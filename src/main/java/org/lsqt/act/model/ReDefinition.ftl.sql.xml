@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.ReDefinition" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_definition">
+				<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="definition_id" property="definitionId" text="流程定义ID"/>
+	 	
+	 		<column name="definition_name" property="definitionName" text="节点定义全称"/>
+	 	
+	 		<column name="definition_short_name" property="definitionShortName" text="流程定义简称"/>
+	 	
+	 		<column name="definition_key" property="definitionKey" text="节点定义Key"/>
+	 	
+	 		<column name="before_script" property="beforeScript" text="前置角本"/>
+	 	
+	 		<column name="before_script_type" property="beforeScriptType" text="1=url 2=javascript_code 3=javacode "/>
+	 	
+	 		<column name="after_script" property="afterScript" text="后置角本"/>
+	 	
+	 		<column name="after_script_type" property="afterScriptType" text="1=url 2=javascript_code 3=javacode "/>
+	 	
+	 		<column name="app_code" property="appCode" text="租户编码"/>
+	 	
+	 		<column name="sn" property="sn" text="排序"/>
+	 	
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 	
+	 	
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_definition where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 							 							 							 							 							 							 							 							 												
+							 
+							definition_id like '%${key}%'  or 
+							
+							 
+							definition_name like '%${key}%'  or 
+							
+							 
+							definition_short_name like '%${key}%'  or 
+							
+							 
+							definition_key like '%${key}%'  or 
+							
+							 
+							before_script like '%${key}%'  or 
+							
+							 
+							before_script_type like '%${key}%'  or 
+							
+							 
+							after_script like '%${key}%'  or 
+							
+							 
+							after_script_type like '%${key}%'  or 
+							
+							 
+							app_code like '%${key}%'  or 
+							
+							 
+							remark like '%${key}%' 
+							
+														
+					)
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+	
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  					<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
+						
+					
+	  						<#if query.definitionName??> and definition_name = '${StringUtil.escapeSql(query.definitionName)}' </#if>
+						
+					
+	  						<#if query.definitionShortName??> and definition_short_name = '${StringUtil.escapeSql(query.definitionShortName)}' </#if>
+						
+					
+	  						<#if query.definitionKey??> and definition_key = '${StringUtil.escapeSql(query.definitionKey)}' </#if>
+						
+					
+	  						<#if query.beforeScript??> and before_script = '${StringUtil.escapeSql(query.beforeScript)}' </#if>
+						
+					
+	  						<#if query.beforeScriptType??> and before_script_type = '${StringUtil.escapeSql(query.beforeScriptType)}' </#if>
+						
+					
+	  						<#if query.afterScript??> and after_script = '${StringUtil.escapeSql(query.afterScript)}' </#if>
+						
+					
+	  						<#if query.afterScriptType??> and after_script_type = '${StringUtil.escapeSql(query.afterScriptType)}' </#if>
+						
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+					
+						
+	  					<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+					
+						
+					
+						
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+						
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_definition ]]>
+	</statement>
+	
+</statements>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sys.model.RegionProvince" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="s_province">
+		<column name="ProvinceID" property="id" />
+		<column name="ProvinceName" property="name"/>
+	</table>
+
+	<statement id="getAll" >
+		<![CDATA[
+			select * from s_province 
+		]]>
+	</statement>
+</statements>

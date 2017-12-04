@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.uum.model.Res" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="uum_res">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 		<column name="pid" property="pid" text="上级"/>
+	 	
+	 		<column name="name" property="name" text="名称"/>
+	 	
+	 		<column name="code" property="code" text="编码"/>
+	 		
+	 		<column name="value" property="value" text="资源值"/>
+	 	
+	 		<column name="type" property="type" text="资源类型：1=界面元素"/>
+	 	
+	 		<column name="sn" property="sn" text="排序"/>
+	 	
+	 		<column name="node_path" property="nodePath" text=""/>
+	 	
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 		<column name="app_code" property="appCode" text=""/>
+	 	
+	 		<column name="pname" property="pName" isVirtual="true" text="上级名称"/>
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+	 		select A.* ,B.name pname from uum_res A left join uum_res B on  A.pid=B.id where 1=1
+		 	<#if query??>
+							<#if query.key??>
+								<#assign key = StringUtil.escapeSql(query.key)/>
+								and (
+										A.name like '%${key}%'  or 
+										A.code like '%${key}%'  or 
+										A.node_path like '%${key}%'  or 
+										A.remark like '%${key}%'  or 
+										A.app_code like '%${key}%' 
+								)
+							</#if>
+				
+							<#if query.ids??> and A.id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and A.id = ${query.id} </#if>
+					
+	  						<#if query.pid??> and A.pid = ${query.pid} </#if>
+					
+	  						<#if query.name??> and A.name = '${StringUtil.escapeSql(query.name)}' </#if>
+						
+	  						<#if query.code??> and A.code = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+	  						<#if query.type??> and A.type = ${query.type} </#if>
+						
+	  						<#if query.sn??> and A.sn = ${query.sn} </#if>
+					
+	  						<#if query.nodePath??> and A.node_path = '${StringUtil.escapeSql(query.nodePath)}' </#if>
+						
+	  						<#if query.remark??> and A.remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+	  						<#if query.appCode??> and A.app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(A.create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+	  						
+	  						<#if query.idNotIn??> and A.id not in (${StringUtil.escapeSql(query.idNotIn)}) </#if>
+				
+							<#-- 获取用户最终权限!!! -->
+							<#if query.userId??> 
+								and A.id in(
+									select res_id from uum_role_res where role_id in (
+									select role_id from uum_object_role where obj_id in(
+									select obj_id from uum_user_object where user_id=${query.userId} and obj_type in(1,2,3,4,7))));
+							</#if>
+							
+							<#-- 获取部门的权限(不含子级) -->
+							<#if query.orgId??> 
+	  							and A.id in(
+									select res_id from uum_role_res where role_id in(
+									select role_id from uum_object_role where obj_type=3 and obj_id=${query.orgId}))
+							</#if>
+							
+							<#-- 获取部门的权限(含子级) -->
+							<#if query.orgIds??> 
+	  							and A.id in(
+									select res_id from uum_role_res where role_id in(
+									select role_id from uum_object_role where obj_type=3 and obj_id in (${query.orgIds})))
+							</#if>
+							
+							<#-- 获取角色下的资源 -->
+							<#if query.roleIds??>
+							 	and A.id in (select res_id from uum_role_res where role_id in(${StringUtil.escapeSql(query.roleIds)}))
+							</#if>
+							
+							<#-- 获取组下的资源 -->
+							<#if query.groupIds??>
+								and A.id in (select res_id from uum_role_res where role_id in (select role_id from uum_object_role where obj_id in(${StringUtil.escapeSql(query.groupIds)}) and obj_type=4))
+							</#if>
+							
+							<#-- 获取称谓的权限 -->
+							<#if query.titleIds??>
+								and  A.id in (
+									select res_id from uum_role_res where role_id in (
+									select role_id from uum_object_role where obj_id in (${StringUtil.escapeSql(query.titleIds)}) and obj_type in (1,2)))
+							</#if>
+							
+							
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	
+</statements>

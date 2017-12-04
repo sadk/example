@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+     xmlns="http://www.springframework.org/schema/beans"  
+     xsi:schemaLocation="http://www.springframework.org/schema/beans 
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">   
+		
+	<bean id="someService" class="org.lsqt.code.springtest.SimpleService" init-method="startup">
+		<constructor-arg>
+			<list>
+				<bean id="user" factory-bean="org.lsqt.code.springtest.ObjectFactory" factory-method="getBean" >
+					<constructor-arg type="java.lang.class" value="org.lsqt.code.User"/>
+				</bean>
+				<bean id="user2" >
+					<property name="firstName" value="张三345345^(234这是)特殊字符"></property>
+					<property name="car" ref="car"></property>
+				</bean>
+				
+				<bean id="car" factory-bean="org.lsqt.code.ObjectFactory" factory-method="getBean" >
+					<constructor-arg type="name" value="宝马车"/> 
+				</bean>
+				<bean id="bus" class="org.lsqt.code.Bus" />
+			</list>
+		</constructor-arg>
+		
+		<property name="userManager" ref="userManager"/>
+		<property name="locations">  
+           <list>  
+              <value>this is location value!!!</value>
+              <bean class="org.lsqt.code.Bus">
+              	<property name="color" value="红色" />
+              </bean>
+            </list>  
+        </property>
+	</bean>
+	
+</beans>

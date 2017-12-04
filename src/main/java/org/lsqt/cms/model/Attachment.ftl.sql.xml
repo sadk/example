@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.cms.model.Attachment" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="cms_cms_attachment">
+		<column id="id" type="auto" property="id" text="主键" />
+		<column name="name" property="name"/>
+		<column name="code" property="code"/>
+		<column name="path" property="path"/>
+		<column name="size" property="size" text="文件大小以M为单位"/>
+		<column name="type" property="type"/>
+		<column name="remark" property="remark" />
+		
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		select * from cms_attachment where 1=1
+		<#if query??>
+			<#if query.key??>
+		        or name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or code like '%${StringUtil.escapeSql(query.key)}%' 
+		        or tags like '%${StringUtil.escapeSql(query.key)}%' 
+		        or type like '%${StringUtil.escapeSql(query.key)}%' 
+		        or summary like '%${StringUtil.escapeSql(query.key)}%' 
+		        or remark like '%${StringUtil.escapeSql(query.key)}%' 
+			</#if>
+			<#if query.id??>
+				and id = ${query.id} 
+			</#if>
+			<#if query.code??>
+				and code = '${StringUtil.escapeSql(query.code)}' 
+			</#if>
+			<#if query.name??>
+				and name like '%${StringUtil.escapeSql(query.name)}%' 
+			</#if>
+			<#if query.type??>
+				and type = '${StringUtil.escapeSql(query.type)}' 
+			</#if>
+			<#if query.summary??>
+				and summary = '${StringUtil.escapeSql(query.summary)}' 
+			</#if>
+			<#if query.tags??>
+				and tags like '%${StringUtil.escapeSql(query.tags)}%' 
+			</#if>
+			<#if query.appCode??>
+				and app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
+			</#if>
+			
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			<#else>
+				order by sn 
+			</#if>
+        </#if>
+		]]>
+	</statement>
+	
+</statements>

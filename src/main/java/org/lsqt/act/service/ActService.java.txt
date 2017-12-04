@@ -1,0 +1,136 @@
+package org.lsqt.act.service;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import org.lsqt.act.model.Definition;
+import org.lsqt.act.model.DefinitionQuery;
+import org.lsqt.act.model.Task;
+import org.lsqt.components.db.Page;
+
+/**
+ * 工作流相关接口
+ * 总共分三大关键类：流程定义、流程流转(起动、挂起、删除等)、任务操作(任务接收、任务完成、获取待办等)
+ * @author mmyuan
+ *
+ */
+@Deprecated
+public interface ActService{
+	
+	/**
+	 * 流程定义相关
+	 * @author mmyuan
+	 *
+	 */
+	interface RepositoryService {
+		
+		Definition getById(String id);
+		
+		Page<Definition> queryForPage(DefinitionQuery query);
+		
+		/**
+		 * 获取所有的流程定义，包括所有发布的版本
+		 * @return
+		 */
+		Collection<Definition> getAll();
+		
+		/**
+		 * 获取的所有的流程定义，只包括最新版本
+		 * @param newest 如果为true只返回最新版本，否则返回所有
+		 * @return
+		 */
+		Collection<Definition> getAll(boolean newest);
+		
+		
+		List<Definition> queryForList(DefinitionQuery query);
+	}
+	
+	/**
+	 * 流程流转相关接口
+	 * @author mmyuan
+	 *
+	 */
+	interface RuntimeService {
+		
+		/**
+		 * 跟据流程定义key启动流程
+		 * @param processDefinitionKey 流程定义Key
+		 * @return processInstanceId 返回流程实例ID
+		 */
+		String startProcessInstanceByKey(String processDefinitionKey);
+		
+		/**
+		 * 
+		 * @param processDefinitionKey 流程定义Key
+		 * @param variables 流程变量Map
+		 * @return processInstanceId 返回流程实例ID
+		 */
+		String startProcessInstanceByKey(String processDefinitionKey,Map<String,Object> variables);
+		
+		/**
+		 * 流程挂起
+		 * 如果一个流程实例状态暂停，与该实例的流程相关活动将不执行工作（定时器、消息）
+		 * @param processInstanceId
+		 */
+		void suspendProcessInstanceById(String processInstanceId);
+		
+		/**
+		 * 流程废除
+		 * @param processInstanceId
+		 * @param deleteReason
+		 */
+		void deleteProcessInstance(String processInstanceId,String deleteReason);
+	}
+	
+	
+	interface TaskService {
+		
+		/**
+		 * 任务授理接口
+		 * @param taskId
+		 * @param userId
+		 */
+		void claim(String taskId, String userId) ;
+		
+		/**
+		 * 任务不受理
+		 * @param taskId
+		 */
+		void unclaim(String taskId);
+		
+		/**
+		 * 下一步
+		 * @param taskId 任务Id
+		 */
+		void complete(String taskId);
+		
+		/**
+		 * 下一步
+		 * @param taskId
+		 * @param variables 流程变量
+		 */
+		void complete(String taskId,Map<String,Object> variables);
+		
+		/**
+		 * 设置任务的受让人
+		 * @param taskId
+		 * @param userId
+		 */
+		void setAssignee(String taskId, String userId);
+		
+		/**
+		 * 添加任务的候选用户
+		 */
+		void addCandidateUser(String taskId, String userId);
+		
+		
+		// -----------------------------------------------------
+		/**
+		 * 获取用户的待办列表
+		 * @param userId
+		 * @return
+		 */
+		List<Task> getToDoList(String userId);
+	}
+}

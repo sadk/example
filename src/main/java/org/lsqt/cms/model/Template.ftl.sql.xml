@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.cms.model.Template" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="cms_template">
+			<column id="id" type="auto" property="id" text="主键" />
+
+	 		<column name="name" property="name" text="模板名"/>
+	 		<column name="title" property="title" text="标题"/>
+	 	
+	 		<column name="code" property="code" text="模板编码"/>
+	 	
+	 		<column name="channel_id" property="channelId" text="所属的栏目编码"/>
+	 		<column name="enable" property="enable" text="是否启用 :0=不启用 1=启用"/>
+	 		
+	 		<column name="thumbnail_name" property="thumbnailName" text="模板缩略图名称"/>
+	 		<column name="path_thumbnail" property="pathThumbnail" text="模板缩略图路径"/>
+	 		<column name="path_thumbnail_l" property="pathThumbnailLarge" text="模板缩略图路径(大)"/>
+	 		<column name="path_thumbnail_m" property="pathThumbnailMiddle" text="模板缩略图路径（中）"/>
+	 		<column name="path_thumbnail_s" property="pathThumbnailSmall" text="模板缩略图路径（小）"/>
+	 		
+	 		<column name="sn" property="sn" text="排序号"/>
+	 	
+	 		<column name="remark" property="remark" text="用户备注"/>
+	 	
+	 		<column name="app_code" property="appCode" text="所属应用"/>
+	 	
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	 		
+	 		<column name="content" property="content" isVirtual="true" text="模板内容"/>
+	 		<column name="channel_name" property="channelName"  isVirtual="true"  text="模板内容"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select A.*,B.content,C.name channel_name from cms_template A left join cms_content B on A.id=B.object_id left join cms_channel C on A.channel_id=C.id where 1=1 
+		 	<#if query??>
+						<#if query.key??>
+							<#assign key = StringUtil.escapeSql(query.key)/>
+							and (
+									A.name like '%${key}%'  or 
+									A.code like '%${key}%'  or 
+									A.remark like '%${key}%'  or 
+									A.app_code like '%${key}%' 
+							)
+						</#if>
+				
+						<#if query.ids??> and A.id in (${StringUtil.escapeSql(query.ids)}) </#if>
+					
+  						<#if query.id??> and A.id = ${query.id} </#if>
+				
+  						<#if query.name??> and A.name = '${StringUtil.escapeSql(query.name)}' </#if>
+					
+  						<#if query.code??> and A.code = '${StringUtil.escapeSql(query.code)}' </#if>
+				
+  						<#if query.channelId??> and A.channel_id = ${query.channelId} </#if>
+					
+  						<#if query.content??> and B.content = '${StringUtil.escapeSql(query.content)}' </#if>
+				
+  						<#if query.remark??> and A.remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+				
+  						<#if query.appCode??> and A.app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+					
+						<#if query.createTimeBegin?? && query.createTimeEnd??>
+  							and date_format(A.create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from cms_template ]]>
+	</statement>
+	
+</statements>

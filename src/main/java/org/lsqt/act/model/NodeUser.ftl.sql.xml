@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.NodeUser" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_node_user">
+			<column id="id" type="auto" property="id" text="主键" />
+			<column name="name" property="name" text="名称"/>
+	 		<column name="definition_id" property="definitionId" text="流程定义ID"/>
+	 		<column name="definition_name" property="definitionName" text="流程定义名称"/>
+	 	
+	 		<column name="task_key" property="taskKey" text="节点定义Key"/>
+	 		
+	 		<column name="approve_obj_variable_code" property="approveObjectVariableCode" text="流程审批候选对象编码"/>
+	 		<column name="approve_obj_id" property="approveObjectId" text="流程审批对象"/>
+	 		<column name="approve_obj_json" property="approveObjectJson" text="流程审批对象"/>
+	 		
+	 		
+	 		<![CDATA[userType ==> 结点用户类型: 1=用户 2=角色 3=组织 4=岗位  5=用户组(与流程引擎的group不是一个概念，主要是第三方系统的UUM)； 100=用户规则 ]]>
+	 		<column name="user_type" property="userType" text="见CDATA注释"/>
+	 		
+	 		<column name="user_from_type" property="userFromType" text="用户数据来源：1=内部 2=外部（如http-json数据）"/>
+	 	
+	 		<column name="app_code" property="appCode" text=""/>
+	 		<column name="sn" property="sn" text="排序"/>
+	 		<column name="remark" property="remark" text="备注"/>
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_node_user where 1=1
+		 	<#if query??>
+		 		
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							definition_id like '%${key}%'  or 
+							definition_name like '%${key}%'  or 
+							task_key like '%${key}%'  or 
+							name like '%${key}%'  or 
+							app_code like '%${key}%'  or 
+							remark like '%${key}%' 							
+					)
+				</#if>
+
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
+						
+					
+	  						<#if query.definitionName??> and definition_name = '${StringUtil.escapeSql(query.definitionName)}' </#if>
+						
+					
+	  						<#if query.taskKey??> and task_key = '${StringUtil.escapeSql(query.taskKey)}' </#if>
+						
+					
+	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+						
+					
+						
+	  						<#if query.userType??> and user_type = ${query.userType} </#if>
+					
+						
+	  						<#if query.userFromType??> and user_from_type = ${query.userFromType} </#if>
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+					
+						
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_node_user ]]>
+	</statement>
+	
+</statements>

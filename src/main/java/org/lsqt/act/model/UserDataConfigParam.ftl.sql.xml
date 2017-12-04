@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.UserDataConfigParam" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_user_data_config_param">
+			<column id="id" type="auto" property="id" text="主键" />
+	 	
+	 		<column name="config_id" property="configId" text="数据配置ID(引用ext_user_data_config.id)"/>
+	 		<column name="param_name" property="paramName" text="参数名称"/>
+	 		<column name="param_code" property="paramCode" text="参数编码"/>
+	 		<column name="param_type" property="paramType" text="参数类型: 100=登陆用户上下文   200=静态值   300=动态值"/>
+	 		<column name="param_value" property="paramValue" text="参数值"/>
+	 		<column name="param_value_express" property="paramValueExpress" text="参数值表达式(当参数类型为动态值时)"/>
+	 		
+	 		<column name="sn" property="sn" text="排序"/>
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_user_data_config_param where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							param_name like '%${key}%'  or 
+							param_code like '%${key}%'  or 
+							param_value like '%${key}%'  or 
+							remark like '%${key}%' 
+							
+														
+					)
+				</#if>
+	
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.configId??> and config_id = '${StringUtil.escapeSql(query.configId)}' </#if>
+					
+	  						<#if query.paramName??> and param_name = '${StringUtil.escapeSql(query.paramName)}' </#if>
+					
+	  						<#if query.paramCode??> and param_code = '${StringUtil.escapeSql(query.paramCode)}' </#if>
+					
+	  						<#if query.paramType??> and param_type = '${StringUtil.escapeSql(query.paramType)}' </#if>
+						
+	  						<#if query.paramValue??> and param_value = '${StringUtil.escapeSql(query.paramValue)}' </#if>
+						
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+						
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+						
+					
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_user_data_config_param ]]>
+	</statement>
+	
+</statements>

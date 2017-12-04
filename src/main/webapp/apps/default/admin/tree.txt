@@ -1,0 +1,143 @@
+﻿﻿[
+
+	{id: "sys", text: "系统管理"},
+	{id: "sys-1", text: "应用管理", pid: "sys", url:"/apps/default/admin/sys/application/index.jsp" },	
+	{id: "sys-2", text: "分类管理" , pid: "sys", url: "/apps/default/admin/sys/category/index.jsp"},
+	{id: "sys-3", text: "字典管理" , pid: "sys", url: "/apps/default/admin/sys/dictionary/index.jsp"},
+	{id: "sys-4", text: "地区管理" , pid: "sys", url: "/apps/default/admin/sys/region/index.jsp"},
+	{id: "sys-11", text: "服务器管理" , pid: "sys", url: "/apps/default/admin/sys/machine/index.jsp"},	
+	/*文件服务器、*/
+	
+	
+	{id: "sys-5", text: "代码生成器", pid: "sys", url:"/apps/default/admin/sys/project/index.jsp" },
+	{id: "sys-6", text: "数据源管理", pid: "sys-5", url:"/apps/default/admin/sys/datasource/index.jsp" },	
+	{id: "sys-7", text: "代码模板", pid: "sys-5", url:"/apps/default/admin/sys/project/index.jsp" },			
+	{id: "sys-8", text: "表定义", pid: "sys-5", url:"/apps/default/admin/sys/table/index.jsp" },	
+	{id: "sys-9", text: "字段定义", pid: "sys-5", url:"/apps/default/admin/sys/column/index.jsp" },			
+	{id: "sys-10", text: "生成代码", pid: "sys-5", url:"/apps/default/admin/sys/code_template/index.jsp" },
+	
+	/**/
+	{id: "buss", text: "填报专区"},
+	{id: "buss-1", text: "业务表数据库" , pid: "buss", url: "/apps/default/buss/factory/index.jsp"} ,
+	{id: "buss-2", text: "表单管理" , pid: "buss", url: "/apps/default/buss/product/index.jsp"} ,
+	{id: "buss-3", text: "RIA报表配置" , pid: "buss", url: "/apps/default/buss/quality/index.jsp"} ,
+	
+	
+	{id: "cms", text: "建站系统"},
+	{id: "cms-1", text: "站点管理" , pid: "cms", url: "/apps/default/admin/sys/application/index.jsp"} ,
+	{id: "cms-6", text: "栏目管理" , pid: "cms", url: "/apps/default/admin/cms/channel/index.jsp"} ,
+	{id: "cms-2", text: "资讯内容" , pid: "cms", url: "/apps/default/admin/cms/news/index.jsp"} ,
+	{id: "cms-3", text: "模板管理" , pid: "cms", url: "/apps/default/admin/cms/template/index.jsp"} ,
+	{id: "cms-4", text: "评价管理" , pid: "cms", url: "/apps/default/admin/cms/comment/index.jsp"} ,
+	{id: "cms-5", text: "标签管理" , pid: "cms", url: ""} ,
+	
+	
+	{id: "uum", text: "用户系统"},
+	{id: "uum-0", text: "基础数据" , pid: "uum"},
+	{id: "uum-1", text: "用户管理" , pid: "uum-0", url: "/apps/default/admin/uum/user/index.jsp"} ,
+	{id: "uum-2", text: "角色管理" , pid: "uum-0", url: "/apps/default/admin/uum/role/index.jsp"} ,
+	{id: "uum-3", text: "组织机构" , pid: "uum-0", url: "/apps/default/admin/uum/org/index.jsp"} ,
+	{id: "uum-4", text: "称谓管理" , pid: "uum-0", url: "/apps/default/admin/uum/title/index.jsp"} ,
+	{id: "uum-5", text: "资源管理" , pid: "uum-0", url: "/apps/default/admin/uum/res/index.jsp"},
+	{id: "uum-12", text: "组管理" , pid: "uum-0", url: "/apps/default/admin/uum/group/index.jsp"},
+	 
+	{id: "uum-6", text: "权限管理" , pid: "uum", url: ""},
+	{id: "uum-7", text: "用户" , pid: "uum-6", url: "/apps/default/admin/uum/user/permission_index.jsp"},
+	
+	
+	{id: "uum-8", text: "机构" , pid: "uum-6", url: ""},
+	{id: "uum-13", text: "机构-(通讯录)" , pid: "uum-8", url: "/apps/default/admin/uum/org/permission_contact.jsp"},
+	{id: "uum-14", text: "机构" , pid: "uum-8", url: "/apps/default/admin/uum/org/permission_index.jsp"},
+	
+	{id: "uum-9", text: "角色" , pid: "uum-6", url: "/apps/default/admin/uum/role/permission_index.jsp"},
+	{id: "uum-10", text: "组" , pid: "uum-6", url: "/apps/default/admin/uum/group/permission_index.jsp"},
+	{id: "uum-11", text: "称谓" , pid: "uum-6", url: "/apps/default/admin/uum/title/permission_index.jsp"},
+	
+
+	{id: "uum_syswin", text: "思源用户系统"},
+	{id: "uum_syswin_0", text: "基础数据" , pid: "uum_syswin"},
+	
+	{id: "uum_syswin_6", text: "角色数据" , pid: "uum_syswin_0"},
+	{id: "uum_syswin_7", text: "角色分类" , pid: "uum_syswin_6", url: "/apps/default/syswin/uum/role/category/index.jsp"} ,
+	{id: "uum_syswin_8", text: "角色数据" , pid: "uum_syswin_6", url: "/apps/default/syswin/uum/role/index.jsp"} ,
+	
+	{id: "uum_syswin_2", text: "组织架构" , pid: "uum_syswin_0", url: "/apps/default/syswin/uum/org/index.jsp"} ,
+	{id: "uum_syswin_3", text: "岗位相关" , pid: "uum_syswin_0"} ,
+	{id: "uum_syswin_9", text: "岗位分类" , pid: "uum_syswin_3", url: "/apps/default/syswin/uum/position/category/index.jsp"} ,
+	{id: "uum_syswin_4", text: "岗位数据" , pid: "uum_syswin_3", url: "/apps/default/syswin/uum/position/index.jsp"} ,
+	{id: "uum_syswin_5", text: "岗位角色" , pid: "uum_syswin_3", url: "/apps/default/syswin/uum/position/position_roles.jsp"} ,
+	{id: "uum_syswin_1", text: "用户数据" , pid: "uum_syswin_0", url: "/apps/default/syswin/uum/user/index.jsp"} ,
+	
+	
+		
+	
+	{id: "uum_syswin_authority", text: "授权管理" , pid: "uum_syswin"} ,
+	{id: "uum_syswin_authority_2", text: "权限资源" , pid: "uum_syswin_authority", url: "/apps/default/syswin/uum/button/index.jsp"},
+	/*
+	{id: "uum_syswin_authority_1", text: "菜单定义" , pid: "uum_syswin_authority", url: "/apps/default/syswin/uum/menu/index.jsp"},
+	*/
+	{id: "uum_syswin_authority_5", text: "角色授权" , pid: "uum_syswin_authority", url: "/apps/default/syswin/uum/role/authority.jsp"} ,
+	
+	/**/
+	{id: "weixin", text: "微信系统"},
+	{id: "weixin-1", text: "微信消息", pid: "weixin", url: ""},
+	{id: "weixin-2", text: "微信用户", pid: "weixin", url: ""},
+	{id: "weixin-3", text: "微信支付", pid: "weixin", url: ""},
+	
+	
+	{id: "bbs", text: "论坛系统"},
+	{id: "bbs-1", text: "版块管理", pid: "bbs", url:"" },
+	{id: "bbs-2", text: "贴子管理", pid: "bbs", url:"" },
+	
+	{id: "blog", text: "博客系统"},
+	{id: "blog-1", text: "博客模板管理", pid: "blog", url:"" },
+	{id: "blog-2", text: "博客内容管理", pid: "blog", url:"" },
+	
+	{id: "pro", text: "项目管理"},
+	{id: "pro-1", text: "bug管理", pid: "pro", url:"" },
+	{id: "pro-2", text: "博客内容管理", pid: "pro", url:"" },
+	
+	
+	
+	{id: "flow", text: "办公系统"},
+	{id: "flow-1", text: "个人办公", pid: "flow", url:"" },
+	{id: "flow-101", text: "我的待办（简版1）", pid: "flow-1", url:"/apps/default/admin/act/task/index1.jsp" },
+	{id: "flow-102", text: "我的待办（简版2）", pid: "flow-1", url:"/apps/default/admin/act/task/index2.jsp" },
+	{id: "flow-103", text: "我的待办", pid: "flow-1", url:"/apps/default/admin/act/task/index.jsp" },
+	{id: "flow-104", text: "我的已办", pid: "flow-1", url:"/apps/default/admin/act/task/index_my_done.jsp" },
+	{id: "flow-105", text: "我的发起", pid: "flow-1", url:"/apps/default/admin/act/task/index_my_start.jsp" },
+	{id: "flow-106", text: "抄送我的", pid: "flow-1", url:"/apps/default/admin/act/task/index_cc_my.jsp" },
+		
+	{id: "flow-5", text: "流程设计", pid: "flow", url:"" },
+	{id: "flow-6", text: "流程分类", pid: "flow-5", url:"/apps/default/admin/act/category/index.jsp" },
+	{id: "flow-13", text: "用户规则", pid: "flow-5", url:"/apps/default/admin/act/user_rule/index.jsp" },
+	{id: "flow-7", text: "流程设置", pid: "flow-5", url:"/apps/default/admin/act/definition/index.jsp" },
+	{id: "flow-8", text: "实例管理", pid: "flow-5", url:"/apps/default/admin/act/instance/index.jsp" },
+	
+	{id: "flow-9", text: "表单定义", pid: "flow-5", url:"" },
+	{id: "flow-10", text: "数据库表定义", pid: "flow-9", url:"" },
+	{id: "flow-11", text: "流程表单", pid: "flow-9", url:"" },
+
+	{id: "flow-12", text: "用户适配", pid: "flow-5", url:"/apps/default/admin/act/user_data/index.jsp" },
+	
+	/**/
+	{id: "dev", text: "在线开发"},
+	{id: "dev-1", text: "数据源管理", pid: "dev", url:""},
+	{id: "dev-1", text: "页面模板", pid: "dev", url:"" },
+	{id: "dev-2", text: "页面设计", pid: "dev", url:"" },
+	{id: "dev-2", text: "报表分析", pid: "dev", url:"" },
+	
+	
+	{id: "search", text: "站内搜索"},
+	{id: "search-1", text: "采集管理", pid: "search", url:"" },
+	{id: "search-2", text: "检验管理", pid: "search", url:"" },
+
+	{id: "dataManager", text: "数据抽取"},
+	{id: "dataManager1", text: "数据映射",pid: "dataManager"},
+	{id: "dataManager2", text: "数据对抽",pid: "dataManager"},
+	{id: "dataManager3", text: "作业抽取",pid: "dataManager"}
+	
+		
+]
+
+

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.FlowPayApproval" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="t_flow_pay_approval">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 		<column name="apply_user_id" property="applyUserId" text="发起人ID"/>
+	 	
+	 		<column name="apply_user_name" property="applyUserName" text="发起人名称"/>
+	 	
+	 		<column name="apply_time" property="applyTime" text="发起时间"/>
+	 	
+	 		<column name="pay_remark" property="payRemark" text="付款说明"/>
+	 	
+	 	
+	 	
+	 	
+	 	
+	 		<column name="createby" property="createby" text="创建者id"/>
+	 		<column name="createby_name" property="createbyName" text="创建者名称"/>
+	 		<column name="updateby" property="updateby" text="修改者id"/>
+	 		<column name="updateby_name" property="updatebyName" text="修改者名称"/>
+	 		<column name="update_date" property="updateDate" text="修改时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from t_flow_pay_approval where 1=1
+		 	<#if query??>
+		 	 
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 							 							 							 					
+							 
+							apply_user_id like '%${key}%'  or 
+							
+							 
+							apply_user_name like '%${key}%'  or 
+							
+							 
+							pay_remark like '%${key}%'  or 
+							
+							 
+							createby_name like '%${key}%'  or 
+							
+							 
+							updateby_name like '%${key}%' 
+							
+					)
+				</#if>
+				 
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.applyUserId??> and apply_user_id = '${StringUtil.escapeSql(query.applyUserId)}' </#if>
+						
+					
+	  						<#if query.applyUserName??> and apply_user_name = '${StringUtil.escapeSql(query.applyUserName)}' </#if>
+						
+						
+							<#if query.applyTimeBegin?? && query.applyTimeEnd??>
+	  							and date_format(apply_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.applyTimeBegin)}' and '${StringUtil.escapeSql(query.applyTimeEnd)}'
+	  						</#if>
+	  						
+	  						<#if query.payRemark??> and pay_remark = '${StringUtil.escapeSql(query.payRemark)}' </#if>
+						
+						
+	  						<#if query.createby??> and createby = ${query.createby} </#if>
+					
+	  						<#if query.createbyName??> and createby_name = '${StringUtil.escapeSql(query.createbyName)}' </#if>
+						
+					
+						
+	  						<#if query.updateby??> and updateby = ${query.updateby} </#if>
+					
+	  						<#if query.updatebyName??> and updateby_name = '${StringUtil.escapeSql(query.updatebyName)}' </#if>
+						
+					
+						
+					
+						
+							<#if query.updateDateBegin?? && query.updateDateEnd??>
+	  							and date_format(update_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.updateDateBegin)}' and '${StringUtil.escapeSql(query.updateDateEnd)}'
+	  						</#if>
+	  						
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from t_flow_pay_approval ]]>
+	</statement>
+	
+</statements>

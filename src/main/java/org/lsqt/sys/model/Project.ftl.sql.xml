@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sys.model.Project" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="sys_project">
+		<column id="id" type="auto" property="id" text="主键" />
+		
+		<column name="name" property="name"/>
+		<column name="code" property="code"/>
+		<column name="file_name" property="fileName"/>
+		<column name="file_path" property="filePath"/>
+		
+		<column name="structure" property="structure"/>
+		<column name="eclipse" property="eclipse" />
+		
+		<column name="level_db" property="levelDb" />
+		<column name="level_web" property="levelWeb" />
+		<column name="level_view" property="levelView" />
+		
+		<column name="plugin" property="plugin" />
+		<column name="sn" property="sn" />
+		<column name="remark" property="remark" />
+		<column name="app_code" property="appCode" />
+		
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		select A.* from sys_project A where 1=1
+		<#if query??>
+			<#if query.key??>
+		        and (
+		           A.id like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.name like '%${StringUtil.escapeSql(query.key)}%'
+		        or A.code like '%${StringUtil.escapeSql(query.key)}%'  
+		        or A.file_name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.level_db like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.level_web like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.level_view like '%${StringUtil.escapeSql(query.key)}%' 
+		        
+		        or A.plugin like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.remark like '%${StringUtil.escapeSql(query.key)}%' 
+		        )
+			</#if>
+			<#if query.id??>
+				and A.id = ${query.id} 
+			</#if>
+			<#if query.name??>
+				and A.name like  '%${StringUtil.escapeSql(query.name)}%' 
+			</#if>
+			
+			<#if query.code??>
+				and A.code like  '%${StringUtil.escapeSql(query.code)}%' 
+			</#if>
+			
+			<#if query.fileName??>
+				and A.file_name like  '%${StringUtil.escapeSql(query.fileName)}%' 
+			</#if>
+			
+			<#if query.levelDb??>
+				and A.level_db like '%${StringUtil.escapeSql(query.levelDb)}%' 
+			</#if>
+			
+			<#if query.levelWeb??>
+				and A.level_web like '%${StringUtil.escapeSql(query.levelWeb)}%' 
+			</#if>
+			
+			<#if query.levelView??>
+				and A.level_view like '%${StringUtil.escapeSql(query.levelView)}%' 
+			</#if>
+			
+			<#if query.plugin??>
+				and A.plugin like '%${StringUtil.escapeSql(query.plugin)}%' 
+			</#if>
+			
+			<#if query.remark??>
+				and A.remark like '%${StringUtil.escapeSql(query.remark)}%' 
+			</#if>
+			
+			<#if query.appCode??>
+				and A.app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
+			</#if>
+			
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			<#else>
+				order by sn 
+			</#if>
+        </#if>
+		]]>
+	</statement>
+	
+</statements>

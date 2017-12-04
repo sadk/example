@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.syswin.authority.model.RangeValue" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="t_power_role_range_res">
+			<column id="pk" type="auto" property="id" text="主键" />
+		
+	 		<column name="code" property="code" text="数据查询权限编码"/>
+	 		
+	 		<column name="role_id" property="roleId" text="角色id"/>
+	 	
+	 		<column name="range_id" property="rangeId" text="资源id"/>
+	 		<column name="range_name" property="rangeName" text="资源名称"/>
+	 		<column name="range_value" property="rangeValue" text="资源分类值"/>
+	 		<column name="range_type" property="rangeType" text="范围值类型： 1=静态值 2=动态值"/>
+	 	
+	 		<column name="range_desc" property="description" text="资料描述"/>
+	 	
+	 	
+	 	
+	 		<column name="createby" property="createUserId" text="创建者id"/>
+	 		<column name="createby_name" property="createUserName" text="创建者名称"/>
+	 	
+	 	
+	 		<column name="updateby" property="updateUserId" text="修改者id"/>
+	 		<column name="updateby_name" property="updateUserName" text="修改者名称"/>
+	 	
+	 		
+	 		<column createTime="create_date" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_date" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from t_power_role_range_res where 1=1
+		 	<#if query??>
+		 		 
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							code like '%${key}%'  or 
+							range_desc like '%${key}%'  or 
+							createby_name like '%${key}%'  or 
+							updateby_name like '%${key}%' 
+							
+					)
+				</#if>
+ 
+				
+						<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+					
+  						<#if query.id??> and pk = ${query.id} </#if>
+				
+  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+	  					<#if query.roleId??> and role_id = ${query.roleId} </#if>
+					
+	  					<#if query.rangeId??> and range_id = ${query.rangeId} </#if>
+						
+	  					<#if query.rangeValue??> and range_value = ${query.rangeValue} </#if>
+					
+	  					<#if query.description??> and range_desc = '${StringUtil.escapeSql(query.description)}' </#if>
+						
+	  					<#if query.createUserId??> and createby = ${query.createUserId} </#if>
+					
+	  					<#if query.createUserName??> and createby_name = '${StringUtil.escapeSql(query.createUserName)}' </#if>
+						
+						<#if query.createTimeBegin?? && query.createTimeEnd??>
+  							and date_format(create_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+  						</#if>
+	  						
+	  					<#if query.updateUserId??> and updateby = ${query.updateUserId} </#if>
+					
+	  					<#if query.updateUserName??> and updateby_name = '${StringUtil.escapeSql(query.updateUserName)}' </#if>
+						
+						<#if query.updateTimeBegin?? && query.updateTimeEnd??>
+  							and date_format(update_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.updateTimeBegin)}' and '${StringUtil.escapeSql(query.updateTimeEnd)}'
+  						</#if>
+	  						
+						<#--  用户的数据值权限  -->
+						<#if query.userId??>
+							and role_id in (select role_id from  T_POWER_DUTIES_ROLE where duties_id in (select duties_id from t_org_duties_info where duties_id in(select duties_id from  t_user_duties where user_id =${query.userId})))
+						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from t_power_role_range_res ]]>
+	</statement>
+	
+</statements>

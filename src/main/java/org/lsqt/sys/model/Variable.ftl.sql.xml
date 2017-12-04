@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sys.model.Variable" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="sys_variable">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 		<column name="obj_id" property="objId" text=""/>
+	 	
+	 		<column name="name" property="name" text="变量名"/>
+	 	
+	 		<column name="code" property="code" text="变量编码"/>
+	 	
+	 		<column name="use_type" property="useType" text="变量使用类型 1=流程变量用 2=代码生成用 3=常用变量"/>
+	 	
+	 		<column name="value" property="value" text="变量值"/>
+	 	
+	 		<column name="value_type" property="valueType" text="变量值类型  1=固定值 2=运行时 3=内置值"/>
+	 		
+	 		<column name="value_resolve_type" property="valueResolveType" text="变量值解析类型:1=freemark 2=velocity 3=groovy 4=javascript"/>
+	 	
+	 		<column name="sn" property="sn" text=""/>
+	 	
+	 		<column name="remark" property="remark" text="用户备注"/>
+	 	
+	 		<column name="app_code" property="appCode" text=""/>
+	 	
+	 	
+	 		
+	 		
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from sys_variable where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							name like '%${key}%'  or 
+							code like '%${key}%'  or 
+							use_type like '%${key}%'  or 
+							remark like '%${key}%'  or 
+							app_code like '%${key}%' 
+					)
+				</#if>
+				
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+						
+	  						<#if query.objId??> and obj_id = ${query.objId} </#if>
+					
+	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+						
+	  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+	  						<#if query.useType??> and use_type = '${StringUtil.escapeSql(query.useType)}' </#if>
+						
+	  						<#if query.value??> and value = '${StringUtil.escapeSql(query.value)}' </#if>
+							
+							<#if query.valueType??> and value_type = '${StringUtil.escapeSql(query.value)}' </#if>
+							
+	  						<#if query.valueResolveType??> and value_resolve_type = '${StringUtil.escapeSql(query.valueResolveType)}' </#if>
+						
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+					
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+</statements>

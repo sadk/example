@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.RunTaskAssignForwardCc" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_run_task_assign_forward_cc">
+			
+			<column id="id" type="auto" property="id" text="主键" />
+	 	
+	 		<column name="business_key" property="businessKey" text="表单数据id"/>
+	 		<column name="business_type" property="businessType" text="表单数据（自定义）业务类型"/>
+	 	
+	 		<column name="process_instance_id" property="processInstanceId" text="流程实例id"/>
+	 	
+	 		<column name="definition_id" property="definitionId" text="流程定义ID"/>
+	 		<column name="definition_name" property="definitionName" text="流程定义名称"/>
+	 		<column name="definition_key" property="definitionKey" text="流程定义key"/>
+	 	
+	 		<column name="task_id" property="taskId" text="记录审批时的节点ID（待办任务ID）"/>
+	 		<column name="task_complete_type" property="taskCompleteType" text="任务是否已完成（用以区分数据）：0=没有完成 1=已完成"/>
+	 		<column name="task_name" property="taskName" text="待办任务名称"/>
+	 		<column name="task_key" property="taskKey" text="待办任务Key"/>
+	 		
+	 		<column name="approve_user_id" property="approveUserId" text="审批操作用户"/>
+	 		<column name="approve_user_name" property="approveUserName" text="审批用户名"/>
+	 		<column name="approve_action" property="approveAction" text="审批操作 code： 同意、拒绝等"/>
+	 		
+	 		<column name="assign_forward_cc_user_ids" property="assignForwardCcUserIds" text="加签、转发、抄送的用户（多个以逗号隔开）"/>
+	 	
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 	
+	 	
+	 	
+		
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_run_task_assign_forward_cc where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							business_key = '%${key}%'  or 
+							business_type = '%${key}%'  or 
+							process_instance_id = '%${key}%'  or 
+							
+							definition_id = '%${key}%'  or 
+							definition_name like '%${key}%'  or 
+							definition_key like '%${key}%'  or 
+							
+							task_id = '%${key}%'  or 
+							task_name like '%${key}%'  or 
+							task_key like '%${key}%'  or 
+							
+							 
+							approve_user_id = '%${key}%'  or 
+							approve_user_name like '%${key}%'  or 
+							approve_action like '%${key}%'  or 
+							
+							assign_forward_cc_user_ids like '%${key}%'  or 
+							 
+							remark like '%${key}%' 
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.businessKey??> and business_key = '${StringUtil.escapeSql(query.businessKey)}' </#if>
+						
+	  						<#if query.businessType??> and business_type = '${StringUtil.escapeSql(query.businessType)}' </#if>
+						
+	  						<#if query.processInstanceId??> and process_instance_id = '${StringUtil.escapeSql(query.processInstanceId)}' </#if>
+						
+	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
+					
+	  						<#if query.definitionName??> and definition_name = '${StringUtil.escapeSql(query.definitionName)}' </#if>
+						
+	  						<#if query.definitionKey??> and definition_key = '${StringUtil.escapeSql(query.definitionKey)}' </#if>
+						
+	  						<#if query.taskId??> and task_id = '${StringUtil.escapeSql(query.taskId)}' </#if>
+					
+	  						<#if query.taskCompleteType??> and task_complete_type = '${StringUtil.escapeSql(query.taskCompleteType)}' </#if>
+					
+	  						<#if query.taskName??> and task_name = '${StringUtil.escapeSql(query.taskName)}' </#if>
+						
+	  						<#if query.taskKey??> and task_key = '${StringUtil.escapeSql(query.taskKey)}' </#if>
+						
+	  						<#if query.approveUserId??> and approve_user_id = '${StringUtil.escapeSql(query.approveUserId)}' </#if>
+					
+	  						<#if query.approveUserName??> and approve_user_name = '${StringUtil.escapeSql(query.approveUserName)}' </#if>
+						
+	  						<#if query.approveAction??> and approve_action = '${StringUtil.escapeSql(query.approveAction)}' </#if>
+						
+	  						<#if query.assignForwardCcUserIds??> and assign_forward_cc_user_ids like '%,${StringUtil.escapeSql(query.assignForwardCcUserIds)},%' </#if>
+							
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_run_task_assign_forward_cc ]]>
+	</statement>
+	
+</statements>

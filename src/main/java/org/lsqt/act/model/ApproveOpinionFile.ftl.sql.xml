@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.ApproveOpinionFile" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_approve_opinion_file">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="business_key" property="businessKey" text="业务主键（如付款审批ID)"/>
+	 		<column name="opinion_id" property="opinionId" text="审批意见id(ext_approve_opinion.id)"/>
+	 		
+	 		<column name="approve_process_instance_id" property="approveProcessInstanceId" text="审批时的流程实例"/>
+	 		<column name="approve_task_id" property="approveTaskId" text="审批时的任务ID"/>
+	 		<column name="approve_task_key" property="approveTaskKey" text=""/>
+	 		
+	 		<column name="definition_id" property="definitionId" text=""/>
+	 		<column name="definition_name" property="definitionName" text=""/>
+	 		<column name="definition_key" property="definitionKey" text=""/>
+	 	
+	 		<column name="stored_name" property="storedName" text="存储文件名"/>
+	 		<column name="original_name" property="originalName" text="原始文件名"/>
+	 		<column name="type_code" property="typeCode" text="文件类型编码，引用字典值或自定义"/>
+	 	
+	 		<column name="path" property="path" text="(FastDFS文件)路径"/>
+	 		<column name="path_large" property="pathLarge" text="文件缩略图（大）"/>
+	 		<column name="path_medium" property="pathMedium" text="文件缩略图（中）"/>
+	 		<column name="path_small" property="pathSmall" text="文件缩略图（小）"/>
+	 	
+	 		<column name="upload_user_id" property="uploadUserId" text="上传的用户ID"/>
+	 		<column name="upload_user_name" property="uploadUserName" text="上传的用户名称"/>
+	 		
+	 		
+	 		<column name="sn" property="sn" text="排序"/>
+	 		<column name="remark" property="remark" text="备注"/>
+	 		<column name="app_code" property="appCode" text=""/>
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_approve_opinion_file where 1=1
+		 	<#if query??>
+		 		
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							business_key like '%${key}%'  or 
+							approve_task_key like '%${key}%'  or 
+							stored_name like '%${key}%'  or 
+							original_name like '%${key}%'  or 
+							remark like '%${key}%'  or 
+							upload_user_name like '%${key}%' 
+					)
+				</#if>
+				 
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.businessKey??> and business_key = '${StringUtil.escapeSql(query.businessKey)}' </#if>
+						
+							<#if query.opinionId??> and opinion_id = '${StringUtil.escapeSql(query.opinionId)}' </#if>
+							
+							
+	  						<#if query.approveProcessInstanceId??> and approve_process_instance_id = '${StringUtil.escapeSql(query.approveProcessInstanceId)}' </#if>
+	  						<#if query.approveTaskId??> and approve_task_id = '${StringUtil.escapeSql(query.approveTaskId)}' </#if>
+	  						<#if query.approveTaskKey??> and approve_task_key = '${StringUtil.escapeSql(query.approveTaskKey)}' </#if>
+						
+						
+						
+	  						<#if query.storedName??> and stored_name = '${StringUtil.escapeSql(query.storedName)}' </#if>
+	  						<#if query.originalName??> and original_name = '${StringUtil.escapeSql(query.originalName)}' </#if>
+	  						<#if query.typeCode??> and type_code = '${StringUtil.escapeSql(query.typeCode)}' </#if>
+						
+						
+						
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+					
+	  						<#if query.path??> and path = '${StringUtil.escapeSql(query.path)}' </#if>
+	  						<#if query.pathLarge??> and path_large = '${StringUtil.escapeSql(query.pathLarge)}' </#if>
+	  						<#if query.pathMedium??> and path_medium = '${StringUtil.escapeSql(query.pathMedium)}' </#if>
+	  						<#if query.pathSmall??> and path_small = '${StringUtil.escapeSql(query.pathSmall)}' </#if>
+					
+					
+	  						<#if query.uploadUserId??> and upload_user_id = '${StringUtil.escapeSql(query.uploadUserId)}' </#if>
+	  						<#if query.uploadUserName??> and upload_user_name = '${StringUtil.escapeSql(query.uploadUserName)}' </#if>
+						
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_approve_opinion_file ]]>
+	</statement>
+	
+</statements>

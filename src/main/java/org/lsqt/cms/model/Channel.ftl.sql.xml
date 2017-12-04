@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.cms.model.Channel" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="cms_channel">
+		<column id="id" type="auto" property="id" text="主键" />
+		<column name="pid" property="pid"/>
+		<column name="code" property="code"/>
+		<column name="sn" property="sn"/>
+		<column name="name" property="name"/>
+		<column name="status" property="status" text="状态:0=不启用 1=启用"/>
+		<column name="node_path" property="nodePath"/>
+		<column name="app_code" property="appCode" />
+		<column name="remark" property="remark" />
+		<column name="category_code" property="categoryCode" text="系统分类(ldpg wfhg)"/>
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+		
+		<column name="category_name" property="categoryName" isVirtual = "true" text="虚拟列，关联查询时使用"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		SELECT 
+		    A.*, B.name as category_name
+		FROM
+		    cms_channel A
+		        left join
+		    sys_category B ON A.category_code = B.code where 1=1
+		<#if query??>
+			<#if query.key??>
+		        or A.id like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.code like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.remark like '%${StringUtil.escapeSql(query.key)}%' 
+			</#if>
+			<#if query.id??>
+				and A.id = ${query.id} 
+			</#if>
+			<#if query.code??>
+				and A.code = '${query.code}' 
+			</#if>
+			
+			<#-- 获取下级节点(一层) -->
+			<#if query.parentCode??>
+				and A.pid in (
+					select id from cms_channel where code='${StringUtil.escapeSql(query.parentCode)}')
+			</#if>
+			
+			<#if query.name??>
+				and A.name = '${query.name}' 
+			</#if>
+
+			
+			<#if query.remark??>
+				and A.remark like '%${StringUtil.escapeSql(query.remark)}%' 
+			</#if>
+			
+			<#if query.appCode??>
+				and A.app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
+			</#if>
+			
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			<#else>
+				order by sn , A.name
+			</#if>
+        </#if>
+		]]>
+	</statement>
+	
+</statements>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sys.model.Property" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="sys_property">
+		<column id="id" type="auto" property="id" text="主键" />
+		<column name="parent_code" property="parentCode"/>
+		<column name="name" property="name"/>
+		<column name="value" property="value"/>
+		<column name="remark" property="remark"/>
+		<column name="app_code" property="appCode" />
+		<column name="sn" property="sn" />
+		
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		select A.* from sys_property A where 1=1
+		<#if query??>
+			<#if query.key??>
+		        and (
+		           A.id like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.parent_code like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.code like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.remark like '%${StringUtil.escapeSql(query.key)}%' )
+			</#if>
+			<#if query.id??>
+				and A.id = ${query.id} 
+			</#if>
+			<#if query.code??>
+				and A.code = '${query.code}' 
+			</#if>
+			
+			<#if query.parentCode??>
+				and A.parent_code = '${query.parentCode}' 
+			</#if>
+			
+			<#if query.name??>
+				and A.name = '${query.name}' 
+			</#if>
+			<#if query.value??>
+				and A.remark like '%${StringUtil.escapeSql(query.value)}%' 
+			</#if>
+			<#if query.appCode??>
+				and A.app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
+			</#if>
+			
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			<#else>
+				order by sn 
+			</#if>
+        </#if>
+		]]>
+	</statement>
+	
+</statements>

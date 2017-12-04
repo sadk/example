@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4"
+	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+  <display-name>example</display-name>
+ 
+ 	<listener>
+		<listener-class>
+			org.apache.commons.fileupload.servlet.FileCleanerCleanup
+		</listener-class>
+	</listener>
+
+  <filter>
+    <filter-name>CORSFilter</filter-name>
+    <filter-class>org.lsqt.components.mvc.CORSFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CORSFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+	<!-- 连接池 启用 Web 监控统计功能 start -->
+	<filter>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+		<init-param>
+			<param-name>exclusions</param-name>
+			<param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<servlet>
+		<servlet-name>DruidStatView</servlet-name>
+		<servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DruidStatView</servlet-name>
+		<url-pattern>/druid/*</url-pattern>
+	</servlet-mapping>
+	<!-- 连接池 启用 Web 监控统计功能 end -->
+
+  <filter>
+    <filter-name>applicationFilter</filter-name>
+    <filter-class>org.lsqt.components.mvc.ApplicationFilter</filter-class>
+    
+    <!-- 指定静态资源加速 -->
+    <init-param>
+      <param-name>static</param-name>
+      <param-value>/scripts/*</param-value>
+    </init-param>
+    
+    <!-- 脱离MVC容器管理的URL,例如自定义的Servlet地址 -->
+    <init-param>
+      <param-name>escape</param-name>
+      <param-value>
+      	/index.html
+      </param-value>
+    </init-param>
+    
+    <!-- 登陆、注册等可匿名访问的地址  -->
+    <init-param>
+      <param-name>anonymous</param-name>
+      <param-value>
+	      /user/login,
+	      /user/save_or_update
+      </param-value>
+    </init-param>
+  </filter>
+  
+  <filter-mapping>
+    <filter-name>applicationFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+
+
+</web-app>

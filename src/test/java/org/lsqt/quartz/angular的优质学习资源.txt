@@ -1,0 +1,54 @@
+https://my.oschina.net/mumu/blog/831790
+
+
+Angular2优质学习资源收集 --- 大漠穷秋 
+   
+
+
+以下都是我自己经常看的一些内容，这个列表会不定期更新，发现好的就加上去。
+
+文档博客书籍类
+
+官方网站： https://angular.io
+中文站点： https://angular.cn
+Victor的blog（Victor是Angular路由模块的作者）： https://vsavkin.com/@vsavkin
+Todd Motto的Blog： https://toddmotto.com/
+ThoughtRAM上的Blog频道： https://blog.thoughtram.io/categories/angular-2/
+Angular University： http://blog.angular-university.io/
+Deborah's Developer MindScape： http://blogs.msmvps.com/deborahk/
+Jason Watmore's Blog： http://jasonwatmore.com/
+RxJS官方网站： http://reactivex.io/
+RxJS中文版文档（这是我看过的最好的关于RxJS的中文文档，注意，没有之一！向译者致敬！）： https://www.gitbook.com/book/buctwbzs/rxjs/details
+一本开源的Angular2书籍：https://zhangchen915.gitbooks.io/angular2-training/
+开源项目类
+
+Angular Angury项目： https://augury.angular.io/
+Angular Team在github上的地址： https://github.com/angular
+ng2-bootstrap： https://ng-bootstrap.github.io/#/home
+NGPrime： http://www.primefaces.org/primeng/#/
+Angular-Material2： https://github.com/angular/material2
+KendoUI：http://www.telerik.com/blogs/what-to-expect-in-2016-for-kendo-ui-with-angular-2-and-more
+ionic： https://ionic.io/
+基于Angular 1.x+Bootstrap的后台管理模板项目：https://github.com/akveo/blur-admin
+如果你需要更多基于Angular1.x后台管理模板项目，请点这里，一共15个：https://colorlib.com/wp/angularjs-admin-templates/
+一个非常好的管理后台项目，基于Angular2的（那些拿Angular2来做管理系统的朋友，请务必看这个项目，它是非常好的后台管理界面模板，而且是开源免费的）： https://github.com/akveo/ng2-admin
+一个很好的Blog项目： https://github.com/WittBulter/sails-blog-frontend
+RxJS聊天室： https://github.com/ng-book/angular2-rxjs-chat
+教学用的项目NiceFish： http://git.oschina.net/mumu-osc/NiceFish
+GitHub上搜索Angular相关资源的更好方法：https://github.com/search?utf8=%E2%9C%93&q=topic%3Aangular&type=Repositories&ref=searchresults
+一组Angular2应用收集：http://angularexpo.com/
+一组UI库：https://teradata.github.io/covalent/#/
+视频类
+
+一个非常好的RxJS教学视频（想快速学会RxJS的朋友请务必仔细看完这个视频）： https://coryrylan.com/blog/introduction-to-rxjs-observables-and-angular
+关于RxJS的更多视频（RxJS官方出的）： https://egghead.io/lessons/rxjs-rxjs-observables-vs-promises
+油管上的AngularConnect频道： https://www.youtube.com/channel/UCzrskTiT_ObAk3xBkVxMz5g
+油管上的ng-conf频道： https://www.youtube.com/user/ngconfvideos
+如果你有看到过的好东西想分享给大家，请留言或者评论哦！我会把它补充到这个列表里面的，谢谢！
+
+
+
+大漠穷秋的开源视屏
+这是全球第一份系统、完整的Angular 2.0视频教程，就像我在慕课网发布的AngularJS 1.x视频教程一样！！！！
+Angular2.0 : https://my.oschina.net/mumu/blog/834254
+Angular1.0 : http://www.imooc.com/learn/156

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.uum.model.User" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="uum_user">
+			<column id="id" type="auto" property="id" text="主键" />
+	 		<column name="name" property="name" text="姓名"/>
+	 		<column name="login_name" property="loginName" text="帐号"/>
+	 		<column name="login_pwd" property="loginPwd" text="密码"/>
+	 		<column name="status" property="status" text="状态  3=过期(长久没有登陆，僵尸用户) 2=锁定（可登陆不能操作） 1=激活（可登陆、可操作） 0=禁用（不可登陆） -1=删除"/>
+	 		<column name="email" property="email" text="邮箱"/>
+	 		<column name="mobile" property="mobile" text="手机"/>
+	 		<column name="tel" property="tel" text="电话"/>
+	 		<column name="num_qq" property="numQq" text="QQ"/>
+	 		<column name="num_wx" property="numWx" text="微信"/>
+	 		<column name="birthday" property="birthday" text="生日"/>
+	 		<column name="address_office" property="addressOffice" text="办公地点（多个地址用分号分割）"/>
+	 		<column name="address_home" property="addressHome" text="家庭地址（多个地址用分号分割）"/>
+	 		<column name="sex" property="sex" text="性别  1=男  0=女"/>
+	 		<column name="sn" property="sn" />
+	 		<column name="remark" property="remark"/>
+	 		<column name="app_code" property="appCode"/>
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from uum_user where 1=1
+		 	<#if query??>
+		 		
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							name like '%${key}%'  or 
+							login_name like '%${key}%'  or 
+							login_pwd like '%${key}%'  or 
+							email like '%${key}%'  or 
+							mobile like '%${key}%'  or 
+							tel like '%${key}%'  or 
+							num_qq like '%${key}%'  or 
+							num_wx like '%${key}%'  or 
+							address_office like '%${key}%'  or 
+							address_home like '%${key}%'  or 
+							sex like '%${key}%'  or 
+							remark like '%${key}%'  or 
+							app_code like '%${key}%' 
+					)
+				</#if>
+				
+	
+			
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+				
+				<#if query.id??> and id = ${query.id} </#if>
+				
+				<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+				<#if query.loginName??> and login_name = '${StringUtil.escapeSql(query.loginName)}' </#if>
+				<#if query.loginPwd??> and login_pwd = '${StringUtil.escapeSql(query.loginPwd)}' </#if>
+				<#if query.status??> and status = ${query.status} </#if>
+				<#if query.email??> and email = '${StringUtil.escapeSql(query.email)}' </#if>
+				<#if query.mobile??> and mobile = '${StringUtil.escapeSql(query.mobile)}' </#if>
+				<#if query.tel??> and tel = '${StringUtil.escapeSql(query.tel)}' </#if>
+				<#if query.numQq??> and num_qq = '${StringUtil.escapeSql(query.numQq)}' </#if>
+				<#if query.numWx??> and num_wx = '${StringUtil.escapeSql(query.numWx)}' </#if>
+				
+				<#if query.birthdayBegin?? && query.birthdayEnd??>
+	  				and date_format(birthday,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.birthdayBegin)}' and '${StringUtil.escapeSql(query.birthdayEnd)}'
+	  			</#if>
+	  						
+	  			<#if query.addressOffice??> and address_office = '${StringUtil.escapeSql(query.addressOffice)}' </#if>
+				<#if query.addressHome??> and address_home = '${StringUtil.escapeSql(query.addressHome)}' </#if>
+				<#if query.sex??> and sex = '${StringUtil.escapeSql(query.sex)}' </#if>
+				<#if query.sn??> and sn = ${query.sn} </#if>
+				<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+				<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+					
+				<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  				and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  			</#if>
+	  			
+	  			<#-- 获取(一层)部门下的用户 -->
+	  			<#if query.orgId??> and id in (select user_id from uum_user_object where obj_type in (3) and obj_id in(${query.orgId})) </#if>
+	  			
+	  			<#-- 获取角色下的用户 -->
+	  			<#if query.roleId??>  and id  in (select user_id from uum_user_object where obj_type in(7) and obj_id=${query.roleId}) </#if>
+	  			
+	  			<#-- 获取组下的用户 -->
+	  			<#if query.groupId??>  and id  in (select user_id from uum_user_object where obj_type in(4) and obj_id=${query.groupId}) </#if>
+	  			
+	  			<#-- 获取称谓下的用户 -->
+	  			<#if query.titleId??>  and id  in (select user_id from uum_user_object where obj_type in(1,2) and obj_id=${query.titleId}) </#if>
+	  			
+	  			<#-- 获取(多层)部门下的用户 -->
+	  			<#if query.orgIds??> and id in (select user_id from uum_user_object where obj_type in (3) and obj_id in(${query.orgIds})) </#if>
+	  			
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+</statements>

@@ -1,0 +1,91 @@
+非合同付款（能耗类）=budget_none_contract_4_energy
+	startUserId(流程发起人) businessKey(业务主键)  money(金额)
+	
+001个人借款= personal_borrow  
+	流程参数:
+	borrowType= (lsjk=临时借款 , cqbyj=长期备用金)   deptType=(zb=总部   xmfgs=项目分公司)  money=(借款金额)  startUserId(流程发起人) businessKey(业务主键) createDeptId (表单填 制部门ID）
+{"startUserId":6605,"businessKey":323,"title":"csy3000--001个人借款2017-07-18 21:27:4",deptType:"xmfgs",money:2000,borrowType:"lsjk"}
+
+002个人还款=personal_payment
+	deptType=(zb=总部   xmfgs=项目分公司) startUserId(流程发起人) businessKey(业务主键)
+	最后一步回调： 
+	
+
+003个人报销=personal_reimbursement
+	deptType=(zb=总部   xmfgs=项目分公司) money(金额)  startUserId(流程发起人) businessKey(业务主键)
+
+	最后一步回调： http://syswin-xin:8080/nets-budget/reimburse/process_over_back?businessKey=${businessKey}&currUserId=${loginUser.userId}&action=${action}
+	其中（  action=agree，已完成 ;  action = abort（作废)、 reject（驳回）、reject_to_starter（驳回到发起人））
+
+{"startUserId":6250,"businessKey":6611,"title":"keke107个人报销-流程标题2017-07-18 21:27:4",deptType:"zb",money:2}
+
+
+
+004非合同付款=non_contract_payment
+	A、B、C、D、E、F、G、H、I、J、K、L、M、N、O、P、Q、R、S、T、U、V、W、X、Y、Z、
+	AA、AB、AC、AD、AE、AF、AG、AH、AI、AJ、AK、AL、AM、
+	=(true或false)   startUserId(流程发起人) businessKey(业务主键)
+{"startUserId":6605,"businessKey":6611,"title":"mmy200-非合同付款-流程标题2017-07-18 21:27:4",A:true,B:false,C:false,D:true,E:false,AN:true,H:false,G:false,I:false,AO:false,AP:true,M:true,L:false,O:false,P:false,Q:false,W:false,S:false,V:false,T:true,R:false,N:false,AA:false,AB:false,AC:true,AD:false,AE:true,AH:true,AG:false,AF:false}
+
+
+005合同付款=contract_payment
+	A、B、C、D、E、F、G、H、I、J、K、L、M、N、O、P、Q、R、S、T、U、V、W、X、Y、Z、
+	AA、AB、AC、AD、AE、AF、AG、 =(true或false)   startUserId(流程发起人) businessKey(业务主键)
+
+
+006预算调整=budget_adjustment
+	subjectType=(xzys_kyjkm=新增预算_跨一级科目    ejkmjtj=二级科目间调剂)   deptType=(zb=总部)  money=(调剂金额)   startUserId(流程发起人) businessKey(业务主键)
+	
+
+007创新经营业务计划=innovation_operation_business_plan
+	deptType=(zb=总部   xmfgs=项目分公司)   startUserId(流程发起人) businessKey(业务主键)
+
+008租赁收入计划=lease_income_plan
+	companyType=(zb=总部   xmfgs=项目分公司)   startUserId(流程发起人) businessKey(业务主键)
+	
+009能耗支出计划=energy_payment_plan
+	startUserId(流程发起人) businessKey(业务主键) contractType=(nt=内拓 wt=外拓)
+   	
+010委托服务合约规划=delegation_service_rule_plan
+	startUserId(流程发起人) businessKey(业务主键)
+	
+011专业服务收入计划=profession_service_income_plan
+	startUserId(流程发起人) businessKey(业务主键) 
+011_2专业服务合同=pro_service_contract
+	同上
+	
+012非合同采购支出计划=none_contract_buy_payment_plan
+	buyType（采购类型）=(pzl=品质类、xzl=行政类)    deptType=(zb=总部)  money=(金额)   startUserId(流程发起人) businessKey(业务主键)
+	
+013基础物业服务收入计划=base_wuye_service_income_plan
+	startUserId(流程发起人) businessKey(业务主键)
+
+014采购合约计划=buy_rule_plan
+	conventionType(合同类型)=(rslfwht=人事类服务合同  、wblfwht=外包类服务合同   、pzlwlcght=品质类物料采购合同、xzlwlcght=行政类物料采购合同)   deptType=(zb=总部)  money(金额)   
+	startUserId(流程发起人) businessKey(业务主键)
+	
+014_2采购合同=pro_buy_contract
+	同上
+	
+
+015委托服务合同 = delegation_service_contract  李刚： 采购 委托 专业
+	contractType=(ntfw=内拓服务 wtfw=外拓服务) deptType=(zb=总部)   money(金额)   startUserId(流程发起人) businessKey(业务主键)
+
+
+016采购申请=buy_application
+    buyType(采购类型)=(pzl=品质类  hzl=行政类)   deptType=(zb=总部) money(金额)   startUserId(流程发起人) businessKey(业务主键) title(流程标题)
+
+
+017预算编制=
+	1)项目流程模板=budget_create_xm
+	    deptType=(xm=项目 、 fgs=分公司 、 zb=总部}   startUserId(流程发起人) businessKey(业务主键)
+	    
+	2)分公司流程模板
+	    startUserId(流程发起人) businessKey(业务主键)
+	 
+	3)总部模板
+		 startUserId(流程发起人) businessKey(业务主键)
+		 
+018预算发布
+		 startUserId(流程发起人) businessKey(业务主键)
+		 

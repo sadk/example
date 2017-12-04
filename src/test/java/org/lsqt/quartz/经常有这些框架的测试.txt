@@ -1,0 +1,9 @@
+
+
+
+https://www.techempower.com/benchmarks/#section=data-r13&hw=ph&test=json
+
+
+好玩的东西：嵌入式 Web 服务器 Undertow
+https://www.oschina.net/p/undertow
+https://www.oschina.net/news/49158/undertow_vert_x_and_netty_benchmarks

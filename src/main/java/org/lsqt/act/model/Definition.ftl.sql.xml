@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.Definition" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="act_re_procdef">
+		<column id="ID_" property="id"  text="主键" />
+		<column name="NAME_" property="name" />
+		<column name="KEY_" property="key" />
+		<column name="VERSION_" property="version" />
+		<column name="DEPLOYMENT_ID_" property="deploymentId" />
+		
+		<column name="RESOURCE_NAME_" property="resourceName"/>
+		<column name="DGRM_RESOURCE_NAME_" property="dgrmResourceName" />
+		<column name="DESCRIPTION_" property="description" />
+		<column name="HAS_START_FORM_KEY_" property="hasStartFormKey"  />
+		<column name="HAS_GRAPHICAL_NOTATION_" property="hasGraphicalNotation" />
+		
+		<column name="SUSPENSION_STATE_" property="suspensionState" text = "1=激活 2=挂起"/>
+		<column name="TENANT_ID_" property="tenantId"/>
+		
+		<column name="short_name" property="shortName" text="流程定义简称(新增字段，用于手机端)"/>
+		<column name="enable_mobile" property="enableMobile" text="手机端是否显示"/>
+		
+		<column name="DEPLOY_NAME" property="deployName" isVirtual = "true" text="虚拟列，发布名称"/>
+		<column name="DEPLOY_TIME" property="deployTime" isVirtual = "true" text="虚拟列，发布时间"/>
+		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+	SELECT A.*,B.name_ DEPLOY_NAME, B.DEPLOY_TIME_ DEPLOY_TIME FROM  act_re_procdef A left join act_re_deployment B on A.DEPLOYMENT_ID_ = B.ID_  where 1=1 
+		<#if query??>
+			<#if query.keyWord??>
+		        and (A.NAME_ like '%${StringUtil.escapeSql(query.keyWord)}%' 
+		        or A.KEY_ like '${StringUtil.escapeSql(query.keyWord)}' 
+		        or A.RESOURCE_NAME_ like '${StringUtil.escapeSql(query.keyWord)}' 
+		        or B.NAME_ like '${StringUtil.escapeSql(query.keyWord)}' )
+			</#if>
+			
+			<#if query.id??>
+				and A.ID_ = ${query.id} 
+			</#if>
+			
+			<#if query.name??>
+				and A.NAME_ = '${query.name}' 
+			</#if>
+			
+			<#if query.key??>
+				and A.KEY_ = '${query.key}' 
+			</#if>
+			
+			<#if query.resourceName??>
+				and A.RESOURCE_NAME_  like '%${StringUtil.escapeSql(query.resourceName)}%' 
+			</#if>
+			
+			<#if query.dgrmResourceName??>
+				and A.DGRM_RESOURCE_NAME_  like '%${StringUtil.escapeSql(query.dgrmResourceName)}%' 
+			</#if>
+			
+			<#if query.description??>
+				and A.DESCRIPTION_ like '%${StringUtil.escapeSql(query.description)}%' 
+			</#if>
+			
+			<#if query.tenantId??>
+				and A.TENANT_ID_ like '%${StringUtil.escapeSql(query.tenantId)}%' 
+			</#if>
+
+			<#if query.deployCategory??>
+				and B.CATEGORY_ like '%${StringUtil.escapeSql(query.deployCategory)}%' 
+			</#if>
+			
+			
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			<#else>
+				  order by A.Key_ ,A.version_ desc
+			</#if>
+        </#if>
+
+		]]>
+	</statement>
+
+</statements>

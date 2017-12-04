@@ -1,0 +1,9 @@
+方法二： 
+
+首先在 MySQL的安装目录下 新建一个pwdhf.txt, 输入文本：SET PASSWORD FOR 'root'@'localhost' = PASSWORD('123456'); 
+
+红色部份为 需要设置的新密码 
+用windows服务管理工具或任务管理器来停止MySQL服务 (任务管理器K掉 mysqld-nt 进程) 
+Dos命令提示符到 MySQL安装目录下的bin目录 如我的是 D:\Program Files\MySQL\MySQL Server 5.1\bin 
+然后运行： mysqld-nt --init-file=../pwdhf.txt 
+执行完毕 停止MySQL数据库服务 (任务管理器K掉 mysqld-nt 进程)，然后再重新以正常模式启动MYSQL 即可

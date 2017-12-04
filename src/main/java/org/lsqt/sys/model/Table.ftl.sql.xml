@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sys.model.Table" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="sys_table">
+		<column id="id" type="auto" property="id" text="主键" />
+		<column name="project_code" property="projectCode"/>
+		<column name="version" property="version"/>
+		<column name="model_name" property="modelName"/>
+		<column name="table_name" property="tableName"/>
+		<column name="datasource_code" property="dataSourceCode"/>
+		
+		<column name="db_name" property="dbName"/>
+		<column name="type" property="type"/>
+		
+		<column name="engine" property="engine" />
+		<column name="rows" property="rows" />
+		<column name="auto_increment" property="autoIncrement" />
+		<column name="collation" property="collation" />
+		<column name="create_option" property="createOption" />
+		<column name="comment" property="comment" />
+		<column name="app_code" property="appCode" />
+		<column name="sn" property="sn" />
+		<column name="version" property="version" />
+		<column name="remark" property="remark" />
+		
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		select A.* from sys_table A where 1=1
+		<#if query??>
+			<#if query.key??>
+		        and (
+		           A.id like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.datasource_code like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.db_name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.table_name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.comment like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.remark like '%${StringUtil.escapeSql(query.key)}%' )
+			</#if>
+			<#if query.id??>
+				and A.id = ${query.id} 
+			</#if>
+			<#if query.dataSourceCode??>
+				and A.datasource_code = '${query.dataSourceCode}' 
+			</#if>
+			
+			<#if query.dbName??>
+				and A.db_name = '${query.dbName}' 
+			</#if>
+			
+			<#if query.tableName??>
+				and A.table_name = '${query.tableName}' 
+			</#if>
+			
+			<#if query.comment??>
+				and A.comment = '${query.comment}' 
+			</#if>
+			
+			<#if query.modelName??>
+				and A.model_name like '%${StringUtil.escapeSql(query.modelName)}%' 
+			</#if>
+			
+			<#if query.remark??>
+				and A.remark like '%${StringUtil.escapeSql(query.remark)}%' 
+			</#if>
+			<#if query.appCode??>
+				and A.app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
+			</#if>
+			
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			<#else>
+				order by sn 
+			</#if>
+        </#if>
+		]]>
+	</statement>
+	
+	<statement id="queryPageFromDb" parameterName="query" text="即时查询数据库里所有的表,mysql">
+	 	<![CDATA[
+	 		select  CAST(@rownum:=@rownum+1 AS SIGNED) AS id, A.TABLE_SCHEMA db_name, A.TABLE_NAME table_name, A.TABLE_TYPE `type` , A.ENGINE `engine`, CAST(A.TABLE_ROWS AS SIGNED) `rows`,CAST(A.AUTO_INCREMENT as SIGNED)  `auto_increment` , A.TABLE_COLLATION `collation`, A.CREATE_OPTIONS create_option,A.TABLE_COMMENT `comment`, CAST(A.CREATE_TIME as DATETIME) create_time,CAST(A.UPDATE_TIME as DATETIME) update_time  FROM (SELECT @rownum:=0) r, information_schema.tables A where 1=1 
+	 		<#if query.dbName??>
+	 			and A.TABLE_SCHEMA = '${StringUtil.escapeSql(query.dbName)}'
+	 		</#if>
+	 		<#if query.tableName??>
+	 			and A.TABLE_NAME = '${StringUtil.escapeSql(query.tableName)}'
+	 		</#if>
+	 		order by A.TABLE_TYPE,A.TABLE_SCHEMA ,A.TABLE_NAME 
+	 	]]>
+	</statement>
+</statements>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sys.model.RegionCity" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="s_city">
+		<column name="CityID" property="id" />
+		<column name="CityName" property="name"/>
+		<column name="ZipCode" property="zipCode" text="邮编"/>
+		<column name="ProvinceID" property="provinceId" />
+	</table>
+
+	<statement id="getAll" >
+		<![CDATA[
+			select * from s_city 
+		]]>
+	</statement>
+</statements>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.InstanceVariable" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_instance_variable">
+				<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="instance_id" property="instanceId" text="流程实例ID"/>
+	 	
+	 		<column name="title" property="title" text="流程实例标题"/>
+	 	
+	 		<column name="definition_id" property="definitionId" text="流程实例ID"/>
+	 	
+	 		<column name="business_key" property="businessKey" text="业务数据主键ID"/>
+	 	
+	 		<column name="variable_json" property="variableJson" text="流程变量数据"/>
+	 		
+	 		<column name="variable_json_start" property="variableJSONStart" text="流程发起时最初的变量"/>
+	 	
+	 		<column name="app_code" property="appCode" text="租户编码"/>
+	 	
+	 		<column name="sn" property="sn" text="排序"/>
+	 	
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 	
+	 	
+	 	
+		
+		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		
+	 		
+	 		
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		
+	 		
+	 		
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_instance_variable where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 							 							 							 							 							 												
+							 
+							instance_id like '%${key}%'  or 
+							
+							 
+							title like '%${key}%'  or 
+							
+							 
+							definition_id like '%${key}%'  or 
+							
+							 
+							business_key like '%${key}%'  or 
+							
+							 
+							variable_json like '%${key}%'  or 
+							
+							 
+							app_code like '%${key}%'  or 
+							
+							 
+							remark like '%${key}%' 
+							
+														
+					)
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+	
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  					<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.instanceId??> and instance_id = '${StringUtil.escapeSql(query.instanceId)}' </#if>
+	  						
+	  						<#if query.instanceIdList?? && (query.instanceIdList?size>0)>
+	  							and instance_id in
+	  							(
+		  							<#list query.instanceIdList as item>
+		  						 		 '${StringUtil.escapeSql(item)}' <#if item_has_next>,</#if>
+		  						 	</#list>
+	  						 	)
+	  						 </#if>
+					
+	  						<#if query.title??> and title = '${StringUtil.escapeSql(query.title)}' </#if>
+						
+					
+	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
+						
+					
+	  						<#if query.businessKey??> and business_key = '${StringUtil.escapeSql(query.businessKey)}' </#if>
+						
+					
+	  						<#if query.variableJson??> and variable_json = '${StringUtil.escapeSql(query.variableJson)}' </#if>
+						
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+					
+						
+	  					<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+					
+						
+					
+						
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+						
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_instance_variable ]]>
+	</statement>
+	
+</statements>

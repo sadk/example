@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://code.alibabatech.com/schema/dubbo          
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd"
+	default-lazy-init="true">
+	<!--消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 -->  
+    <dubbo:application name="consumer-of-qt-estate-mhj" />
+	
+	<!-- 测试环境 -->
+	<dubbo:registry id="gomeZookeeperAddress" protocol="zookeeper" address="172.28.18.209:2181,172.28.18.210:2181,172.28.18.211:2181,172.28.18.219:2181,172.28.18.220:2181" />
+	
+	<!-- 生产环境 
+	<dubbo:registry id="gomeZookeeperAddress" protocol="zookeeper" address="10.252.19.156:2181,10.252.19.157:2181,10.252.19.158:2181,10.252.19.159:2181,10.252.19.160:2181" />
+	 -->
+	 
+	<dubbo:protocol name="dubbo" port="20992" />
+
+	<dubbo:reference
+		interface="com.qitoon.framework.organ.service.IPositionTagService" id="positionTagService"
+		loadbalance="random" timeout="100000" registry="gomeZookeeperAddress"
+		check="false" />
+
+	<dubbo:reference
+		interface="com.qitoon.framework.organ.service.IOrganUnitTagService" id="organUnitTagService"
+		loadbalance="random" timeout="100000" registry="gomeZookeeperAddress"
+		check="false" />
+	
+	<!-- 组织架构 -->
+	<dubbo:reference
+		interface="com.qitoon.framework.organ.service.IOrgToonAdminService"
+		id="orgToonAdminService" loadbalance="random" timeout="50000"
+		registry="gomeZookeeperAddress" check="false" />
+		
+	<!-- 组织架构 -->
+	<dubbo:reference
+		interface="com.qitoon.framework.organ.service.IOrganizationService"
+		id="organizationService" loadbalance="random" timeout="50000"
+		registry="gomeZookeeperAddress" check="false" />
+	<!-- 组织单元 -->
+	<dubbo:reference interface="com.qitoon.framework.organ.service.IOrganUnitService"
+		id="organUnitService" loadbalance="random" timeout="50000"
+		registry="gomeZookeeperAddress" check="false" />
+	<!-- 岗位 -->
+	<dubbo:reference interface="com.qitoon.framework.organ.service.IPositionService"
+		id="positionService" loadbalance="random" timeout="50000"
+		registry="gomeZookeeperAddress" check="false" />
+	<!-- 个人 -->
+	<dubbo:reference interface="com.qitoon.framework.organ.service.IEmployeeService"
+		id="employeeService" loadbalance="random" timeout="50000"
+		registry="gomeZookeeperAddress" check="false" />
+
+
+</beans>

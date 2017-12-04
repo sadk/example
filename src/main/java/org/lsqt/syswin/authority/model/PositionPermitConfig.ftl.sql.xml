@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.syswin.authority.model.PositionPermitConfig" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="t_power_duties_permit_config">
+				<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="duties_id" property="positionId" text="岗位id"/>
+	 	
+	 		<column name="parent_duties_id" property="positionIdParent" text="父岗位id"/>
+	 	
+	 		<column name="node_path" property="nodePath" text="节点路径"/>
+	 	
+	 		<column name="org_ids" property="orgIds" text="权限数据ID（组织结点ID）"/>
+	 	
+		
+		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from t_power_duties_permit_config where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 					
+							 
+							node_path like '%${key}%'  or 
+							
+							 
+							org_ids like '%${key}%' 
+							
+					)
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+	
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  					<#if query.id??> and id = ${query.id} </#if>
+					
+						
+	  					<#if query.positionId??> and duties_id = ${query.positionId} </#if>
+					
+						
+	  					<#if query.positionIdParent??> and parent_duties_id = ${query.positionIdParent} </#if>
+					
+	  						<#if query.nodePath??> and node_path = '${StringUtil.escapeSql(query.nodePath)}' </#if>
+						
+					
+	  						<#if query.orgIds??> and org_ids = '${StringUtil.escapeSql(query.orgIds)}' </#if>
+						
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from t_power_duties_permit_config ]]>
+	</statement>
+	
+</statements>

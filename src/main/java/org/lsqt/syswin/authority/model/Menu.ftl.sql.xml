@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.syswin.authority.model.Menu" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="t_power_res_menu_info">
+			<column id="menu_id" type="auto" property="id" text="主键" />
+	 	
+	 		<column name="menu_name" property="name" text="菜单名称"/>
+	 		<column name="menu_code" property="code" text="菜单code"/>
+	 		<column name="menu_order" property="sn" text="菜单顺序"/>
+	 		<column name="menu_url" property="url" text="菜单url"/>
+	 		<column name="menu_icon" property="icon" text="菜单图标"/>
+	 		<column name="menu_desc" property="description" text="菜单描述"/>
+	 		<column name="pri_menu_id" property="pid" text="父级菜单id（根结节点-1）"/>
+	 		<column name="menu_type" property="type" text="菜单类型(1=pc 2=app 3=pad)"/>
+	 		<column name="menu_level" property="level" text="菜单层级（根节点为0）"/>
+	 		<column name="node_path" property="nodePath" text="菜单路径"/>
+	 	
+	 	
+	 	
+	 		<column name="createby" property="createUserId" text="创建者id"/>
+	 		<column name="createby_name" property="createUserName" text="创建者名称"/>
+	 		<column name="updateby" property="updateUserId" text="修改者id"/>
+	 		<column name="updateby_name" property="updateUserName" text="修改者名称"/>
+	 		<column createTime="create_date" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_date" property="updateTime" text="更新时间"/>
+	 		
+	 		<column name="p_name" property="pName" isVirtual="true" text="上级菜单名称"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	SELECT A.*,B.menu_name p_name FROM  t_power_res_menu_info A left  join t_power_res_menu_info B on A.pri_menu_id = B.menu_id where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							A.menu_name like '%${key}%'  or 
+							A.menu_code like '%${key}%'  or 
+							A.menu_url like '%${key}%'  or 
+							A.menu_icon like '%${key}%'  or 
+							A.menu_desc like '%${key}%'  or 
+							A.node_path like '%${key}%'  or 
+							A.createby_name like '%${key}%'  or 
+							A.updateby_name like '%${key}%' 
+							
+					)
+				</#if>
+				
+							<#if query.ids??> and A.id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and A.menu_id = ${query.id} </#if>
+					
+	  						<#if query.name??> and A.menu_name = '${StringUtil.escapeSql(query.name)}' </#if>
+					
+	  						<#if query.code??> and A.menu_code = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+	  						<#if query.sn??> and A.menu_order = ${query.sn} </#if>
+					
+	  						<#if query.url??> and A.menu_url = '${StringUtil.escapeSql(query.url)}' </#if>
+						
+	  						<#if query.icon??> and A.menu_icon = '${StringUtil.escapeSql(query.icon)}' </#if>
+						
+	  						<#if query.description??> and A.menu_desc = '${StringUtil.escapeSql(query.description)}' </#if>
+						
+	  						<#if query.pid??> and A.pri_menu_id = ${query.pid} </#if>
+					
+	  						<#if query.type??> and A.menu_type = ${query.type} </#if>
+						
+	  						<#if query.level??> and A.menu_level = ${query.level} </#if>
+					
+	  						<#if query.nodePath??> and A.node_path = '${StringUtil.escapeSql(query.nodePath)}' </#if>
+						
+	  						<#if query.createUserId??> and A.createby = ${query.createUserId} </#if>
+					
+	  						<#if query.createUserName??> and A.createby_name = '${StringUtil.escapeSql(query.createUserName)}' </#if>
+						
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(A.create_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+	  						<#if query.updateUserId??> and A.updateby = ${query.updateUserId} </#if>
+					
+	  						<#if query.updateUserName??> and A.updateby_name = '${StringUtil.escapeSql(query.updateUserName)}' </#if>
+						
+							<#if query.idNotIn??> and A.menu_id not in (${StringUtil.escapeSql(query.idNotIn)}) </#if>
+							
+							<#-- 获取角色的菜单 -->
+							<#if query.roleId??> and A.menu_id in (select menu_id from T_POWER_ROLE_MENU_OPERATION where role_id = ${query.roleId}) </#if>
+							
+							<#-- 获取用户授权的菜单 -->
+							<#if query.userId??> 
+								and A.menu_id in (
+									select menu_id from T_POWER_ROLE_MENU_OPERATION where role_id in(
+									select role_id from T_POWER_DUTIES_ROLE where duties_id in (
+									select duties_id from  t_user_duties where user_id =${query.userId}))) 
+							</#if>
+							
+							
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ SELECT A.*,B.menu_name p_name FROM  t_power_res_menu_info A left  join t_power_res_menu_info B on A.pri_menu_id = B.menu_id where 1=1 ]]>
+	</statement>
+	
+</statements>

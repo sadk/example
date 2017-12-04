@@ -1,0 +1,1 @@
+mvn install:install-file -DgroupId=edu.npu -DartifactId=fastexcel -Dversion=0.5.1-2010-12-26 -Dpackaging=jar -Dfile=fastexcel-0.5.1-2010-12-26.jar

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sys.model.Application" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="sys_application">
+		<column id="id" type="auto" property="id" text="主键" />
+		<column name="name" property="name"/>
+		<column name="value" property="value"/>
+		<column name="code" property="code"/>
+		<column name="sn" property="sn"/>
+		
+		<column name="enable" property="enable" text="是否启用"/>
+		<column name="remark" property="remark" />
+		
+		<column gid="gid" property="gid" text="全局唯一编号"/>
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from sys_application where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/> 
+					and (id like '%${key}%' or code like '%${key}%' or name like '%${key}%' or remark like '%${key}%')
+				</#if>
+				
+				<#if query.id??> and id=${query.id} </#if>
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+				<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+				<#if query.value??> and value = '${StringUtil.escapeSql(query.value)}' </#if>
+				<#if query.name??> and name like '%${StringUtil.escapeSql(query.name)}%' </#if>
+				<#if query.remark??> and remark like '%${StringUtil.escapeSql(query.remark)}%' </#if>
+				<#if query.enable??> and enable = '${StringUtil.escapeSql(query.enable)}' </#if>
+				
+				<#if query.createTimeBegin?? && query.createTimeEnd??>
+				 and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+				</#if>
+			<#else>
+				and 1=2
+        	</#if>
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from sys_application ]]>
+	</statement>
+	
+</statements>

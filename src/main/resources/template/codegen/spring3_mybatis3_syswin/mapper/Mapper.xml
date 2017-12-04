@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${pkg}.mapper.${Model}Mapper">
+	<resultMap type="${pkg}.model.${Model}" id="${Model}">
+		<#-- 生成主键列 -->
+		<#list columnList as column>
+			<#if column.primaryKey == 1>
+			<!-- ${column.comment} -->
+			<id column="${column.name}" property="${column.propertyName}" />
+			</#if>
+		</#list>
+		
+		<#-- 生成常规列 -->
+		<#list columnList as column>
+	 		<#if column.oroColumnType == 4>
+	 		<!-- ${column.comment} -->
+	 		<result column="${column.name}" property="${column.propertyName}"/>
+	 		</#if>
+		</#list>
+	</resultMap>
+
+	<#assign columnLength = (columnList?size) />
+	<#assign tmpCnt = 0 />
+	<sql id="columns">
+		<#list columnList as column>
+		<#if column.primaryKey != 1>
+			${column.name}<#if (columnLength-1)!=tmpCnt>,</#if>
+		</#if>
+			<#assign tmpCnt = tmpCnt+1 />
+		</#list>
+	</sql>
+
+
+	<sql id="whereClause">
+		<#assign tmpCnt = 0 />
+		<#list columnList as column>
+		<#if column.javaType == 1 || column.javaType == 0>
+			<if test="${column.propertyName} != null and ${column.propertyName} != ''" >
+			    and ${column.name} = <#noparse>#{</#noparse>${column.propertyName}<#noparse>}</#noparse>
+			</if>
+		<#else> 
+			<if test="${column.propertyName} != null" >
+			    and ${column.name} = <#noparse>#{</#noparse>${column.propertyName}<#noparse>}</#noparse>
+			</if>
+		</#if>
+			<#assign tmpCnt = tmpCnt+1 />
+		</#list>
+	</sql>
+
+	<#assign pk = 'id' />
+	<#list columnList as column>
+		<#if column.primaryKey == 1>
+			<#assign pk = (column.name) />
+			<#assign pkColumn = column />
+		</#if>
+	</#list>
+	
+	<insert id="save" parameterType="${pkg}.model.${Model}" useGeneratedKeys="true" keyProperty="${pk}">
+		<#assign tmpCnt = 0 />
+		insert ${tableName} (<include refid="columns"/>) values 
+		(
+			<#list columnList as column>
+				<#if column.primaryKey != 1>
+					<#noparse>#{</#noparse>${column.propertyName}<#noparse>}</#noparse> <#if (columnLength-1)!=tmpCnt>,</#if>
+				</#if>
+				<#assign tmpCnt = tmpCnt+1 />
+			</#list>
+		)
+	</insert>
+
+	<update id="update" parameterType="${pkg}.model.${Model}">
+		<#assign tmpCnt = 0 />
+		update ${tableName} 
+		<set> 
+<#list columnList as column>
+	<#if column.primaryKey != 1>
+		<#if column.javaType == 1 || column.javaType == 0>
+			<if test="${column.propertyName} != null and ${column.propertyName} != ''" >
+			    ${column.name} = <#noparse>#{</#noparse>${column.propertyName}<#noparse>}</#noparse> <#if (columnLength-1)!=tmpCnt>,</#if>
+			</if>
+		<#else> 
+			<if test="${column.propertyName} != null" >
+			    ${column.name} = <#noparse>#{</#noparse>${column.propertyName}<#noparse>}</#noparse> <#if (columnLength-1)!=tmpCnt>,</#if>
+			</if>
+		</#if>
+	</#if>
+
+	<#assign tmpCnt = tmpCnt+1 />
+</#list>
+		</set>
+		  where ${pkColumn.name}=<#noparse>#{</#noparse>${pkColumn.propertyName}<#noparse>}</#noparse>
+	</update>
+
+	<delete id="deleteById" parameterType="Long">
+		delete from ${tableName} where ${pkColumn.name} in
+		<foreach item="item" collection="array" open="(" separator="," close=")">
+       		<#noparse>#{item}</#noparse>
+        </foreach>
+	</delete>
+
+	<select id="getById" parameterType="Long" resultType="${pkg}.model.${Model}" resultMap="${Model}">
+		select ${pkColumn.name}, <include refid="columns"/> from ${tableName} where  ${pkColumn.name} = <#noparse>#{</#noparse>${pkColumn.propertyName}<#noparse>}</#noparse>
+	</select>
+	
+
+	<select id="getAll" resultType="${pkg}.model.${Model}" resultMap="${Model}">
+		select ${pkColumn.name}, <include refid="columns"/> from ${tableName}
+	</select>
+	
+	
+	<select id="queryForList" resultType="${pkg}.model.${Model}" resultMap="${Model}" parameterType="${pkg}.model.${Model}Query">
+		select ${pkColumn.name}, <include refid="columns"/> from ${tableName} where 1=1 <include refid="whereClause"/>
+	</select>
+	
+</mapper>

@@ -1,0 +1,82 @@
+1.controller控制器的url支持正则表达式
+
+2.容器报错，http状态没有处理正确
+
+3.db接口迁移、聚合
+
+4.SqlStatementBuilderFTL改为建造者模式、（工厂模式？）
+
+5.为什么db没有实例化，因为db的实例化是从spring容器里来的，所以，要弄一个“桥” 接通两大容器
+
+6.
+
+// ContextUtil.mvc.getResponse(); ...
+
+// ContextUtil.db.getDb();
+
+// ContextUtil.user.getUserId();
+
+// ContextUtil.log.info("aaaaa");
+
+// ContextUtil.container.getBean("userServiceId");
+
+
+// util.file.listFiles(File dir);
+
+// util.file.listFiles(File dir,boolean isDeep);
+
+// util.file.getContent(File file);
+
+// util.file.getContent(File file,String charset);
+
+// util.file.getAppRoot();
+
+
+// util.http.execute(String url); ....
+
+
+// util.string.isBlank(String ...text); util.string.isNotBlank(String ...text);
+
+// util.clazz.forName(String text);
+
+
+// util.collection.join(Collection<?> collection,String splitor);
+
+// util.collection.toKeyList(Map<K,?> map);
+
+// util.collection.toValueList(Map<?,V> map)
+
+
+
+// util.exception.getStackTrace(Exception ex);
+
+// util.exception.throwNew(Throwable ex);
+
+
+
+// util.validate.isBlank(Strng text);
+
+// util.validate.isNotBlank(Strng text);
+
+// util.validate.isMobile(Strng text);
+
+// util.validate.isEmail(Strng text);
+
+// util.validate.isIdCard(Strng text);
+
+// util.validate.isNumber(Strng text);
+
+// util.validate.isDate(Strng text,String parttern);
+
+// util.validate.rangeOf(String text,String start,String end);
+
+
+
+7.添加插件,比如：db插件、容器插件、 插件要排序，由全局配置文件指定
+
+8.buildInvokeParam 开启excutePlan ，在没有找到Controller的方法要调用的情况下，不需要开启db事务
+
+9.支持多数据源、数据源读写分离配置化
+
+10.支持流程配置
+

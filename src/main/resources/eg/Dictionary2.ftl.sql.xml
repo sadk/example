@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.cms.model.Dictionary2" cache="true" import="org.lsqt.components.util.lang.ArrayUtil" >
+	<table name=" sys_test" schema="test">
+		<column id="id" type="auto" property="id" text="主键" />
+		<column name="pid" property="pid"/>
+		<column name="code" property="code"/>
+		<column gid="gid" property="gid" />
+		<column name="sn" property="sn"/>
+		<column name="name" property="name"/>
+		<column name="node_path" property="nodePath"/>
+		<column name="app_code" property="appCode" />
+		<column name="remark" property="remark" />
+		<column name="create_time" property="createTime" text="创建时间"/>
+		<column lastModified="update_time" property="lastModified" text="更新时间"/>
+	</table>
+	
+	<statement id="list" parameterName="param">
+	 	<![CDATA[
+		SELECT 
+		    A.*, B.name as category_name
+		FROM
+		    sys_dictionary A
+		        left join
+		    cms_category B ON A.category_id = B.id
+		where 1=1
+		<#if param??>
+			<#if param.key??>
+		        or (B.name like '%${param.key}%' 
+		        or A.category_id like '%${param.key}%' 
+		        or A.name like '%${param.key}%'  
+		        or A.description like '%${param.key}%' 
+		        or A.code like '%${param.key}%')
+			</#if>
+			<#if param.categoryName??>
+				or A.name = @{param.categoryName}
+			</#if>
+        </#if>
+		]]>
+	</statement>
+	
+	<!-- 
+	<statement id="save"  parameterName="dic" >
+	 	<![CDATA[
+			insert into sys_dictionary(id,pid,name,code,path,level,category_id,data_key,create_time,modify_time,description) values(@{dic.id},@{dic.pid},@{dic.name},@{dic.code},@{dic.path},@{dic.level},@{dic.categoryId},@{dic.dataKey},@{dic.createTime},@{dic.modifyTime},@{dic.description})
+		]]>
+	</statement>
+	
+	<statement id="get_by_id" parameterName="id">
+		<![CDATA[
+			select * from  cms_category where id=@{id}
+		]]>
+	</statement>
+	 -->
+	 
+	<!-- 参数是List、HashSet  或数组  （1）利用freemark直接解析
+	<statement id="list_by_idList" parameterName="ids">
+		<![CDATA[
+			select * from  cms_category where 1=1 
+			<#if ids??>
+			and id in 
+			(
+				<#list ids as id> 
+					${id} <#if id_has_next>,</#if>
+				</#list>
+			)
+			</#if>
+		]]>
+	</statement>
+	-->
+	
+	<!-- 参数是List、HashSet  或数组  （2）利用工具类拼成字符串
+	<statement id="list_by_idList2" parameterName="ids">
+		<![CDATA[
+			select * from  cms_category where 1=1 
+			<#if ids??>
+			and id in 
+			(
+				ArrayUtil.join(@ids,",")
+			)
+			</#if>
+		]]>
+	</statement>
+	-->
+	
+	<!-- 参数是List、HashSet  或数组  （3）利用自定义的@{}符解析参数
+	<statement id="list_by_idList3" parameterName="ids">
+		<![CDATA[
+			select * from  cms_category where 1=1 
+			<#if ids??>
+			and id in 
+			(
+				<#list ids as id> 
+					@{id} <#if id_has_next>,</#if>
+				</#list>
+			)
+			</#if>
+		]]>
+	</statement>
+	-->
+</statements>

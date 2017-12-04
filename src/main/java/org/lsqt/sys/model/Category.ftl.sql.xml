@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sys.model.Category" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="sys_category">
+		<column id="id" type="auto" property="id" text="主键" />
+		<column name="pid" property="pid"/>
+		<column name="code" property="code"/>
+		<column name="sn" property="sn"/>
+		<column name="name" property="name"/>
+		<column name="node_path" property="nodePath"/>
+		<column name="app_code" property="appCode" />
+		<column name="remark" property="remark" />
+		
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from sys_category where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/> 
+					and (id like '%${key}%' or code like '%${key}%' or name like '%${key}%' or remark like '%${key}%')
+				</#if>
+				
+				<#if query.id??> and id=${query.id} </#if>
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+				<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+				<#if query.name??> and name like '%${StringUtil.escapeSql(query.name)}%' </#if>
+				<#if query.remark??> and remark like '%${StringUtil.escapeSql(query.remark)}%' </#if>
+				<#if query.appCode??> and app_code like '%${StringUtil.escapeSql(query.appCode)}%' </#if>
+				
+				<#if query.createTimeBegin?? && query.createTimeEnd??>
+				 and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+				</#if>
+				
+				<#if query.sortField?? && query.sortOrder??>
+					order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+				<#else>
+					order by sn 
+				</#if>
+				
+			<#else>
+				and 1=2
+        	</#if>
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from sys_category ]]>
+	</statement>
+</statements>

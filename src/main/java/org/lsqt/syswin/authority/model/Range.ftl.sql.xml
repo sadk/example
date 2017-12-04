@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.syswin.authority.model.Range" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="t_power_range_res_info">
+			<column id="range_id" type="auto" property="id" text="主键" />
+		
+	 		<column name="range_name" property="name" text="数据资源名称"/>
+	 		<column name="range_code" property="code" text="数据资源编码"/>
+	 		<column name="range_value" property="value" text=""/>
+	 		<column name="range_desc" property="description" text="资源描述"/>
+	 	
+	 		<column name="createby" property="createUserId" text="创建者id"/>
+	 		<column name="createby_name" property="createUserName" text="创建者名称"/>
+	 		<column name="updateby" property="updateUserId" text="修改者id"/>
+	 		<column name="updateby_name" property="updateUserName" text="修改者名称"/>
+	 		
+	 		<column createTime="create_date" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_date" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from t_power_range_res_info where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 							 							 							 					
+							 
+							range_name like '%${key}%'  or 
+							
+							 
+							range_value like '%${key}%'  or 
+							
+							 
+							range_desc like '%${key}%'  or 
+							
+							 
+							createby_name like '%${key}%'  or 
+							
+							 
+							updateby_name like '%${key}%' 
+							
+					)
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+	
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  					<#if query.id??> and range_id = ${query.id} </#if>
+					
+	  						<#if query.name??> and range_name = '${StringUtil.escapeSql(query.name)}' </#if>
+						
+					
+	  						<#if query.value??> and range_value = '${StringUtil.escapeSql(query.value)}' </#if>
+						
+					
+	  						<#if query.description??> and range_desc = '${StringUtil.escapeSql(query.description)}' </#if>
+						
+					
+						
+	  					<#if query.createUserId??> and createby = ${query.createUserId} </#if>
+					
+	  						<#if query.createUserName??> and createby_name = '${StringUtil.escapeSql(query.createUserName)}' </#if>
+						
+					
+						
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+						
+	  					<#if query.updateUserId??> and updateby = ${query.updateUserId} </#if>
+					
+	  						<#if query.updateUserName??> and updateby_name = '${StringUtil.escapeSql(query.updateUserName)}' </#if>
+						
+					
+						
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from t_power_range_res_info ]]>
+	</statement>
+	
+</statements>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.uum.model.Group" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="uum_group">
+			<column id="id" type="auto" property="id" text="主键" />
+	 		
+	 		<column name="pid" property="pid" text="父级id" />
+	 		
+	 		<column name="node_path" property="nodePath" text="节点路径" />	
+	 		
+	 		<column name="name" property="name" text="名称"/>
+	 	
+	 		<column name="name_short" property="nameShort" text="组简称"/>
+	 	
+	 		<column name="code" property="code" text="组编码"/>
+	 	
+	 		<column name="status" property="status" text="状态 1=启用 0=禁用 -1=已删除"/>
+	 	
+	 		<column name="sn" property="sn" text="排序"/>
+	 	
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 		<column name="app_code" property="appCode" text=""/>
+	 	
+	 		<column name="pname" property="pName" isVirtual="true" text="上级名称"/>
+	 		
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select A.*,B.name pname from uum_group A left join uum_group B on  A.pid=B.id where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							name like '%${key}%'  or 
+							name_short like '%${key}%'  or 
+							code like '%${key}%'  or 
+							remark like '%${key}%'  or 
+							app_code like '%${key}%' 
+					)
+				</#if>
+						    <#if query.ids??> and A.id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  					    <#if query.id??> and A.id = ${query.id} </#if>
+					
+	  						<#if query.name??> and A.name = '${StringUtil.escapeSql(query.name)}' </#if>
+						
+	  						<#if query.nameShort??> and A.name_short = '${StringUtil.escapeSql(query.nameShort)}' </#if>
+						
+	  						<#if query.code??> and A.code = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+	  					    <#if query.status??> and A.status = ${query.status} </#if>
+						
+	  					    <#if query.sn??> and A.sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and A.remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+					
+	  						<#if query.appCode??> and A.app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(A.create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+	  						<#-- 获取某个节点下的所有组 -->
+							<#if query.nodePath??> and A.node_path like '${StringUtil.escapeSql(query.nodePath)}%' </#if>
+							
+							<#if query.idNotIn??> and A.id not in (${StringUtil.escapeSql(query.idNotIn)}) </#if>
+				
+							<#-- 获取用户的组 -->
+							<#if query.userId??> and A.id in (select obj_id from uum_user_object where obj_type=4 and user_id=${query.userId}) </#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+</statements>

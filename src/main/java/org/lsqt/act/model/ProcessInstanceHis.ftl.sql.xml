@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.ProcessInstanceHis" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ACT_HI_PROCINST">
+			<column id="ID_" type="auto" property="id" text="主键" />
+	 		<column name="PROC_INST_ID" property="processInstanceId" text="流程实例ID(等于业务主键)"/>
+	 		<column name="BUSINESS_KEY_" property="businessKey" text="业务数据主键ID"/>
+	 		<column name="PROC_DEF_ID_" property="processDefinitionId" text="流程定义ID"/>
+	 		<column name="START_TIME_" property="startTime" text="开始时间"/>
+	 		<column name="END_TIME_" property="endTime" text="结束时间"/>
+	 		<column name="DURATION_" property="durationInMillis" text="流程经历时间"/>
+	 		
+	 		<column name="START_USER_ID_" property="startUserId" text="发起人ID"/>
+	 		<column name="START_ACT_ID_" property="startActivityId" text="开始节点key"/>
+	 		<column name="END_ACT_ID_" property="endAcitivityId" text="结束结点key"/>
+	 		
+	 		<column name="SUPER_PROCESS_INSTANCE_ID_" property="superProcessInstanceId" text="父级实例Id"/>
+	 		<column name="DELETE_REASON_" property="deleteReason" text="删除原因"/>
+	 		<column name="TENANT_ID_" property="tenantId" text="租户编码"/>
+	 		<column name="NAME_" property="name" text="流程实例的名称"/>
+	 		
+	 		
+	 		
+	 		<column name="title" property="title" text="流程标题" isVirtual="true"/>
+	 		<column name="process_definition_key" property="processDefinitionKey" isVirtual="true" text="流程定义key" />
+	 		<column name="process_definition_name" property="processDefinitionName" isVirtual="true" text="流程定义名称"/>
+			<column name="version" property="version" text="流程版本" isVirtual="true"/>
+	 		<column name="create_dept_id" property="createDeptId" isVirtual="true" text="填制人部门：一般从表单取值，如果没有取发起用户的主部门，主部门没有再取用户的普通部门第一个"/>
+
+	 		<column name="start_user_name" property="startUserName" isVirtual="true" text="发起人名称"/>
+	 		<column name="start_user_org_text" property="startUserOrgText" isVirtual="true" text="发起人组织信息"/>
+	 		<column name="start_user_position_text" property="startUserPositionText" isVirtual="true" text="发起人岗位信息"/>
+	 		
+	 		<column name="business_status" property="businessStatus" isVirtual="true" text="业务自定义的状态,如自定义审批通过、未通过、正常、异常等(内置的状态是1=审批中 2=审批通过  3=审批未通过)"/>
+	 		<column name="business_status_desc" property="businessStatusDesc" isVirtual="true" text="业务状态中文表示"/>
+	 		<column name="business_category" property="businessCategory" isVirtual="true" text="业务自定义的分类"/>
+	 		
+	 		
+	 		
+	 		<column name="sn" property="sn" text="排序" isVirtual="true"/>
+	 		<column name="remark" property="remark" text="备注" isVirtual="true"/>	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号" isVirtual="true"/>
+	 		
+	 		
+	</table>
+	 
+	
+	<statement id="getAll">
+		<![CDATA[ select * from act_hi_procinst ]]>
+	</statement>
+	
+	<statement id="queryForPageFinishedDetail" parameterName="query">
+	 	<![CDATA[
+	 	<#-- 查询已结束的流程实例  -->
+		select        
+			RES.*,
+			C.title,
+			C.create_dept_id ,
+			
+			C.start_user_id ,
+			C.start_user_name,
+			C.start_user_org_text,
+			C.start_user_position_text,
+			
+			C.business_status,
+			C.business_status_desc,
+			C.business_category,
+			
+			C.sn,
+			C.remark,
+			C.gid,
+			D.version_ version,
+			D.KEY_  process_definition_key
+		from ACT_HI_PROCINST RES left join ext_run_instance C on RES.PROC_INST_ID_ = C.instance_id left join act_re_procdef D on RES.PROC_DEF_ID_=D.ID_ WHERE 1=1 and RES.END_TIME_ is not NULL 
+		
+		<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							RES.NAME_ like '%${key}%'  or 
+							RES.TENANT_ID_ = '%${key}%'  or 
+							RES.PROC_INST_ID = '%${key}%' or
+							
+							C.title like '%${key}%'  or 
+							C.start_user_id = '${key}'  or 
+							C.start_user_name like '%${key}%'  or 
+							C.business_key = '%${key}%'  or 
+							C.business_status_desc like '%${key}%',
+							C.remark like '%${key}%' 
+					)
+				</#if>
+				
+						<#if query.businessKey??> and RES.BUSINESS_KEY_ = '${StringUtil.escapeSql(query.businessKey)}' </#if>
+						<#if query.instanceId??> and RES.PROC_INST_ID  = '${StringUtil.escapeSql(query.instanceId)}' </#if>
+						
+						<#if query.processDefinitionId??> and RES.PROC_DEF_ID_  = '${StringUtil.escapeSql(query.processDefinitionId)}' </#if>
+						<#if query.processDefinitionName??> and RES.NAME_  = '${StringUtil.escapeSql(query.processDefinitionName)}' </#if>
+				
+ 						<#if query.title??> and C.title = '${StringUtil.escapeSql(query.title)}' </#if>
+						<#if query.userId??> and C.start_user_id = '${StringUtil.escapeSql(query.userId)}' </#if>
+ 						<#if query.startUserName??> and C.start_user_name = '${StringUtil.escapeSql(query.startUserName)}' </#if>
+						<#if query.business_category??> and C.business_category = '${StringUtil.escapeSql(query.businessCategory)}' </#if>
+						
+ 						<#if query.processDefinitionKey??> and D.KEY_ = '${StringUtil.escapeSql(query.processDefinitionKey)}' </#if>
+						
+						<#if query.sortField?? && query.sortOrder??>
+							order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+						<#else>
+							  order by RES.END_TIME_ desc 
+						</#if>
+						
+		</#if>
+		
+	 	]]>
+ 	</statement>
+</statements>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.cms.model.Content" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="cms_content">
+		<column id="id" type="auto" property="id" text="主键" />
+		<column name="object_id" property="objectId"/>
+		<column name="code" property="code"/>
+		<column name="title" property="title"/>
+		<column name="type" property="type" text="类型:30=新闻 31=博客 32=贴子        3=ftl内容模板 4=vm内容模板"/>
+		<column name="content" property="content"/>
+		
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		select * from cms_content where 1=1
+		<#if query??>
+			<#if query.key??>
+		        or object_id = '%${StringUtil.escapeSql(query.key)}%' 
+		        or code like '%${StringUtil.escapeSql(query.key)}%' 
+		        or title like '%${StringUtil.escapeSql(query.key)}%' 
+		        or content like '%${StringUtil.escapeSql(query.key)}%' 
+			</#if>
+			<#if query.id??>
+				and id = ${query.id} 
+			</#if>
+			<#if query.code??>
+				and code = '${StringUtil.escapeSql(query.code)}' 
+			</#if>
+			
+			<#if query.objectId??>
+				and object_id = ${query.objectId}
+			</#if>
+			
+			<#if query.type??>
+				and type = '${StringUtil.escapeSql(query.type)}'
+			</#if>
+			 
+			<#if query.title??>
+				and title like '%${StringUtil.escapeSql(query.title)}%' 
+			</#if>
+			<#if query.appCode??>
+				and app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
+			</#if>
+			
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			<#else>
+				order by sn 
+			</#if>
+        </#if>
+		]]>
+	</statement>
+	
+</statements>

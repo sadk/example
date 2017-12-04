@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<config>
+	<mvc>
+		<url>
+			<!-- 指定静态资源加速 -->
+			<pattern name="static" value="/scripts/*"></pattern>
+			
+			<!-- 登陆、注册等可匿名访问的地址  -->
+			<pattern name="anonymous">
+				/user/login,
+		      	/user/save_or_update
+			</pattern>
+			
+			<!-- 脱离MVC容器管理的URL,例如自定义的Servlet地址 -->
+			<pattern name="escape" value="/index.html"></pattern>
+			
+			<!-- 特定静态资源加速 -->
+			<pattern name="css" value="*.css"></pattern>
+			<pattern name="js" value="*.js"></pattern>
+			<pattern name="img" value="*.jpg,*.png,*.gif"></pattern>
+			<pattern name="file" value="*.xml,*.pdf,*.xls,*.xlsx,*.doc,*.docx,*.ppt,*.pptx></pattern>
+			
+		</url>
+	</mvc>
+</config>

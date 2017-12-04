@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sys.model.DataSource" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="sys_datasource">
+		<column id="id" type="auto" property="id" text="主键" />
+		
+		<column name="code" property="code"/>
+		<column name="sn" property="sn"/>
+		<column name="name" property="name"/>
+		
+		<column name="login_name" property="loginName"/>
+		<column name="login_password" property="loginPassword"/>
+		<column name="login_default_db" property="loginDefaultDb"/>
+		<column name="url" property="url"/>
+		<column name="status" property="status"/>
+		
+		<column name="address" property="address"/>
+		<column name="port" property="port" />
+		<column name="sn" property="sn" />
+		<column name="driver_class_name" property="driverClassName" />
+		<column name="remark" property="remark" />
+		<column name="app_code" property="appCode" />
+		
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		select  A.*  from  sys_datasource A where 1=1
+		<#if query??>
+			<#if query.key??>
+		        and ( 
+		           A.name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.code like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.login_name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.remark like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.driver_class_name like '%${StringUtil.escapeSql(query.key)}%' )  
+			</#if>
+			<#if query.id??>
+				and A.id = ${query.id} 
+			</#if>
+			<#if query.code??>
+				and A.code = '${query.code}' 
+			</#if>
+			<#if query.name??>
+				and A.name = '${query.name}' 
+			</#if>
+			<#if query.value??>
+				and A.remark like '%${StringUtil.escapeSql(query.value)}%' 
+			</#if>
+			<#if query.appCode??>
+				and A.app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
+			</#if>
+			
+			<#if query.createTimeBegin?? && query.createTimeEnd??>
+				 and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+			</#if>
+			
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			<#else>
+				order by sn 
+			</#if>
+        </#if>
+		]]>
+	</statement>
+	
+	<statement id="getDatabaseList" parameterName="query">
+	 	<![CDATA[
+	 		select distinct(A.TABLE_SCHEMA) name from information_schema.tables A order by name
+	 	]]>
+	</statement>
+</statements>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.UserDataConfig" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_user_data_config">
+			<column id="id" type="auto" property="id" text="主键" />
+			
+			<column name="config_key" property="configKey" text="配置编码"/>
+	 		<column name="config_name" property="configName" text="配置名称"/>
+	 		<column name="config_code" property="configCode" text="配置编码"/>
+	 		<column name="config_type" property="configType" text="映射类型: 1=外部系统-http-json 2=本地系统"/>
+	 		<column name="entity_type" property="entityType" text="映射的实体类型: 1=职称 2=岗位 3=部门 4=组 5=用户 7=角色 "/>
+	 		
+	 		<column name="url" property="url" text="接口地址(不带参数的地址)"/>
+	 		<column name="method" property="method" text="接口地址(不带参数的地址),请求方法是post还是get"/>
+	 		<column name="data_prop" property="dataProp" text="json结果集，取数据的字段"/>
+	 		
+	 		<column name="sn" property="sn" text="排序"/>
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	 		
+	 		<column name="app_code" property="appCode" text="应用编码"/>
+	 		<column name="app_name" property="appName" isVirtual="true" text="虚拟列"/>
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select A.*,B.name app_name from ext_user_data_config A left join sys_application B on A.app_code=B.code where 1=1
+		 	<#if query??>
+		 		
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							A。config_name like '%${key}%'  or 
+							A。app_code like '%${key}%'  or 
+							A。url like '%${key}%'  or 
+							A。remark like '%${key}%' 
+					)
+				</#if>
+				
+							<#if query.ids??> and A。id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and A。id = ${query.id} </#if>
+					
+	  						<#if query.configName??> and A.config_name = '${StringUtil.escapeSql(query.configName)}' </#if>
+						
+							<#if query.configCode??> and A.config_code = '${StringUtil.escapeSql(query.configCode)}' </#if>
+							
+	  						<#if query.appCode??> and A.app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+	  						<#if query.configType??> and A.config_type = '${StringUtil.escapeSql(query.configType)}' </#if>
+						
+					
+	  						<#if query.entityType??> and A.entity_type = '${StringUtil.escapeSql(query.entityType)}' </#if>
+						
+					
+	  						<#if query.url??> and A.url like '%${StringUtil.escapeSql(query.url)}%' </#if>
+						
+						
+	  						<#if query.sn??> and A.sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and A.remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+						
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(A.create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+						
+					
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select A.*,B.name app_name from ext_user_data_config A left join sys_application B on A.app_code=B.code ]]>
+	</statement>
+	
+</statements>

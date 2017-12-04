@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.RunInstance" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_run_instance">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 		<column name="instance_id" property="instanceId" text="流程实例ID"/>
+	 	
+	 		<column name="title" property="title" text="流程标题"/>
+	 	
+	 		<column name="process_definition_id" property="processDefinitionId" text="流程定义ID"/>
+	 		<column name="process_definition_key" property="processDefinitionKey" text="流程定义key"/>
+	 		<column name="process_definition_name" property="processDefinitionName" text="流程定义名称"/>
+	 	
+	 		<column name="create_dept_id" property="createDeptId" text="填制人部门：一般从表单取值，如果没有取发起用户的主部门，主部门没有再取用户的普通部门第一个"/>
+	 		<column name="start_user_id" property="startUserId" text="发起人ID"/>
+	 		<column name="start_user_name" property="startUserName" text="发起人名称"/>
+	 		<column name="start_user_org_text" property="startUserOrgText" text="发起人组织信息"/>
+	 		<column name="start_user_position_text" property="startUserPositionText" text="发起人岗位信息"/>
+	 		
+	 		<column name="business_key" property="businessKey" text="业务数据主键ID"/>
+	 		<column name="business_status" property="businessStatus" text="业务自定义的状态,如自定义审批通过、未通过、正常、异常等(内置的状态是1=审批中 2=审批通过  3=审批未通过)"/>
+	 		<column name="business_status_desc" property="businessStatusDesc" text="业务状态中文表示"/>
+	 		<column name="business_category" property="businessCategory" text="业务自定义的分类"/>
+	 		
+	 		
+	 		<column name="app_code" property="appCode" text="租户编码"/>
+	 		<column name="sn" property="sn" text="排序"/>
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	 		
+	 		
+	 		<column name="taskKey" property="taskKey" text="当前活动节点key" isVirtual="true"/>
+	 		<column name="isActive" property="isActive" text="是否是活动" isVirtual="true"/>
+	 		<column name="isConcurrent" property="isConcurrent" text="是否是并发任务" isVirtual="true"/>
+	 		<column name="isSuspended" property="isSuspended" text="是否挂起" isVirtual="true"/>
+	 		<column name="version" property="version" text="流程版本" isVirtual="true"/>
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_run_instance where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							title like '%${key}%'  or 
+							
+							definition_key like '%${key}%'  or 
+							definition_name like '%${key}%'  or 
+							
+							start_user_name like '%${key}%'  or 
+							
+							business_key like '%${key}%'  or 
+							business_status like '%${key}%'  or 
+							business_status_desc like '%${key}%'  or 
+							business_category like '%${key}%'  or 
+							
+							 
+							app_code like '%${key}%'  or 
+							remark like '%${key}%' 
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.instanceId??> and instance_id = '${StringUtil.escapeSql(query.instanceId)}' </#if>
+	  						
+	  						<#if query.instanceIdList?? && (query.instanceIdList?size>0)>
+	  							and instance_id in
+	  							(
+		  							<#list query.instanceIdList as item>
+		  						 		 '${StringUtil.escapeSql(item)}' <#if item_has_next>,</#if>
+		  						 	</#list>
+	  						 	)
+	  						 </#if>
+	  						
+							<#if query.businessKey??> and business_key = '${StringUtil.escapeSql(query.businessKey)}' </#if>
+	  						<#if query.title??> and title = '${StringUtil.escapeSql(query.title)}' </#if>
+					
+	  						<#if query.processDefinitionId??> and process_definition_id = '${StringUtil.escapeSql(query.processDefinitionId)}' </#if>
+	  						<#if query.processDefinitionKey??> and process_definition_key = '${StringUtil.escapeSql(query.processDefinitionKey)}' </#if>
+	  						<#if query.processDefinitionName??> and process_definition_name = '${StringUtil.escapeSql(query.processDefinitionName)}' </#if>
+						
+					
+	  						<#if query.startUserId??> and start_user_id = '${StringUtil.escapeSql(query.startUserId)}' </#if>
+	  						<#if query.startUserName??> and start_user_name = '${StringUtil.escapeSql(query.startUserName)}' </#if>
+						
+					
+	  					
+	  						<#if query.businessStatus??> and business_status = '${StringUtil.escapeSql(query.businessStatus)}' </#if>
+	  						<#if query.businessStatusDesc??> and business_status_desc = '${StringUtil.escapeSql(query.businessStatusDesc)}' </#if>
+	  						<#if query.businessCategory??> and business_category = '${StringUtil.escapeSql(query.businessCategory)}' </#if>
+						
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+					
+						
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_run_instance ]]>
+	</statement>
+	
+	<statement id="queryForPageRunningDetail" parameterName="query">
+	 	<![CDATA[
+	 	<#-- 查询运行中的流程实例  -->
+		select distinct RES.ID_ id,
+			RES.REV_ rev,
+			RES.PROC_INST_ID_  instance_id,
+		    RES.PROC_DEF_ID_ process_definition_id,
+		    
+		    RES.ACT_ID_ taskKey,
+		    RES.IS_ACTIVE_ isActive,
+		    RES.IS_CONCURRENT_ isConcurrent,
+		    RES.SUSPENSION_STATE_  isSuspended,
+		    
+		    P.NAME_  process_definition_name, 
+		    P.KEY_  process_definition_key, 
+		    P.VERSION_  version, 
+		    P.DEPLOYMENT_ID_  DeploymentId , 
+		    C.title,
+		   	C.business_key , 
+		    C.create_dept_id ,
+		    
+		    C.start_user_id ,
+			C.start_user_name,
+		    C.start_user_org_text,
+		    C.start_user_position_text,
+
+		    C.business_status,
+		    C.business_status_desc,
+		    C.business_category,
+
+		    C.app_code,
+		    C.sn,
+		    C.remark,
+		    C.gid,
+		    C.create_time,
+		    C.update_time
+		    
+		from ACT_RU_EXECUTION RES inner join ACT_RE_PROCDEF P on RES.PROC_DEF_ID_ = P.ID_ 
+		left join ext_run_instance C on RES.PROC_INST_ID_ = C.instance_id where 1=1
+		
+		<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							C.title like '%${key}%'  or 
+							
+							P.KEY_ like '%${key}%'  or 
+							P.NAME_ like '%${key}%'  or 
+							C.start_user_id = '${key}'  or 
+							C.start_user_name like '%${key}%'  or 
+							C.business_key = '%${key}%'  or 
+							C.app_code = '%${key}%'  or 
+							C.remark like '%${key}%' 
+					)
+				</#if>
+				
+						<#if query.businessKey??> and C.business_key = '${StringUtil.escapeSql(query.businessKey)}' </#if>
+ 						<#if query.title??> and C.title = '${StringUtil.escapeSql(query.title)}' </#if>
+			
+ 						<#if query.processDefinitionId??> and RES.PROC_DEF_ID_  = '${StringUtil.escapeSql(query.processDefinitionId)}' </#if>
+ 						<#if query.processDefinitionKey??> and P.KEY_ = '${StringUtil.escapeSql(query.processDefinitionKey)}' </#if>
+ 						<#if query.processDefinitionName??> and P.NAME_  = '${StringUtil.escapeSql(query.processDefinitionName)}' </#if>
+				
+			
+ 						<#if query.startUserId??> and C.start_user_id = '${StringUtil.escapeSql(query.startUserId)}' </#if>
+ 						<#if query.startUserName??> and C.start_user_name = '${StringUtil.escapeSql(query.startUserName)}' </#if>
+			
+		</#if>
+		
+	 	]]>
+ 	</statement>
+</statements>

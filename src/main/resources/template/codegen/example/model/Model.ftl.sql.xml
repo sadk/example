@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="${pkg}.model.${Model}" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="${tableName}">
+		<#-- 生成主键列 -->
+		<#list columnList as column>
+			<#if column.primaryKey == 1>
+				<column id="${column.name}" type="auto" property="${column.propertyName}" text="主键" />
+			</#if>
+		</#list>
+		
+		<#-- 生成常规列 -->
+		<#list columnList as column>
+	 		<#if column.oroColumnType == 4>
+	 		<column name="${column.name}" property="${column.propertyName}" text="${column.comment}"/>
+	 		</#if>
+	 	
+		</#list>
+		
+		
+		<#-- 生成gid、createTime、updateTime列 -->
+		<#list columnList as column>
+	 		<#if column.oroColumnType == 1>
+	 		<column gid="${column.name}" property="${column.propertyName}" text="全局唯一编号"/>
+	 		</#if>
+	 		
+	 		<#if column.oroColumnType == 2>
+	 		<column createTime="${column.name}" property="${column.propertyName}" text="创建时间"/>
+	 		</#if>
+	 		
+	 		<#if column.oroColumnType == 3>
+	 		<column updateTime="${column.name}" property="${column.propertyName}" text="更新时间"/>
+	 		</#if>
+		</#list>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ${tableName} where 1=1
+<#noparse>
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+</#noparse>
+					<#assign keyCnt = 0/>
+					<#list columnList as column>
+						<#if column.javaType == 0>
+							<#if !(column.oroColumnType?? && column.oroColumnType ==1)> <#-- 排除gid的字段 -->
+							<#assign keyCnt = (keyCnt + 1)/>
+							</#if>
+						</#if>
+					</#list>
+					
+					<#assign tmpCnt = 0/>
+					<#list columnList as column>
+						<#if column.javaType == 0>
+							<#if !(column.oroColumnType?? && column.oroColumnType ==1)> <#-- 排除gid的字段 -->
+							${column.name} like <#noparse>'%${key}%'</#noparse> <#if tmpCnt!= keyCnt-1> or </#if>
+							</#if>
+							
+							<#assign tmpCnt = (tmpCnt + 1)/>
+						</#if>
+					</#list>
+					)
+<#noparse>
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+</#noparse>
+	
+<#noparse>
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+</#noparse>
+				<#list columnList as column>
+					<#if column.javaType == 0 || column.javaType == 1>
+						<#if column.oroColumnType != 1>
+	  						<#noparse><#if</#noparse> query.${column.propertyName}<#noparse>??></#noparse> and ${column.name} = <#noparse>'${StringUtil.escapeSql(query.</#noparse>${column.propertyName}<#noparse>)}' </#if></#noparse>
+	  					</#if>
+					</#if>
+						
+					<#if column.javaType == 2 || column.javaType == 3 || column.javaType == 4 || column.javaType == 5 || column.javaType == 6 || column.javaType == 7 || column.javaType == 10 || column.javaType == 11>
+	  					<#noparse><#if</#noparse> query.${column.propertyName}<#noparse>??></#noparse> and ${column.name} = <#noparse>${query.</#noparse>${column.propertyName}<#noparse>} </#if></#noparse>
+					</#if>	
+					
+					<#if column.javaType == 9 || column.javaType == 12 || column.javaType == 13 || column.javaType == 14>
+						<#if column.oroColumnType != 3>
+						
+							<#noparse><#if</#noparse> query.${column.propertyName}Begin<#noparse>?? && </#noparse>query.${column.propertyName}End<#noparse>??></#noparse>
+	  							and date_format(${column.name},'%Y-%m-%d') between  '<#noparse>${</#noparse>StringUtil.escapeSql(query.${column.propertyName}Begin)<#noparse>}</#noparse>' and '<#noparse>${</#noparse>StringUtil.escapeSql(query.${column.propertyName}End)<#noparse>}</#noparse>'
+	  						<#noparse></#if></#noparse>
+	  						
+	  					</#if>
+					</#if>	
+				</#list>
+<#noparse>
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+</#noparse>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ${tableName} ]]>
+	</statement>
+	
+</statements>

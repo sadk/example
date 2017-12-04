@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sys.model.Region" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="sys_region">
+		<column name="id" property="id" />
+		<column name="pid" property="pid"/>
+		<column name="code" property="code"/>
+		<column name="sn" property="sn"/>
+		<column name="name" property="name"/>
+		<column name="type" property="type" text="国=1 省=2 市=3 区=4"/>
+		<column name="node_path" property="nodePath"/>
+		<column name="node_path_text" property="nodePathText"/>
+		<column name="app_code" property="appCode" />
+		<column name="remark" property="remark" />
+		<column name="value" property="value" />
+		
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+		
+	</table>
+	
+	<statement id="queryById" parameterName="id">
+	 	<![CDATA[
+		select  * from sys_region A where id=${id?c} <#--${id?string("##0.##")} -->
+		  ]]>
+	</statement>
+	
+	<statement id="getAll">
+	 	<![CDATA[
+		select * from sys_region 
+		  ]]>
+	</statement>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		select * from  sys_region A where 1=1
+		<#if query??>
+			<#if query.key??>
+		        and (A.name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.id like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.code like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.node_path_text like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.remark like '%${StringUtil.escapeSql(query.key)}%'
+		        or A.value like '%${StringUtil.escapeSql(query.key)}%' )
+			</#if>
+			<#if query.id??>
+				and A.id = ${query.id} 
+			</#if>
+			<#if query.code??>
+				and A.code = '${query.code}' 
+			</#if>
+			<#if query.name??>
+				and A.name like '%${query.name}%' 
+			</#if>
+			<#if query.nodePath??>
+				and A.node_path like '${query.nodePath}%' 
+			</#if>
+			<#if query.value??>
+				and A.value like '%${StringUtil.escapeSql(query.value)}%' 
+			</#if>
+			<#if query.remark??>
+				and A.remark like '%${StringUtil.escapeSql(query.remark)}%' 
+			</#if>
+			<#if query.appCode??>
+				and A.app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
+			</#if>
+			
+			<#if query.createTimeBegin?? && query.createTimeEnd??>
+				 and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+			</#if>
+				
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			<#else>
+				order by sn 
+			</#if>
+        </#if>
+		]]>
+	</statement>
+	
+</statements>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.NodeForm" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_node_form">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 		<column name="definition_id" property="definitionId" text="流程定义ID"/>
+	 	
+	 		<column name="task_key" property="taskKey" text="节点定义Key"/>
+	 	
+	 		<column name="task_name" property="taskName" text="节点定义名称"/>
+	 		
+	 		<column name="form_name" property="formName" text="表单名称"/>
+	 	
+	 		<column name="form_code" property="formCode" text="表单编码"/>
+	 	
+	 		<column name="data_type" property="dataType" text="表单分类： 1=节点表单   2=全局表单  "/>
+	 		
+	 		<column name="form_type" property="formType" text="表单类型: 0=在线表单 1=URL表单,注：在线表单,为系统自定义表单;url表单,是外部表单。地址写法规则为：如果表单页面平台在同一个应用中，路径从根开始写，不需要上下文路径，例如 ：/form/addUser.do。 如果需要使用的表单不再同一个应用下，则需要写完整路径如:http://xxx/crm/addUser.do  "/>
+	 	
+	 		<column name="form_url" property="formUrl" text="当表单类型=1时：表单URL值, (表单编辑url)"/>
+	 	
+	 		<column name="form_detail_url" property="formDetailUrl" text="当表单类型=1时: 明细URL值"/>
+	 		
+	 		<column name="custom_url" property="customUrl" text="自定义URL值"/>
+	 		
+	 		<column name="app_code" property="appCode" text="租户编码"/>
+	 	
+	 		<column name="sn" property="sn" text="排序"/>
+	 	
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 	
+
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_node_form where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							definition_id = '%${key}%'  or 
+							task_key like '%${key}%'  or 
+							task_name like '%${key}%'  or 
+							form_name like '%${key}%'  or 
+							form_code = '%${key}%'  or 
+							form_url like '%${key}%'  or 
+							form_detail_url like '%${key}%'  or 
+							app_code = '%${key}%'  or 
+							remark like '%${key}%' 
+					)
+				</#if>
+				
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						<#if query.dataType??> and data_type = ${query.dataType} </#if>
+					
+	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
+						
+							<#if query.definitionIdList??>
+								 <#if (query.definitionIdList?size > 0)>
+								 	and definition_id in 
+								 	(
+								 	<#list query.definitionIdList as definitionId>
+		  								'${StringUtil.escapeSql(definitionId)}'
+		  								 <#if definitionId_has_next>,</#if>
+	  								</#list>
+	  								)
+								 </#if>
+							</#if>
+							
+							
+	  						<#if query.taskKey??> and task_key = '${StringUtil.escapeSql(query.taskKey)}' </#if>
+	  						
+	  						<#if query.taskName??> and task_name = '${StringUtil.escapeSql(query.taskName)}' </#if>
+						
+	  						<#if query.formName??> and form_name = '${StringUtil.escapeSql(query.formName)}' </#if>
+						
+	  						<#if query.formCode??> and form_code = '${StringUtil.escapeSql(query.formCode)}' </#if>
+						
+	  						<#if query.formType??> and form_type = ${query.formType} </#if>
+					
+	  						<#if query.formUrl??> and form_url = '${StringUtil.escapeSql(query.formUrl)}' </#if>
+						
+	  						<#if query.formDetailUrl??> and form_detail_url = '${StringUtil.escapeSql(query.formDetailUrl)}' </#if>
+						
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_node_form ]]>
+	</statement>
+	
+</statements>

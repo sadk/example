@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.Node" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_node">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 		<column name="definition_id" property="definitionId" text="流程定义ID"/>
+	 	
+	 		<column name="node_jump_type" property="nodeJumpType" text="节点跳转类型: 1=正常跳转 2=选择路径跳转 3=自由跳转 (这个字段待删除!!!)"/>
+	 		
+	 		<column name="node_variable_copy" property="nodeVariableCopy" text="是否从全局变量里copy流程变量值到当前节点 0=否  1=是 2=第三方接口设置"/>
+	 		
+	 		<column name="task_key" property="taskKey" text="节点定义Key"/>
+	 	
+	 		<column name="task_name" property="taskName" text="按钮名称"/>
+	 	
+	 		<column name="task_def_type" property="taskDefType" text="节点定义类型: 1=usertask"/>
+	 	
+	 		<column name="task_biz_type" property="taskBizType" text="节点类型: 0=拟稿节点"/>
+	 	
+	 	
+	 		<column name="app_code" property="appCode" text="租户编码"/>
+	 		<column name="sn" property="sn" text="排序"/>
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_node where 1=1
+		 	<#if query??>
+		 		
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							task_key like '%${key}%'  or 
+							task_name like '%${key}%'  or 
+							remark like '%${key}%' 
+					)
+				</#if>
+				
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
+						
+	  						<#if query.taskKey??> and task_key = '${StringUtil.escapeSql(query.taskKey)}' </#if>
+						
+	  						<#if query.taskName??> and task_name like '%${StringUtil.escapeSql(query.taskName)}%' </#if>
+						 
+						 
+							<#if query.nodeVariableCopy??> and node_variable_copy = ${query.nodeVariableCopy} </#if>
+							
+							<#if query.nodeJumpType??> and node_jump_type = ${query.nodeJumpType} </#if>
+								 
+								 
+							<#if query.taskDefType??> and task_def_type = ${query.taskDefType} </#if>
+							
+							<#if query.taskBizType??> and task_biz_type = ${query.taskBizType} </#if>
+							
+							
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+						
+					
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_node ]]>
+	</statement>
+	
+</statements>

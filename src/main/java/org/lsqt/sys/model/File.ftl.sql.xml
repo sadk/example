@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sys.model.File" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="sys_file">
+		<column id="id" type="auto" property="id" text="主键" />
+		<column name="pid" property="pid"/>
+		
+		<column name="obj_id" property="objId"/>
+		
+		<column name="name" property="name"/>
+		<column name="original_name" property="originalName"/>
+		<column name="type_code" property="typeCode" text="文件或目录类型编码，引用字典值"/>
+		<column name="sn" property="sn"/>
+		
+		<column name="path" property="path" text="(FastDFS文件)路径"/>
+		<column name="path_small" property="pathSmall" text="文件缩略图(小)"/>
+		<column name="path_medium" property="pathMedium" text="文件缩略图(中)"/>
+		<column name="path_large" property="pathLarge" text="文件缩略图(大)"/>
+		
+		<column name="node_path" property="nodePath"/>
+		<column name="file_or_dir" property="fileOrDir" text="文件或目录： 1=文件 2=目录"/>
+		
+		<column name="app_code" property="appCode" />
+		<column name="remark" property="remark" />
+		
+		
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+		
+	</table>
+	
+	<statement id="queryById" parameterName="id">
+	 	<![CDATA[
+			select  * from sys_file A where id=${id?c} <#--${id?string("##0.##")} -->
+		  ]]>
+	</statement>
+	
+	<statement id="getAll">
+	 	<![CDATA[ select * from sys_file ]]>
+	</statement>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		select * from  sys_file A where 1=1
+		<#if query??>
+			<#if query.key??>
+		        and (A.name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.id like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.original_name like '%${StringUtil.escapeSql(query.original_name)}%'
+		        or A.remark like '%${StringUtil.escapeSql(query.key)}%' )
+			</#if>
+			<#if query.id??>
+				and A.id = ${query.id} 
+			</#if>
+			
+			<#if query.objId??>
+				and A.obj_id = ${query.objId} 
+			</#if>
+			
+			<#if query.name??>
+				and A.name like '%${query.name}%' 
+			</#if>
+			<#if query.originalName??>
+				and A.original_name like '%${query.originalName}%' 
+			</#if>
+			<#if query.remark??>
+				and A.remark like '%${StringUtil.escapeSql(query.remark)}%' 
+			</#if>
+			<#if query.appCode??>
+				and A.app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
+			</#if>
+			
+			<#if query.createTimeBegin?? && query.createTimeEnd??>
+				 and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+			</#if>
+				
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			<#else>
+				order by sn 
+			</#if>
+        </#if>
+		]]>
+	</statement>
+	
+</statements>

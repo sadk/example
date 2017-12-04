@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sys.model.Column" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="sys_column">
+		<column id="id" type="auto" property="id" text="主键" />
+		<column name="version" property="version"/>
+		<column name="db_name" property="dbName"/>
+		<column name="table_id" property="tableId"/>
+		<column name="table_name" property="tableName"/>
+		<column name="name" property="name"/>
+		<column name="comment" property="comment"/>
+		<column name="db_type" property="dbType"/>
+		<column name="search_type" property="searchType" text="生成代码时是否作为查询条件"/>
+		<column name="java_type" property="javaType"/>
+		<column name="property_name" property="propertyName"/>
+		<column name="primary_key" property="primaryKey"/>
+		<column name="oro_column_type" property="oroColumnType" text="ORMapping映射的字段类型：gid=全局唯一码 updateTime=更新时间 createTime=创建时间"/>
+		
+		<column name="column_codegen_type" property="columnCodegenType" text="字段的代码生成器类型 1=选择器 2=字典 3=外键 4=text 5=long 6=double 7=date 8=file"/>
+		<column name="column_codegen_format" property="columnCodegenFormat" text="默认：double型的为两个小数点， date 为'yyyy-MM-dd HH:mm:ss' " />
+		<column name="column_codegen_group_code" property="columnCodegenGroupCode" text="字段组:用于生成html的fieldset框"/>
+		
+		<!-- 
+		<column name="fk_table_name" property="fkTableName"/>
+		<column name="fk_table_commnet" property="fkTableCommnet"/>
+		<column name="fk_col" property="fkCol"/>
+		 -->
+		 
+		<!-- 
+		<column name="selector_ref_table_name" property="selectorRefTableName"/>
+		<column name="selector_ref_table_comment" property="selectorRefTableComment"/>
+		<column name="selector_ref_table_column" property="selectorRefTableColumn"/>
+		 -->
+		 
+		<column name="selector_multil_select" property="selectorMultilSelect"/>
+		<column name="selector_text_cols" property="selectorTextCols"/>
+		<column name="selector_value_cols" property="selectorValueCols"/>
+		
+		<column name="selector_data_from_type" property="selectorDataFromType"/>
+		<column name="selector_data_from" property="selectorDataFrom"/>
+		<column name="selector_data_source_code" property="selectorDataSourceCode"/>
+		<column name="selector_db_name" property="selectorDbName"/>
+		
+		<column name="file_multil" property="fileMultil"/>
+		<column name="file_custom_content" property="fileCustomContent"/>
+		
+		
+		<column name="dict_ref_code" property="dictRefCode" />
+		<column name="dict_text_col" property="dictTextCol" />
+		<column name="dict_value_col" property="dictValueCol" />
+		
+		<column name="sn" property="sn" />
+		<column name="version" property="version" />
+		<column name="opt_log" property="optLog" />
+		<column name="remark" property="remark" />
+		<column name="app_code" property="appCode" />
+		
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		select A.* from sys_column A where 1=1
+		<#if query??>
+			<#if query.key??>
+		        and (
+		           A.id like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.db_name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.table_name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.comment like '%${StringUtil.escapeSql(query.key)}%' 
+		        or A.remark like '%${StringUtil.escapeSql(query.key)}%' )
+			</#if>
+			<#if query.id??>
+				and A.id = ${query.id} 
+			</#if>
+			
+			<#if query.version??>
+				and A.version = '${query.version}' 
+			</#if>
+			
+			<#if query.dbName??>
+				and A.db_name = '${query.dbName}' 
+			</#if>
+			
+			<#if query.tableId??>
+				and A.table_id = '${query.tableId}' 
+			</#if>
+			
+			<#if query.tableName??>
+				and A.table_name = '${query.tableName}' 
+			</#if>
+			
+			<#if query.name??>
+				and A.name = '${query.name}' 
+			</#if>
+			
+			<#if query.comment??>
+				and A.comment = '${query.comment}' 
+			</#if>
+			
+			<#if query.remark??>
+				and A.remark like '%${StringUtil.escapeSql(query.remark)}%' 
+			</#if>
+			<#if query.appCode??>
+				and A.app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
+			</#if>
+			
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			<#else>
+				order by sn 
+			</#if>
+        </#if>
+		]]>
+	</statement>
+	
+	<statement id="queryColumnsByTable" parameterName="args">
+	 	<![CDATA[
+			SELECT 
+			    A.TABLE_NAME table_name,
+			    A.COLUMN_NAME name,
+			    A.COLUMN_COMMENT comment,
+			    A.DATA_TYPE db_type,
+			    CAST((CASE WHEN A.COLUMN_KEY = 'PRI' then 1 else 0 END) as SIGNED) as primary_key,
+			    CAST(A.ORDINAL_POSITION as SIGNED) sn
+			FROM
+			    information_schema.columns A
+			WHERE
+			    1 = 1 
+		        and table_schema = '${StringUtil.escapeSql(args[0])}'
+		        and table_name = '${StringUtil.escapeSql(args[1])}'
+	 	]]>
+	</statement>
+</statements>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.cms.model.News" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="cms_news">
+		<column id="id" type="auto" property="id" text="主键" />
+		<column name="name" property="name"/>
+		<column name="code" property="code"/>
+		<column name="title" property="title"/>
+		<column name="summary" property="summary" text="资讯摘要"/>
+		<column name="author" property="author"/>
+		
+		<column name="tags" property="tags" text="标签(逗号分割)"/>
+		<column name="publish_date" property="publishDate" text="发布日期"/>
+		<column name="enable" property="enable" />
+		<column name="status_auth" property="statusAuth" text="状态：0=未审 1=审核中 2=审核通过"/>
+		<column name="top_days" property="topDays" text="置顶日期（天）" />
+		<column name="cnt_replay" property="cntReplay" text="回复数"/>
+		<column name="cnt_view" property="cntView" text="阅读数"/>
+		<column name="sn" property="sn" />
+		<column name="app_code" property="appCode" />
+		<column name="remark" property="remark" />
+		
+		<column name="time" property="time" />
+		<column name="address" property="address" />
+		<column name="person" property="person" />
+		
+		<column name="source" property="source" text="来源,如百度、新浪"/>
+		<column name="source_url" property="sourceUrl" text="原链接"/>
+		<column name="generate_type" property="generateType" text="生成的类型：0=用户后台发布 1=应用程序采集 2=注册用户自己发布"/>
+		
+		<column name="static_file_flag" property="staticFileFlag" text="是否生成静态文件 0=未生成 1=已生成"/>
+		<column name="static_file_path" property="staticFilePath" text="静态文件相对路径"/>
+		
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		select * from cms_news where 1=1
+		<#if query??>
+			<#if query.key??>
+		        or name like '%${StringUtil.escapeSql(query.key)}%' 
+		        or title like '%${StringUtil.escapeSql(query.key)}%' 
+		        or code like '%${StringUtil.escapeSql(query.key)}%' 
+		        or summary like '%${StringUtil.escapeSql(query.key)}%' 
+		        or tags like '%${StringUtil.escapeSql(query.key)}%' 
+		        or remark like '%${StringUtil.escapeSql(query.key)}%' 
+		        or address like '%${StringUtil.escapeSql(query.key)}%' 
+		        or person like '%${StringUtil.escapeSql(query.key)}%' 
+		        or source like '%${StringUtil.escapeSql(query.key)}%' 
+			</#if>
+			<#if query.id??>
+				and id = ${query.id} 
+			</#if>
+			<#if query.code??>
+				and code = '${StringUtil.escapeSql(query.code)}' 
+			</#if>
+			<#if query.name??>
+				and name like '%${StringUtil.escapeSql(query.name)}%' 
+			</#if>
+			<#if query.title??>
+				and title like '%${StringUtil.escapeSql(query.title)}%' 
+			</#if>
+			<#if query.summary??>
+				and code = '${StringUtil.escapeSql(query.summary)}' 
+			</#if>
+			<#if query.tags??>
+				and tags like '%${StringUtil.escapeSql(query.tags)}%' 
+			</#if>
+			<#if query.address??>
+				and address like '%${StringUtil.escapeSql(query.address)}%' 
+			</#if>
+			<#if query.person??>
+				and person like '%${StringUtil.escapeSql(query.person)}%' 
+			</#if>
+			<#if query.from??>
+				and from like '%${StringUtil.escapeSql(query.from)}%' 
+			</#if>
+			
+			<#if query.appCode??>
+				and app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
+			</#if>
+			
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			<#else>
+				order by sn 
+			</#if>
+        </#if>
+		]]>
+	</statement>
+	
+</statements>

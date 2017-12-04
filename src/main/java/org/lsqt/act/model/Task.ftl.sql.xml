@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.Task" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="act_ru_task">
+			<column id="ID_" type="auto" property="id" text="主键" />
+		
+	 		<column name="REV_" property="rev" text=""/>
+	 		<column name="EXECUTION_ID_" property="executionId" text=""/>
+	 		<column name="PROC_INST_ID_" property="processInstanceId" text=""/>
+	 		<column name="PROC_DEF_ID_" property="processDefinitionId" text=""/>
+	 		<column name="NAME_" property="name" text=""/>
+	 		<column name="PARENT_TASK_ID_" property="parentTaskId" text=""/>
+	 		<column name="DESCRIPTION_" property="description" text=""/>
+	 		<column name="TASK_DEF_KEY_" property="taskDefinitionKey" text=""/>
+	 		<column name="OWNER_" property="owner" text=""/>
+	 		<column name="ASSIGNEE_" property="assignee" text=""/>
+	 		<column name="DELEGATION_" property="delegation" text="代办人Id或loginNo，取决于业务存什么"/>
+	 		<column name="PRIORITY_" property="priority" text=""/>
+	 		<column name="DUE_DATE_" property="dueDate" text=""/>
+	 		<column name="CATEGORY_" property="category" text=""/>
+	 		<column name="SUSPENSION_STATE_" property="suspensionState" text="1=未挂起"/>
+	 		<column name="TENANT_ID_" property="tenantId" text=""/>
+	 		<column name="FORM_KEY_" property="formKey" text="一般为外部表单的url值"/>
+	 		<column createTime="CREATE_TIME_" property="createTime" text="创建时间"/>
+	 		
+	 		
+
+	 		<!-- 待办任务的其它显示字段 -->
+	 		<column name="title" property="title" isVirtual="true" text="流程标题" />
+	 		<column name="business_key" property="businessKey" isVirtual="true" text="业务主键" />
+	 		<column name="business_status" property="businessStatus" isVirtual="true" text="业务状态:0=待发起 1=审批中 2=已通过 3=未通过 ,暂时内置这4个状态" />
+	 		<column name="business_status_desc" property="businessStatusDesc" isVirtual="true" text="业务状态描述" />
+	 		
+	 		<column name="process_definition_name" property="processDefinitionName" isVirtual="true" text="流程定义名称" />
+	 		<column name="process_definition_key" property="processDefinitionKey" isVirtual="true" text="流程定义key"/>
+	 		
+	 		<column name="start_user_id" property="startUserId" isVirtual="true" text="流程发起人id"/>
+	 		<column name="start_user_name" property="startUserName" isVirtual="true" text="流程发起人姓名"/>
+	 		<column name="start_user_org_text" property="startUserOrgText" isVirtual="true" text="发起人(主)组织信息"/>
+	 		<column name="start_user_position_text" property="startUserOrgText" isVirtual="true" text="发起人(主)岗位"/>
+	 		
+	 		<!-- 加签、转发、抄送显示的字段 -->
+	 		<column name="assign_forward_cc_action" property="assignForwardCcAction" isVirtual="true" text="加签、转发、抄送的动作编码"/>
+	 		<column name="assign_forward_cc_user_ids" property="assignForwardCcUserIds" isVirtual="true" text="加签、转发、抄送给哪些用户"/>
+	 		<column name="assign_forward_cc_operater_user_id" property="assignForwardCcOpertaterUserId" isVirtual="true" text="是谁做的加签、转发、抄送动作"/>
+	 		
+	</table>
+	
+	<statement id="queryForPageDetail" parameterName="query">
+	 	<![CDATA[
+		 	select distinct RES.*,RUN.title,RUN.start_user_id,CC.approve_action assign_forward_cc_action,CC.assign_forward_cc_user_ids,CC.approve_user_id assign_forward_cc_operater_user_id, RUN.start_user_name,RUN.start_user_org_text,RUN.start_user_position_text, RUN.business_key,RUN.business_status,RUN.business_status_desc,RUN.process_definition_key,RUN.process_definition_name from ACT_RU_TASK RES left join ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_ left join ext_run_instance RUN on RES.PROC_INST_ID_= RUN.instance_id  left join ext_run_task_assign_forward_cc CC on RES.ID_ = CC.task_id WHERE 1=1 
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							RES.ID_ like '%${key}%'  or 
+							RES.EXECUTION_ID_ like '%${key}%'  or 
+							RES.PROC_INST_ID_ like '%${key}%'  or 
+							RES.PROC_DEF_ID_ like '%${key}%'  or 
+							RES.NAME_ like '%${key}%'  or 
+							RES.PARENT_TASK_ID_ like '%${key}%'  or 
+							RES.DESCRIPTION_ like '%${key}%'  or 
+							RES.TASK_DEF_KEY_ like '%${key}%'  or 
+							RES.OWNER_ like '%${key}%'  or 
+							RES.ASSIGNEE_ like '%${key}%'  or 
+							RES.DELEGATION_ like '%${key}%'  or 
+							RES.CATEGORY_ like '%${key}%'  or 
+							RES.TENANT_ID_ like '%${key}%'  or 
+							RES.FORM_KEY_ like '%${key}%' or
+							
+							RUN.title like '%${key}%' or
+							RUN.start_user_name like '%${key}%' or
+							RUN.start_user_org_text like '%${key}%' or
+							RUN.start_user_position_text like '%${key}%' or
+							RUN.process_definition_key like '%${key}%' or
+							RUN.process_definition_name like '%${key}%'
+					)
+				</#if>
+				
+							<#if query.ids??> and RES.ID_ in (${StringUtil.escapeSql(query.ids)}) </#if>
+	  						<#if query.id??> and RES.ID_ = '${StringUtil.escapeSql(query.id)}' </#if>
+					
+						
+	  						<#if query.rev??> and RES.REV_ = ${query.rev} </#if>
+					
+	  						<#if query.executionId??> and RES.EXECUTION_ID_ = '${StringUtil.escapeSql(query.executionId)}' </#if>
+					
+	  						<#if query.processInstanceId??> and RES.PROC_INST_ID_ = '${StringUtil.escapeSql(query.processInstanceId)}' </#if>
+					
+	  						<#if query.processDefinitionId??> and RES.PROC_DEF_ID_ = '${StringUtil.escapeSql(query.processDefinitionId)}' </#if>
+	  						
+	  						<#if query.name??> and RES.NAME_ = '${StringUtil.escapeSql(query.name)}' </#if>
+					
+	  						<#if query.parentTaskId??> and RES.PARENT_TASK_ID_ = '${StringUtil.escapeSql(query.parentTaskId)}' </#if>
+					
+	  						<#if query.description??> and RES.DESCRIPTION_ = '${StringUtil.escapeSql(query.description)}' </#if>
+					
+	  						<#if query.taskDefinitionKey??> and RES.TASK_DEF_KEY_ = '${StringUtil.escapeSql(query.taskDefinitionKey)}' </#if>
+					
+	  						<#if query.owner??> and RES.OWNER_ = '${StringUtil.escapeSql(query.owner)}' </#if>
+					
+	  						<#if query.assignee??> and RES.ASSIGNEE_ = '${StringUtil.escapeSql(query.assignee)}' </#if>
+					
+	  						<#if query.delegation??> and RES.DELEGATION_ = '${StringUtil.escapeSql(query.delegation)}' </#if>
+						
+	  						<#if query.priority??> and RES.PRIORITY_ = ${query.priority} </#if>
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(RES.CREATE_TIME_,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+							<#if query.dueDateBegin?? && query.dueDateEnd??>
+	  							and date_format(RES.DUE_DATE_,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.dueDateBegin)}' and '${StringUtil.escapeSql(query.dueDateEnd)}'
+	  						</#if>
+	  						
+	  						<#if query.category??> and RES.CATEGORY_ = '${StringUtil.escapeSql(query.category)}' </#if>
+						
+	  						<#if query.suspensionState??> and RES.SUSPENSION_STATE_ = ${query.suspensionState} </#if>
+					
+	  						<#if query.tenantId??> and RES.TENANT_ID_ = '${StringUtil.escapeSql(query.tenantId)}' </#if>
+					
+	  						<#if query.formKey??> and RES.FORM_KEY_ = '${StringUtil.escapeSql(query.formKey)}' </#if>
+	  						
+	  						<#-- 专供非并发分支产生的待办查询，一个流程实例（业务主键）对应一个待办记录 -->
+	  						<#if query.businessKey??> and RUN.business_key = '${StringUtil.escapeSql(query.businessKey)}' </#if>
+	  						<#if query.processDefinitionKey??> and RUN.process_definition_key = '${StringUtil.escapeSql(query.processDefinitionKey)}' </#if>
+	  						
+	  						<#-- 移动端启用 -->
+	  						<#if query.enableMobile??>
+	  							and RES.PROC_DEF_ID_ in (select ID_ from act_re_procdef where enable_mobile=${StringUtil.escapeSql(query.enableMobile)})
+	  						</#if>
+	  						
+	  						<#-- 获取我的待办 -->
+	  						<#if query.userId??> 
+		  						and ( 
+									1=1 
+		  							and (RES.ASSIGNEE_ = ${StringUtil.escapeSql(query.userId)}  or (RES.ASSIGNEE_ is null and (I.USER_ID_ = ${StringUtil.escapeSql(query.userId)} or I.GROUP_ID_ IN (select g.GROUP_ID_ from ACT_ID_MEMBERSHIP g where g.USER_ID_ = ${StringUtil.escapeSql(query.userId)}) ) ) ) 
+		  							
+		  							<#-- 含加签、转发 用户的待办 -->
+		  							or  RES.ID_ in  (select task_id from ext_run_task_assign_forward_cc where assign_forward_cc_user_ids like '%,${StringUtil.escapeSql(query.userId)},%' and approve_action in ( 'add_assign','forword_read') )
+		  						)
+		  						
+		  						<#-- 去除加签\转发的"主人"待办 -->
+		  						and RES.ID_ not in  ( select task_id from ext_run_task_assign_forward_cc  where 1=1 and task_complete_type=0 and approve_action in ('add_assign','forword_read') and approve_user_id=${StringUtil.escapeSql(query.userId)} )  
+	  						</#if>
+	  						
+	  						<#-- 获取抄送给我的待办任务 
+	  						<#if query.ccUserId??> 
+	  							and RES.ID_ in (select task_id from ext_run_task_assign_forward_cc where approve_action= 'copy_send' and assign_forward_cc_user_ids like '%,${StringUtil.escapeSql(query.ccUserId)},%') 
+	  						</#if>
+	  						-->
+	  						
+	  						<#if query.sortOrder?? && query.sortField??> 
+	  							order by ${StringUtil.escapeSql(query.sortField)} ${StringUtil.escapeSql(query.sortOrder)} 
+	  						</#if>
+	  						 
+        	</#if>
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select distinct RES.*,RUN.title,RUN.start_user_id, RUN.start_user_name,RUN.start_user_org_text,RUN.start_user_position_text, RUN.business_key,RUN.process_definition_key,RUN.process_definition_name from ACT_RU_TASK RES left join ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_ left join ext_run_instance RUN on RES.PROC_INST_ID_= RUN.instance_id WHERE 1=1  ]]>
+	</statement>
+	
+	<statement id="queryTask" parameterName="query">
+		<![CDATA[ 
+			SELECT A.approve_task_id ID_, A.process_instance_id PROC_INST_ID_ , A.definition_id PROC_DEF_ID_ , A.approve_task_name NAME_ ,approve_task_key TASK_DEF_KEY_,A.create_time CREATE_TIME_  , 
+					B.title,B.business_key, B.business_status, B.business_status_desc, B.process_definition_name,B.process_definition_key, B.start_user_id,B.start_user_name,B.start_user_org_text,B.start_user_position_text FROM ext_approve_opinion A  left join ext_run_instance B on A.process_instance_id = B.instance_id  where 1=1 
+			
+			<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							B.start_user_name like '%${key}%' or
+							B.process_definition_key like '%${key}%'
+					)
+				</#if>
+						<#if query.processDefinitionId??> and A.definition_id = '${StringUtil.escapeSql(query.processDefinitionId)}' </#if>
+						
+						<#if query.createTimeBegin?? && query.createTimeEnd??>
+				  			and date_format(A.create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+				  		</#if>
+				  						
+				  		<#-- 移动端启用 -->
+  						<#if query.enableMobile??>
+  							and A.definition_id in (select ID_ from act_re_procdef where enable_mobile=${StringUtil.escapeSql(query.enableMobile)})
+  						</#if>
+  						
+						<#-- 获取我的已办 -->
+						<#if query.userId??> 
+							and A.approve_user_id = ${StringUtil.escapeSql(query.userId)} and A.approve_action!='start'
+							union 
+							SELECT null ID_,instance_id PROC_INST_ID_ ,  process_definition_id PROC_DEF_ID_,
+							 -- CONCAT(process_definition_name,'- (',start_user_name,')') 
+							 title NAME_ , null TASK_DEF_KEY_ ,create_time CREATE_TIME_,
+							 title, business_key,business_status,business_status_desc,process_definition_name,process_definition_key,start_user_id,start_user_name,start_user_org_text,start_user_position_text
+							 FROM  ext_run_instance where 1=1 
+							 
+							 and  start_user_id=${StringUtil.escapeSql(query.userId)} and business_status=4 
+						</#if>
+						
+						<#-- 获取我的发起 -->
+						<#if query.startUserId??> 
+							and A.approve_user_id = ${StringUtil.escapeSql(query.startUserId)} and A.approve_action='start'
+						</#if>
+						
+						<#if query.sortOrder?? && query.sortField??> 
+							order by ${StringUtil.escapeSql(query.sortField)} ${StringUtil.escapeSql(query.sortOrder)} 
+						</#if>
+			</#if>
+		]]>
+	</statement>
+	
+	<statement id="querySimple" parameterName="query">
+		<![CDATA[  
+			 select distinct RES.* from ACT_RU_TASK RES left join ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_ WHERE 1=1 
+			 
+			 	<#if query.processInstanceId??> and RES.PROC_INST_ID_ = '${StringUtil.escapeSql(query.processInstanceId)}' </#if>
+
+	  			<#if query.processDefinitionId??> and RES.PROC_DEF_ID_ = '${StringUtil.escapeSql(query.processDefinitionId)}' </#if>
+		]]>
+	</statement>
+
+	<statement id="queryMyCopySend" parameterName="query">
+		<![CDATA[  
+			<#-- 获取"抄送我的"任务 -->
+			SELECT 
+			    task_id ID_,
+			    process_instance_id PROC_INST_ID_,
+			    definition_id PROC_DEF_ID_,
+			    definition_name process_definition_name,
+			    definition_key process_definition_key,
+			    task_name NAME_,
+			    A.create_time CREATE_TIME_,
+			    A.business_key,
+			    B.business_status,
+			    B.business_status_desc,
+			    B.start_user_id,
+			    B.start_user_name,
+			    B.start_user_org_text,
+			    B.start_user_position_text,
+			    B.title,
+			    approve_action assign_forward_cc_action,
+			    assign_forward_cc_user_ids,
+			    approve_user_id assign_forward_cc_operater_user_id
+			FROM
+			    ext_run_task_assign_forward_cc A
+			        LEFT JOIN
+			    ext_run_instance B ON A.process_instance_id = B.instance_id
+			WHERE 1=1
+			    and approve_action = 'copy_send'
+			    and assign_forward_cc_user_ids LIKE ',${StringUtil.escapeSql(query.ccUserId)},'
+		    	
+		    	<#-- 移动端启用 -->
+				<#if query.enableMobile??>
+					and A.definition_id in (select ID_ from act_re_procdef where enable_mobile=${StringUtil.escapeSql(query.enableMobile)})
+				</#if>
+			
+		]]>
+	</statement>
+</statements>

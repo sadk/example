@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.syswin.authority.model.Function" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="t_power_res_func_info">
+			<column id="func_id" type="auto" property="id" text="主键" />
+		
+	 		<column name="func_name" property="name" text="功能名称"/>
+	 		<column name="func_desc" property="description" text="功能描述"/>
+	 		<column name="func_code" property="code" text="功能code"/>
+	 		
+	 		<column name="createby" property="createUserId" text="创建者id"/>
+	 		<column name="createby_name" property="createUserName" text="创建者名称"/>
+	 		<column name="updateby" property="updateUserId" text="修改者id"/>
+	 		<column name="updateby_name" property="updateUserName" text="修改者名称"/>
+	 	
+	 		<column createTime="create_date" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_date" property="updateTime" text="更新时间"/>
+	 		
+	 		<column name="menu_id" property="menuId" isVirtual="true" text="辅助属性,功能按钮挂载的菜单"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from t_power_res_func_info where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							func_name like '%${key}%'  or 
+							func_desc like '%${key}%'  or 
+							func_code like '%${key}%'  or 
+							createby_name like '%${key}%'  or 
+							updateby_name like '%${key}%' 
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and func_id = ${query.id} </#if>
+					
+	  						<#if query.name??> and func_name = '${StringUtil.escapeSql(query.name)}' </#if>
+					
+	  						<#if query.description??> and func_desc = '${StringUtil.escapeSql(query.description)}' </#if>
+						
+	  						<#if query.code??> and func_code = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+						
+	  						<#if query.createUserId??> and createby = ${query.createUserId} </#if>
+	  						<#if query.createUserName??> and createby_name = '${StringUtil.escapeSql(query.createUserName)}' </#if>
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+						
+	  						<#if query.updateUserId??> and updateby = ${query.updateUserId} </#if>
+	  						<#if query.updateUserName??> and updateby_name = '${StringUtil.escapeSql(query.updateUserName)}' </#if>
+						
+						
+							<#if query.updateTimeBegin?? && query.updateTimeEnd??>
+	  							and date_format(update_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.updateTimeBegin)}' and '${StringUtil.escapeSql(query.updateTimeEnd)}'
+	  						</#if>
+	  						
+	  						<#-- 获取菜单下的按钮 -->
+	  						<#if query.menuId??> 
+								and func_id in (select func_id from T_POWER_MENU_FUNC where menu_id=${query.menuId})
+							</#if>
+							
+							<#-- 获取用户的功能按钮 -->
+							<#if query.userId??> 
+								and func_id in (
+									select func_id from T_POWER_MENU_FUNC where menu_func_id in (
+									select menu_func_id from T_POWER_ROLE_MENU_FUNC_OPERATION where role_id in (
+									select role_id from T_POWER_DUTIES_ROLE where duties_id in ( select duties_id from  t_user_duties where user_id =${query.userId}))))
+							</#if>
+	  						
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from t_power_res_func_info ]]>
+	</statement>
+	
+	<statement id="getFunctionListByRoleID" parameterName="query">
+		<![CDATA[
+			<#-- 获取角色的功能按钮(结果集含菜单ID)-->
+			select A.menu_id, A.menu_func_id func_id,B.func_name ,B.func_desc,A.createby,A.createby_name,A.create_date from T_POWER_MENU_FUNC A left join T_POWER_RES_FUNC_INFO B on A.func_id=B.func_id where A.menu_func_id in (
+			select menu_func_id from  T_POWER_ROLE_MENU_FUNC_OPERATION where role_id = ${query.roleId})
+		]]>
+	</statement>
+	
+	<statement id="getFunctionListByUserID" parameterName="query">
+		<![CDATA[
+			<#-- 获取用的的功能按钮(结果集含菜单ID)-->
+			select A.menu_id, A.menu_func_id func_id,B.func_name ,B.func_desc,A.createby,A.createby_name,A.create_date from T_POWER_MENU_FUNC A left join T_POWER_RES_FUNC_INFO B on A.func_id=B.func_id where A.menu_func_id in (
+			select menu_func_id from  T_POWER_ROLE_MENU_FUNC_OPERATION where role_id in(
+            select role_id from  T_POWER_DUTIES_ROLE where duties_id in (select duties_id from  t_user_duties where user_id =${query.userId})))
+		]]>
+	</statement>
+	
+	
+</statements>
