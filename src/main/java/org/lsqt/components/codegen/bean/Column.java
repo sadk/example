@@ -45,6 +45,8 @@ public class Column {
 
 	
 	public static String JAVA_TYPE_DESC_JAVA_LANG_STRING="java.lang.String";
+	public static String JAVA_TYPE_DESC_JAVA_LANG_STRING_CLOB="java.sql.Clob";
+	
 	public static String JAVA_TYPE_DESC_JAVA_LANG_BYTE="java.lang.Byte";
 	public static String JAVA_TYPE_DESC_JAVA_LANG_INTEGER="java.lang.Integer";
 	public static String JAVA_TYPE_DESC_JAVA_LANG_LONG="java.lang.Long";
@@ -57,7 +59,9 @@ public class Column {
 	public static String JAVA_TYPE_DESC_JAVA_SQL_TIMESTAMP="java.sql.Timestamp"; // 日期
 	public static String JAVA_TYPE_DESC_JAVA_SQL_DATE="java.sql.Date";
 	public static String JAVA_TYPE_DESC_JAVA_UTIL_DATE="java.util.Date";
+	
 	public static String JAVA_TYPE_DESC_JAVA_LANG_BYTE_ARRAY="[B"; // Blob数据类型
+	public static String JAVA_TYPE_DESC_JAVA_SQL_BLOB="java.sql.Blob";
 	
 	private Long id;
 	private String dbName;
