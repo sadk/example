@@ -103,7 +103,7 @@ public class JDBCExecutor {
 	}
 
 	private PreparedStatement prepareStatement(Connection conn, String sql,Object[] paramValues) throws SQLException {
-		log.debug(String.format(formatStr, sql,ArrayUtil.join(paramValues, ",")));
+		log.debug(String.format(formatStr, sql,ArrayUtil.join(paramValues, ",",true)));
 		PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
 		ParameterMetaData pmd = null;
@@ -161,7 +161,7 @@ public class JDBCExecutor {
 				return (T) rs.getObject(1);
 			}
 
-			jdbcCache.clear();
+			//jdbcCache.clear();
 			return (T) temp;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -187,12 +187,13 @@ public class JDBCExecutor {
 		ResultSet rs = null;
 		
 		try {
+			/*
 			final String cacheKey = getCachedKey(sql, paramValues);
 			Object cacheResult = jdbcCache.get(cacheKey);
 			if(cacheResult!=null) {
 				log.info(String.format(formatStr, "hit cache, cacheKey:",cacheKey));
 				return (List<Map<String, Object>>)cacheResult;
-			}
+			}*/
 			
 			con = prepareConnection();
 			stmt = prepareStatement(con, sql, paramValues);
@@ -210,7 +211,7 @@ public class JDBCExecutor {
 				list.add(row);
 			}
 			
-			jdbcCache.put(cacheKey, list);
+			//jdbcCache.put(cacheKey, list);
 			return list;
 		} catch (Exception ex) {
 			log.error(" --- executeQuery fail , " + ex.getMessage());

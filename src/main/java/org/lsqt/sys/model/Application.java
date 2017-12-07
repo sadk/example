@@ -27,6 +27,8 @@ public class Application {
 	private String enable;
 	private String gid;
 	
+	private String tenantCode;
+	
 	//@JSONField (format="yyyy-MM-dd")  
 	private Date createTime;
 	private String createTimeDesc;
@@ -121,6 +123,14 @@ public class Application {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
 	}
 	
 }

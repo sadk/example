@@ -47,8 +47,10 @@
 								</td>
 							</tr> 
 							<tr>
+								<td>所属租户:</td>
+								<td><input id="tenantCode" name="tenantCode" class="mini-buttonedit" onbuttonclick="onButtonEdit" />   </td>
 								<td>备注：</td>
-								<td colspan="3">
+								<td>
 								 	<input id="remark" name="remark" class="mini-textbox"/>
 								</td>
 							</tr>
@@ -65,7 +67,29 @@
 			mini.parse();
 
 			var form = new mini.Form("edit-form1");
-		
+			
+	        function onButtonEdit(e) {
+	            var btnEdit = this;
+	            mini.open({
+	                url: "${pageContext.request.contextPath}/apps/default/admin/sys/tenant/selector_tenant.jsp",
+	                title: "选择列表",
+	                width: 650,
+	                height: 380,
+	                ondestroy: function (action) {
+	                    //if (action == "close") return false;
+	                    if (action == "ok") {
+	                        var iframe = this.getIFrameEl();
+	                        var data = iframe.contentWindow.GetData();
+	                        data = mini.clone(data);    //必须
+	                        if (data) {
+	                            btnEdit.setValue(data.code);
+	                            btnEdit.setText(data.name);
+	                        }
+	                    }
+
+	                }
+	            });
+	        }
 			function SaveData() {
 				var o = form.getData();
 				form.validate();
@@ -100,6 +124,8 @@
 							form.setData(o);
 							form.setChanged(false);
 							
+							loadTenantName(o.tenantCode);
+							
 							if (data.action == 'view') {
 								form.setEnabled(false);
 							}
@@ -108,6 +134,21 @@
 				}
 			}
 
+			function loadTenantName(code){
+				$.ajax({
+					url : "${pageContext.request.contextPath}/tenant/page?code=" + code,
+					dataType: 'json',
+					cache : false,
+					success : function(text) {
+						var o = mini.decode(text);
+						if(o!=null && o.data!=null && o.data.length>0) {
+							o = o.data[0];
+							mini.get("tenantCode").setText(o.name);
+						}
+					}
+				});
+			}
+			
 			function GetData() {
 				var o = form.getData();
 				return o;

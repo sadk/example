@@ -58,6 +58,25 @@ CREATE TABLE `sys_region` (
 
 
 
+drop table  IF EXISTS sys_tenant ;  
+CREATE TABLE `sys_tenant` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL COMMENT '租户名称',
+  `value` varchar(45) DEFAULT NULL,
+  `code` varchar(100) NOT NULL COMMENT '租户编码',
+  
+  `sn` int(10) DEFAULT '0' COMMENT '排序',
+  `remark` varchar(256) DEFAULT NULL,
+  `enable` varchar(2) DEFAULT NULL COMMENT '启用状态 0=未起用，1=启用',
+  
+  `gid` varchar(40) DEFAULT NULL COMMENT 'gid:全局唯一编号',
+  `create_time` datetime NOT NULL COMMENT 'createTime:创建日期',
+  `update_time` datetime NOT NULL COMMENT 'updateTime:更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_tenant_code` (`code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='租户表';
+
+
 
 drop table  IF EXISTS sys_application ;   
 CREATE TABLE `sys_application` (
@@ -73,6 +92,7 @@ CREATE TABLE `sys_application` (
   `create_time` datetime NOT NULL COMMENT 'createTime:创建日期',
   `update_time` datetime NOT NULL COMMENT 'updateTime:更新时间',
 
+  `tenant_code` varchar(100) NOT NULL COMMENT '租户编码',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_app_code` (`code`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='应用表';

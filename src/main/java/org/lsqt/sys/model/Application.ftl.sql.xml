@@ -10,6 +10,8 @@
 		<column name="enable" property="enable" text="是否启用"/>
 		<column name="remark" property="remark" />
 		
+		<column name="tenant_code" property="tenantCode" text="租户码" />
+		
 		<column gid="gid" property="gid" text="全局唯一编号"/>
 		<column createTime="create_time" property="createTime" text="创建时间"/>
 		<column updateTime="update_time" property="updateTime" text="更新时间"/>

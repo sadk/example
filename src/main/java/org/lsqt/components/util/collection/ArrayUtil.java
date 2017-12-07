@@ -1,7 +1,9 @@
 package org.lsqt.components.util.collection;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,6 +40,28 @@ public class ArrayUtil {
 				temp.append(separator );
 			}
 		}
+		return temp.toString();
+	}
+	
+	public static String join(Object [] objs,String separator,boolean formatDate){
+		if(objs == null || objs.length == 0) return "";
+		
+		StringBuilder temp=new StringBuilder();
+		
+		int i=0;
+		for(Object e: objs) {
+			i++;
+			if(e!=null && java.util.Date.class.isAssignableFrom(e.getClass())) {
+				Date dt = (Date)e;
+				temp.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dt));
+			}else {
+				temp.append(e);
+			}
+			if(i != objs.length) {
+				temp.append(separator );
+			}
+		}
+		
 		return temp.toString();
 	}
 	
