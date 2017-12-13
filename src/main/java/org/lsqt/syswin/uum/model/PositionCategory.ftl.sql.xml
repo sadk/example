@@ -59,6 +59,12 @@
 							<#if query.updateTimeBegin?? && query.updateTimeEnd??>
 	  							and date_format(update_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.updateTimeBegin)}' and '${StringUtil.escapeSql(query.updateTimeEnd)}'
 	  						</#if>
+	  						
+	  						<#-- 获取岗位分类下的实体岗 -->
+	  						<#if query.categoryId??>
+	  							and duties_id in (SELECT duties_id FROM t_power_duties_type_mid where type_id =  ${query.categoryId})
+	  						</#if>
+	  						
         	</#if>
         	
 		]]>
