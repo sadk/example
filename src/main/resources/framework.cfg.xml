@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<config>
+	<mvc>
+		<url>
+			<anonymous>
+				<!-- 指定静态资源加速 -->
+				<pattern name="static" value="/scripts/*"></pattern>
+				
+				<!-- 登陆、注册等可匿名访问的地址  -->
+				<pattern name="anonymous">
+					/user/login,
+			      	/user/save_or_update
+				</pattern>
+				
+				<!-- 脱离MVC容器管理的URL,例如自定义的Servlet地址 -->
+				<pattern name="escape" value="/index.html"></pattern>
+				
+				<!-- 特定静态资源加速 -->
+				<pattern name="css" value="*.css"></pattern>
+				<pattern name="js" value="*.js"></pattern>
+				<pattern name="img" value="*.jpg,*.png,*.gif"></pattern>
+				<pattern name="file" value="*.xml,*.pdf,*.xls,*.xlsx,*.doc,*.docx,*.ppt,*.pptx"></pattern>
+			</anonymous>
+			
+			
+			<permission>
+				<!-- 需要权限校验才能访问 -->
+				<pattern name="index" value="/apps/default/admin/index.jsp"></pattern>
+	
+				<pattern name="permission" module="system.uum.user">
+					/syswin/user/delete,
+					/syswin/user/save_or_update,
+					/syswin/user/delete,
+					/syswin/user/add_user_positions,
+					/syswin/user/remove_user_positions
+				</pattern>
+			</permission>
+			
+		</url>
+	</mvc>
+	
+	<db>
+		<node id="dataSourceDruidWorkFlow" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close" type="read" tenant="1000">   
+		    <property name="url">
+		   	 	<value><![CDATA[jdbc:mysql://localhost:3306/ets_work_flow?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&connectTimeout=6000&socketTimeout=6000]]></value>
+		    </property>  
+		    <property name="username" value="root" />  
+		    <property name="password" value="123456" />  
+		    <property name="initialSize" value="1" />  
+		    <property name="minIdle" value="1" />   
+		    <property name="maxActive" value="20"/>  
+		    <property name="maxWait" value="60000" />  
+		    <property name="timeBetweenEvictionRunsMillis" value="60000" />  
+		    <property name="minEvictableIdleTimeMillis" value="300000" />  
+		    <property name="validationQuery" value="SELECT 1 from dual" />  
+		    <property name="testWhileIdle" value="true" />  
+		    <property name="testOnBorrow" value="true" />  
+		    <property name="testOnReturn" value="false" />  
+		    <property name="poolPreparedStatements" value="true" />  
+		    <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />  
+		    <property name="filters" value="stat" />   
+		</node>
+		
+		<node id="dataSourceDruid" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close" type="write">   
+			    <property name="url">
+			   	 	<value><![CDATA[jdbc:mysql://localhost:3306/ets_work_flow?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&connectTimeout=6000&socketTimeout=6000]]></value>
+			    </property>  
+			    <property name="username" value="root" />  
+			    <property name="password" value="123456" />  
+			    <property name="initialSize" value="1" />  
+			    <property name="minIdle" value="1" />   
+			    <property name="maxActive" value="20"/>  
+			    <property name="maxWait" value="60000" />  
+			    <property name="timeBetweenEvictionRunsMillis" value="60000" />  
+			    <property name="minEvictableIdleTimeMillis" value="300000" />  
+			    <property name="validationQuery" value="SELECT 1 from dual" />  
+			    <property name="testWhileIdle" value="true" />  
+			    <property name="testOnBorrow" value="true" />  
+			    <property name="testOnReturn" value="false" />  
+			    <property name="poolPreparedStatements" value="true" />  
+			    <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />  
+			    <property name="filters" value="stat" />   
+		</node>
+	</db>
+</config>
