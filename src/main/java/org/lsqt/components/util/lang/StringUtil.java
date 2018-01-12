@@ -65,6 +65,16 @@ public class StringUtil {
 		}
 		return true;
 	}
+	
+	/**
+	 * 默认以逗号分割，连接集合中的元素
+	 * @param collection
+	 * @param separator
+	 * @return
+	 */
+	public static String join(Collection<?> collection){
+    	return join(collection,",","","");
+    }
 
 	/**
 	 * 用分割符连接集合中的元素
@@ -73,18 +83,31 @@ public class StringUtil {
 	 * @return
 	 */
 	public static String join(Collection<?> collection,String separator){
-    	if(collection.isEmpty()) return "";
-    	
-    	StringBuilder sb = new StringBuilder();
+    	return join(collection,separator,"","");
+    }
+	
+	/**
+	 * 
+	 * @param collection
+	 * @param separator 
+	 * @param prefix 每一个元素的前缀字符
+	 * @param endfix 每一个元素的后缀字符
+	 * @return
+	 */
+	public static String join(Collection<?> collection,String separator,String prefix,String endfix){
+		if(collection.isEmpty()) return "";
+		
+		StringBuilder sb = new StringBuilder();
     	Iterator<?> i = collection.iterator();
-    	sb.append(i.next());
+    	sb.append(prefix+i.next()+endfix);
     	
     	while(i.hasNext()){
     		sb.append(separator);
-    		sb.append(i.next());
+    		sb.append(prefix+i.next()+endfix);
     	}
     	return sb.toString();
-    }
+	}
+	
 	
 	public static List<String> split(String text, String splitor) {
 		if (text.startsWith(splitor)) {

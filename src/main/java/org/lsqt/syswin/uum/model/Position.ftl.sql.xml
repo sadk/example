@@ -48,7 +48,7 @@
 							)
 						</#if>
 				
-						<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						<#if query.ids??> and duties_id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  					<#if query.id??> and duties_id = ${query.id} </#if>
 					
@@ -89,11 +89,24 @@
   						
   						<#-- 用户的岗位 -->
   						<#if query.userId??>
-  							and duties_id in (SELECT duties_id FROM  t_user_duties where user_id = ${query.userId}) 
+  							and duties_id in (select duties_id from  t_user_duties where user_id = ${query.userId}) 
+  						</#if>
+  						
+  						<#-- 用于查询一堆用户的岗位 -->
+  						<#if query.userIds?? && StringUtil.isNotBlank(query.userIds)>
+  							and duties_id in (select duties_id from  t_user_duties where user_id in (${StringUtil.escapeSql(query.userIds)})) 
   						</#if>
   						
   						
+  						<#-- 角色的岗位 -->
+  						<#if query.roleId??>
+  							and duties_id in (select duties_id from t_power_duties_role where role_id = ${query.roleId})
+  						</#if>
   						
+  						<#-- 查询某个岗位类别下的具体岗 -->
+  						<#if query.positionCategoryId??>
+  							and duties_id in (select duties_id from t_power_duties_type_mid where type_id = ${query.positionCategoryId}) 
+  						</#if>
         	</#if>
         	
 		]]>
@@ -127,10 +140,22 @@
 		select user_id, min(pk) pk from (
 			select A.pk,A.duties_id,A.user_id,A.duties_type from t_user_duties A left join t_org_duties_info B on A.duties_id=B.duties_id where A.user_id in (
 					select user_id from (
-					SELECT user_id,count(user_id) cnt FROM ets_platform.t_user_duties where duties_type=1 group by user_id having cnt >1
+					SELECT user_id,count(user_id) cnt FROM t_user_duties where duties_type=1 group by user_id having cnt >1
 				) amount 
 			) and duties_type = 1  and B.duties_id is not null order by user_id,duties_type  
 		) temp_01 group by user_id  
+		]]>
+	</statement>
+	
+	<statement id="getConfigedPermitPosition" parameterName="query">
+		<![CDATA[ 
+		<#-- 获取已配置的权限岗位  -->
+		select * from t_org_duties_info where duties_id in (
+			select distinct(duties_id) from t_power_permit_duties_config where duties_id in (
+				select duties_id from t_org_duties_info where 1=1 
+						and duties_id in (SELECT duties_id FROM t_power_duties_role where role_id = ${query.roleId})
+			)
+		)
 		]]>
 	</statement>
 </statements>

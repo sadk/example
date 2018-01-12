@@ -1,6 +1,8 @@
 package org.lsqt.act.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.lsqt.components.context.annotation.Inject;
@@ -8,6 +10,12 @@ import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.FlowElement;
+import org.activiti.bpmn.model.UserTask;
+import org.activiti.engine.RepositoryService;
+import org.lsqt.act.ActUtil;
+import org.lsqt.act.controller.DefinitionController.NodeObject;
 import org.lsqt.act.model.Definition;
 import org.lsqt.act.model.Node;
 import org.lsqt.act.model.NodeButton;
@@ -42,11 +50,33 @@ public class ReDefinitionServiceImpl implements ReDefinitionService{
 		return db.deleteById(ReDefinition.class, Arrays.asList(ids).toArray());
 	}
 	
+	/**
+	 * 获取流程图里的用户任务节点
+	 * @param definitionId
+	 * @return
+	 */
+	private List<UserTask> getDiagramTaskNodeList(String definitionId) {
+		List<UserTask> diagramNodeList = new ArrayList<>(); // 流程图里的任务节点
+		RepositoryService repositoryService = ActUtil.getRepositoryService();
+		BpmnModel model = repositoryService.getBpmnModel(definitionId);
+		if (model != null) {
+			Collection<FlowElement> flowElements = model.getMainProcess().getFlowElements();
+			for (FlowElement e : flowElements) {
+				if (UserTask.class.isAssignableFrom(e.getClass())) {
+					UserTask task = (UserTask) e;
+					diagramNodeList.add(task);
+				}
+			}
+		}
+		return diagramNodeList;
+	}
 	
 	public ReDefinition copySettings(String sourceDefinitionId,String targetDefinitionId) {
 		if(StringUtil.isBlank(sourceDefinitionId)){
 			return null;
 		}
+		
+		List<UserTask> diagramNodeList = getDiagramTaskNodeList(targetDefinitionId);
 		
 		ReDefinitionQuery query = new ReDefinitionQuery();
 		query.setDefinitionId(sourceDefinitionId);
@@ -67,6 +97,13 @@ public class ReDefinitionServiceImpl implements ReDefinitionService{
 		for(Node e: nodeList) {
 			e.setId(null);
 			e.setDefinitionId(targetDefinitionId);
+			
+			for(UserTask t: diagramNodeList) {
+				if(t.getId().equals(e.getTaskKey())) {
+					e.setTaskName(t.getName());
+					break;
+				}
+			}
 			db.save(e);
 		}
 		
@@ -77,6 +114,13 @@ public class ReDefinitionServiceImpl implements ReDefinitionService{
 		for (NodeUser n : nodeUserList) {
 			n.setId(null);
 			n.setDefinitionId(targetDefinitionId);
+			
+			for(UserTask t: diagramNodeList) {
+				if(t.getId().equals(n.getTaskKey())) {
+					n.setName(t.getName());
+					break;
+				}
+			}
 			db.save(n);
 		}
 		
@@ -87,6 +131,14 @@ public class ReDefinitionServiceImpl implements ReDefinitionService{
 		for (NodeButton n: nodeButtonList) {
 			n.setId(null);
 			n.setDefinitionId(targetDefinitionId);
+			
+			for(UserTask t: diagramNodeList) {
+				if(t.getId().equals(n.getTaskKey())) {
+					n.setTaskName(t.getName());
+					break;
+				}
+			}
+			
 			db.save(n);
 		}
 		
@@ -97,6 +149,13 @@ public class ReDefinitionServiceImpl implements ReDefinitionService{
 		for(NodeForm n: formList){
 			n.setId(null);
 			n.setDefinitionId(targetDefinitionId);
+			
+			for(UserTask t: diagramNodeList) {
+				if(t.getId().equals(n.getTaskKey())) {
+					n.setTaskName(t.getName());
+					break;
+				}
+			}
 			db.save(n);
 		}
 		

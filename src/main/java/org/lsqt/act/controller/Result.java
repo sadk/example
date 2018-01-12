@@ -74,7 +74,7 @@ package org.lsqt.act.controller;
  */
 public class Result {
 	private boolean isSuccess = false;
-	private int status = 503; // 一般定义为HTTP的状态码
+	private int status = 0; 
 	private String message;
 	private Object data;
 
@@ -113,7 +113,7 @@ public class Result {
 
 	public static Result ok(String msg, Object data) {
 		Result rs = new Result();
-		rs.setMessage("");
+		rs.setMessage(msg);
 		rs.setStatus(STATUS_OK);
 		rs.setIsSuccess(true);
 		rs.setData(data);

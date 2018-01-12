@@ -11,7 +11,8 @@ public class UserRuleQuery {
 
 	private String sortOrder;
 	private String sortField;
-
+	private String sortFieldGbk; // 中文排序字段
+	
 	private String key; // 关键字
 	private String ids; // 用逗号分割的id字符
 
@@ -43,6 +44,9 @@ public class UserRuleQuery {
 
 	/** 备注 */
 	private String remark;
+	
+	/**1=启用 0=禁用**/
+	private Integer enable;
 
 	// ------------------------- 辅助字段 -------------------------
 	private String categoryName ;
@@ -183,6 +187,22 @@ public class UserRuleQuery {
 
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
+	}
+
+	public Integer getEnable() {
+		return enable;
+	}
+
+	public void setEnable(Integer enable) {
+		this.enable = enable;
+	}
+
+	public String getSortFieldGbk() {
+		return sortFieldGbk;
+	}
+
+	public void setSortFieldGbk(String sortFieldGbk) {
+		this.sortFieldGbk = sortFieldGbk;
 	}
 
 }

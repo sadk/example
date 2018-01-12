@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.UserRuleMatrixFlow" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_user_rule_matrix_flow">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="user_rule_id" property="userRuleId" text="用户规则ID"/>
+	 		
+	 		<column name="user_rule_name" property="userRuleName" text="用户规则ID"/>
+	 	
+	 		<column name="definition_id" property="definitionId" text="流程定义Id"/>
+	 	
+	 		<column name="task_key" property="taskKey" text="流程节点"/>
+	 	
+	 		<column name="task_name" property="taskName" text="流程节点名称"/>
+	 	
+	 		<column name="definition_name" property="definitionName" text="流程定义名称" />
+	 		
+	 		<column name="version" property="version" text="流程定义版本号" />
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_user_rule_matrix_flow where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							definition_id like '%${key}%'  or 
+							task_key like '%${key}%'  or 
+							task_name like '%${key}%' 
+					)
+				</#if>
+
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.userRuleId??> and user_rule_id = ${query.userRuleId} </#if>
+					
+	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
+					
+	  						<#if query.taskKey??> and task_key = '${StringUtil.escapeSql(query.taskKey)}' </#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_user_rule_matrix_flow ]]>
+	</statement>
+	
+</statements>

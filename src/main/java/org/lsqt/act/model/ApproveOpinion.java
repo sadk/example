@@ -92,8 +92,16 @@ public class ApproveOpinion {
 	
 	
 	
+	public static List<Long> getIdList(List<ApproveOpinion> list) {
+		List<Long> data = new ArrayList<>();
+		for(ApproveOpinion e: list) {
+			if(e!=null) {
+				data.add(e.getId());
+			}
+		}
+		return data;
+	}
 	
-
 	public String getCreateTimeDesc() {
 		if(createTime!=null) {
 			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(this.createTime);

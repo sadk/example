@@ -446,7 +446,7 @@ public class ApplicationFilter implements Filter{
 			throw new ApplicationException(ex);
 		} finally{
 			db.close();
-			platformDb.threadConnectionDestory();
+			platformDb.close();
 		}
 	
 		// 3.展现视图

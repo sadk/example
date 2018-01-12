@@ -11,7 +11,8 @@ public class OrgQuery {
 
 	private String sortOrder;
 	private String sortField;
-
+	private String sortFieldGbk;// 中文排序，如：order by CONVERT(A.org_node_path_text USING gbk) asc
+	
 	private String key; // 关键字
 	private String ids; // 用逗号分割的id字符
 
@@ -259,6 +260,14 @@ public class OrgQuery {
 
 	public void setNodePath2(String nodePath2) {
 		this.nodePath2 = nodePath2;
+	}
+
+	public String getSortFieldGbk() {
+		return sortFieldGbk;
+	}
+
+	public void setSortFieldGbk(String sortFieldGbk) {
+		this.sortFieldGbk = sortFieldGbk;
 	}
 
 }

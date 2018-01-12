@@ -12,9 +12,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,21 +26,20 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
-import org.lsqt.components.cache.Cache;
-import org.lsqt.components.cache.SimpleCache;
 import org.lsqt.components.db.DbException;
 import org.lsqt.components.db.IdGenerator;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.db.Plan;
+import org.lsqt.components.db.Db.DbDialect;
 import org.lsqt.components.db.orm.ORMappingIdGenerator;
 import org.lsqt.components.db.orm.SqlStatement;
+import org.lsqt.components.db.orm.SqlStatementArgs;
 import org.lsqt.components.db.orm.SqlStatementBuilder;
 import org.lsqt.components.db.orm.Table;
 import org.lsqt.components.db.orm.Table.Column;
 import org.lsqt.components.db.orm.util.ModelUtil;
 import org.lsqt.components.util.bean.BeanUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
-import org.lsqt.components.util.lang.Md5Util;
 import org.lsqt.components.util.lang.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ import freemarker.template.TemplateModelException;
  *
  */
 public class PlatformDb {
-	
+
 	static final String formatStr = " --- %s -- ===> %s";
 
 	static final Logger log = LoggerFactory.getLogger(PlatformDb.class);
@@ -64,8 +65,6 @@ public class PlatformDb {
 	final JDBCExecutor exe = new JDBCExecutor();
 
 	final IdGenerator idGenerator = new ORMappingIdGenerator();
-	
-	private Cache jdbcCache  = new SimpleCache();
 	
 	private SqlStatementBuilder sqlStatementBuilder;
 	public PlatformDb(){}
@@ -85,20 +84,20 @@ public class PlatformDb {
 	}
 	static StringTemplateLoader FTL_STRINGLOADER = new StringTemplateLoader();
 	
-	public void threadConnectionDestory() {
+	public void close() {
 		try {
 			if (null == exe.getCurrentConnection()) {
 				log.warn(" --- No thread connection was found for the current binding~!");
 			}
 			
 			Connection con = exe.getCurrentConnection();
-			log.debug(" --- >>>>>>>>>>>> thread-id:"+Thread.currentThread().getId()+", >>threadConnectionDestory ing...  "+con);
+			//log.debug(" --- >>>>>>>>>>>> thread-id:"+Thread.currentThread().getId()+", >>db.close ing...  "+con);
 			
 			if(con!=null && !con.isClosed() && !con.getAutoCommit()){
 				con.commit();
 			}
 			exe.close(null, null, con);
-			log.debug(" --- >>>>>>>>>>>> thread-id:"+Thread.currentThread().getId()+", >>threadConnectionDestoryed ...  "+con);
+			//log.debug(" --- >>>>>>>>>>>> thread-id:"+Thread.currentThread().getId()+", >>db.closed ...  "+con);
 		} catch (Exception e) {
 			throw new DbException("close db resource fail~!", e);
 		}
@@ -256,7 +255,14 @@ public class PlatformDb {
 		return false;
 	}
 	
-	private Map<String, Object> prepareInsertColumn(Table table, Object entity, String... prop) {
+	/**
+	 * 获取模型 对象映射的表字段名和字段值， key=字段名 value=字段值
+	 * @param entity 
+	 * @param table
+	 * @param prop
+	 * @return
+	 */
+	private Map<String, Object> getModelMappedInsertColumnSqlAndValues(Object entity,Table table,String... prop) {
 		Map<String, Object> columnValues = new LinkedHashMap<>(); // 必须使用有序的,db缓存用到sql散列
 
 		if (table.getColumnList() == null || table.getColumnList().isEmpty()) {
@@ -317,56 +323,20 @@ public class PlatformDb {
 	}
 	 
 	
-	public Serializable save(Object pojo, String... prop) throws DbException {
-		final String sqlFmt = "insert into %s (%s) values (%s)";
+	public Serializable save(Object model, String... prop) throws DbException {
 		
-		List<Table> list = sqlStatementBuilder.getAllTable();
-		String clazz = pojo.getClass().getName();
-		Table table = null;
-		for (Table e : list) {
-			if (clazz.equals(e.getEntityClass())) {
-				table = e;
-				break;
-			}
-		}
+		Table table = getModelMappedTable(model);
 		
-		if (table == null) {
-			throw new DbException("not found ORMapping file for entity : "+pojo);
-			//return StringUtil.EMPTY;
-		}
+		Map<String, Object> columnValues = getModelMappedInsertColumnSqlAndValues(model,table,prop);
 		
-		Map<String,Object> columnValues = prepareInsertColumn(table,pojo,prop);
-		if (columnValues==null || columnValues.isEmpty()) {
-			return null;
-		}
+		SqlStatementArgs insert = getModelInsertSqlStatentArgs(model, columnValues);
 		
-		StringBuilder columnSQL = new StringBuilder();
-		StringBuilder columnParam = new StringBuilder();
-		
-		List<Object> args = new ArrayList<>();
-		int i=0;
-		
-		Set<Entry<String, Object>>  set = columnValues.entrySet();
-		for (Entry<String,Object> e: set) {
-			columnSQL.append(e.getKey());
-			columnParam.append("?");
-			if (i != columnValues.size() - 1) {
-				columnSQL.append(",");
-				columnParam.append(",");
-			}
-
-			args.add(e.getValue());
-			
-			i++;
-		}
-		
-		final String sql = String.format(sqlFmt, getFullTable(pojo.getClass()),columnSQL.toString(),columnParam.toString());
-		Serializable id = exe.executeUpdate(sql, args.toArray());
+		Serializable id = exe.executeUpdate(insert.getSql(), insert.getArgs().toArray());
 		
 		for (Column c : table.getColumnList()) {
 			if(isIdAuto(c)){
 				try {
-					BeanUtil.forceSetProperty(pojo, c.getProperty(), id);
+					BeanUtil.forceSetProperty(model, c.getProperty(), id);
 					break;
 				} catch (Exception ex) {
 					throw new DbException(ex);
@@ -375,6 +345,55 @@ public class PlatformDb {
 		}
 		return id;
 	}
+	
+	/**
+	 * 获取模型对象的插入SQL（含占位符）语句和对应的参数值
+	 * @param model
+	 * @param columnValues
+	 * @return
+	 */
+	private SqlStatementArgs getModelInsertSqlStatentArgs(Object model,Map<String, Object> columnValues) {
+		final String sqlFmt = "insert into %s (%s) values (%s)";
+		
+		if (columnValues == null || columnValues.isEmpty()) {
+			return null;
+		}
+		
+		StringBuilder columnSQL = new StringBuilder();
+		StringBuilder columnParam = new StringBuilder();
+		
+		List<Object> args = new ArrayList<>();
+		int i = 0;
+
+		Set<Entry<String, Object>> set = columnValues.entrySet();
+		for (Entry<String, Object> e : set) {
+			columnSQL.append(e.getKey());
+			columnParam.append("?");
+			if (i != columnValues.size() - 1) {
+				columnSQL.append(",");
+				columnParam.append(",");
+			}
+
+			args.add(e.getValue());
+
+			i++;
+		}
+		
+		String sql = String.format(sqlFmt, getFullTable(model.getClass()),columnSQL.toString(),columnParam.toString());
+
+		SqlStatementArgs ssa = new SqlStatementArgs(sql,args);
+		return ssa;
+	}
+	
+	/**
+	 * 获取模型映射的表对象
+	 * @param pojo
+	 * @return
+	 */
+	private Table getModelMappedTable(Object pojo) {
+		return getModelMappedTable(pojo.getClass());
+	}
+ 
 
 	public <T> T saveOrUpdate(T model, String... props) throws DbException {
 		Object id = getIdValue(model);
@@ -436,7 +455,7 @@ public class PlatformDb {
 		}
 		
 		if (isSameClazz) { // 删除的是同一张表的多个记录
-			Table table = getTable(pojo[0].getClass());
+			Table table = getModelMappedTable(pojo[0].getClass());
 			if(table == null) {
 				throw new DbException("没有找到数据库表的映射("+pojo[0].getClass().getName()+")~!");
 			}
@@ -464,14 +483,13 @@ public class PlatformDb {
 			sqlFmt = sqlFmt.concat(sqlHolds.toString()).concat(")");
 			
 			String sql = String.format(sqlFmt, getFullTable(table),idColumn.getId());
-			
 			return exe.executeUpdate(sql, args.toArray());
 			
 		} else {
 			
 			for (Object e : pojo) {
 				try {
-					Table table = getTable(e.getClass());
+					Table table = getModelMappedTable(e.getClass());
 					if(table == null) {
 						throw new DbException("没有找到数据库表的映射("+pojo[0].getClass().getName()+")~!");
 					}
@@ -486,8 +504,6 @@ public class PlatformDb {
 					throw new DbException(ex);
 				}
 			}
-			
-			PlatformDb.this.jdbcCache.clear();
 			return cnt;
 		}
 		 
@@ -500,7 +516,7 @@ public class PlatformDb {
 			throw new DbException("id不能为空");
 		}
 
-		final Table table = getTable(type);
+		final Table table = getModelMappedTable(type);
 
 		if (table == null) {
 			return 0;
@@ -532,7 +548,7 @@ public class PlatformDb {
 		return exe.executeUpdate(sql, id);
 	}
 
-	private Table getTable(Class<?> type) {
+	private Table getModelMappedTable(Class<?> type) {
 		List<Table> list = sqlStatementBuilder.getAllTable();
 		String clazz = type.getName();
 		Table table = null;
@@ -564,7 +580,7 @@ public class PlatformDb {
 	
 	public <T> T getById(Class<T> type, Object id) {
 		String sqlFmt = "select * from %s where %s=?";
-		Table table = getTable(type);
+		Table table = getModelMappedTable(type);
 		if (table == null) {
 			throw new DbException("没有找到映射文件(" + type.getName() + ")~!");
 		}
@@ -594,7 +610,7 @@ public class PlatformDb {
 	private  <T> T toModel(Class<T> type,Map<String, Object> row)  {
 		try{
 			Object entity = type.newInstance();
-			Table table = getTable(type);
+			Table table = getModelMappedTable(type);
 			if (table == null) {
 				throw new DbException("没有找到映射文件~!");
 			}
@@ -645,7 +661,7 @@ public class PlatformDb {
 		}
 		
 		String sqlFmt = "update %s set %s where %s=?";
-		Table table = getTable(pojo.getClass());
+		Table table = getModelMappedTable(pojo.getClass());
 		if (table == null) {
 			throw new DbException("没有找到映射文件(" + pojo.getClass().getName() + ")~!");
 		}
@@ -960,8 +976,30 @@ public class PlatformDb {
 			throw new DbException("渲染sql模板出错，请偿试检查参数",ex);
 		}
 	}
-
-	
+/*
+	public Long queryForCount(String nameSpace,String sqlID, Object... args) {
+		SqlStatement stmt = getSqlStatement(nameSpace, sqlID);
+		if (stmt == null) {
+			throw new DbException("没有在映射文件件里找到指定的sql编号：" + sqlID + " , namespace:" + nameSpace);
+		}
+		final String sqlMaped = prepareRenderedSql(stmt, args);
+		 
+		
+		
+		long total = 0;
+		String totalSqlFmt = "select count(1) from (%s) _t0_amount";
+		String totalSql = String.format(totalSqlFmt,sqlMaped);
+		
+		List<Map<String, Object>> totalMapList = exe.executeQuery(totalSql);
+		if (totalMapList != null && totalMapList.size() > 0) {
+			Object cnt = totalMapList.get(0).values().iterator().next();
+			if (cnt != null) {
+				total = Long.valueOf(cnt.toString());
+			}
+		}
+		return total;
+	}
+*/	
 	public <T> Page<T> queryForPage(String nameSpace,String sqlID, int pageIndex, int pageSize, Class<T> requiredType, Object... args) {
 		SqlStatement stmt = getSqlStatement(nameSpace, sqlID);
 		if (stmt == null) {
@@ -1082,229 +1120,551 @@ public class PlatformDb {
 		executePlan(true,plan);
 	}
 	 
-	static final ThreadLocal<Connection> THREAD_LOCAL_CON = new ThreadLocal<>();
-	
-	
-	private  final class JDBCExecutor {
-		public JDBCExecutor(){}
-		
-		public void setCurrentConnection(Connection connection){
-			THREAD_LOCAL_CON.set(connection);
-		}
-		
-		public void setConfigDataSource(DataSource dataSource) {
-			this.dataSource = dataSource;
-		}
-		
-		private DataSource dataSource;
-
-		
-		private volatile boolean isBroken = false;
-		
-		
-		public Connection getCurrentConnection() {
-			return THREAD_LOCAL_CON.get();
-		}
-		
-		private void print(Connection con) throws SQLException {
-			//if (log.isDebugEnabled()) {
-			DatabaseMetaData meta = con.getMetaData();
-			log.info(" --- >>>>>>>>>>>> thread-id:" + Thread.currentThread().getId() + ", prepare Connection--> instance: " + con + ", url: "+meta.getURL()+"  , username: "+meta.getUserName()+"");
-			log.info(" --- >>>>>>>>>>>> thread-id:" + Thread.currentThread().getId() + "," 
-					+ con.getMetaData().getDatabaseProductName() 
-					+ con.getMetaData().getDatabaseMajorVersion() + "." 
-					+ con.getMetaData().getDatabaseMinorVersion() + "  "
-					+ con.getMetaData().getDriverVersion() + "  ") ;
-			//}
-		}
-		
-		private Connection prepareConnection() throws SQLException {
-			
-			if (this.dataSource == null) {
-				throw new SQLException("JDBCExecutor requires a DataSource or Connection to be invoked in this way");
-			}
-			
-			//优先从绑定的当前线程取连接
-			Connection con = THREAD_LOCAL_CON.get();
-			if (con != null && con.isClosed() == false) {
-				print(con);
-				return con;
-			} 
-			
-			THREAD_LOCAL_CON.set(this.dataSource.getConnection());
-			con = THREAD_LOCAL_CON.get();
-			
-			/*
-			log.info(" --- " 
-					+ con.getMetaData().getDatabaseProductName() 
-					+ con.getMetaData().getDatabaseMajorVersion() + "." 
-					+ con.getMetaData().getDatabaseMinorVersion() + "  "
-					+ con.getMetaData().getDriverVersion() + "  ") ;
-			*/		
-			print(con);
-			return con;
-		}
-
-		private PreparedStatement prepareStatement(Connection conn, String sql,Object[] paramValues) throws SQLException {
-			log.info(String.format(formatStr, sql,ArrayUtil.join(paramValues, ",")));
-			PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-
-			ParameterMetaData pmd = null;
-			if (!(this.isBroken)) {
-				pmd = stmt.getParameterMetaData();
-				int stmtCount = pmd.getParameterCount();
-				int paramsCount = (paramValues == null) ? 0 : paramValues.length;
-
-				if (stmtCount != paramsCount)
-					throw new SQLException("Wrong number of parameters: expected "	+ stmtCount + ", was given " + paramsCount);
-
-			}
-
-
-			for (int i = 0; i < paramValues.length; ++i)
-				if (paramValues[i] != null) {
-					stmt.setObject(i + 1, paramValues[i]);
-				} else {
-					int sqlType = 12;
-					if (!(this.isBroken))
-						try {
-							sqlType = pmd.getParameterType(i + 1);
-						} catch (SQLException e) {
-							this.isBroken = true;
-						}
-
-					stmt.setNull(i + 1, sqlType);
-				}
-
-			return stmt;
-		}
-		
-		/**
-		 * 执行SQL插入或更新语句，如果有主键生成，则返回主键值
-		 * @param sql
-		 * @param paramValues
-		 * @return
-		 * @throws DbException
-		 */
-		@SuppressWarnings("unchecked")
-		public <T> T executeUpdate(String sql, Object ... args) throws DbException {
-			Connection con = null;
-			PreparedStatement stmt = null;
-			ResultSet rs = null;
-			try {
-				con = prepareConnection();
-				if(con==null)return null;
-				
-				stmt = prepareStatement(con, sql, args);
-				
-				Integer temp = Integer.valueOf(stmt.executeUpdate());
-				
-				rs = stmt.getGeneratedKeys();
-				if (rs.next()){
-					return (T) rs.getObject(1);
-				}
-				
-				PlatformDb.this.jdbcCache.clear();
-				return (T) temp;
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				throw new DbException(ex.getMessage(),ex);
-			} finally {
-				close(stmt, rs,null); // 没有关闭连接对象,当前线程结束的时候关闭!!!
-			}
-		}
-		
-		private String getCachedKey(String sql,Object ...paramValues) {
-			StringBuilder sqlContent = new StringBuilder(sql);
-			for (Object e: paramValues) {
-				sqlContent.append(e+"_@@_");
-			}
-			return Md5Util.MD5Encode(sqlContent.toString(), "utf-8", false) ;
-			//return jdbcCache.get(sqlContent);
-		}
-		
-		@SuppressWarnings("unchecked")
-		public List<Map<String, Object>> executeQuery(String sql,Object ... paramValues) throws DbException  {
-			Connection con = null;
-			PreparedStatement stmt = null;
-			ResultSet rs = null;
-			try {
-				final String cacheKey = getCachedKey(sql, paramValues);
-				Object cacheResult = jdbcCache.get(cacheKey);
-				if(cacheResult!=null) {
-					log.info(String.format(formatStr, "hit cache, cacheKey:",cacheKey));
-					return (List<Map<String, Object>>)cacheResult;
-				}
-				
-				
-				con = prepareConnection();
-				stmt = prepareStatement(con, sql, paramValues);
-				rs = stmt.executeQuery();
-
-				List<Map<String, Object>> list = new LinkedList<Map<String, Object>>();
-				int cnt = rs.getMetaData().getColumnCount();
-				while (rs.next()) {
-					Map<String, Object> row = new LinkedHashMap<String, Object>();
-					for (int i = 1; i <= cnt; ++i) {
-						String key = rs.getMetaData().getColumnLabel(i);
-						Object value = rs.getObject(i);
-						row.put(key, value);
-					}
-					list.add(row);
-				}
-				
-				jdbcCache.put(cacheKey, list);
-				return list;
-			} catch (Exception ex) {
-				log.error(" --- executeQuery fail , " + ex.getMessage());
-				throw new DbException(ex.getMessage(), ex);
-			} finally {
-				close(stmt, rs,null); // 没有关闭连接对象,当前线程结束的时候关闭!!!
-			}
-		}
-		
-		public  void close(Statement stmt, ResultSet rs,Connection con ) {
-			try {
-				if (stmt != null){
-					stmt.close();
-					//log.info(" --- >>>>>>>>>>>> close Statement success~!");
-				}
-			} catch (SQLException e) {
-				log.info(" --- SqlExecutor close Statement fail ==> "+ e.getMessage());
-				
-			} finally {
-				try {
-					if (rs != null) {
-						rs.close();
-						//log.info(" --- >>>>>>>>>>>>close ResultSet success~!");
-					}
-				} catch (SQLException ex) {
-					log.info(" --- SqlExecutor close ResultSet fail~！ ==> "+ ex.getMessage());
-				} finally {					
-					try {
-						if (con != null ){ 
-							log.info(" --- >>>>>>>>>>>> thread-id:"+ Thread.currentThread().getId() + ", >>close connection, instance:"+con);
-							con.close();
-						}
-					} catch (SQLException ec) {
-						log.error(" --- SqlExecutor close Connection fail  ,"+ ec.getMessage());
-					}
-				}
-			}
-		}
-		
-		
+	public List<Map<String, Object>> executeQuery(String sql, Object... args) {
+		return exe.executeQuery(sql, args);
 	}
 
 	public void cascade(Object model, String... props) throws DbException {
 		if (props == null || props.length == 0) return ;
-		
-		
-		
 	}
 
-	public List<Map<String, Object>> executeQuery(String sql, Object... args) throws DbException {
-		return exe.executeQuery(sql, args);
+	/**
+	 * 批量插入或更新
+	 * @param sql 标准的SQL语句（不像MySql的insert table (a,b,c) values(1,2,3),(4,5,6),(7,8,9)的特有语句)
+	 * @param paramValues 
+	 * @return
+	 * @throws Exception
+	 */
+	public int batchUpdate(String sql, Object... args){
+		return exe.batchUpdate(sql, args);
 	}
+	
+	public int batchUpdate(List<String> sqls){
+		return exe.batchUpdate(sqls);
+	}
+	
+	/**
+	 * 批量新增
+	 * 
+	 * @param models 多个模型对象（注：模型对象必须为同类型对象）
+	 * @param props 需要保存的属性
+	 */
+	public int batchSave(List<?> models, String... prop) {
+		if (models == null || models.isEmpty()) {
+			return 0;
+		}
+		
+		Set<String> types = new HashSet<>();
+		for (Object m : models) {
+			types.add(m.getClass().getName());
+		}
+
+		if (types.size() > 1) {
+			throw new IllegalArgumentException("Model objects must be of the same type");
+		}
+		
+		String sql = null;
+		List<Object> batchParamValues = new LinkedList<>();
+		
+		for (Object model : models) {
+
+			Table table = getModelMappedTable(model);
+
+			Map<String, Object> columnValues = getModelMappedInsertColumnSqlAndValues(model, table, prop);
+
+			SqlStatementArgs insert = getModelInsertSqlStatentArgs(model, columnValues);
+
+			if (sql == null) {
+				sql = insert.getSql();
+			}
+
+			batchParamValues.addAll(insert.getArgs());
+		}
+
+		return exe.batchUpdate(sql, batchParamValues.toArray(new Object[batchParamValues.size()]));
+	}
+	 
+}
+
+class JDBCExecutor {
+	
+	private static final String formatStr = " --- %s -- ===> %s";
+	
+	private static final Logger log = LoggerFactory.getLogger(JDBCExecutor.class);
+	
+	private final ThreadLocal<Connection> THREAD_LOCAL_CON = new ThreadLocal<>();
+	
+	public JDBCExecutor(){}
+	
+	public void setCurrentConnection(Connection connection){
+		THREAD_LOCAL_CON.set(connection);
+	}
+	
+	public void setConfigDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+	
+	
+	private DataSource dataSource;
+	
+	
+	private volatile boolean isBroken = false;
+	
+	
+	public Connection getCurrentConnection() {
+		return THREAD_LOCAL_CON.get();
+	}
+	
+	private void print(Connection con) throws SQLException {
+		
+		if (log.isDebugEnabled()) {
+			DatabaseMetaData meta = con.getMetaData();
+			log.debug(" --- >>>>>>>>>>>> thread-id:" + Thread.currentThread().getId() + ", prepare Connection--> instance: " + con + ", url: "+meta.getURL()+"  , username: "+meta.getUserName()+"");
+			log.debug(" --- >>>>>>>>>>>> thread-id:" + Thread.currentThread().getId() + "," 
+					+ con.getMetaData().getDatabaseProductName() 
+					+ con.getMetaData().getDatabaseMajorVersion() + "." 
+					+ con.getMetaData().getDatabaseMinorVersion() + "  "
+					+ con.getMetaData().getDriverVersion() + "  ") ;
+		}
+		
+	}
+	
+	
+	
+	public Connection prepareConnection() throws SQLException {
+		
+		if (this.dataSource == null) {
+			throw new SQLException("JDBCExecutor requires a DataSource or Connection to be invoked in this way");
+		}
+		
+		//优先从绑定的当前线程取连接
+		Connection con = THREAD_LOCAL_CON.get();
+		if (con != null && con.isClosed() == false) {
+			print(con);
+			return con;
+		} 
+		
+		THREAD_LOCAL_CON.set(this.dataSource.getConnection());
+		con = THREAD_LOCAL_CON.get();
+		
+		/*
+		log.info(" --- " 
+				+ con.getMetaData().getDatabaseProductName() 
+				+ con.getMetaData().getDatabaseMajorVersion() + "." 
+				+ con.getMetaData().getDatabaseMinorVersion() + "  "
+				+ con.getMetaData().getDriverVersion() + "  ") ;
+		*/	
+		
+		print(con);
+		return con;
+	}
+
+	private PreparedStatement prepareStatement(Connection conn, String sql,Object[] paramValues) throws SQLException {
+		log.debug(String.format(formatStr, sql,ArrayUtil.join(paramValues, ",")));
+		PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+		ParameterMetaData pmd = null;
+		if (!(this.isBroken)) {
+			pmd = stmt.getParameterMetaData();
+			int stmtCount = pmd.getParameterCount();
+			int paramsCount = (paramValues == null) ? 0 : paramValues.length;
+
+			if (stmtCount != paramsCount)
+				throw new SQLException("Wrong number of parameters: expected "	+ stmtCount + ", was given " + paramsCount);
+
+		}
+
+
+		for (int i = 0; i < paramValues.length; ++i)
+			if (paramValues[i] != null) {
+				stmt.setObject(i + 1, paramValues[i]);
+			} else {
+				int sqlType = 12;
+				if (!(this.isBroken))
+					try {
+						sqlType = pmd.getParameterType(i + 1);
+					} catch (SQLException e) {
+						this.isBroken = true;
+					}
+
+				stmt.setNull(i + 1, sqlType);
+			}
+
+		return stmt;
+	}
+	
+	/**
+	 * 执行SQL插入或更新语句，如果有主键生成，则返回主键值
+	 * @param sql
+	 * @param paramValues
+	 * @return
+	 * @throws DbException
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T executeUpdate(String sql, Object ... args) throws DbException {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			con = prepareConnection();
+			if(con==null)return null;
+			
+			stmt = prepareStatement(con, sql, args);
+			
+			Integer temp = Integer.valueOf(stmt.executeUpdate());
+			
+			rs = stmt.getGeneratedKeys();
+			if (rs.next()){
+				return (T) rs.getObject(1);
+			}
+
+			return (T) temp;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			throw new DbException(ex.getMessage(),ex);
+		} finally {
+			close(stmt, rs,null); // 没有关闭连接对象,当前线程结束的时候关闭!!!
+		}
+	}
+	
+	public List<Map<String, Object>> executeQuery(String sql,Object ... paramValues) throws DbException  {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			con = prepareConnection();
+			stmt = prepareStatement(con, sql, paramValues);
+			rs = stmt.executeQuery();
+
+			List<Map<String, Object>> list = new LinkedList<Map<String, Object>>();
+			int cnt = rs.getMetaData().getColumnCount();
+			while (rs.next()) {
+				Map<String, Object> row = new LinkedHashMap<String, Object>();
+				for (int i = 1; i <= cnt; ++i) {
+					String key = rs.getMetaData().getColumnLabel(i);
+					Object value = rs.getObject(i);
+					row.put(key, value);
+				}
+				list.add(row);
+			}
+			return list;
+		} catch (Exception ex) {
+			log.error(" --- executeQuery fail , " + ex.getMessage());
+			throw new DbException(ex.getMessage(), ex);
+		} finally {
+			close(stmt, rs,null); // 没有关闭连接对象,当前线程结束的时候关闭!!!
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	// --------------------------------------------  批量操作 -----------------------------------------------------
+	/**
+	 * <pre>
+	 * 批量插入阀值 !!!
+	 * </pre>
+	 * 
+	 **/
+	private static int BATCH_INSERT_MAX=5000;
+	
+	
+	public int batchUpdate(List<String> sqls) {
+		int sum = 0;
+		if (sqls == null || sqls.size() == 0) {
+			return sum;
+		}
+
+		try {
+			Connection con = prepareConnection();
+			
+			PreparedStatement pstmt = con.prepareStatement(sqls.get(0));
+			pstmt.addBatch(sqls.get(0));
+			log.debug(String.format(formatStr, "[Batch Insert] ", sqls.get(0)));
+			
+			for (int i = 1; i < sqls.size(); i++) {
+				log.debug(String.format(formatStr, "[Batch Insert] ", sqls.get(i)));
+				pstmt.addBatch(sqls.get(i));
+			}
+
+			return sum += ArrayUtil.sum(pstmt.executeBatch());
+		} catch (Exception ex) {
+			throw new DbException(ex);
+		}
+	}
+	
+	/**
+	 * 批量插入或更新
+	 * @param sql 标准的SQL语句（不像MySql的insert table (a,b,c) values(1,2,3),(4,5,6),(7,8,9)的特有语句)
+	 * @param paramValues 
+	 * @return
+	 * @throws Exception
+	 */
+	public int batchUpdate(String sql, Object ... paramValues) {
+		if (StringUtil.isBlank(sql)) {
+			throw new NullPointerException("sql statement is empty or is null!");
+		}
+		
+		if(paramValues == null || paramValues.length==0) {
+			return batchUpdate(Arrays.asList(sql));
+		}
+		
+		int sum = 0;
+		final String sqlOriginal = sql.trim();
+		try {
+			if (isBatchInsert(sql)) { // 如果是批量插入
+				int dialect = resovleDialect();
+
+				// 1.MySql数据库特有的批量插入
+				if (DbDialect.MySQLInnoDBDialect == dialect || DbDialect.MySQLDialect == dialect
+						|| DbDialect.MySQLMyISAMDialect == dialect) {
+					sum += doBatchInsertForMysql(sqlOriginal, paramValues);
+				} else
+
+				// 2.常规批量插入
+				{
+					sum += doBatchInsertForNormal(sql, paramValues);
+				}
+			}
+		} catch (Exception ex) {
+			throw new DbException(ex);
+		}
+
+		return sum;
+	}
+
+	private int doBatchInsertForNormal(String sql,Object... paramValues) throws SQLException {
+		List<List<Object>> rows = convertRowParamsForBatchInsert(sql, paramValues);
+		
+		Connection con = prepareConnection();
+		PreparedStatement pstmt = con.prepareStatement(sql);
+		//log.debug(String.format(formatStr,"[Batch Insert] " ,sql));
+		
+		int sum = 0;
+		
+		for (int n = 0; n < rows.size(); n++) {
+
+			for (int i = 0; i < rows.get(n).size(); i++) {
+				pstmt.setObject(i + 1, rows.get(n).get(i));
+			}
+			pstmt.addBatch();
+			/*
+			if (n != 0 && n % BATCH_INSERT_MAX == 0) {
+				log.debug(String.format(formatStr, "[Batch Insert] ","bigger than BATCH_INSERT_MAX="+BATCH_INSERT_MAX+",executeBatch one!"));
+				sum += ArrayUtil.sum(pstmt.executeBatch());
+			}*/
+			log.debug(String.format(formatStr, "[Batch Insert] "+sql, ArrayUtil.join(rows.get(n), ",")));
+		}
+		
+		sum += ArrayUtil.sum(pstmt.executeBatch());
+		return sum;
+	}
+	
+
+	/**
+	 * <pre>
+	 * MySql数据库专有的批量插入模式
+	 * 例如：insert into someTable(id,name) values (1,'张三'),(2,'李四'),(3,'王五'),(4,'赵六'),(5,'钱七')
+	 * </pre>
+	 * @param sql 原始SQL
+	 * @param paramValues
+	 * @return
+	 * @throws SQLException
+	 */
+	private int doBatchInsertForMysql(final String sql, Object... paramValues) throws Exception {
+		
+		List<List<Object>> argsList = convertRowParamsForBatchInsert(sql, paramValues);
+
+		if (argsList.size() > BATCH_INSERT_MAX) { //如果大于阀值分批次插入
+			int sumEffect = 0; // 受影响的行数
+
+			int times = (int) Math.ceil(argsList.size() / (double) BATCH_INSERT_MAX); //例如：假如共23条记录，（阀值为3）一个SQL插入3行记录，要8个批次
+			for (int i = 1; i <= times; i++) {
+				List<List<Object>> rowBatch = null;
+				
+				if (i == times) {
+					rowBatch = argsList.subList((times - 1) * BATCH_INSERT_MAX, argsList.size());
+				} else {
+					rowBatch = argsList.subList((i - 1) * BATCH_INSERT_MAX, i * BATCH_INSERT_MAX);
+				}
+				sumEffect += doOneBatchInsertForMysql(sql,rowBatch);
+			}
+			return sumEffect;
+		}
+		
+		return doOneBatchInsertForMysql(sql, argsList);
+	}
+	
+ 
+
+	/**
+	 * 
+	 * @param sql 原始SQL
+	 * @param argsList 适应MySql重排后的参数
+	 * @param isOverflow 插入的记录数是否超过系统默认阀值
+	 * @return
+	 * @throws SQLException
+	 */
+	private int doOneBatchInsertForMysql(final String sql, List<List<Object>> argsList) throws Exception {
+		Connection con = prepareConnection();
+		
+		final String VALUES = "values";
+		StringBuffer mysqlInsertBatchSql = new StringBuffer(sql.substring(0, sql.toLowerCase().indexOf(VALUES) + VALUES.length()));
+		for (int i = 0; i < argsList.size(); i++) {
+
+			mysqlInsertBatchSql.append("(");
+
+			for (int t = 0; t < argsList.get(i).size(); t++) {
+				mysqlInsertBatchSql.append("?");
+				if (t != argsList.get(i).size() - 1) {
+					mysqlInsertBatchSql.append(",");
+				}
+			}
+			
+			mysqlInsertBatchSql.append(")");
+			
+			if(i!=argsList.size()-1) {
+				mysqlInsertBatchSql.append(",");
+			}
+		}
+		
+		PreparedStatement pstmt = null;
+		try {
+			String pSql= mysqlInsertBatchSql.toString();
+			pstmt = con.prepareStatement(pSql);
+
+			List<Object> fullParam = new ArrayList<>();
+			int idx = 1;
+			for (List<Object> e : argsList) {
+
+				fullParam.addAll(e);
+
+				for (Object arg : e) {
+					pstmt.setObject(idx++, arg);
+				}
+			}
+			
+
+			log.debug(String.format("Batch insert - "+formatStr, pSql,StringUtil.join(fullParam, ",")));
+			
+
+			return pstmt.executeUpdate();
+		} catch (Exception ex) {
+			throw ex;
+		} finally {
+			close(pstmt, null, null);
+		}
+	}
+
+	/**
+	 * 解析数据库方言
+	 * @return
+	 * @throws SQLException
+	 */
+	private int resovleDialect() throws SQLException {
+		Connection con = prepareConnection();
+		String prdName = con.getMetaData().getDatabaseProductName();
+		if (StringUtil.isNotBlank(prdName) && prdName.toLowerCase().indexOf("mysql") != -1) {
+			return DbDialect.MySQLInnoDBDialect;
+		}
+		return DbDialect.MySQLInnoDBDialect;
+	}
+
+	private boolean isBatchInsert(String sql) {
+		if (sql.startsWith("insert ") && sql.indexOf("into") != -1 && sql.indexOf("values") != -1) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * <pre>
+	 * 	参数值转行
+	 * </pre>
+	 * @param sql 
+	 * @param paramValues 
+	 * @return
+	 */
+	private static List<List<Object>> convertRowParamsForBatchInsert(String sql, Object... paramValues) {
+		if (sql.indexOf("?") == -1 && paramValues.length > 0) {
+			throw new IllegalArgumentException("sql statement args holder and args value mismatch");
+		}
+
+		List<List<Object>> params = new ArrayList<>();
+
+		int cnt = getRowCnt(sql, paramValues);
+ 
+		for (int i = 0; i < paramValues.length; i++) {
+			if (i % cnt == 0) {
+				List<Object> args = new ArrayList<>();
+				for (int n = 0; n < cnt; n++) {
+					args.add(paramValues[i + n]);
+				}
+				params.add(args);
+			}
+		}
+		return params;
+	}
+
+	private static int getRowCnt(String sql, Object... paramValues) {
+		int cnt = 0;
+		String temp = sql.replace("'?'", ""); // 去除问号字符串(，这里容易有bug,用户这样的insert tb values('xxx?yyy')容易出现问题，待优化！！！！！！）
+		for (char e : temp.toCharArray()) {
+			if (e == '?') {
+				cnt++;
+			}
+		}
+		
+		if (cnt!=0 && paramValues.length % cnt != 0) {
+			throw new IllegalArgumentException("The parameter value does not match the number");
+		}
+		return cnt;
+	}
+	
+ 
+	public static void main(String[] args) {
+		Object [] aaa= new Object[]{null,"a","b","c","d","e","f",null};
+		 
+		String sql="insert table(a,b) values(?,?)";
+		List<List<Object>> temp = convertRowParamsForBatchInsert(sql,aaa);
+		System.out.println(temp);
+		
+		
+	}
+	
+	// ----------------------------------------------- 批量操作结束 ----------------------------------------
+	
+	public  void close(Statement stmt, ResultSet rs,Connection con ) {
+		try {
+			if (stmt != null){
+				stmt.close();
+			}
+		} catch (SQLException e) {
+			log.error(" --- SqlExecutor close Statement fail ==> "+ e.getMessage());
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+			} catch (SQLException ex) {
+				log.error(" --- SqlExecutor close ResultSet fail~！ ==> "+ ex.getMessage());
+			} finally {
+				try {
+					if (con != null ){
+						//if(!con.isClosed()) { 
+							log.debug(" --- >>>>>>>>>>>> thread-id:"+ Thread.currentThread().getId() + ", >>close connection, instance:"+con);
+						//}
+						con.close();
+					}
+				} catch (SQLException ec) {
+					log.error(" --- SqlExecutor close Connection fail  ,"+ ec.getMessage());
+				}
+			}
+		}
+	}
+	
 	
 }

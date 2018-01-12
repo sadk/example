@@ -16,11 +16,23 @@ public class Node {
 	private String nodePath;
 	private String url; 
 	
-	//节点类型：1=菜单 2=功能
+	//节点类型：1=菜单 2=功能 3=数据查询结点
 	public static final String DATA_TYPE_MENU="1";
 	public static final String DATA_TPYE_FUNCTION="2";
+	public static final String DATA_TPYE_DATA_QUERY="3";
 	
-	
+	public String getDataTypeDesc(){
+		if(DATA_TYPE_MENU.equals(dataType)){
+			return "菜单";
+		}
+		if(DATA_TPYE_FUNCTION.equals(dataType)){
+			return "功能按钮";
+		}
+		if(DATA_TPYE_DATA_QUERY.equals(dataType)){
+			return "数据查询";
+		}
+		return "";
+	}
  
 	public String getName() {
 		return name;

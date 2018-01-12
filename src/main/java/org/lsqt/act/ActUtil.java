@@ -24,14 +24,34 @@ import org.lsqt.components.util.lang.StringUtil;
  *
  */
 public final class ActUtil {
+	public static final String AUTO_JUMP_USER_ID = "-1";
+	
 	/**内置的流程变量key**/
 	public static final String VARIABLES_START_USER_ID ="startUserId";   //流程发起人
 	public static final String VARIABLES_BUSINESS_KEY = "businessKey"; // 业务主键 
 	public static final String VARIABLES_TITLE="title";  // 流程标题
 	public static final String VARIABLES_CREATE_DEPT_ID="createDeptId"; // 单据填制人部门，如果没有取用户主部门，哪果再没有取user.userOrgList的第一个
 	public static final String VARIABLES_BUSINESS_TYPE = "businessType"; // 自定义的单据业务类型
+	public static final String VARIABLES_LOGIN_USER = "loginUser"; 
+	public static final String VARIABLES_APPROVE_OPINION = "approveOpinion"; // 流程发起变量里的审批意见key
 	
-	/** 暂自定义整个流程的业务状态 :待发起=0 待审批=1 审批中=3 审批通过=2 未通过=-1 已完成=4**/
+	/**流程是否结束 4=已完成  3=审批中**/
+	public static final String CLOSE_STATUS_YES="4";
+	public static final String CLOSE_STATUS_NO="3";
+	public static String getCloseStatusDesc(String closeStatus) {
+		if(StringUtil.isBlank(closeStatus)){
+			return "";
+		}
+		if(CLOSE_STATUS_YES.equals(closeStatus)) {
+			return "已完成";
+		}
+		if(CLOSE_STATUS_NO.equals(closeStatus)) {
+			return "审批中";
+		}
+		return "";
+	}
+	
+	/** 暂自定义整个流程的业务状态 :待发起=0 待审批=1 审批中=3 审批通过=2 未通过=-1 已完成=4 
 	public static final String BUSINESS_STATUS_待发起="0";
 	public static final String BUSINESS_STATUS_待审批="1";
 	public static final String BUSINESS_STATUS_审批中="3";
@@ -62,7 +82,7 @@ public final class ActUtil {
 		}
 		return "";
 	}
-	
+	**/
 	private ActUtil(){}
 	private static ProcessEngine PROCESS_ENGINE= null;
 	

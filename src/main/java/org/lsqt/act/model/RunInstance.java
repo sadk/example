@@ -32,6 +32,9 @@ public class RunInstance {
 	/** 流程发起人名称 */
 	private String startUserName;
 	
+	/** 流程发起人账号 **/
+	private String startLoginNo;
+	
 	/**发起人组织信息**/
 	private String startUserOrgText;
 	
@@ -75,10 +78,14 @@ public class RunInstance {
 	private java.util.Date updateTime;
 
 	//---------------------------- activiti 属性
-	private boolean isSuspended;
-	private boolean isConcurrent;
-	private boolean isActive;
+	private Boolean isSuspended;
+	private Boolean isConcurrent;
+	private Boolean isActive;
 	private String version;
+	
+	
+	// --------------------------- 活动节点的审批人,如：张三(zhang3),李四(li4)
+	private String approveUserText;
 	
 	public String getIsEndedDesc() {
 		if(isSuspended) {
@@ -292,28 +299,28 @@ public class RunInstance {
 		this.taskKey = taskKey;
 	}
 
-	public boolean getIsSuspended() {
+	public Boolean getIsSuspended() {
 		return isSuspended;
 	}
 
-	public void setIsSuspended(boolean isSuspended) {
+	public void setIsSuspended(Boolean isSuspended) {
 		this.isSuspended = isSuspended;
 	}
 	
 	
-	public boolean getIsConcurrent() {
+	public Boolean getIsConcurrent() {
 		return isConcurrent;
 	}
 
-	public void setIsConcurrent(boolean isConcurrent) {
+	public void setIsConcurrent(Boolean isConcurrent) {
 		this.isConcurrent = isConcurrent;
 	}
 
-	public boolean getIsActive() {
+	public Boolean getIsActive() {
 		return isActive;
 	}
 
-	public void setIsActive(boolean isActive) {
+	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
 	}
 
@@ -347,6 +354,22 @@ public class RunInstance {
 
 	public void setVariableJSONStarting(String variableJSONStarting) {
 		this.variableJSONStarting = variableJSONStarting;
+	}
+
+	public String getApproveUserText() {
+		return approveUserText;
+	}
+
+	public void setApproveUserText(String approveUserText) {
+		this.approveUserText = approveUserText;
+	}
+
+	public String getStartLoginNo() {
+		return startLoginNo;
+	}
+
+	public void setStartLoginNo(String startLoginNo) {
+		this.startLoginNo = startLoginNo;
 	}
 	
 }

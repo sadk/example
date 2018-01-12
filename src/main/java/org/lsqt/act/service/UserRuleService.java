@@ -13,7 +13,9 @@ public interface UserRuleService {
 	Page<UserRule> queryForPage(UserRuleQuery query);
 
 	UserRule saveOrUpdate(UserRule model);
-
+	
+	UserRule saveOrUpdate(UserRule model,String ...props) ;
+	
 	int deleteById(Long... ids);
 	
 	Collection<UserRule> getAll();

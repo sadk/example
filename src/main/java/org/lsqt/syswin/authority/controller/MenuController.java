@@ -9,14 +9,18 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
+import org.lsqt.syswin.PlatformDb;
 import org.lsqt.syswin.authority.model.Menu;
 import org.lsqt.syswin.authority.model.MenuQuery;
 import org.lsqt.syswin.authority.service.MenuService;
+
+import com.alibaba.fastjson.JSON;
 
 @Controller(mapping={"/syswin/menu","/nv2/syswin/menu"})
 public class MenuController {
 	
 	@Inject private MenuService menuService; 
+	@Inject private PlatformDb db;
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<Menu> queryForPage(MenuQuery query) throws IOException {
@@ -36,6 +40,16 @@ public class MenuController {
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public Menu saveOrUpdate(Menu form) {
 		return menuService.saveOrUpdate(form);
+	}
+	
+	@RequestMapping(mapping = { "/save_or_update_simple", "/m/save_or_update_simple" })
+	public void saveOrUpdateSimple(String data) {
+		if(StringUtil.isNotBlank(data)) {
+			List<Menu> list = JSON.parseArray(data, Menu.class);
+			for (Menu e: list) {
+				db.saveOrUpdate(e, "name","code","sn","url");
+			}
+		}
 	}
 	
 	@RequestMapping(mapping = { "/delete", "/m/delete" })

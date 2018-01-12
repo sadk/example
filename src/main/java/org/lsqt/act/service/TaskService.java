@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.lsqt.act.model.ApproveOpinion;
-import org.lsqt.act.model.RunTaskAssignForwardCc;
 import org.lsqt.act.model.Task;
 import org.lsqt.act.model.TaskQuery;
 import org.lsqt.components.db.Page;
@@ -118,4 +117,11 @@ public interface TaskService {
 	 * @return
 	 */
 	List<Task> queryForListDetail(org.lsqt.act.model.TaskQuery query) ;
+	
+	/**
+	 * 获取当前实例的活动任务（不支持并发模式）
+	 * @param processInstanceId
+	 * @return
+	 */
+	Task getNextNewTask(String processInstanceId) ;
 }

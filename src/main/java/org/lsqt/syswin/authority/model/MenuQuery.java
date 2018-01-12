@@ -11,6 +11,7 @@ public class MenuQuery {
 
 	private String sortOrder;
 	private String sortField;
+	private String sortFieldGbk; //中文字段排序
 
 	private String key; // 关键字
 	private String ids; // 用逗号分割的id字符
@@ -258,6 +259,14 @@ public class MenuQuery {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+
+	public String getSortFieldGbk() {
+		return sortFieldGbk;
+	}
+
+	public void setSortFieldGbk(String sortFieldGbk) {
+		this.sortFieldGbk = sortFieldGbk;
 	}
 
 }

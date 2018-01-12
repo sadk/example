@@ -85,7 +85,7 @@
 			</#if>
 			
 			<#if query.appCode??>
-				and A.app_code = '${StringUtil.escapeSql(query.appCode)}' 
+				and A.app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
 			</#if>
 			
 			<#if query.categoryName??>

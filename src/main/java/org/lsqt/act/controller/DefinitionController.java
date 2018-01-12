@@ -3,6 +3,7 @@ package org.lsqt.act.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,9 +20,14 @@ import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.UserTask;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.impl.RepositoryServiceImpl;
+import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
+import org.activiti.engine.impl.pvm.process.ActivityImpl;
+import org.activiti.engine.impl.pvm.process.ProcessDefinitionImpl;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.lsqt.act.ActUtil;
 import org.lsqt.act.model.ApproveObject;
@@ -326,4 +332,84 @@ public class DefinitionController {
 		return null;
 	}
 	
+	
+	
+	/**
+	 * 导出图片文件到硬盘
+	 */
+	@RequestMapping(mapping = { "/export_diagrams", "/m/export_diagrams" },text="导出流程图")
+	public List<String> exportDiagrams(String exportDir) throws IOException {
+		HttpServletRequest request = ContextUtil.getRequest();
+		String root = request.getServletContext().getRealPath("/");
+		
+		List<String> files = new ArrayList<String>();
+		List<ProcessDefinition> list = ActUtil.getRepositoryService().createProcessDefinitionQuery().list();
+		
+		for (ProcessDefinition processDefinition : list) {
+			String diagramResourceName = processDefinition.getDiagramResourceName();
+			String key = processDefinition.getKey();
+			int version = processDefinition.getVersion();
+
+			
+			InputStream resourceAsStream = ActUtil.getRepositoryService().getResourceAsStream(
+					processDefinition.getDeploymentId(), diagramResourceName);
+			byte[] b = new byte[resourceAsStream.available()];
+
+			@SuppressWarnings("unused")
+			int len = -1;
+			resourceAsStream.read(b, 0, b.length);
+
+			// create file if not exist
+			String diagramDir = root+"/"+exportDir + "/" + key + "/" + version+".png";
+			File file = new File(diagramDir);
+			
+			// wirte bytes to file
+			FileUtils.writeByteArrayToFile(file, b, true);
+				
+		 
+			
+		}
+		
+		return files;
+	}
+	
+	
+	
+	
+	
+	void test(String procDefId,String proInstId) {
+		org.activiti.engine.RepositoryService repositoryService = ActUtil.getRepositoryService();
+		org.activiti.engine.RuntimeService runtimeService = ActUtil.getRuntimeService();
+		
+		List<ActivityImpl> actImpls = new ArrayList<ActivityImpl>();
+		ProcessDefinition processDefinition = repositoryService .createProcessDefinitionQuery().processDefinitionId(procDefId).singleResult();
+		ProcessDefinitionImpl pdImpl = (ProcessDefinitionImpl) processDefinition;
+		String processDefinitionId = pdImpl.getId();// 流程标识
+		ProcessDefinitionEntity def = (ProcessDefinitionEntity) ((RepositoryServiceImpl) repositoryService)
+				.getDeployedProcessDefinition(processDefinitionId);
+		List<ActivityImpl> activitiList = def.getActivities();// 获得当前任务的所有节点
+		List<String> activeActivityIds = runtimeService.getActiveActivityIds(proInstId);
+		for (String activeId : activeActivityIds) {
+			for (ActivityImpl activityImpl : activitiList) {
+				String id = activityImpl.getId();
+				if (activityImpl.isScope()) {
+					if (activityImpl.getActivities().size() > 1) {
+						List<ActivityImpl> subAcList = activityImpl.getActivities();
+						for (ActivityImpl subActImpl : subAcList) {
+							String subid = subActImpl.getId();
+							System.out.println("subImpl:" + subid);
+							if (activeId.equals(subid)) {// 获得执行到那个节点
+								actImpls.add(subActImpl);
+								break;
+							}
+						}
+					}
+				}
+				if (activeId.equals(id)) {// 获得执行到那个节点
+					actImpls.add(activityImpl);
+					System.out.println(id);
+				}
+			}
+		}
+	}
 }

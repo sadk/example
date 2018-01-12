@@ -8,20 +8,30 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
-
+import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.ExceptionUtil;
+import org.lsqt.components.util.collection.ArrayUtil;
+import org.lsqt.components.util.collection.MapUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.syswin.uum.model.User;
 import org.lsqt.syswin.uum.model.UserQuery;
 import org.lsqt.syswin.uum.service.UserService;
+
+import com.alibaba.fastjson.JSON;
+
 import org.lsqt.act.ActUtil;
 import org.lsqt.act.model.UserRule;
+import org.lsqt.act.model.UserRuleMatrixDeptUser;
 import org.lsqt.act.model.UserRuleQuery;
 import org.lsqt.act.service.UserRuleService;
 
@@ -50,6 +60,18 @@ public class UserRuleController {
 	public UserRule saveOrUpdate(UserRule form) {
 		return userRuleService.saveOrUpdate(form);
 	}
+	
+	
+	@RequestMapping(mapping = { "/save_or_update_simple", "/m/save_or_update_simple" },text="启用用户规则")
+	public void saveOrUpdateSimple(String userRulesJson) {
+		if (StringUtil.isNotBlank(userRulesJson)) {
+			List<UserRule> list = JSON.parseArray(userRulesJson, UserRule.class);
+			for (UserRule m : list) {
+				userRuleService.saveOrUpdate(m, "enable");
+			}
+		}
+	}
+	
 	
 	@RequestMapping(mapping = { "/delete", "/m/delete" })
 	public int delete(String ids) {
@@ -83,5 +105,14 @@ public class UserRuleController {
 			ex.printStackTrace();
 		}
 		return rs;
+	}
+	
+	
+
+
+	
+	public static void main(String[] args) {
+		String s="userRule_15";
+		System.out.println(s.split("_")[1]);
 	}
 }

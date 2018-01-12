@@ -1,30 +1,42 @@
 package org.lsqt.syswin.authority.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
-
-import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
-import org.lsqt.sys.model.Dictionary;
+import org.lsqt.syswin.PlatformDb;
 import org.lsqt.syswin.authority.model.PositionPermitConfig;
 import org.lsqt.syswin.authority.model.PositionPermitConfigQuery;
+import org.lsqt.syswin.authority.model.PositionPermitResult;
 import org.lsqt.syswin.authority.service.PositionPermitConfigService;
+import org.lsqt.syswin.uum.model.Position;
+import org.lsqt.syswin.uum.model.PositionQuery;
+import org.lsqt.syswin.uum.service.PositionService;
 
+import com.alibaba.fastjson.JSON;
 
-
-
-@Controller(mapping={"/positionPermitConfig"})
+/**
+ * 岗位授权（org数据)配置
+ * @author admin
+ *
+ */
+@Deprecated
+@Controller(mapping={"/syswin/position_permit_config"})
 public class PositionPermitConfigController {
 	
 	@Inject private PositionPermitConfigService positionPermitConfigService; 
-	
-	@Inject private Db db;
+	@Inject private PositionService positionService;
+	@Inject private PlatformDb db;
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<PositionPermitConfig> queryForPage(PositionPermitConfigQuery query) throws IOException {
@@ -47,68 +59,112 @@ public class PositionPermitConfigController {
 		return positionPermitConfigService.deleteById(list.toArray(new Long[list.size()]));
 	}
 	
-	
-	/** 暂时注释，未能提供通用实现！！！
-	@RequestMapping(mapping = { "/export", "/m/export" })
-	public void export(PositionPermitConfigQuery query, String exportFileType, String exportDataType) {
-		Page<PositionPermitConfig> page = db.getEmptyPage();
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(mapping = { "/get_dataquery_and_useness_config", "/m/get_dataquery_and_useness_config" },text="获取岗位的授权配置")
+	public List<Map> getDataqueryAndUsenessConfig(Long positionId) {
+		List<Map> list = new ArrayList<>(); // orgId,permitType=1 
 		
-		// 1.导出excel
-		if (Dictionary.EXPORT_FILE_TYPE_EXCEL.equals(exportFileType)) {
-			
-			if (Dictionary.EXPORT_DATA_TYPE_全部数据.equals(exportDataType)) {
-				
-				page.setData(positionPermitConfigService.getAll());
-				ContextUtil.file.put("/template/应用列表数据.xls", "page", page);
-				return ;
-			} 
-			
-			page = positionPermitConfigService.queryForPage(query);
-			ContextUtil.file.put("/template/应用列表数据.xls", "page", page);
-			
-			return;
-		}
-
-		// 2.导出文本文件
-		if (Dictionary.EXPORT_FILE_TYPE_TXT.equals(exportFileType)) {
-			if (Dictionary.EXPORT_DATA_TYPE_全部数据.equals(exportDataType)) {
-				page.setData(positionPermitConfigService.getAll());
-				ContextUtil.file.put("/template/应用列表数据.txt", "page", page);
-				return;
-			}
-
-			page = positionPermitConfigService.queryForPage(query);
-			ContextUtil.file.put("/template/应用列表数据.txt", "page", page);
-			return;
+		PositionPermitConfigQuery query = new PositionPermitConfigQuery();
+		query.setPositionId(positionId);
+		PositionPermitConfig cfg = db.queryForObject("queryForPage", PositionPermitConfig.class,query);
+		
+		if (cfg == null) {
+			return list;
 		}
 		
-		// 3.导出doc文件
-		if (Dictionary.EXPORT_FILE_TYPE_DOC.equals(exportFileType)) {
-			if (Dictionary.EXPORT_DATA_TYPE_全部数据.equals(exportDataType)) {
-				page.setData(positionPermitConfigService.getAll());
-				ContextUtil.file.put("/template/应用列表数据.doc", "page", page);
-				return ;
+		List<String> orgIdsQuery = StringUtil.split(cfg.getOrgIdsQuery(), ",");
+		for(String e: orgIdsQuery) {
+			if(StringUtil.isNotBlank(e)) {
+				Map<String,Object> row = new HashMap<>();
+				row.put("orgId", Long.valueOf(e));
+				row.put("colType", "mySelf");
+				list.add(row);
 			}
-			
-			page = positionPermitConfigService.queryForPage(query);
-			ContextUtil.file.put("/template/应用列表数据.doc", "page", page);
-			return;
-		}
-
-		// 4.导出pdf文件
-		if (Dictionary.EXPORT_FILE_TYPE_PDF.equals(exportFileType)) {
-			if (Dictionary.EXPORT_DATA_TYPE_全部数据.equals(exportDataType)) {
-				page.setData(positionPermitConfigService.getAll());
-				ContextUtil.file.put("/template/应用列表数据.pdf", "page", page);
-				return ;
-			}
-			
-			page = positionPermitConfigService.queryForPage(query);
-			ContextUtil.file.put("/template/应用列表数据.pdf", "page", page);
-			return;
 		}
 		
+		List<String> orgIdsUseness = StringUtil.split(cfg.getOrgIdsUseness(), ",");
+		//System.out.println(orgIdsUseness.size());
+		for(String e: orgIdsUseness) {
+			if(StringUtil.isNotBlank(e)) {
+				Map<String,Object> row = new HashMap<>();
+				row.put("orgId", Long.valueOf(e));
+				row.put("colType", "useness");
+				list.add(row);
+			}
+		}
+		
+		return list;
 	}
-	**/
 	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(mapping = { "/save_position_config","/m/save_position_config" },text="（核心1）保存岗位的授权配置")
+	public void savePositionConfig(String positionIds,String itemsJson) {
+		
+		List<Long> orgIdsQuery = new ArrayList<>();
+		List<Long> orgIdsUseness = new ArrayList<>();
+		if (StringUtil.isNotBlank(itemsJson)) {
+			List<Map> item = JSON.parseArray(itemsJson, Map.class);
+			for (Map m : item) {
+				Object orgId = m.get("orgId");
+				Object permitType = m.get("permitType");
+				
+				if (orgId != null && permitType != null) {
+					if (PositionPermitResult.TYPE_QUERY == Integer.valueOf(permitType.toString())) {
+						orgIdsQuery.add(Long.valueOf(orgId.toString()));
+					} else if (PositionPermitResult.TYPE_USENESS == Integer.valueOf(permitType.toString())) {
+						orgIdsUseness.add(Long.valueOf(orgId.toString()));
+					}
+				}
+			}
+		}
+		
+		List<Long> positionIdList = StringUtil.split(Long.class,positionIds, ",");
+		
+		db.executeUpdate(String.format("delete from t_power_duties_permit_config where duties_id in (%s)",StringUtil.join(positionIdList, ",")));
+		
+		PositionQuery query = new PositionQuery();
+		query.setIds(positionIds);
+		List<Position> list = db.queryForList("queryForPage", Position.class, query);
+		
+		Set<Long> refers = new HashSet<Long>();
+		
+		List<PositionPermitConfig> ppcList = new ArrayList<>();
+		List<PositionPermitResult> pprList = new ArrayList<>();
+		for(Position position: list) {
+			if(StringUtil.isBlank(position.getNodePath())) {
+				throw new RuntimeException("ID为"+position.getId()+"的岗位节点路径为空");
+			}
+			PositionPermitConfig model = new PositionPermitConfig();
+			model.setPositionId(position.getId());
+			model.setPositionIdParent(position.getPid());
+			model.setNodePath(position.getNodePath());
+			model.setOrgIdsQuery(StringUtil.join(orgIdsQuery, ","));
+			model.setOrgIdsUseness(StringUtil.join(orgIdsUseness, ","));
+			//db.save(model);
+			ppcList.add(model);
+			
+			// 保存本人权限数据
+			db.executeUpdate("delete from t_power_duties_permit_result where duties_id=? and level=?",position.getId(), PositionPermitResult.LEVEL_MYSELF);
+			List<PositionPermitResult>  data = PositionPermitResult.prepreResultData(model, PositionPermitResult.LEVEL_MYSELF);
+			for(PositionPermitResult d: data) {
+				//db.save(d);
+				pprList.add(d);
+			}
+			
+			// 如果当前岗位有被引用到“直属下级、所有下级”，从root岗重新解析入库
+			refers.add(position.getId());
+			if(StringUtil.isNotBlank(position.getNodePath())) {
+				refers.addAll(StringUtil.split(Long.class, position.getNodePath(), ","));
+			}
+		}
+		
+		db.batchSave(ppcList);
+		db.batchSave(pprList);
+		
+		for(Long id: refers) {
+			positionService.saveResolveResult(id);
+		}
+	}
+	
+ 
 }

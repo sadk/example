@@ -34,55 +34,43 @@ public class PositionCategoryServiceImpl implements PositionCategoryService{
 	}
 	
 	public PositionCategory saveOrUpdate(PositionCategory model) {
-		db.executePlan(new Plan() {
-			@Override
-			public void doExecutePlan() throws DbException {
-				if(model.getId()== null) {
-					if(model.getPid() == null) {
-						model.setPid(0L);
-					}
-				}
-				
-				db.saveOrUpdate(model);
-
-				// 循环向上，处理节点路径
-				List<Long> parentIds = new ArrayList<>();
-				parentIds.add(model.getId());
-				
-				PositionCategory parent = db.getById(PositionCategory.class, model.getPid());
-				while (parent != null) {
-					parentIds.add(parent.getId());
-
-					parent = db.getById(PositionCategory.class, parent.getPid());
-				}
-				
-				if (!parentIds.isEmpty()) {
-					Collections.reverse(parentIds);
-					model.setNodePath(StringUtil.join(parentIds, ",")+",");
-					db.update(model, "nodePath");
-				}
+		if(model.getId()== null) {
+			if(model.getPid() == null) {
+				model.setPid(0L);
 			}
-		});
+		}
+		
+		db.saveOrUpdate(model);
+
+		// 循环向上，处理节点路径
+		List<Long> parentIds = new ArrayList<>();
+		parentIds.add(model.getId());
+		
+		PositionCategory parent = db.getById(PositionCategory.class, model.getPid());
+		while (parent != null) {
+			parentIds.add(parent.getId());
+
+			parent = db.getById(PositionCategory.class, parent.getPid());
+		}
+		
+		if (!parentIds.isEmpty()) {
+			Collections.reverse(parentIds);
+			model.setNodePath(StringUtil.join(parentIds, ",")+",");
+			db.update(model, "nodePath");
+		}
 		return model;
 	}
 
 	public int deleteById(Long ... ids) {
 		if(ids == null || ids.length==0) return 0;
-		db.executePlan(new Plan(){
 
-			@Override
-			public void doExecutePlan() throws DbException {
-				String sql = "delete from t_power_duties_type where node_path like ?"; //级联删除子级
-				for(Long id: ids) {
-					PositionCategory temp = db.getById(PositionCategory.class, id);
-					if(temp!=null && StringUtil.isNotBlank(temp.getNodePath())) {
-						db.executeUpdate(sql, temp.getNodePath()+"%");
-					}
-				}
+		String sql = "delete from t_power_duties_type where node_path like ?"; //级联删除子级
+		for(Long id: ids) {
+			PositionCategory temp = db.getById(PositionCategory.class, id);
+			if(temp!=null && StringUtil.isNotBlank(temp.getNodePath())) {
+				db.executeUpdate(sql, temp.getNodePath()+"%");
 			}
-			
-		});
-		
+		}
 		return ids.length;
 	}
 	

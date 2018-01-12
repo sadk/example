@@ -183,4 +183,36 @@ public class RoleController {
 			});
 		}
 	}*/
+	
+	
+	@RequestMapping(mapping = { "/save_role_positions", "/m/save_role_positions" },text="给一个角色添加多个岗位")
+	public void saveRolePositions(Long roleId,String positionIds) {
+		final List<Long> posIds = StringUtil.split(Long.class,positionIds, ",");
+		if(StringUtil.isBlank(positionIds)){
+			return ;
+		}
+		
+		String sql = String.format("delete from t_power_duties_role where role_id=? and duties_id in(%s)",StringUtil.join(posIds, ","));
+		db.executeUpdate(sql, roleId);
+		
+		final String insertSql = "insert t_power_duties_role(role_id,duties_id,role_type,create_date) values(?,?,?,?)";
+		for(Long posId: posIds) {
+			Role r= db.getById(Role.class, roleId);
+			if(r!=null) {
+				db.executeUpdate(insertSql, roleId,posId ,r.getType(),new Date());
+			}
+		}
+	}
+	
+	@RequestMapping(mapping = { "/delete_role_positions", "/m/delete_role_positions" },text="给一个角色添加多个岗位")
+	public void deleteRolePositions(Long roleId,String positionIds) {
+		final List<Long> posIds = StringUtil.split(Long.class,positionIds, ",");
+		if(StringUtil.isBlank(positionIds)){
+			return ;
+		}
+		
+		String sql = String.format("delete from t_power_duties_role where role_id=? and duties_id in(%s)",StringUtil.join(posIds, ","));
+		db.executeUpdate(sql, roleId);
+
+	}
 }

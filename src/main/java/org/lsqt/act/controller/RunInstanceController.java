@@ -2,17 +2,26 @@ package org.lsqt.act.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowElement;
 import org.lsqt.act.ActUtil;
+import org.lsqt.act.model.ApproveObject;
 import org.lsqt.act.model.InstanceVariable;
 import org.lsqt.act.model.InstanceVariableQuery;
+import org.lsqt.act.model.Node;
+import org.lsqt.act.model.NodeQuery;
+import org.lsqt.act.model.ProcessInstance;
 import org.lsqt.act.model.ProcessInstanceHis;
 import org.lsqt.act.model.RunInstance;
 import org.lsqt.act.model.RunInstanceQuery;
+import org.lsqt.act.service.NodeUserService;
+import org.lsqt.act.service.impl.NodeUserServiceImpl;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -22,6 +31,9 @@ import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.syswin.PlatformDb;
 import org.lsqt.syswin.uum.model.Org;
 import org.lsqt.syswin.uum.model.OrgQuery;
+import org.lsqt.syswin.uum.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
@@ -31,8 +43,11 @@ import com.alibaba.fastjson.JSON;
  */
 @Controller(mapping = { "/act/runinstance","/nv2/act/runinstance" })
 public class RunInstanceController {
+	private static final Logger log = LoggerFactory.getLogger(RunInstanceController.class);
+	
 	@Inject private Db db;
 	@Inject private PlatformDb db2;
+	@Inject private NodeUserService nodeUserService; 
 	 
 	@RequestMapping(mapping = { "/page_running", "/m/page_running" }, text = "获取运行中的流程实例（含流程标题、发起人、业务主键等关键信息)")
 	public Page<RunInstance> queryForPageRunningDetail(RunInstanceQuery query) {
@@ -127,6 +142,55 @@ public class RunInstanceController {
 				}
 			}
 		}
+		
+		// 获取拟稿节点
+		NodeQuery nq =new NodeQuery();
+		nq.setTaskBizType(Node.TASK_BIZ_TYPE_DRAFTNODE);
+		nq.setDefinitionId(query.getProcessDefinitionId());
+		Node draftNode = db.queryForObject("queryForPage", Node.class, nq);
+		
+		// 加载流程当前活动节点的审批人
+		for (RunInstance e: page.getData()) {
+			Map<String, Object> map = new HashMap<>();
+			
+			if(StringUtil.isNotBlank(e.getCreateDeptId())) {
+				map.put(ActUtil.VARIABLES_CREATE_DEPT_ID, Long.valueOf(e.getCreateDeptId()));
+			}else {
+				log.error("流程实例ID="+e.getInstanceId()+"的流程找不到填制人部门");
+			}
+			map.put(ActUtil.VARIABLES_START_USER_ID, e.getStartUserId());
+			//map.put(ActUtil.VARIABLES_LOGIN_USER,null);
+			List<ApproveObject> approveUsers =null;
+			try{
+				approveUsers = nodeUserService.getNodeUsers(null, e.getProcessDefinitionId(), e.getTaskKey(), map);
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+			StringBuilder approveUserText = new StringBuilder();
+
+			
+			
+			if (approveUsers != null) {
+				for (ApproveObject t : approveUsers) {
+					User user = db2.getById(User.class, t.getId());
+					if (user != null) {
+						approveUserText.append(t.getName() + "(" + user.getLoginNo()+"/"+user.getUserId() + ")");
+					}
+				}
+				e.setApproveUserText(approveUserText.toString());
+			}
+			
+			if(draftNode!=null && e.getTaskKey().equals(draftNode.getTaskKey())) {
+				User user = db2.getById(User.class, e.getStartUserId());
+				if (user!=null) {
+					e.setApproveUserText(e.getStartUserName()+"("+user.getLoginNo()+"/"+user.getUserId()+")");
+				}
+				
+			}
+		}
+		
+
+		
 		return page;
 	}
 	

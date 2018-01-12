@@ -154,6 +154,9 @@ public class NodeButton {
 	 * */
 	private Integer btnType;
 	
+	/**重提交按钮**/
+	public static final String BTN_TYPE_RESUBMIT="resubmit";
+	
 	/**同意**/
 	public static final String BTN_TYPE_AGREE="agree";
 	/**驳回**/

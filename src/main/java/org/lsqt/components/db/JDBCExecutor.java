@@ -314,7 +314,12 @@ public class JDBCExecutor {
 		}
 		
 		if(paramValues == null || paramValues.length==0) {
-			return batchUpdate(Arrays.asList(sql));
+			if(sql.indexOf("?")==-1) { // 执行纯SQL
+				return batchUpdate(Arrays.asList(sql));
+			}else {
+				return 0;
+			}
+			//return batchUpdate(Arrays.asList(sql));
 		}
 		
 		int sum = 0;

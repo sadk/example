@@ -55,13 +55,16 @@ public class PositionQuery {
 	
 	// -----------------------
 	private Long userId; // 用于查询用户的岗位使用
+	private String userIds; //用于查询一堆用户的岗位
 	
 	private String nodePath; // 岗位节点路径(用于上下级管理)
 	
 	private Boolean pidNotNull;
 	private Boolean nodePathIsNull;
 	
+	private Long roleId; // 用于查询角色下的岗位
 	
+	private Long positionCategoryId; // 用于查询某个岗位类别下的具体岗
 	
 	// getter、setter
 
@@ -247,6 +250,30 @@ public class PositionQuery {
 
 	public void setNodePathIsNull(Boolean nodePathIsNull) {
 		this.nodePathIsNull = nodePathIsNull;
+	}
+
+	public Long getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(Long roleId) {
+		this.roleId = roleId;
+	}
+
+	public Long getPositionCategoryId() {
+		return positionCategoryId;
+	}
+
+	public void setPositionCategoryId(Long positionCategoryId) {
+		this.positionCategoryId = positionCategoryId;
+	}
+
+	public String getUserIds() {
+		return userIds;
+	}
+
+	public void setUserIds(String userIds) {
+		this.userIds = userIds;
 	}
 
 }

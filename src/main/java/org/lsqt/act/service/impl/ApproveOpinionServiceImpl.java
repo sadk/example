@@ -36,4 +36,8 @@ public class ApproveOpinionServiceImpl implements ApproveOpinionService{
 	public int deleteById(Long ... ids) {
 		return db.deleteById(ApproveOpinion.class, Arrays.asList(ids).toArray());
 	}
+	
+	public int deleteBy(String instanceId,String businessKey) {
+		return db.executeUpdate("delete from ext_approve_opinion where process_instance_id=? and business_key=?", instanceId,businessKey);
+	}
 }

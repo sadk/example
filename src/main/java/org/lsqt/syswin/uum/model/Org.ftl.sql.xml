@@ -23,13 +23,15 @@
 			<column updateTime="update_date" property="updateTime" text="修改时间"/>
 	 		<column createTime="create_date" property="createTime" text="创建时间"/>
 	 		
+	 		<!-- 
 	 		<column name="pname" property="pName" isVirtual="true" text="上级名称"/>
 	 		<column name="type_prop" property="propType" isVirtual="true" text="单元属性: 1=填报单元 2=汇总单元"/>
+	 		 -->
 	</table>
 	
 	<statement id="queryForPage" parameterName="query">
 	 	<![CDATA[
-	 		select A.* ,B.org_unit_name pname,C.type_prop from t_org_unit_info A left join t_org_unit_info B on  A.parent_org_unit_id=B.org_unit_id left join ets_budget.t_unit_budget C on A.org_unit_id = C.unit_id where 1=1
+	 		select A.* ,B.org_unit_name pname from t_org_unit_info A left join t_org_unit_info B on  A.parent_org_unit_id=B.org_unit_id  where 1=1
 
 		 	 
 		 	<#if query??>
@@ -106,14 +108,19 @@
 	  						<#if query.sortOrder?? && query.sortField??>
   								order by ${StringUtil.escapeSql(query.sortField)} ${StringUtil.escapeSql(query.sortOrder)} 
   							</#if>
-	  						
+  							
+  							<#if query.sortOrder?? && query.sortFieldGbk??>
+  								order by CONVERT(${StringUtil.escapeSql(query.sortFieldGbk)} USING gbk)  ${StringUtil.escapeSql(query.sortOrder)} 
+  							</#if>
         	</#if>
         	
 		]]>
 	</statement>
 	
 	<statement id="getAll">
-		<![CDATA[ select A.* ,B.org_unit_name pname from t_org_unit_info A left join t_org_unit_info B on  A.parent_org_unit_id=B.org_unit_id where 1=1 ]]>
+		<![CDATA[ 
+			select A.* ,B.org_unit_name pname from t_org_unit_info A left join t_org_unit_info B on  A.parent_org_unit_id=B.org_unit_id where 1=1 
+			]]>
 	</statement>
 	
 	<statement id="getUserMainOrg" parameterName="userId">

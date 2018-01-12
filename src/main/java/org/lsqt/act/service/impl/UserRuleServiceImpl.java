@@ -51,6 +51,10 @@ public class UserRuleServiceImpl implements UserRuleService{
 	public UserRule saveOrUpdate(UserRule model) {
 		return db.saveOrUpdate(model);
 	}
+	
+	public UserRule saveOrUpdate(UserRule model,String ...props) {
+		return db.saveOrUpdate(model,props);
+	}
 
 	public int deleteById(Long ... ids) {
 		return db.deleteById(UserRule.class, Arrays.asList(ids).toArray());
@@ -82,6 +86,11 @@ public class UserRuleServiceImpl implements UserRuleService{
 			if (rule == null || rule.getResolveType() == null){
 				continue;
 			}
+			/*
+			if(rule.getEnable()!=null && rule.getEnable()== UserRule.ENABLE_ON) {
+				
+				continue;
+			}*/
 			
 			log.debug(" --- 规则类型(1=freemark 2=velocity 3=javascript 4=groovy): "+rule.getResolveType());
 			
@@ -123,7 +132,7 @@ public class UserRuleServiceImpl implements UserRuleService{
 	
 	String resolveUserIdsFreemark(Map<String,Object> root,UserRule rule) throws Exception{
 		if(rule!=null){
-			log.debug(" --- 用户规则id:"+rule.getId()+",内容："+rule.getContent());
+			///log.debug(" --- 用户规则id:"+rule.getId()+",内容："+rule.getContent()+ ",变量:"+root);
 		}
 		Template tmpl = new Template(rule.getId()+""+System.currentTimeMillis(), new StringReader(rule.getContent()), ActFreemarkUtil.FTL_CONFIGURATION);
 		StringWriter stringWriter = new StringWriter();

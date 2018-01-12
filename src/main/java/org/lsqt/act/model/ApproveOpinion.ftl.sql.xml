@@ -129,7 +129,7 @@
 	
 	<statement id="getHistoryApproveNode" parameterName="processInstanceId">
 		<![CDATA[ 
-			select distinct approve_task_key ,approve_task_name from ext_approve_opinion where 1=1 and process_instance_id = '${StringUtil.escapeSql(processInstanceId)}' and approve_action!='start'
+			select distinct approve_task_key ,approve_task_name,definition_id from ext_approve_opinion where 1=1 and process_instance_id = '${StringUtil.escapeSql(processInstanceId)}'  and approve_task_key is not null  order by create_time desc 
 		]]>
 	</statement>
 	

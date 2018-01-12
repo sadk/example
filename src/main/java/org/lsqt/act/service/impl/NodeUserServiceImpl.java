@@ -37,6 +37,9 @@ import org.lsqt.act.ActUtil;
 import org.lsqt.act.model.ApproveObject;
 import org.lsqt.act.model.NodeUser;
 import org.lsqt.act.model.NodeUserQuery;
+import org.lsqt.act.model.UserRule;
+import org.lsqt.act.model.UserRuleMatrixDeptUser;
+import org.lsqt.act.model.UserRuleMatrixDeptUserQuery;
 import org.lsqt.act.service.NodeUserService;
 import org.lsqt.act.service.UserRuleService;
 import org.lsqt.components.context.annotation.Inject;
@@ -177,7 +180,11 @@ public class NodeUserServiceImpl implements NodeUserService{
 		List<String> userIdList = new ArrayList<>();
 		List<String> orgIdList = new ArrayList<>();
 		List<String> positionIdList = new ArrayList<>();
+		
 		List<String> ruleIdList = new ArrayList<>();
+		
+		
+		List<User> userList = new ArrayList<>();
 		
 		for (NodeUser e : list) {
 			if (e.getUserType() == null) {
@@ -199,7 +206,31 @@ public class NodeUserServiceImpl implements NodeUserService{
 				}
 
 				if (NodeUser.USER_TYPE_SCRIPT == e.getUserType()) {
-					ruleIdList.add(e.getApproveObjectId());
+					UserRule rule = db.getById(UserRule.class, e.getApproveObjectId());
+					if(rule != null) {
+						if (rule.getEnable()!=null && UserRule.ENABLE_ON == rule.getEnable()) { // 部门与用户规则矩阵配置的审批用户
+
+							UserRuleMatrixDeptUserQuery q = new UserRuleMatrixDeptUserQuery();
+							q.setUserRuleId(rule.getId());
+							q.setCreateDeptId(Long.valueOf(variables.get(ActUtil.VARIABLES_CREATE_DEPT_ID) + ""));
+							List<UserRuleMatrixDeptUser> tempData = db.queryForList("queryForPage",UserRuleMatrixDeptUser.class, q); //理论上只有一个值 
+
+							if (tempData != null && !tempData.isEmpty()) {
+								for (UserRuleMatrixDeptUser md : tempData) {
+									if (StringUtil.isNotBlank(md.getUserIds())) {
+
+										UserQuery userQuery = new UserQuery();
+										userQuery.setIds(md.getUserIds());
+										List<User> users0 = db2.queryForList("queryForPage", User.class, userQuery);
+										userList.addAll(users0);
+									}
+								}
+							}
+						} else {
+							ruleIdList.add(e.getApproveObjectId()); // freemarkt等代码类型角本
+						}
+					}
+					
 				}
 				
 			} else if (NodeUser.USER_FROM_TYPE_REMOTE_HTTP_JSON == e.getUserFromType()) {
@@ -207,7 +238,7 @@ public class NodeUserServiceImpl implements NodeUserService{
 			}
 		}
 		
-		List<User> userList = new ArrayList<>();
+		
 		
 		// 指定的用户
 		if(!userIdList.isEmpty()){
@@ -233,11 +264,12 @@ public class NodeUserServiceImpl implements NodeUserService{
 			userList.addAll(users3);
 		}
 		
-		// 角本规则用户
+		// 角本规则用户(代码引擎解析出用户的一类别)
 		if (!ruleIdList.isEmpty()) {
 			String rids = ArrayUtil.join(ruleIdList, ",");
 			List<Long> idList = StringUtil.split(Long.class, rids, ",");
 			Long[] ids = idList.toArray(new Long[idList.size()]);
+			
 			try {
 				log.debug(" --- 准备解析角本规则用户,规则Id : "+rids);
 				
@@ -255,7 +287,7 @@ public class NodeUserServiceImpl implements NodeUserService{
 			}
 		}
 		
-		
+
 		
 		
 		for(User e: userList) {

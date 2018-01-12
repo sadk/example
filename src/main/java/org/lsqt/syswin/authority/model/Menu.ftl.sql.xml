@@ -45,7 +45,7 @@
 					)
 				</#if>
 				
-							<#if query.ids??> and A.id in (${StringUtil.escapeSql(query.ids)}) </#if>
+							<#if query.ids??> and A.menu_id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  						<#if query.id??> and A.menu_id = ${query.id} </#if>
 					
@@ -67,7 +67,7 @@
 						
 	  						<#if query.level??> and A.menu_level = ${query.level} </#if>
 					
-	  						<#if query.nodePath??> and A.node_path = '${StringUtil.escapeSql(query.nodePath)}' </#if>
+	  						<#if query.nodePath??> and A.node_path like '${StringUtil.escapeSql(query.nodePath)}%' </#if>
 						
 	  						<#if query.createUserId??> and A.createby = ${query.createUserId} </#if>
 					
@@ -96,7 +96,12 @@
 									select duties_id from  t_user_duties where user_id =${query.userId}))) 
 							</#if>
 							
-							
+  							
+  							<#if query.sortOrder?? && query.sortField??>
+  								order by ${StringUtil.escapeSql(query.sortField)} ${StringUtil.escapeSql(query.sortOrder)}
+  							<#else>
+  								order by menu_order 
+  							</#if>
         	</#if>
         	
 		]]>

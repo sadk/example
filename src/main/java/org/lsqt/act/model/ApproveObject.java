@@ -50,37 +50,50 @@ public class ApproveObject {
 		for (ApproveObject e : list) {
 			if (Byte.class.isAssignableFrom(type) || byte.class.isAssignableFrom(type)) {
 				set.add((T)Byte.valueOf(e.getId()));
+				continue;
 			} 
 			
 			if (Short.class.isAssignableFrom(type) || short.class.isAssignableFrom(type)) {
 				set.add((T)Short.valueOf(e.getId()));
+				continue;
 			}
 			
 			if (Integer.class.isAssignableFrom(type) || int.class.isAssignableFrom(type)) {
 				set.add((T)Integer.valueOf(e.getId()));
+				continue;
 			}   
 			
 			if (Long.class.isAssignableFrom(type) || long.class.isAssignableFrom(type)) {
 				set.add((T)Long.valueOf(e.getId()));
+				continue;
 			}   
 			
 			if (Float.class.isAssignableFrom(type) || float.class.isAssignableFrom(type)) {
 				set.add((T)Float.valueOf(e.getId()));
+				continue;
 			}
 			
 			if (Double.class.isAssignableFrom(type) || double.class.isAssignableFrom(type)) {
 				set.add((T)Double.valueOf(e.getId()));
+				continue;
 			}
 			
 			if (Boolean.class.isAssignableFrom(type) || boolean.class.isAssignableFrom(type)) {
 				set.add((T)Boolean.valueOf(e.getId()));
+				continue;
+			}
+			
+			if (java.lang.String.class.isAssignableFrom(type)) {
+				set.add((T)String.valueOf(e.getId()));
+				continue;
 			}
 			
 			if (java.lang.Character.class.isAssignableFrom(type) || char.class.isAssignableFrom(type)) {
 				set.add((T)e.getId());
+				continue;
 			}
-			
-			throw new RuntimeException("unsupport type: "+type);
+
+			throw new UnsupportedOperationException("unsupport type: "+type);
 		}
 		return new ArrayList<>(set);
 	}

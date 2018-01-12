@@ -7,6 +7,7 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.syswin.PlatformDb;
 import org.lsqt.syswin.authority.model.PositionPermitConfig;
 import org.lsqt.syswin.authority.model.PositionPermitConfigQuery;
 import org.lsqt.syswin.authority.service.PositionPermitConfigService;
@@ -14,7 +15,7 @@ import org.lsqt.syswin.authority.service.PositionPermitConfigService;
 @Service
 public class PositionPermitConfigServiceImpl implements PositionPermitConfigService{
 	
-	@Inject private Db db;
+	@Inject private PlatformDb db;
 	
 	public Page<PositionPermitConfig>  queryForPage(PositionPermitConfigQuery query) {
 		return db.queryForPage("queryForPage", query.getPageIndex(), query.getPageSize(), PositionPermitConfig.class, query);

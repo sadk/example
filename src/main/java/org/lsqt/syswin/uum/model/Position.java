@@ -96,6 +96,7 @@ public class Position {
 	private String orgNodeText;
 	private String mainPositionDesc;//是否是“主岗”、“兼岗”
 	
+	
 	// getter、setter
 	public void setId(Long id) {
 		this.id = id;

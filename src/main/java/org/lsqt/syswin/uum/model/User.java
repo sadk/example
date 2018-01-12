@@ -45,6 +45,18 @@ select role_id from  T_POWER_DUTIES_ROLE where duties_id in (select duties_id fr
  */
 public class User {
 
+	public static List<Long> toIdList(List<User> userList) {
+		List<Long> userIdList = new ArrayList<>();
+		if (userList == null || userList.isEmpty()) {
+			return userIdList;
+		}
+
+		for (User u : userList) {
+			userIdList.add(u.getUserId());
+		}
+		return userIdList;
+	}
+	
 	/** 用户id */
 	private Long userId;
 

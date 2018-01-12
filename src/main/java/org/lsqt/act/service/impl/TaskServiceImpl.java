@@ -55,7 +55,9 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
+import org.lsqt.sys.model.Application;
 import org.lsqt.syswin.PlatformDb;
 import org.lsqt.syswin.uum.model.Org;
 import org.lsqt.syswin.uum.model.OrgQuery;
@@ -90,6 +92,9 @@ public class TaskServiceImpl implements TaskService{
 	@Inject private NodeButtonService nodeButtonService;
 	@Inject private NodeUserService nodeUserService;
 	
+	public void setDb(Db db) {
+		this.db = db;
+	}
 	// ------------------------------------------------------  动作  -------------------------------------------
 	public void claim(String taskId, String userId) {
 		actTaskService.claim(taskId, userId);
@@ -190,10 +195,10 @@ public class TaskServiceImpl implements TaskService{
 	Task getNextNewTask(org.lsqt.act.model.ProcessInstance instance) {
 		org.lsqt.act.model.TaskQuery filter = new org.lsqt.act.model.TaskQuery();
 		filter.setProcessDefinitionId(instance.getProcessDefinitionId());
-		filter.setProcessInstanceId(instance.getId());
+		filter.setProcessInstanceId(instance.getProcessInstanceId());
 		List<Task> taskList = db.queryForList("querySimple", Task.class, filter);
 		if (taskList != null && taskList.size() > 1) {
-			throw new RuntimeException("自动跳过的节点，不支持并发模式");
+			throw new RuntimeException("不支持并发模式");
 		}
 
 		if(taskList.isEmpty()) {
@@ -202,6 +207,17 @@ public class TaskServiceImpl implements TaskService{
 		
 		Task task = taskList.get(0);
 		return task;
+	}
+	
+	/**
+	 *  获取当前实例的任务（不支持并发模式）
+	 * @param processInstanceId
+	 * @return
+	 */
+	public Task getNextNewTask(String processInstanceId) {
+		org.lsqt.act.model.ProcessInstance instance = new org.lsqt.act.model.ProcessInstance();
+		instance.setProcessInstanceId(processInstanceId);
+		return getNextNewTask(instance);
 	}
 	
 	/**
@@ -273,6 +289,24 @@ public class TaskServiceImpl implements TaskService{
 		return null;
 	}
 	
+	/**
+	 * 自动跳过添加默认用户
+	 * @param nodeUserMap
+	 */
+	private void prepareAutoJumpUser(Map<String, List<ApproveObject>> nodeUserMap) {
+		Set<String> set = nodeUserMap.keySet();
+		for(String key: set) {
+			List<ApproveObject> approveObjects = nodeUserMap.get(key);
+			if(approveObjects == null || approveObjects.isEmpty()) {
+				ApproveObject adminApprove = new ApproveObject();
+				adminApprove.setId(ActUtil.AUTO_JUMP_USER_ID);
+				List<ApproveObject> temp = new ArrayList<>();
+				temp.add(adminApprove);
+				nodeUserMap.put(key, temp);
+			}
+		}
+	}
+	
 	@SuppressWarnings({ "unchecked" })
 	public String complete(Long loginUserId,String taskId, Map<String, Object> variable,ApproveOpinion opinion) {
 		
@@ -323,6 +357,8 @@ public class TaskServiceImpl implements TaskService{
 		Map<String,Object> nodeUserVariable = new HashMap<>();
 		nodeUserVariable.put(ActUtil.VARIABLES_CREATE_DEPT_ID, createDeptId);
 		Map<String, List<ApproveObject>> nodeUserMap = nodeUserService.getNodeUsers(Long.valueOf(startUserIdObj.toString()), task.getProcessDefinitionId(),nodeUserVariable);
+		
+		//prepareAutoJumpUser(nodeUserMap);
 		prepareDraftNodeUser(draftNode,startUserIdObj.toString(),nodeUserMap);
 		
 		for(String key: nodeUserMap.keySet()) {
@@ -353,7 +389,7 @@ public class TaskServiceImpl implements TaskService{
 				if (approveUsers == null || approveUsers.isEmpty()) {
 					//variable.put(task.getTaskDefinitionKey(), Arrays.asList(loginUserId.toString()));
 					ProcessDefinition def= ActUtil.getRepositoryService().createProcessDefinitionQuery().processDefinitionId(task.getProcessDefinitionId()).singleResult();
-					throw new RuntimeException("没有解析到当前节点审批用户，请联系管理员设置流程节点的审批用户【流程定义ID:"+task.getProcessDefinitionId()+",流程版本号:"+def.getVersion());
+					throw new RuntimeException("没有解析到当前节点审批用户，请联系管理员设置流程节点的审批用户【节点编码:"+task.getTaskDefinitionKey()+",流程版本号:"+def.getVersion());
 				}
 			}
 		}
@@ -412,8 +448,12 @@ public class TaskServiceImpl implements TaskService{
 		opinion.setCreateTime(new Date());
 		opinion.setUpdateTime(new Date());
 		opinion.setApproveUserName(loginUser.getUserName());
+		if(variable.get(ActUtil.VARIABLES_APPROVE_OPINION)!=null) {
+			opinion.setApproveOpinion(variable.get(ActUtil.VARIABLES_APPROVE_OPINION)+"" );
+		}
 		db.save(opinion);
 		
+		try{
 		// 补全流程附件表其它字段
 		if(opinion!=null && opinion.getAttachmentList()!=null) {
 			for(ApproveOpinionFile f : opinion.getAttachmentList()) {
@@ -447,17 +487,11 @@ public class TaskServiceImpl implements TaskService{
 				||NodeButton.BTN_TYPE_FORWORD_READ.equals(opinion.getApproveAction())
 				||NodeButton.BTN_TYPE_COPY_SEND.equals(opinion.getApproveAction())) {
 			if(StringUtil.isBlank(opinion.getAssignForwardCcUserIds())) {
-				if(opinion.getId()!=null){
-					db.deleteById(ApproveOpinion.class, opinion.getId());
-				}
 				throw new RuntimeException("加签、转发或抄送用户不能为空");
 			}
 			
 			if(NodeButton.BTN_TYPE_ADD_ASSIGN.equals(opinion.getApproveAction()) && 
 					StringUtil.split(opinion.getAssignForwardCcUserIds(),",").contains(loginUserId.toString())) {
-				if(opinion.getId()!=null){
-					db.deleteById(ApproveOpinion.class, opinion.getId());
-				}
 				throw new RuntimeException("不能加签给自己");
 			}
 			
@@ -542,7 +576,7 @@ public class TaskServiceImpl implements TaskService{
 			
 			//先执行全局回调角本、再执行按钮回调角本（就近原则!!)
 			executeGlobalAfterScript(loginUser,ActUtil.convert(actInstance), task.getProcessDefinitionId(), nextTaskCandidateUserIds);
-			executeAfterScript(loginUser,task,opinion,draftNode);
+			executeAfterScript(loginUser,task,opinion,draftNode,nextTaskCandidateUserIds);
 			
 			
 			//流程如果结束更新流程状态为已完成
@@ -598,9 +632,26 @@ public class TaskServiceImpl implements TaskService{
 			}
 			
 			if (isMutilReject) { // 多级退回
-				ApproveOpinion lastRejectNode = getLastMutilRejectNode(apprOpinionList);
 				variable.putAll(initVariable);
+				
+				// 如果是多级退回，已退回到拟稿人，则重新按流程顺序走；否则逆着原来的节点路径跳跃式前进,如： 1(拟稿节点)-2-3-4-5-6-7-8-9, 9退-7-5-2，2提交时执行路径为 2-5-7-9
+				if(draftNode!=null && task.getTaskDefinitionKey().equals(draftNode.getTaskKey())) {//如果退回到拟稿节点了（也就是由拟稿节点提交过来的）
+					List<Long> ids = ApproveOpinion.getIdList(apprOpinionList);
+					if(!ids.isEmpty()) {
+						String sql = String.format("update ext_approve_opinion set reject_re_run_complete_status=? where id in (%s)",StringUtil.join(ids, ","));
+						db.executeUpdate(sql,ApproveOpinion.REJECT_RE_RUN_COMPLETESTATUS_COMPLETE);
+					}
+					
+					//actTaskService.complete(taskId, variable);
+					NextCompleteGeneralHandler nextComplete = new NextCompleteGeneralHandler();
+					nextComplete.setTaskServiceImpl(this);
+					return nextComplete.execute(loginUser, actInstance, task, nodeUserVariable, nodeUserMap, draftNode, opinion, lastTask);
+				}
+				
+				ApproveOpinion lastRejectNode = getLastMutilRejectNode(apprOpinionList);
+				//variable.putAll(initVariable);
 				jump(taskId, lastRejectNode.getApproveTaskKey(),variable);
+				 
 				task = getNextNewTask(ActUtil.convert(actInstance));
 				task = processAutoJumpForEmptyApproveUserNode(loginUser,opinion,lastTask,draftNode,actInstance,task, variable,nodeUserMap);
 				
@@ -608,12 +659,13 @@ public class TaskServiceImpl implements TaskService{
 				db.update(lastRejectNode, "rejectReRunCompleteStatus");
 				
 				String nextTaskCandidateUserIds = getNextTaskCandidateUserIds(actInstance.getBusinessKey(), task.getProcessDefinitionId(), actInstance.getId(), nodeUserMap, draftNode,task);
+				log.debug("多级退回,审批的户IDs:"+nextTaskCandidateUserIds);
 				
 				//执行全局回调角本
 				executeGlobalAfterScript(loginUser,ActUtil.convert(actInstance), task.getProcessDefinitionId(), nextTaskCandidateUserIds);
 				
 				//执行按钮回调角本
-				executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode);
+				executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode,nextTaskCandidateUserIds);
 
 				//流程如果结束更新流程状态为已完成
 				processRunInstaceStatus(actInstance.getId());
@@ -631,7 +683,9 @@ public class TaskServiceImpl implements TaskService{
 				}
 				
 				temp.putAll(initVariable);
+				 
 				jump(taskId, backedLastStepNode.getApproveTaskKey(),temp);
+				
 				task = getNextNewTask(ActUtil.convert(actInstance));
 				task = processAutoJumpForEmptyApproveUserNode(loginUser,opinion,lastTask,draftNode,actInstance,task, variable,nodeUserMap);
 				
@@ -644,14 +698,13 @@ public class TaskServiceImpl implements TaskService{
 				executeGlobalAfterScript(loginUser,ActUtil.convert(actInstance), task.getProcessDefinitionId(), nextTaskCandidateUserIds);
 				
 				//执行按钮回调角本
-				executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode);
+				executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode,nextTaskCandidateUserIds);
 
 				//流程如果结束更新流程状态为已完成
 				processRunInstaceStatus(actInstance.getId());
 				return nextTaskCandidateUserIds;
 				
 			} else if (assignTask!=null) { //检查2： 是否是加签用户在处理，处理完毕跳回至给他加签的主人
-				
 				jump(taskId, assignTask.getTaskKey(),variable);
 				
 				opinion.setApproveAction(NodeButton.BTN_TYPE_ADD_ASSIGN_AGREE);
@@ -669,7 +722,7 @@ public class TaskServiceImpl implements TaskService{
 				executeGlobalAfterScript(loginUser,ActUtil.convert(actInstance), task.getProcessDefinitionId(), nextTaskCandidateUserIds);
 				
 				//执行按钮回调角本
-				executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode);
+				executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode,nextTaskCandidateUserIds);
 
 				//流程如果结束更新流程状态为已完成
 				processRunInstaceStatus(actInstance.getId());
@@ -680,8 +733,10 @@ public class TaskServiceImpl implements TaskService{
 			} else {
 				
 				variable.putAll(initVariable);
-				log.debug(" --- ymm3:常规同意，taskId="+taskId+" ："+JSON.toJSONString(variable, true));
+				/*log.debug(" --- ymm3:常规同意，taskId="+taskId+" ："+JSON.toJSONString(variable, true));
+				
 				actTaskService.complete(taskId, variable);
+				
 				boolean isInstanceEnded = isInstanceEnded(actInstance.getId());
 				
 				
@@ -692,7 +747,7 @@ public class TaskServiceImpl implements TaskService{
 					nextTaskCandidateUserIds = getNextTaskCandidateUserIds(actInstance.getBusinessKey(), actInstance.getProcessDefinitionId(), actInstance.getId(), nodeUserMap, draftNode,task);
 					log.debug(" --- ymm1:"+nextTaskCandidateUserIds);
 					executeGlobalAfterScript(loginUser, ActUtil.convert(actInstance), task.getProcessDefinitionId(), nextTaskCandidateUserIds);//执行全局回调角本
-					executeAfterScript(loginUser, lastTask, opinion, draftNode);// 执行按钮回调角本
+					executeAfterScript(loginUser, lastTask, opinion, draftNode,nextTaskCandidateUserIds);// 执行按钮回调角本
 					
 					task = processAutoJumpForRessolveEmptyApproveUserNode(loginUser,opinion,lastTask,draftNode,actInstance,task,variable,nodeUserMap);//解析出用户为空自动跳过
 				}
@@ -714,9 +769,12 @@ public class TaskServiceImpl implements TaskService{
 						// 防止流程任务游离，下一步处理人为空，将跳回原节点（事务补偿)
 						log.debug(" --- ymm4:防止流程任务游离，下一步处理人为空，将跳回原节点（事务补偿)"+taskId+" ："+JSON.toJSONString(variable, true));
 						log.debug(" --- ymm5:"+task.getId()+"lastTaskKey:"+lastTask.getTaskDefinitionKey());
+						
+						
 						jump(task.getId(), lastTask.getTaskDefinitionKey(), variable);
 						
-						String msg = String.format("检测到流程节点“%s”审批用户为空", task.getName());
+						
+						String msg = String.format("检测到下一步流程节点“%s”节点审批用户为空,请联系管理员设置审批人", task.getName());
 						log.error(msg + ", 登陆用户:" + loginUserId + ", 审批节点名称:" + task.getName() + ", 流程节点key:" + task.getTaskDefinitionKey());
 						throw new RuntimeException(msg);
 						
@@ -728,12 +786,17 @@ public class TaskServiceImpl implements TaskService{
 					executeGlobalAfterScript(loginUser, ActUtil.convert(actInstance), task.getProcessDefinitionId(), nextTaskCandidateUserIds);
 					
 					// 执行按钮回调角本
-					executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode);
+					executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode,nextTaskCandidateUserIds);
 				}
 				
 				//流程如果结束更新流程状态为已完成
 				processRunInstaceStatus(actInstance.getId());
-				return nextTaskCandidateUserIds;
+				*/
+				
+				NextCompleteGeneralHandler nextComplete = new NextCompleteGeneralHandler();
+				nextComplete.setTaskServiceImpl(this);
+				return nextComplete.execute(loginUser, actInstance, task, nodeUserVariable, nodeUserMap, draftNode, opinion, lastTask);
+				//return nextTaskCandidateUserIds;
 			}
 		}
 		
@@ -768,7 +831,9 @@ public class TaskServiceImpl implements TaskService{
 				Task lastTask = Task.getCloneObject(task);
 				RunTaskAssignForwardCc assignTask = getAssignUserApporve(loginUserId,task);
 				if (assignTask!=null) {
+				
 					jump(taskId, assignTask.getTaskKey(),variable);
+					
 					
 					opinion.setApproveAction(NodeButton.BTN_TYPE_ADD_ASSIGN_DISAGREE);
 					opinion.setApproveResult(NodeButton.getApproveActionDesc(NodeButton.BTN_TYPE_ADD_ASSIGN_DISAGREE));
@@ -784,7 +849,7 @@ public class TaskServiceImpl implements TaskService{
 					executeGlobalAfterScript(loginUser,ActUtil.convert(actInstance), task.getProcessDefinitionId(), nextTaskCandidateUserIds);
 					
 					//执行按钮回调角本
-					executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode);
+					executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode,nextTaskCandidateUserIds);
 
 					//流程如果结束更新流程状态为已完成
 					processRunInstaceStatus(actInstance.getId());
@@ -793,6 +858,23 @@ public class TaskServiceImpl implements TaskService{
 					
 					return nextTaskCandidateUserIds;
 				}
+			}
+			
+			// 撤回，使终是流程发起人才能撤回，如果别有权限帮发起人撤回，也是以发起人的身分撤回
+			if (NodeButton.BTN_TYPE_START_USER_REBACK.equals(opinion.getApproveAction())) {
+				RunInstanceQuery ft = new RunInstanceQuery();
+				ft.setInstanceId(actInstance.getProcessInstanceId());
+				RunInstance ri = db.queryForObject("queryForPage", RunInstance.class, ft);
+				if(ri!=null && (opinion!=null && opinion.getId()!=null) && draftNode!=null) {
+					opinion.setApproveTaskName(draftNode.getTaskName());
+					opinion.setApproveTaskKey(draftNode.getTaskKey());
+					opinion.setApproveTaskCandidateUserIds(ri.getStartUserId());
+					opinion.setApproveUserName(ri.getStartUserName());
+					opinion.setApproveUserOrgText(ri.getStartUserOrgText());
+					opinion.setApproveUserPositionText(ri.getStartUserPositionText());
+					db.update(opinion, "approveTaskName","approveTaskKey","approveTaskCandidateUserIds","approveUserName","approveUserOrgText","approveUserPositionText");
+				}
+				processRunInstaceBusinessStatus(actInstance.getProcessInstanceId(),"6","已撤回");
 			}
 			
 			// 查找设置的拟稿节点，如果没有，调用流程图起始节点的下一个节点??????
@@ -808,14 +890,16 @@ public class TaskServiceImpl implements TaskService{
 			globalVariableFill(hisVariable,actInstance);
 			
 			hisVariable.putAll(initVariable);
+			
 			jump(taskId, draftNode.getTaskKey(),hisVariable);
+			
 			
 			//执行全局回调角本
 			String nextTaskCandidateUserIds = getNextTaskCandidateUserIds(actInstance.getBusinessKey(), task.getProcessDefinitionId(), actInstance.getId(), nodeUserMap, draftNode,task);
 			executeGlobalAfterScript(loginUser, ActUtil.convert(actInstance), task.getProcessDefinitionId(), nextTaskCandidateUserIds);
 			
 			//执行按钮回调角本
-			executeAfterScript(loginUser,task,opinion,draftNode);
+			executeAfterScript(loginUser,task,opinion,draftNode,nextTaskCandidateUserIds);
 			
 			//流程如果结束更新流程状态为已完成
 			processRunInstaceStatus(actInstance.getId());
@@ -826,19 +910,24 @@ public class TaskServiceImpl implements TaskService{
 		if (NodeButton.BTN_TYPE_REJECT_TO_CHOOSE_NODE.equals(opinion.getApproveAction())
 				|| NodeButton.BTN_TYPE_REJECT_TO_CHOOSE_NODE_FOR_MUTIL_BACK.equals(opinion.getApproveAction())) {
 			if(StringUtil.isBlank(opinion.getRejectToChooseNodeTaskKey())) {
+				if(opinion.getId()!=null){
+					db.deleteById(ApproveOpinion.class, opinion.getId());
+				}
 				throw new RuntimeException("请选择要驳回的节点任务");
 			}
 			globalVariableFill(variable,actInstance);
 			variable.putAll(initVariable);
-			//variable.put("usertask9", 6366L);
+			
+			
 			jump(taskId, opinion.getRejectToChooseNodeTaskKey(),variable);
+			
 			
 			//执行全局回调角本
 			String nextTaskCandidateUserIds = getNextTaskCandidateUserIds(actInstance.getBusinessKey(), task.getProcessDefinitionId(), actInstance.getId(), nodeUserMap, draftNode,task);
 			executeGlobalAfterScript(loginUser,ActUtil.convert(actInstance), task.getProcessDefinitionId(), nextTaskCandidateUserIds);
 			
 			//执行按钮回调角本
-			executeAfterScript(loginUser,task,opinion,draftNode);
+			executeAfterScript(loginUser,task,opinion,draftNode,nextTaskCandidateUserIds);
 			
 			//流程如果结束更新流程状态为已完成
 			processRunInstaceStatus(actInstance.getId());
@@ -874,14 +963,17 @@ public class TaskServiceImpl implements TaskService{
 			
 			globalVariableFill(variable,actInstance);
 			variable.putAll(initVariable);
+			
+			
 			jump(taskId, destNodeKey,variable);
+			
 			
 			//执行全局回调角本
 			String nextTaskCandidateUserIds = getNextTaskCandidateUserIds(actInstance.getBusinessKey(), task.getProcessDefinitionId(), actInstance.getId(), nodeUserMap, draftNode,task);
 			executeGlobalAfterScript(loginUser,ActUtil.convert(actInstance), task.getProcessDefinitionId(), nextTaskCandidateUserIds);
 			
 			//执行按钮回调角本
-			executeAfterScript(loginUser,task,opinion,draftNode);
+			executeAfterScript(loginUser,task,opinion,draftNode,nextTaskCandidateUserIds);
 			
 			//流程如果结束更新流程状态为已完成
 			processRunInstaceStatus(actInstance.getId());
@@ -906,24 +998,31 @@ public class TaskServiceImpl implements TaskService{
 			executeGlobalAfterScript(loginUser, ActUtil.convert(actInstance), task.getProcessDefinitionId(), nextTaskCandidateUserIds);
 			
 			// 执行按钮回调角本
-			executeAfterScript(loginUser,task,opinion,draftNode);
+			executeAfterScript(loginUser,task,opinion,draftNode,nextTaskCandidateUserIds);
 			
 			//流程如果结束更新流程状态为已完成
 			processRunInstaceStatus(actInstance.getId());
 			return nextTaskCandidateUserIds;
 		}
 		
-		if(NodeButton.BTN_TYPE_DISAGREE_CONTINUE_GO.equals(opinion.getApproveAction())) {
+		if(NodeButton.BTN_TYPE_DISAGREE_CONTINUE_GO.equals(opinion.getApproveAction()) || NodeButton.BTN_TYPE_RESUBMIT.equals(opinion.getApproveAction())) {
 			nodeVariableCopyIfSetOrNot(task,variable);
 			variable.putAll(initVariable);
+			
 			actTaskService.complete(taskId, variable);
+			
+			if(NodeButton.BTN_TYPE_RESUBMIT.equals(opinion.getApproveAction())) {
+				opinion.setApproveAction(NodeButton.BTN_TYPE_RESUBMIT);
+				opinion.setApproveResult("提交");
+				db.saveOrUpdate(opinion, "approveAction","approveResult");
+			}
 			
 			//执行全局回调角本
 			String nextTaskCandidateUserIds = getNextTaskCandidateUserIds(actInstance.getBusinessKey(), task.getProcessDefinitionId(), actInstance.getId(), nodeUserMap, draftNode,task);
 			executeGlobalAfterScript(loginUser, ActUtil.convert(actInstance), task.getProcessDefinitionId(), nextTaskCandidateUserIds);
 			
 			// 执行按钮回调角本
-			executeAfterScript(loginUser,task,opinion,draftNode);
+			executeAfterScript(loginUser,task,opinion,draftNode,nextTaskCandidateUserIds);
 			
 			//流程如果结束更新流程状态为已完成
 			processRunInstaceStatus(actInstance.getId());
@@ -937,18 +1036,29 @@ public class TaskServiceImpl implements TaskService{
 		
 		nodeVariableCopyIfSetOrNot(task,variable);
 		variable.putAll(initVariable);
+		
 		actTaskService.complete(taskId, variable);
+		
 		
 		//执行全局回调角本
 		String nextTaskCandidateUserIds = getNextTaskCandidateUserIds(actInstance.getBusinessKey(), task.getProcessDefinitionId(), actInstance.getId(), nodeUserMap, draftNode,task);
 		executeGlobalAfterScript(loginUser,ActUtil.convert(actInstance), task.getProcessDefinitionId(),  nextTaskCandidateUserIds);
 
 		// 执行按钮回调角本
-		executeAfterScript(loginUser,task,opinion,draftNode);
+		executeAfterScript(loginUser,task,opinion,draftNode,nextTaskCandidateUserIds);
 		
 		//流程如果结束更新流程状态为已完成
 		processRunInstaceStatus(actInstance.getId());
 		return nextTaskCandidateUserIds;
+		
+		
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			if(opinion!=null && opinion.getId() !=null) {
+				db.delete(opinion);
+			}
+			throw ex;
+		}
 	}
 
 	/**
@@ -1177,17 +1287,19 @@ public class TaskServiceImpl implements TaskService{
 					executeGlobalAfterScript(loginUser, ActUtil.convert(actInstance), task.getProcessDefinitionId(), Node.NODE_JUMP_TYPE_EMPTY_APPROVE_USER_AUTO_JUMP_VIRTUAL_USERID);
 
 					// 执行按钮回调角本
-					executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode);
+					executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode,"");
 				}
 				
 				
 				//lastTask = Task.getCloneObject(task);
 				task = getNextNewTask(ActUtil.convert(actInstance));
 				if(task==null) return null; //流程已结束
-				
+			} else {
+				break;
 			}
-			return task;
 		}
+		
+		return getNextNewTask(ActUtil.convert(actInstance));
 	}
 	
 	/**
@@ -1234,7 +1346,7 @@ public class TaskServiceImpl implements TaskService{
 					executeGlobalAfterScript(loginUser, ActUtil.convert(actInstance), task.getProcessDefinitionId(), Node.NODE_JUMP_TYPE_EMPTY_APPROVE_USER_AUTO_JUMP_VIRTUAL_USERID);
 
 					// 执行按钮回调角本
-					executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode);
+					executeAfterScriptForAutoJumpNode(loginUser,opinion,lastTask,task,draftNode,"");
 				}
 				
 				
@@ -1257,13 +1369,13 @@ public class TaskServiceImpl implements TaskService{
 				}
 				executeGlobalAfterScript(loginUser, ActUtil.convert(actInstance), definitionId, nextUserIds);//执行全局回调角本
 				prepareTaskBusinesskey(task,actInstance);
-				executeAfterScript(loginUser, task, opinion, draftNode);// 执行按钮回调角本
+				executeAfterScript(loginUser, task, opinion, draftNode,nextUserIds);// 执行按钮回调角本
 				
 				// 如果流程结束，执行最后一个节点的角本
 				if (isInstanceEnded(actInstance.getId())) {
 					executeGlobalAfterScript(loginUser, ActUtil.convert(actInstance), definitionId, nextUserIds);// 执行全局回调角本
 					prepareTaskBusinesskey(lastTask, actInstance);
-					executeAfterScript(loginUser, lastTask, opinion, draftNode);// 执行按钮回调角本
+					executeAfterScript(loginUser, lastTask, opinion, draftNode,nextUserIds);// 执行按钮回调角本
 				}
 				
 				/*
@@ -1323,17 +1435,26 @@ public class TaskServiceImpl implements TaskService{
 		return false;
 	}
 	
+	 
 	void processRunInstaceStatus(String processInstanceId) {
+		
 		boolean isEnded = isInstanceEnded(processInstanceId);
 		
-		String sql = "update ext_run_instance set business_status = ? , business_status_desc = ? where instance_id = ?";
+		String sql = "update ext_run_instance set end_status = ?  where instance_id = ?";
 		if (isEnded) {
-			db.executeUpdate(sql, ActUtil.BUSINESS_STATUS_已完成,ActUtil.getBusinessStatusDesc(ActUtil.BUSINESS_STATUS_已完成),processInstanceId);
+			db.executeUpdate(sql, ActUtil.CLOSE_STATUS_YES,processInstanceId);
 		} else {
-			db.executeUpdate(sql, ActUtil.BUSINESS_STATUS_审批中,ActUtil.getBusinessStatusDesc(ActUtil.BUSINESS_STATUS_审批中),processInstanceId);
+			db.executeUpdate(sql, ActUtil.CLOSE_STATUS_NO,processInstanceId);
 		}
 	}
 
+	void processRunInstaceBusinessStatus(String processInstanceId,String status,String statusDesc) {
+		String sql = "update ext_run_instance set business_status = ? ,business_status_desc=? where instance_id = ?";
+		if (StringUtil.isNotBlank(processInstanceId,status)) {
+			db.executeUpdate(sql, status,statusDesc,processInstanceId);
+		}
+	}
+	
 	/**
 	 * 判断流程是否已经结束
 	 * @param processInstanceId
@@ -1498,7 +1619,7 @@ public class TaskServiceImpl implements TaskService{
 	 * @param task
 	 * @param btnCode
 	 */
-	void executeAfterScriptForAutoJumpNode(User loginUser,ApproveOpinion opinion,Task lastTask,Task currTask,Node draftNode) {
+	void executeAfterScriptForAutoJumpNode(User loginUser,ApproveOpinion opinion,Task lastTask,Task currTask,Node draftNode,String nextTaskCandidateUserIds) {
 		log.debug(" ------------------------------- 开始执行审批按钮后置角本（回调）--------------------------------------");
 		NodeButtonQuery query = new NodeButtonQuery();
 		query.setDefinitionId(lastTask.getProcessDefinitionId());
@@ -1518,7 +1639,7 @@ public class TaskServiceImpl implements TaskService{
 				if(StringUtil.isNotBlank(model.getAfterScript())) {
 					if(NodeButton.SCRIPT_TYPE_URL.equals(model.getAfterScriptType())){
 						
-						String url = resolveScriptTypeUrl(loginUser, currTask, opinion, model, draftNode);
+						String url = resolveScriptTypeUrl(loginUser, currTask, opinion, model, draftNode,nextTaskCandidateUserIds);
 						/*
 						final Map<String, Object> root = new HashMap<>();
 						root.put("loginUser", loginUser);
@@ -1589,7 +1710,7 @@ public class TaskServiceImpl implements TaskService{
 	 * @param opinion 用户提交过来的审批意见对象
 	 * @param draftNode 拟稿结点(可为null)
 	 */
-	void executeAfterScript(User loginUser,Task task,ApproveOpinion opinion,Node draftNode) throws RuntimeException {
+	void executeAfterScript(User loginUser,Task task,ApproveOpinion opinion,Node draftNode,String nextTaskCandidateUserIds) throws RuntimeException {
 		log.debug(" ------------------------------- 开始执行审批按钮后置角本（回调）--------------------------------------");
 		if(task == null){
 			return;
@@ -1611,7 +1732,7 @@ public class TaskServiceImpl implements TaskService{
 				if(StringUtil.isNotBlank(model.getAfterScript())) {
 					if(NodeButton.SCRIPT_TYPE_URL.equals(model.getAfterScriptType())){
 						
-						String url = resolveScriptTypeUrl(loginUser, task, opinion, model, draftNode);
+						String url = resolveScriptTypeUrl(loginUser, task, opinion, model, draftNode,nextTaskCandidateUserIds);
 						log.debug(" --- 执行后置角本,类型为url: "+url);
 						
 						/*
@@ -1664,7 +1785,7 @@ public class TaskServiceImpl implements TaskService{
 	 * @throws IOException
 	 * @throws TemplateException
 	 */
-	private String resolveScriptTypeUrl(User loginUser, Task task, ApproveOpinion opinion, NodeButton nodeButton,Node draftNode) throws IOException, TemplateException {
+	private String resolveScriptTypeUrl(User loginUser, Task task, ApproveOpinion opinion, NodeButton nodeButton,Node draftNode,String nextTaskCandidateUserIds) throws IOException, TemplateException {
 		final Map<String, Object> root = new HashMap<>();
 		root.put("loginUser", loginUser);
 		root.put("task", task);
@@ -1683,6 +1804,12 @@ public class TaskServiceImpl implements TaskService{
 			}else {
 				root.put("actionRejectType", Node.TASK_BIZ_TYPE_UNDRAFTNODE);
 			}
+		}
+		
+		if(StringUtil.isNotBlank(nextTaskCandidateUserIds)) {
+			root.put("nextTaskCandidateUserIds", nextTaskCandidateUserIds);
+		} else {
+			root.put("nextTaskCandidateUserIds", "");
 		}
 		
 		Template tmpl = new Template((task.getProcessDefinitionId()+task.getTaskDefinitionKey()+opinion.getApproveAction()), new StringReader(nodeButton.getAfterScript()), ActFreemarkUtil.FTL_CONFIGURATION);

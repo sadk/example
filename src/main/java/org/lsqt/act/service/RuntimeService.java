@@ -121,5 +121,11 @@ public interface RuntimeService {
 	 */
 	List<ApproveOpinion> queryForListOpinion(ApproveOpinionQuery query) ;
 	
+	/**
+	 * 流程是否结束
+	 * @param processInstanceId
+	 * @return
+	 */
+	boolean isInstanceEnded(String processInstanceId);
 	
 }

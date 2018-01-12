@@ -34,16 +34,16 @@ public class PositionCategory {
 	private java.util.Date createTime;
 
 	/** 修改者id */
-
 	private Long updateUserId;
 
 	/** 修改者名称 */
 	private String updateUserName;
 
 	/** 修改时间 */
-
 	private java.util.Date updateTime;
 
+	private String remark;
+	
 	// getter、setter
 	public void setId(Long id) {
 		this.id = id;
@@ -131,6 +131,14 @@ public class PositionCategory {
 
 	public java.util.Date getUpdateTime() {
 		return this.updateTime;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
 }

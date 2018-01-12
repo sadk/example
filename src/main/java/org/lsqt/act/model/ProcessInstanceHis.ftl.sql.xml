@@ -2,7 +2,7 @@
 <statements namespace="org.lsqt.act.model.ProcessInstanceHis" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
 	<table name="ACT_HI_PROCINST">
 			<column id="ID_" type="auto" property="id" text="主键" />
-	 		<column name="PROC_INST_ID" property="processInstanceId" text="流程实例ID(等于业务主键)"/>
+	 		<column name="PROC_INST_ID_" property="processInstanceId" text="流程实例ID(等于业务主键)"/>
 	 		<column name="BUSINESS_KEY_" property="businessKey" text="业务数据主键ID"/>
 	 		<column name="PROC_DEF_ID_" property="processDefinitionId" text="流程定义ID"/>
 	 		<column name="START_TIME_" property="startTime" text="开始时间"/>
@@ -48,6 +48,22 @@
 		<![CDATA[ select * from act_hi_procinst ]]>
 	</statement>
 	
+		<statement id="queryForList" parameterName="query">
+		<![CDATA[ 
+			select * from act_hi_procinst where 1=1
+			<#if query??>
+ 						<#if query.instanceIdList?? && (query.instanceIdList?size>0)>
+	  							and PROC_INST_ID_ in
+	  							(
+		  							<#list query.instanceIdList as item>
+		  						 		 '${StringUtil.escapeSql(item)}' <#if item_has_next>,</#if>
+		  						 	</#list>
+	  						 	)
+	  					</#if>
+			</#if>
+		]]>
+	</statement>
+	
 	<statement id="queryForPageFinishedDetail" parameterName="query">
 	 	<![CDATA[
 	 	<#-- 查询已结束的流程实例  -->
@@ -78,24 +94,24 @@
 					and (
 							RES.NAME_ like '%${key}%'  or 
 							RES.TENANT_ID_ = '%${key}%'  or 
-							RES.PROC_INST_ID = '%${key}%' or
+							RES.PROC_INST_ID_ = '%${key}%' or
 							
 							C.title like '%${key}%'  or 
 							C.start_user_id = '${key}'  or 
 							C.start_user_name like '%${key}%'  or 
 							C.business_key = '%${key}%'  or 
-							C.business_status_desc like '%${key}%',
+							C.business_status_desc like '%${key}%' or
 							C.remark like '%${key}%' 
 					)
 				</#if>
 				
 						<#if query.businessKey??> and RES.BUSINESS_KEY_ = '${StringUtil.escapeSql(query.businessKey)}' </#if>
-						<#if query.instanceId??> and RES.PROC_INST_ID  = '${StringUtil.escapeSql(query.instanceId)}' </#if>
+						<#if query.instanceId??> and RES.PROC_INST_ID_  = '${StringUtil.escapeSql(query.instanceId)}' </#if>
 						
 						<#if query.processDefinitionId??> and RES.PROC_DEF_ID_  = '${StringUtil.escapeSql(query.processDefinitionId)}' </#if>
 						<#if query.processDefinitionName??> and RES.NAME_  = '${StringUtil.escapeSql(query.processDefinitionName)}' </#if>
 				
- 						<#if query.title??> and C.title = '${StringUtil.escapeSql(query.title)}' </#if>
+ 						<#if query.title??> and C.title like '%${StringUtil.escapeSql(query.title)}%' </#if>
 						<#if query.userId??> and C.start_user_id = '${StringUtil.escapeSql(query.userId)}' </#if>
  						<#if query.startUserName??> and C.start_user_name = '${StringUtil.escapeSql(query.startUserName)}' </#if>
 						<#if query.business_category??> and C.business_category = '${StringUtil.escapeSql(query.businessCategory)}' </#if>

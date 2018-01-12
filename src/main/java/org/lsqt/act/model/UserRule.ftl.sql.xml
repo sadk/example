@@ -13,6 +13,7 @@
 	 		<column name="app_code" property="appCode" text=""/>
 	 		<column name="sn" property="sn" text="排序"/>
 	 		<column name="remark" property="remark" text="备注"/>
+	 		<column name="enable" property="enable" text="启用状态：1=启用  0=禁用"/>
 	 		
 	 		
 	 		<column gid="gid" property="gid" text="全局唯一编号"/>
@@ -40,6 +41,8 @@
 							<#if query.ids??> and A.id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  						<#if query.id??> and A.id = ${query.id} </#if>
+	  						
+	  						<#if query.enable??> and A.enable = ${query.enable} </#if>
 					
 	  						<#if query.categoryId??> and A.category_id = ${query.categoryId} </#if>
 	  						
@@ -64,6 +67,13 @@
 	  							and date_format(A.create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 	  						</#if>
 	  						
+	  						<#if query.sortOrder?? && query.sortField??> 
+	  							order by ${StringUtil.escapeSql(query.sortField)} ${StringUtil.escapeSql(query.sortOrder)} 
+	  						</#if>
+	  						
+	  						<#if query.sortOrder?? && query.sortFieldGbk??>
+  								order by CONVERT(${StringUtil.escapeSql(query.sortFieldGbk)} USING gbk)  ${StringUtil.escapeSql(query.sortOrder)} 
+  							</#if>
         	</#if>
 		]]>
 	</statement>

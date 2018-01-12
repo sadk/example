@@ -14,6 +14,7 @@
 	 		<column name="create_dept_id" property="createDeptId" text="填制人部门：一般从表单取值，如果没有取发起用户的主部门，主部门没有再取用户的普通部门第一个"/>
 	 		<column name="start_user_id" property="startUserId" text="发起人ID"/>
 	 		<column name="start_user_name" property="startUserName" text="发起人名称"/>
+	 		<column name="start_login_no" property="startLoginNo" text="发起人账号"/>
 	 		<column name="start_user_org_text" property="startUserOrgText" text="发起人组织信息"/>
 	 		<column name="start_user_position_text" property="startUserPositionText" text="发起人岗位信息"/>
 	 		
@@ -159,6 +160,7 @@
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
+							RES.PROC_INST_ID_ = '${key}' or
 							C.title like '%${key}%'  or 
 							
 							P.KEY_ like '%${key}%'  or 
@@ -181,6 +183,15 @@
 			
  						<#if query.startUserId??> and C.start_user_id = '${StringUtil.escapeSql(query.startUserId)}' </#if>
  						<#if query.startUserName??> and C.start_user_name = '${StringUtil.escapeSql(query.startUserName)}' </#if>
+ 						
+ 						<#if query.instanceIdList?? && (query.instanceIdList?size>0)>
+	  							and instance_id in
+	  							(
+		  							<#list query.instanceIdList as item>
+		  						 		 '${StringUtil.escapeSql(item)}' <#if item_has_next>,</#if>
+		  						 	</#list>
+	  						 	)
+	  					</#if>
 			
 		</#if>
 		

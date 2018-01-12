@@ -62,7 +62,21 @@ public class MenuServiceImpl implements MenuService{
 	}
 
 	public int deleteById(Long ... ids) {
-		return db.deleteById(Menu.class, Arrays.asList(ids).toArray());
+		List<Menu> data = new ArrayList<>();
+		for (Long id : ids) {
+			Menu m = db.getById(Menu.class, id);
+			if (m != null) {
+				MenuQuery mq = new MenuQuery();
+				mq.setNodePath(m.getNodePath());
+				data.addAll(db.queryForList("queryForPage", Menu.class, mq));
+			}
+		}
+		
+		if(data.isEmpty()) {
+			return 0;
+		}
+		return db.delete(data.toArray(new Object[data.size()]));
+		//return db.deleteById(Menu.class, Arrays.asList(ids).toArray());
 	}
 
 	public void repairNodePath() {

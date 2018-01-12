@@ -68,7 +68,7 @@
 						
 	  						<#if query.userId??> and user_id = ${query.userId} </#if>
 					
-	  						<#if query.userName??> and user_name = '${StringUtil.escapeSql(query.userName)}' </#if>
+	  						<#if query.userName??> and user_name like '%${StringUtil.escapeSql(query.userName)}%' </#if>
 					
 	  						<#if query.sex??> and user_sex = ${query.sex} </#if>
 					
@@ -81,7 +81,18 @@
 	  						<#if query.workNo??> and work_no = '${StringUtil.escapeSql(query.workNo)}' </#if>
 					
 	  						<#if query.loginNo??> and login_no = '${StringUtil.escapeSql(query.loginNo)}' </#if>
-						
+					
+					
+							<#if query.loginNoList?? && (query.loginNoList?size > 0) > 
+								and login_no in (
+									<#list query.loginNoList as item>
+									 	'${StringUtil.escapeSql(item)}' <#if item_has_next>,</#if>
+									</#list>
+								)
+							</#if>
+					
+					
+					
 					
 	  						<#if query.mobile??> and mobile_phone = '${StringUtil.escapeSql(query.mobile)}' </#if>
 						
@@ -128,6 +139,13 @@
 	  						<#if StringUtil.isNotBlank(query.orgIds)>
 	  							and  user_id in (select user_id from  t_user_duties where duties_id in(select duties_id from T_ORG_DUTIES_INFO where org_unit_id in (${StringUtil.escapeSql(query.orgIds)})))
 							</#if>	
+							
+							<#-- 获取某个角色下的用户 -->
+							<#if StringUtil.isNotBlank(query.roleId)>
+								and user_id in (
+									select user_id from t_user_duties where duties_id in (
+										SELECT duties_id FROM t_power_duties_role where role_id =  ${StringUtil.escapeSql(query.roleId)}  ))
+							</#if>	
         	</#if>
         	
 		]]>
@@ -142,7 +160,7 @@
 			<#-- 获取有多个主岗的用户  -->
 			select * from t_user_info where user_id in (
 				select user_id from (
-					SELECT user_id,count(user_id) cnt FROM ets_platform.t_user_duties where duties_type=1 group by user_id having cnt >1) amount
+					SELECT user_id,count(user_id) cnt FROM t_user_duties where duties_type=1 group by user_id having cnt >1) amount
 			)
 		]]>
 	</statement>

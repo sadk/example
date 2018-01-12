@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lsqt.act.ActUtil;
+
 /**
  * 流程任务相关
  * 见表：act_ru_task
@@ -67,13 +69,24 @@ public class Task {
 	private String formUrlCustom; 
 	
 	private String candidateUserIds ; // 当前任务可以审批的用户ID
+	private String candidateUserNames;
 
+	private Date instanceCreateTime ; // 流程实例的创建时间
+	
 	private Map<String,Object> extProperty=new HashMap<>(); // 手机端显示金额啥的，全放这里！！！
 	
 	
 	private String businessStatus;   // 见 ActUtil.businessStatus
 	private String businessStatusDesc;
 	
+	private String closeStatus; // 流程是否结束 1=已结束  0=未结束
+	public String getCloseStatusDesc() {
+		if(ActUtil.CLOSE_STATUS_YES.equals(closeStatus)) {
+			return "已结束";
+		}else {
+			return "未结束";
+		}
+	}
 	/**
 	 * 手工克隆任务对象
 	 * @param task
@@ -357,5 +370,27 @@ public class Task {
 	}
 	public void setFormUrlCustom(String formUrlCustom) {
 		this.formUrlCustom = formUrlCustom;
+	}
+
+	public String getCandidateUserNames() {
+		return candidateUserNames;
+	}
+
+	public void setCandidateUserNames(String candidateUserNames) {
+		this.candidateUserNames = candidateUserNames;
+	}
+
+	public String getCloseStatus() {
+		return closeStatus;
+	}
+
+	public void setCloseStatus(String closeStatus) {
+		this.closeStatus = closeStatus;
+	}
+	public Date getInstanceCreateTime() {
+		return instanceCreateTime;
+	}
+	public void setInstanceCreateTime(Date instanceCreateTime) {
+		this.instanceCreateTime = instanceCreateTime;
 	}
 }

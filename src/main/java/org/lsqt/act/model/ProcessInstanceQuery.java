@@ -21,6 +21,7 @@ public class ProcessInstanceQuery {
 	private String createDeptId; // 填制人部门id
 	private String startUserName;
 
+	private String key; // 关键字
 	// -------------------------------------------------
 	
 	/**
@@ -332,5 +333,15 @@ public class ProcessInstanceQuery {
 
 	public void setSortField(String sortField) {
 		this.sortField = sortField;
+	}
+
+
+	public String getKey() {
+		return key;
+	}
+
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 }

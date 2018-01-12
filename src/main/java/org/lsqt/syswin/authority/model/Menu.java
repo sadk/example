@@ -34,7 +34,20 @@ public class Menu {
 
 	/** 菜单类型(1=pc 2=app 3=pad) */
 	private Integer type;
-	
+	public String getTypeDesc() {
+		if(type !=null) {
+			if(1==type) {
+				return "PC端";
+			}
+			if(2==type) {
+				return "手机端";
+			}
+			if(3==type) {
+				return "IPAD端";
+			}
+		}
+		return "";
+	}
 
 	/** 菜单层级（根节点为0） */
 	private Integer level;

@@ -18,4 +18,6 @@ public interface ApproveOpinionService {
 	int deleteById(Long... ids);
 	
 	Collection<ApproveOpinion> getAll();
+	
+	int deleteBy(String instanceId,String businessKey) ;
 }

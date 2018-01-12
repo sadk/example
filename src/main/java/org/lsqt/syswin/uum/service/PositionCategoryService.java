@@ -18,4 +18,6 @@ public interface PositionCategoryService {
 	int deleteById(Long... ids);
 	
 	Collection<PositionCategory> getAll();
+	
+	void repairNodePath();
 }

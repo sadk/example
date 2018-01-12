@@ -2,12 +2,14 @@
 <statements namespace="org.lsqt.syswin.uum.model.PositionCategory" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
 	<table name="t_power_duties_type">
 	
-			<column id="duties_id" type="auto" property="id" text="主键" />
-	 		<column name="duties_name" property="name" text="岗位分类名称"/>
-	 		<column name="duties_code" property="code" text="岗位分类编码"/>
-	 		<column name="parent_duties_id" property="pid" text="父分类id"/>
+			<column id="duties_type_id" type="auto" property="id" text="主键" />
+	 		<column name="duties_type_name" property="name" text="岗位分类名称"/>
+	 		<column name="duties_type_code" property="code" text="岗位分类编码"/>
+	 		<column name="parent_duties_type_id" property="pid" text="父分类id"/>
 	 		<column name="node_path" property="nodePath" text="结点路径"/>
 	 	
+	 		<column name="remark" property="remark" text="备注"/>
+	 		
 	 		<column name="createby" property="createUserId" text="创建者id"/>
 	 		<column name="createby_name" property="createUserName" text="创建者名称"/>
 	 		<column name="updateby" property="updateUserId" text="修改者id"/>
@@ -23,24 +25,24 @@
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
-							duties_id = %${query.key}%  or 
-							duties_name like '%${key}%'  or 
-							duties_code like '%${key}%'  or 
+							duties_type_id = %${query.key}%  or 
+							duties_type_name like '%${key}%'  or 
+							duties_type_code like '%${key}%'  or 
 							node_path like '%${key}%'  or 
 							createby_name like '%${key}%'  or 
 							updateby_name like '%${key}%' 
 					)
 				</#if>
 				
-							<#if query.ids??> and duties_id in (${StringUtil.escapeSql(query.ids)}) </#if>
+							<#if query.ids??> and duties_type_id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
-	  						<#if query.id??> and duties_id = ${query.id} </#if>
+	  						<#if query.id??> and duties_type_id = ${query.id} </#if>
 					
-	  						<#if query.name??> and duties_name = '${StringUtil.escapeSql(query.name)}' </#if>
+	  						<#if query.name??> and duties_type_name = '${StringUtil.escapeSql(query.name)}' </#if>
 					
-	  						<#if query.code??> and duties_code = '${StringUtil.escapeSql(query.code)}' </#if>
+	  						<#if query.code??> and duties_type_code = '${StringUtil.escapeSql(query.code)}' </#if>
 						
-	  						<#if query.pid??> and parent_duties_id = ${query.pid} </#if>
+	  						<#if query.pid??> and parent_duties_type_id = ${query.pid} </#if>
 					
 	  						<#if query.nodePath??> and node_path = '${StringUtil.escapeSql(query.nodePath)}' </#if>
 						
@@ -59,12 +61,6 @@
 							<#if query.updateTimeBegin?? && query.updateTimeEnd??>
 	  							and date_format(update_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.updateTimeBegin)}' and '${StringUtil.escapeSql(query.updateTimeEnd)}'
 	  						</#if>
-	  						
-	  						<#-- 获取岗位分类下的实体岗 -->
-	  						<#if query.categoryId??>
-	  							and duties_id in (SELECT duties_id FROM t_power_duties_type_mid where type_id =  ${query.categoryId})
-	  						</#if>
-	  						
         	</#if>
         	
 		]]>

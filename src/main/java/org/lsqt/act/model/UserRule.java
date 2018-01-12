@@ -64,6 +64,11 @@ public class UserRule {
 	private String gid;
 	private java.util.Date createTime;
 	private java.util.Date updateTime;
+	
+	/** 1=启用 0=禁用 **/
+	private Integer enable; 
+	public static final int ENABLE_ON=1;
+	public static final int ENABLE_OFF=0;
 
 	// --------------------辅助字段
 	private String categoryName ;
@@ -182,4 +187,11 @@ public class UserRule {
 		this.contentType = contentType;
 	}
 
+	public Integer getEnable() {
+		return enable;
+	}
+
+	public void setEnable(Integer enable) {
+		this.enable = enable;
+	}
 }

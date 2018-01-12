@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.lsqt.act.model.NodeButton;
 import org.lsqt.act.model.NodeButtonQuery;
+import org.lsqt.act.model.NodeForm;
+import org.lsqt.act.model.NodeFormQuery;
 import org.lsqt.act.service.NodeButtonService;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
@@ -134,6 +136,48 @@ public class NodeButtonController {
 			n.setTaskName(query.getTaskName());
 		}
 		return dbList;
+	}
+	
+	/**
+	 * 初始化所有按钮
+	 * @param query
+	 * @return
+	 */
+	@RequestMapping(mapping = { "/init_all"},text="初使化表单里所有的审批按钮")
+	public Result initAll(NodeFormQuery query) {
+		System.out.println(query.getDefinitionId());
+		
+		List<Dictionary> list = dictionaryService.getOptionByCode("form_node_button_type", Application.APP_CODE_DEFAULT);
+
+		List<NodeForm> dbList = db.queryForList("queryForPage", NodeForm.class, query);
+
+		db.executeUpdate("delete from ext_node_button where definition_id=? and data_type=?", query.getDefinitionId(),NodeButton.DATA_TYPE_TASK_BUTTON);
+		
+		List<NodeButton> models = new ArrayList<>();
+		for (NodeForm nodeForm : dbList) {
+			
+			if (list != null) {
+				for (Dictionary d : list) {
+					NodeButton nb = new NodeButton();
+					nb.setDefinitionId(nodeForm.getDefinitionId());
+					nb.setTaskKey(nodeForm.getTaskKey());
+					nb.setDataType(nodeForm.getDataType());
+					nb.setBtnName(d.getName());
+					nb.setBtnCode(d.getCode());
+					nb.setBtnType(Integer.parseInt(d.getValue()));
+					nb.setTaskName(nodeForm.getTaskName());
+					nb.setRemark(d.getRemark());
+					//db.save(nb);
+					models.add(nb);
+				}
+			}
+			
+		}
+		if(!models.isEmpty()){
+			db.batchSave(models);
+		}
+
+		return Result.ok();
 	}
 	
 	@RequestMapping(mapping = { "/get_approve_action_list", "/m/get_approve_action_list" },text="")

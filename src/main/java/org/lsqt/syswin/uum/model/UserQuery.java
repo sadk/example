@@ -1,5 +1,7 @@
 package org.lsqt.syswin.uum.model;
 
+import java.util.List;
+
 import org.lsqt.components.db.Page;
 
 /**
@@ -78,7 +80,10 @@ public class UserQuery {
 	// ----------------------------- 辅助属性 --------------------
 	private String orgIds; //用于获取多个组织下的用户（单层)
 	private String positionIds; // 用于获取多个岗位下的用户
-
+	
+	private String roleId; // 用于查询某个角色下的用户
+	
+	private List<String> loginNoList;
 	
 	// getter、setter
 
@@ -304,6 +309,22 @@ public class UserQuery {
 
 	public void setPositionIds(String positionIds) {
 		this.positionIds = positionIds;
+	}
+
+	public String getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(String roleId) {
+		this.roleId = roleId;
+	}
+
+	public List<String> getLoginNoList() {
+		return loginNoList;
+	}
+
+	public void setLoginNoList(List<String> loginNoList) {
+		this.loginNoList = loginNoList;
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.lsqt.act.model;
 
+import java.util.List;
+
 import org.lsqt.components.db.Page;
 
 /**
@@ -75,17 +77,32 @@ public class TaskQuery {
 	private Long createTimeBeginMillis;
 	private Long createTimeEndMillis;
 	
+	// 流程开始日期开始、结束
+	private String instanceCreateTimeBegin;
+	private String instanceCreateTimeEnd;
+	
+	
+	
 	private String userId; // 用于查询指定用户“待办”
+	private String userName; 
 	private String loginNo; // 用于查询指定用户“待办”（ekp手机端使用）
+	private boolean isQueryTaskUser=false; // 是否查询待办用户
+	
+	
+	private String userIds; // 获取多个用户的待办
+	private List<String> userIdList;
+	
 	
 	private String processDefinitionName; // 辅助字段
 	private String processDefinitionKey; // 辅助字段
 	
 	private String startUserId;  // 流程发起人
 	private String startUserName; 
+	private String startLoginNo;
+	
 	private String title; // 流程标题
 	
-	private String ccUserId; //任务抄送的用户ID
+	//private String ccUserId; //任务抄送的用户ID
 	
 	private String businessKey;
 	
@@ -363,13 +380,6 @@ public class TaskQuery {
 		this.createTimeEndMillis = createTimeEndMillis;
 	}
 
-	public String getCcUserId() {
-		return ccUserId;
-	}
-
-	public void setCcUserId(String ccUserId) {
-		this.ccUserId = ccUserId;
-	}
 
 	public String getBusinessKey() {
 		return businessKey;
@@ -401,6 +411,62 @@ public class TaskQuery {
 
 	public void setLoginNo(String loginNo) {
 		this.loginNo = loginNo;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserIds() {
+		return userIds;
+	}
+
+	public void setUserIds(String userIds) {
+		this.userIds = userIds;
+	}
+
+	public String getInstanceCreateTimeBegin() {
+		return instanceCreateTimeBegin;
+	}
+
+	public void setInstanceCreateTimeBegin(String instanceCreateTimeBegin) {
+		this.instanceCreateTimeBegin = instanceCreateTimeBegin;
+	}
+
+	public String getInstanceCreateTimeEnd() {
+		return instanceCreateTimeEnd;
+	}
+
+	public void setInstanceCreateTimeEnd(String instanceCreateTimeEnd) {
+		this.instanceCreateTimeEnd = instanceCreateTimeEnd;
+	}
+
+	public boolean getIsQueryTaskUser() {
+		return isQueryTaskUser;
+	}
+
+	public void setIsQueryTaskUser(boolean isQueryTaskUser) {
+		this.isQueryTaskUser = isQueryTaskUser;
+	}
+
+	public String getStartLoginNo() {
+		return startLoginNo;
+	}
+
+	public void setStartLoginNo(String startLoginNo) {
+		this.startLoginNo = startLoginNo;
+	}
+
+	public List<String> getUserIdList() {
+		return userIdList;
+	}
+
+	public void setUserIdList(List<String> userIdList) {
+		this.userIdList = userIdList;
 	}
 
 }
