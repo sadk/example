@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.text.ParseException;
@@ -422,31 +423,35 @@ public class ApplicationFilter implements Filter{
 		final Result result = new Result();
 		try {
 			db.executePlan(()-> {
-				try {
+				 
 					long start = System.currentTimeMillis();
 					
-					result.invokedResult = urlMappingDef.getMethod().invoke(controller,methodInputParamValues.toArray());
+					try {
+						result.invokedResult = urlMappingDef.getMethod().invoke(controller,methodInputParamValues.toArray());
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 					long end = System.currentTimeMillis();
-					logger.info(" --- thread-id:"+Thread.currentThread().getId()+" Controller["+controller.getClass().getName()+"#"+urlMappingDef.getMethod().getName()+"("+methodInputParamValues+")] invok cost:"+(end-start)+"(ms)");
+					logger.debug(" --- thread-id:"+Thread.currentThread().getId()+" Controller["+controller.getClass().getName()+"#"+urlMappingDef.getMethod().getName()+"("+methodInputParamValues+")] invoke cost:"+(end-start)+"(ms)");
 				
-				} 
-				catch (DbException e){
-					throw e;
-				}
-				catch (ApplicationException e){
-					throw e;
-				}
-				catch (Exception e) {
-					throw new ApplicationException(e);
-				}
+				 
 			});
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			throw new ApplicationException(ex);
+			throw ex;
 		} finally{
-			db.close();
-			platformDb.close();
+			try {
+				db.close();
+			} finally {
+				platformDb.close();
+			}
 		}
 	
 		// 3.展现视图
