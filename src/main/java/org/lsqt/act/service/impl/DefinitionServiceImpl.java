@@ -115,6 +115,10 @@ public class DefinitionServiceImpl implements DefinitionService{
 			Page<Definition> page = new Page.PageModel<>();
 			 
 			ProcessDefinitionQuery dbQuery = ActUtil.getRepositoryService().createProcessDefinitionQuery();
+			if (StringUtil.isNotBlank(query.getCategory())) {
+				dbQuery = dbQuery.processDefinitionCategory(query.getCategory());
+			}
+			
 			dbQuery = dbQuery.latestVersion();
 			long total = dbQuery.count();
 			
@@ -131,6 +135,25 @@ public class DefinitionServiceImpl implements DefinitionService{
 			List<ProcessDefinition> temp = dbQuery.listPage(query.getPageIndex()* query.getPageSize(), query.getPageSize());
 			page.setData(convert(temp));
 
+			// 加载流程简称和移动端是否启用
+			List<String> defIds = new ArrayList<>();
+			for (org.lsqt.act.model.Definition e: page.getData()) {
+				defIds.add(e.getId());
+			}
+			if(defIds.size()>0) {
+				DefinitionQuery q = new DefinitionQuery();
+				q.setIds(StringUtil.join(defIds));
+				List<Definition> list = db.queryForList("queryForPage",Definition.class,q);
+				for(Definition t: list) {
+					for (org.lsqt.act.model.Definition e: page.getData()) {
+						if(t.getId().equals(e.getId())) {
+							e.setShortName(t.getShortName());
+							e.setEnableMobile(t.getEnableMobile());
+							break;
+						}
+					}
+				}
+			}
 			return page;
 		}
 	}

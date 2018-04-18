@@ -113,7 +113,7 @@ public class StringUtil {
 		if (text.startsWith(splitor)) {
 			text = text.substring(splitor.length(), text.length());
 		}
-		return Arrays.asList(text.split(splitor));
+		return new ArrayList<>(Arrays.asList(text.split(splitor)));
 	}
 	
 	public static void main(String[] args) {

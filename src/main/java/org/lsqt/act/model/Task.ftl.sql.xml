@@ -27,6 +27,7 @@
 	 		<!-- 待办任务的其它显示字段 -->
 	 		<column name="title" property="title" isVirtual="true" text="流程标题" />
 	 		<column name="business_key" property="businessKey" isVirtual="true" text="业务主键" />
+	 		<column name="business_flow_no" property="businessFlowNo" isVirtual="true" text="业务流水号（全局唯一）" />
 	 		<column name="business_status" property="businessStatus" isVirtual="true" text="业务状态:各业务自己定义" />
 	 		<column name="business_status_desc" property="businessStatusDesc" isVirtual="true" text="业务状态描述" />
 	 		
@@ -49,7 +50,7 @@
 	
 	<statement id="queryForPageDetail" parameterName="query">
 	 	<![CDATA[
-		 	select distinct RES.*,RUN.title,RUN.start_user_id,CC.approve_action assign_forward_cc_action,CC.assign_forward_cc_user_ids,CC.approve_user_id assign_forward_cc_operater_user_id, RUN.start_user_name,RUN.start_user_org_text,RUN.start_user_position_text, RUN.business_key,RUN.business_status,RUN.business_status_desc,RUN.process_definition_key,RUN.process_definition_name,RUN.create_time instance_create_time from ACT_RU_TASK RES left join ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_ left join ext_run_instance RUN on RES.PROC_INST_ID_= RUN.instance_id  left join ext_run_task_assign_forward_cc CC on RES.ID_ = CC.task_id WHERE 1=1 
+		 	select distinct RES.*,RUN.title,RUN.start_user_id,  RUN.start_user_name,RUN.start_user_org_text,RUN.start_user_position_text, RUN.business_key,RUN.business_flow_no,RUN.business_status,RUN.business_status_desc,RUN.process_definition_key,RUN.process_definition_name,RUN.create_time instance_create_time from ACT_RU_TASK RES left join ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_ left join ext_run_instance RUN on RES.PROC_INST_ID_= RUN.instance_id  WHERE 1=1 
 		 	<#if query??>
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
@@ -75,7 +76,11 @@
 							RUN.process_definition_key like '%${key}%' or
 							RUN.process_definition_name like '%${key}%' or
 							 -->
+							 
+							 
+							 
 							RUN.title like '%${key}%' or
+							RUN.business_flow_no = '%${key}%' or
 							RUN.start_user_name like '%${key}%' 
 							
 					)
@@ -110,6 +115,17 @@
 	  						<#if query.description??> and RES.DESCRIPTION_ = '${StringUtil.escapeSql(query.description)}' </#if>
 					
 	  						<#if query.taskDefinitionKey??> and RES.TASK_DEF_KEY_ = '${StringUtil.escapeSql(query.taskDefinitionKey)}' </#if>
+	  						
+	  						<#if query.taskDefinitionKeys??> 
+	  							<#assign list = StringUtil.split(query.taskDefinitionKeys,",") />
+	  							
+	  							and RES.TASK_DEF_KEY_ in ( 
+	  								
+									<#list list as taskDefinitionKey> 
+										'${StringUtil.escapeSql(taskDefinitionKey)}'  <#if taskDefinitionKey_has_next> , </#if> 
+									</#list> 
+	  							)
+	  						</#if>
 					
 	  						<#if query.owner??> and RES.OWNER_ = '${StringUtil.escapeSql(query.owner)}' </#if>
 					
@@ -158,11 +174,15 @@
 		  							and (RES.ASSIGNEE_ = ${StringUtil.escapeSql(query.userId)}  or (RES.ASSIGNEE_ is null and (I.USER_ID_ = ${StringUtil.escapeSql(query.userId)} or I.GROUP_ID_ IN (select g.GROUP_ID_ from ACT_ID_MEMBERSHIP g where g.USER_ID_ = ${StringUtil.escapeSql(query.userId)}) ) ) ) 
 		  							
 		  							<#-- 含加签、转发 用户的待办 -->
-		  							or  RES.ID_ in  (select task_id from ext_run_task_assign_forward_cc where assign_forward_cc_user_ids like '%,${StringUtil.escapeSql(query.userId)},%' and approve_action in ( 'add_assign','forword_read') )
+		  							<#if query.taskIdsIncludeAssignForward??> 
+		  							or  RES.ID_ in  (${query.taskIdsIncludeAssignForward})
+		  							</#if>
 		  						)
 		  						
 		  						<#-- 去除加签\转发的"主人"待办 -->
-		  						and RES.ID_ not in  ( select task_id from ext_run_task_assign_forward_cc  where 1=1 and task_complete_type=0 and approve_action in ('add_assign','forword_read') and approve_user_id=${StringUtil.escapeSql(query.userId)} )  
+		  						<#if query.taskIdsEscapeAssignForward??> 
+		  						and RES.ID_ not in  ( ${query.taskIdsEscapeAssignForward} )  
+	  							</#if>
 	  						</#if>
 	  						
 	  						
@@ -176,16 +196,15 @@
 		  							and (RES.ASSIGNEE_ in ( ${StringUtil.escapeSql(query.userIds)} )  or (RES.ASSIGNEE_ is null and (I.USER_ID_ in ( ${StringUtil.escapeSql(query.userIds)} ) or I.GROUP_ID_ IN (select g.GROUP_ID_ from ACT_ID_MEMBERSHIP g where g.USER_ID_ in ( ${StringUtil.escapeSql(query.userIds)} ) ) ) ) ) 
 		  							
 		  							<#-- 含加签、转发 用户的待办 -->
-		  							or  RES.ID_ in  (select task_id from ext_run_task_assign_forward_cc where (
-		  																										<#list uids as uid> 
-		  																											assign_forward_cc_user_ids like '%,${StringUtil.escapeSql(uid)},%' <#if uid_has_next> or </#if> 
-		  																										</#list> 
-		  																									  ) 
-		  																										and approve_action in ( 'add_assign','forword_read') )
+		  							<#if query.taskIdsIncludeAssignForward??> 
+		  							or  RES.ID_ in  (${query.taskIdsIncludeAssignForward})
+		  							</#if>
 		  						)
 		  						 
 		  						<#-- 去除加签\转发的"主人"待办 -->
-		  						and RES.ID_ not in  ( select task_id from ext_run_task_assign_forward_cc  where 1=1 and task_complete_type=0 and approve_action in ('add_assign','forword_read') and approve_user_id in (${StringUtil.escapeSql(query.userIds)}) )  
+		  						<#if query.taskIdsEscapeAssignForward??> 
+		  						and RES.ID_ not in  (  ${query.taskIdsEscapeAssignForward} )  
+	  							</#if>
 	  						</#if>
 	  						
 	  						
@@ -207,6 +226,70 @@
 		]]>
 	</statement>
 	
+	<statement id="getTaskIdsIncludeAssignForward" parameterName="query">
+		<![CDATA[ 
+			<#-- 我的待办辅助查询, （优化SQL做成分断查询） 含加签、转发 用户的待办  -->
+			select task_id from ext_run_task_assign_forward_cc where 1=1 and approve_action in ( 'add_assign','forword_read') 
+			<#if query.userId??> 
+				and assign_forward_cc_user_ids like '%,${StringUtil.escapeSql(query.userId)},%'  
+			</#if>
+			
+			<#if query.userIds??> 
+				<#assign uids = StringUtil.split(query.userIds,",") />
+				and (
+					<#list uids as uid> 
+						assign_forward_cc_user_ids like '%,${uid},%'    <#if uid_has_next> or </#if> 
+					</#list> 
+				)
+			</#if>
+		]]>
+	</statement>
+	
+	<statement id="getTaskIdsEscapeAssignForward" parameterName="query">
+		<![CDATA[ 
+			<#-- 我的待办辅助查询,（优化SQL做成分断查询）去除加签\转发的"主人"待办 -->
+			select task_id from ext_run_task_assign_forward_cc  where 1=1 and task_complete_type=0 and approve_action in ('add_assign','forword_read') 
+			<#if query.userId??> 
+				and approve_user_id=${StringUtil.escapeSql(query.userId)} 
+			</#if>
+			
+			<#if query.userIds??> 
+				and approve_user_id=${StringUtil.escapeSql(query.userIds)} 
+			</#if>
+		]]>
+	</statement>
+	
+	
+	
+	<statement id="getTaskIdsIncludeAssignForwardBatchQuery" parameterName="query">
+		<![CDATA[ 
+			<#assign uids = StringUtil.split(query.userIds,",") />
+			
+			select task_id from ext_run_task_assign_forward_cc where (
+				<#list uids as uid> 
+					assign_forward_cc_user_ids like '%,${StringUtil.escapeSql(uid)},%' <#if uid_has_next> or </#if> 
+				</#list> 
+			) 
+			and approve_action in ( 'add_assign','forword_read') 
+		]]>
+	</statement>
+	
+	<statement id="getTaskIdsEscapeAssignForwardBatchQuery" parameterName="query">
+		<![CDATA[ 
+			select task_id from ext_run_task_assign_forward_cc  where 1=1 and task_complete_type=0 and approve_action in ('add_assign','forword_read') and approve_user_id in (${StringUtil.escapeSql(query.userIds)}) 
+		]]>
+	</statement>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	<statement id="getAll">
 		<![CDATA[ select distinct RES.*,RUN.title,RUN.start_user_id, RUN.start_user_name,RUN.start_user_org_text,RUN.start_user_position_text, RUN.business_key,RUN.process_definition_key,RUN.process_definition_name from ACT_RU_TASK RES left join ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_ left join ext_run_instance RUN on RES.PROC_INST_ID_= RUN.instance_id WHERE 1=1  ]]>
 	</statement>
@@ -214,7 +297,7 @@
 	<statement id="queryTask" parameterName="query">
 		<![CDATA[ 
 			SELECT A.approve_task_id ID_, A.process_instance_id PROC_INST_ID_ , A.definition_id PROC_DEF_ID_ , A.approve_task_name NAME_ ,approve_task_key TASK_DEF_KEY_,A.create_time CREATE_TIME_  , 
-					B.title,B.business_key, B.business_status, B.business_status_desc, B.process_definition_name,B.process_definition_key, B.start_user_id,B.start_user_name,B.start_user_org_text,B.start_user_position_text ,B.create_time instance_create_time
+					B.title,B.business_key, B.business_flow_no, B.business_status, B.business_status_desc, B.process_definition_name,B.process_definition_key, B.start_user_id,B.start_user_name,B.start_user_org_text,B.start_user_position_text ,B.create_time instance_create_time
 			FROM ext_approve_opinion A  
 			left join ext_run_instance B on A.process_instance_id = B.instance_id  where 1=1 
 			
@@ -224,7 +307,8 @@
 					and (
 							B.start_user_name like '%${key}%' or
 							B.process_definition_key like '%${key}%' or
-							B.title like '%${key}%'
+							B.title like '%${key}%' or 
+							B.business_flow_no like '%${key}%' 
 					)
 				</#if>
 						<#if query.processDefinitionId??> and A.definition_id = '${StringUtil.escapeSql(query.processDefinitionId)}' </#if>
@@ -251,7 +335,7 @@
 							SELECT null ID_,instance_id PROC_INST_ID_ ,  process_definition_id PROC_DEF_ID_,
 							 -- CONCAT(process_definition_name,'- (',start_user_name,')') 
 							 title NAME_ , null TASK_DEF_KEY_ ,create_time CREATE_TIME_,
-							 title, business_key,business_status,business_status_desc,process_definition_name,process_definition_key,start_user_id,start_user_name,start_user_org_text,start_user_position_text,create_time instance_create_time
+							 title, business_key, business_flow_no , business_status,business_status_desc,process_definition_name,process_definition_key,start_user_id,start_user_name,start_user_org_text,start_user_position_text,create_time instance_create_time
 							 FROM  ext_run_instance where 1=1 
 							 
 							 and  start_user_id=${StringUtil.escapeSql(query.userId)} and end_status=4 
@@ -354,6 +438,7 @@
 			    task_name NAME_,
 			    A.create_time CREATE_TIME_,
 			    A.business_key,
+			    B.business_flow_no,
 			    B.business_status,
 			    B.business_status_desc,
 			    B.start_user_id,
@@ -371,6 +456,16 @@
 			WHERE 1=1
 			    and approve_action = 'copy_send'
 			    
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							B.start_user_name like '%${key}%' or
+							B.process_definition_key like '%${key}%' or
+							B.title like '%${key}%' or 
+							B.business_flow_no like '%${key}%'
+					)
+				</#if>
+				
  				<#if query.processDefinitionKey??> and process_definition_key = '${StringUtil.escapeSql(query.processDefinitionKey)}' </#if>
  				
  				
@@ -391,4 +486,85 @@
 
 		]]>
 	</statement>
+	
+	
+	
+	
+	<statement id="queryMyToDoTask" parameterName="query">
+		<![CDATA[  
+			<#-- 获取"任务参与者数据表"任务（我的待办，第三次优化！！！） -->
+			select distinct RES.*,RUN.title,RUN.start_user_id, RUN.start_user_name,RUN.start_user_org_text,RUN.start_user_position_text, RUN.business_key,RUN.business_flow_no,RUN.business_status,RUN.business_status_desc,RUN.process_definition_key,RUN.process_definition_name,RUN.create_time instance_create_time from ACT_RU_TASK RES left join ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_ left join ext_run_instance RUN on RES.PROC_INST_ID_= RUN.instance_id  WHERE 1=1 
+			<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+						RUN.title like '%${key}%' or
+						RUN.start_user_name like '%${key}%' or
+						RUN.business_flow_no = '${key}'
+					)
+			</#if>
+			
+			<#if query.userId?? || query.userIds??> 
+					<#-- 含assign给我 、加签、转发 用户的待办 -->
+					<#if query.taskIdsIncludeAssignForward??> 
+						and RES.ID_ in (${query.taskIdsIncludeAssignForward})
+					</#if>
+						 
+					<#-- 去除加签\转发的"主人"待办 -->
+					<#if query.taskIdsEscapeAssignForward??> 
+						and RES.ID_ not in  ( ${query.taskIdsEscapeAssignForward})
+					</#if>
+			</#if>
+ 
+				  			
+ 			<#-- 移动端启用 -->
+			<#if query.enableMobile??>
+				and RES.PROC_DEF_ID_ in (select ID_ from act_re_procdef where enable_mobile=${StringUtil.escapeSql(query.enableMobile)})
+			</#if>
+			
+			
+  			<#if query.sortOrder?? && query.sortField??> 
+				order by ${StringUtil.escapeSql(query.sortField)} ${StringUtil.escapeSql(query.sortOrder)} 
+			</#if>
+		]]>
+	</statement>
+	
+	<statement id="getAssignedToUser" parameterName="query">
+		<![CDATA[  
+			<#-- 获取"直接分配给我的"任务（我的待办，辅助查询，第三次优化！！！） -->
+			select ID_ from ACT_RU_TASK where 1=1 
+			
+			<#if query.userId??> 
+				and ASSIGNEE_ in (${StringUtil.escapeSql(query.userId)})
+			</#if>
+			
+			<#if query.userIds??> 
+				and ASSIGNEE_ in (${StringUtil.escapeSql(query.userIds)})
+			</#if>
+			
+		]]>
+	</statement>
+	<statement id="getReferTaskAboutUser" parameterName="query">
+		<![CDATA[  	
+			<#-- 获取"我参与的用户"任务（我的待办，辅助查询,第三次优化！！！） -->
+			select TASK_ID_ from ACT_RU_IDENTITYLINK where 1=1 
+			
+			<#if query.userId??> 
+				and 
+				(
+					(USER_ID_ in (${StringUtil.escapeSql(query.userId)}) and TASK_ID_ is not null) or 
+					(GROUP_ID_ IN (select g.GROUP_ID_ from ACT_ID_MEMBERSHIP g where g.USER_ID_ in ( ${StringUtil.escapeSql(query.userId)} )))
+				)
+			</#if>
+			
+			
+			<#if query.userIds??> 
+				and 
+				(
+					(USER_ID_ in (${StringUtil.escapeSql(query.userIds)}) and TASK_ID_ is not null) or 
+					(GROUP_ID_ IN (select g.GROUP_ID_ from ACT_ID_MEMBERSHIP g where g.USER_ID_ in ( ${StringUtil.escapeSql(query.userIds)} )))
+				)
+			</#if>
+		]]>
+	</statement>
+	
 </statements>

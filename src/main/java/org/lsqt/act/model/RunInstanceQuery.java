@@ -45,7 +45,6 @@ public class RunInstanceQuery {
 	/**发起人岗位信息**/
 	private String startUserPositionText;
 	
-
 	/** 业务数据主键ID */
 	private String businessKey;
 
@@ -62,12 +61,14 @@ public class RunInstanceQuery {
 	private String appCode;
 
 	/** 排序 */
-
 	private Integer sn;
 
 	/** 备注 */
 	private String remark;
 
+	private Boolean isSuspended;  // 数据库：1=激活 2=挂起
+	private Boolean isConcurrent; //数据库存储： 1=并行 0=串行 
+	private Boolean isActive; //数据库存储：  1=激活 0=非激活  
 	
 	private List<String> instanceIdList = new ArrayList<>();
 	
@@ -255,5 +256,30 @@ public class RunInstanceQuery {
 	public void setInstanceIdList(List<String> instanceIdList) {
 		this.instanceIdList = instanceIdList;
 	}
+	
+	
+	public Boolean getIsSuspended() {
+		return isSuspended;
+	}
 
+	public void setIsSuspended(Boolean isSuspended) {
+		this.isSuspended = isSuspended;
+	}
+	
+	
+	public Boolean getIsConcurrent() {
+		return isConcurrent;
+	}
+
+	public void setIsConcurrent(Boolean isConcurrent) {
+		this.isConcurrent = isConcurrent;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
 }

@@ -202,7 +202,7 @@
 			
 			// 组织
 			if(row) {
-				//结点用户类型: 1=职称 2=岗位 3=组织 5=用户 7=角色 4=用户组(与流程引擎的group不是一个概念，主要是第三方系统的UUM)； 角本计算：10=java角本计算 11=groovy角本计算 12=javascript角本计算(注：角本计算必须返回Collection<String>集合
+				//结点用户类型: 1=职称 2=岗位 3=组织 5=用户 7=角色 4=用户组(与流程引擎的group不是一个概念，主要是第三方系统的UUM)； 脚本计算：10=java脚本计算 11=groovy脚本计算 12=javascript脚本计算(注：脚本计算必须返回Collection<String>集合
 				data.push({approveObjectId: row.id ,definitionId:definitionId,definitionName:definitionName,taskKey:taskKey,name:row.name,userType:3,userFromType:2})
 				
 				var json = mini.encode(row);

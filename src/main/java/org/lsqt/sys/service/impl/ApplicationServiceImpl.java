@@ -16,6 +16,10 @@ public class ApplicationServiceImpl implements ApplicationService{
 	
 	@Inject private Db db;
 	
+	public List<Application>  queryForList(ApplicationQuery query) {
+		return db.queryForList("queryForPage", Application.class, query);
+	}
+	
 	public Page<Application>  queryForPage(ApplicationQuery query) {
 		return db.queryForPage("queryForPage", query.getPageIndex(), query.getPageSize(), Application.class, query);
 	}

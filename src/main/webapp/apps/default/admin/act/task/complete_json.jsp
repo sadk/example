@@ -170,10 +170,10 @@
 	                type: "post", dataType: 'json',
 	                data : data,
 	                success: function (data) {
-	                	mini.alert("下一步流转成功");
+	                	mini.alert("流转成功，下一步处理人："+data);
 	                },
 	                error: function (jqXHR, textStatus, errorThrown) {
-	                    alert(jqXHR.responseText);
+	                	mini.alert(jqXHR.responseText);
 	                }
 	        }); 
 		}

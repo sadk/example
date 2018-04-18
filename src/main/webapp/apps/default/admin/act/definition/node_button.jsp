@@ -39,10 +39,10 @@
 			        </div>
 			        <div field="dataTypeDesc" width="70" align="left"  headerAlign="center">按钮范围</div>
 			        <!-- 
-			        <div field="beforeScript" width="160" align="left"  headerAlign="center">前置角本
+			        <div field="beforeScript" width="160" align="left"  headerAlign="center">前置脚本
 			        	<input property="editor" class="mini-textarea" style="width:100%;"/>
 			        </div>
-			        <div field="afterScript" width="160" align="left"  headerAlign="center">后置角本
+			        <div field="afterScript" width="160" align="left"  headerAlign="center">后置脚本
 			        	<input property="editor" class="mini-textarea" style="width:100%;"/>
 			        </div>
 			        
@@ -62,9 +62,9 @@
 			</div>
 	    </div>  
     </div>
-    <div title="前置角本"  >
+    <div title="前置脚本"  >
 	    <div class="mini-toolbar">
-	         <a class="mini-button" iconCls="icon-save" plain="false"  onclick="save()">保存【<span id="beforeBtn" style="font-weight: bold;color: red;"></span>】按钮前置角本</a>
+	         <a class="mini-button" iconCls="icon-save" plain="false"  onclick="save()">保存【<span id="beforeBtn" style="font-weight: bold;color: red;"></span>】按钮前置脚本</a>
 	    </div>
 	    <div class="mini-fit">
        		<input id="beforeScript" name="beforeScript" class="mini-textarea" style="width:100%;height:275px;"/>
@@ -81,9 +81,9 @@
 	    	</div>
        	</div>
     </div>
-    <div title="后置角本">
+    <div title="后置脚本">
 	    <div class="mini-toolbar">
-	         <a class="mini-button" iconCls="icon-save" plain="false" onclick="save()">保存【<span id="afterBtn" style="font-weight: bold;color: red;"></span>】按钮后置角本</a>     
+	         <a class="mini-button" iconCls="icon-save" plain="false" onclick="save()">保存【<span id="afterBtn" style="font-weight: bold;color: red;"></span>】按钮后置脚本</a>     
 	    </div>
 	    <div class="mini-fit">
         	<input id="afterScript" name="afterScript" class="mini-textarea" style="width:100%;height:275px;"/>

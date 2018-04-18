@@ -50,7 +50,7 @@
 				
 				<div field="processInstanceId" width="80" headerAlign="center" allowSort="true" align="center">流程实例ID</div>
 				<div field="approveUserName" width="80" headerAlign="center" allowSort="true" align="center">审批用户</div> 
-				<div field="approveResult" width="80" headerAlign="center" allowSort="true" align="center">审批动作</div> 
+				<div field="approveResult" width="120" headerAlign="center" allowSort="true" align="left">审批动作</div> 
 				<div field="approveOpinion" width="260" headerAlign="center" allowSort="true" align="left">审批意见</div>
 				<div field="approveTaskName" width="160" headerAlign="center" allowSort="true" align="left">审批节点</div>
 				<div field="approveAction" width="220" headerAlign="center" allowSort="true" align="left">审批动作key</div>

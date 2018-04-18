@@ -31,28 +31,59 @@
 									</tr>
 						
 									<tr>
-										<td>名称：</td>
+										<td>流程标题：</td>
 										<td>
-											<input id="name" name="name"   class="mini-textbox"  emptyText="请输入姓名"  onenter="search"/>
+											<input id="title" name="title"   class="mini-textbox"  emptyText="请输入流程标题"  onenter="search"/>
 										</td>
 									</tr>
 									
+									
+									
+									
 									<tr>
-										<td>抄送的用户：</td>
+										<td>抄送用户ID：</td>
 										<td>
-											<input id="ccUserId" name="ccUserId"   class="mini-textbox"  emptyText="请输入抄送的ccUserId"  onenter="search"/>
+											<input id="userId" name="userId"   class="mini-textbox"  emptyText="请输入抄送用户ID"  onenter="search"/>
 										</td>
 									</tr>
 									<tr>
-										<td>创建日期(开始)：</td>
+										<td>抄送用户名：</td>
+										<td>
+											<input id="userName" name="userName"   class="mini-textbox"  emptyText="请输入抄送的用户名"  onenter="search"/>
+										</td>
+									</tr>
+									<tr>
+										<td>抄送用户账号：</td>
+										<td>
+											<input id="loginNo" name="loginNo"   class="mini-textbox"  emptyText="请输入抄送的用户账号"  onenter="search"/>
+										</td>
+									</tr>
+									
+									
+									
+									
+									<tr>
+										<td>抄送日期(开始)：</td>
 										<td>
 											<input id="createTimeBegin" name="createTimeBegin" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入创建日期(开始)" />
 										</td>
 									</tr>
 									<tr>
-										<td>创建日期(结束)：</td>
+										<td>抄送日期(结束)：</td>
 										<td>
 											<input id="createTimeEnd" name="createTimeEnd" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入创建日期(结束)" />
+										</td>
+									</tr>
+									<tr>
+										<td>流程日期(开始)：</td>
+										<td>
+											<input id="instanceCreateTimeBegin" name="instanceCreateTimeBegin" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入流程创建日期(开始)" />
+										</td>
+									</tr>
+									<tr>
+										<td>流程日期(结束)：</td>
+										<td>
+											<input id="instanceCreateTimeEnd" name="instanceCreateTimeEnd" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入流程创建日期(结束)" />
 										</td>
 									</tr>
 									
@@ -80,7 +111,7 @@
 								
 						        <div class="mini-fit">
 									<div id="ccMyGrid" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" 
-									url="${pageContext.request.contextPath}/act/task/page_detail"  idField="id" sizeList="[5,10,20,50,100]" pageSize="20" >
+									url="${pageContext.request.contextPath}/act/task/query_page_for_mycopy_send"  idField="id" sizeList="[5,10,20,50,100]" pageSize="20" >
 									<div property="columns">
 										<div type="checkcolumn" ></div>
 										
@@ -107,8 +138,8 @@
 										
 										<div field="parentTaskId" width="80" headerAlign="center" allowSort="true" align="center">父任务ID</div>
 										<div field="tenantId" width="80" headerAlign="center" allowSort="true" align="center">租户ID</div>
-										<div field="createTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">创建日期</div>
-										
+										<div field="createTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">抄送日期</div>
+										<div field="instanceCreateTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">发起日期</div>
 									</div>
 									</div>
 						        </div>

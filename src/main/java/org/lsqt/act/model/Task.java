@@ -41,6 +41,7 @@ public class Task {
 	private String taskDefinitionKey;
 	private String tenantId;
 	
+	private String businessFlowNo;
 	
 	// -------------------------------------------------------------- 辅助字段  ----------------------------
 	// 当前任务对应的流程实例关联的业务主键 !!!
@@ -81,7 +82,7 @@ public class Task {
 	
 	private String closeStatus; // 流程是否结束 1=已结束  0=未结束
 	public String getCloseStatusDesc() {
-		if(ActUtil.CLOSE_STATUS_YES.equals(closeStatus)) {
+		if(ActUtil.END_STATUS_已结束.equals(closeStatus)) {
 			return "已结束";
 		}else {
 			return "未结束";
@@ -316,7 +317,7 @@ public class Task {
 	}
 	public void setAssignForwardCcOpertaterUserId(String assignForwardCcOpertaterUserId) {
 		this.assignForwardCcOpertaterUserId = assignForwardCcOpertaterUserId;
-	}
+	} 
 	public String getFormUrlViewGlobal() {
 		return formUrlViewGlobal;
 	}
@@ -392,5 +393,11 @@ public class Task {
 	}
 	public void setInstanceCreateTime(Date instanceCreateTime) {
 		this.instanceCreateTime = instanceCreateTime;
+	}
+	public String getBusinessFlowNo() {
+		return businessFlowNo;
+	}
+	public void setBusinessFlowNo(String businessFlowNo) {
+		this.businessFlowNo = businessFlowNo;
 	}
 }

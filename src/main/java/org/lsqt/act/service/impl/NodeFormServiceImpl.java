@@ -74,13 +74,16 @@ public class NodeFormServiceImpl implements NodeFormService{
 					
 					st.setCreateTime(new Date());
 					st.setUpdateTime(new Date());
-					db.save(st);
-					
+					st.setRemark(task.getDocumentation());
+
 					list.add(st);
 				}
 			}
 		}
 		
+		if (!list.isEmpty()) {
+			db.batchSave(list);
+		}
 		return list;
 	}
 }

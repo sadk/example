@@ -3,7 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>我的待办（详细版）</title>
+		<title>我的待办</title>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pagertree.js" ></script>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
@@ -29,34 +29,69 @@
 											<input id="key" name="key"  class="mini-textbox" emptyText="请输入关键字搜索" style="width: 150px;" onenter="search"/>
 										</td>
 									</tr>
-						
 									<tr>
-										<td>名称：</td>
+										<td>流程单据标题 ：</td>
 										<td>
-											<input id="name" name="name"   class="mini-textbox"  emptyText="请输入姓名"  onenter="search"/>
-										</td>
-									</tr>
-									
-     								<tr>
-										<td>待办用户：</td>
-										<td>
-											<input id="userId" name="userId"   class="mini-textbox"  emptyText="请输入userId"  onenter="search"/>
-										</td>
-									</tr>
-									
-									<tr>
-										<td>创建日期(开始)：</td>
-										<td>
-											<input id="createTimeBegin" name="createTimeBegin" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入创建日期(开始)" />
+											<input id="title" name="title"   class="mini-textbox"  emptyText="请输入流程单据标题"  onenter="search"/>
 										</td>
 									</tr>
 									<tr>
-										<td>创建日期(结束)：</td>
+										<td>待办用户ID ：</td>
 										<td>
-											<input id="createTimeEnd" name="createTimeEnd" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入创建日期(结束)" />
+											<input id="userId" name="userId"   class="mini-textbox"  emptyText="请输入待办用户名ID"  onenter="search"/>
+										</td>
+									</tr>
+									<tr>
+										<td>待办用户名 ：</td>
+										<td>
+											<input id="userName" name="userName"   class="mini-textbox"  emptyText="请输入待办用户名"  onenter="search"/>
+										</td>
+									</tr>
+									<tr>
+										<td>待办用户账号：</td>
+										<td>
+											<input id="loginNo" name="loginNo"   class="mini-textbox"  emptyText="请输入待办用户账号"  onenter="search"/>
+										</td>
+									</tr>
+									<!--  -->
+									<tr>
+										<td>流程发起人：</td>
+										<td>
+											<input id="startUserName" name="startUserName"   class="mini-textbox"  emptyText="请输入流程发起人"  onenter="search"/>
+										</td>
+									</tr>
+									<tr>
+										<td>单据主键：</td>
+										<td>
+											<input id="businessKey" name="businessKey"   class="mini-textbox"  emptyText="请输入单据主键"  onenter="search"/>
+										</td>
+									</tr>
+     								
+									<tr>
+										<td>待办日期(开始)：</td>
+										<td>
+											<input id="createTimeBegin" name="createTimeBegin" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入待办创建日期(开始)" />
+										</td>
+									</tr>
+									<tr>
+										<td>待办日期(结束)：</td>
+										<td>
+											<input id="createTimeEnd" name="createTimeEnd" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入待办创建日期(结束)" />
 										</td>
 									</tr>
 									
+									<tr>
+										<td>流程日期(开始)：</td>
+										<td>
+											<input id="instanceCreateTimeBegin" name="instanceCreateTimeBegin" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入流程创建日期(开始)" />
+										</td>
+									</tr>
+									<tr>
+										<td>流程日期(结束)：</td>
+										<td>
+											<input id="instanceCreateTimeEnd" name="instanceCreateTimeEnd" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入流程创建日期(结束)" />
+										</td>
+									</tr>
 					</table>
 					<div style="text-align:center;padding:10px;">
 						<a class="mini-button" onclick="search()" iconCls="icon-search" style="width:60px;margin-right:20px;">查询</a>
@@ -102,13 +137,16 @@
 									<div property="columns">
 										<div type="checkcolumn" ></div>
 										
-										<div field="id" width="80" headerAlign="center" allowSort="true" align="center">任务ID</div>
+										<div field="processInstanceId" width="80" headerAlign="center" allowSort="true" align="left">流程实例ID</div>			
+										<div field="id" width="70" headerAlign="center" allowSort="true" align="left">任务ID</div>
+										<div field="closeStatusDesc" width="100" headerAlign="center" allowSort="true" align="center">流程是否结束</div>
 										<div field="name" width="100" headerAlign="center" allowSort="true" align="left">任务名称</div>
-										
-										<div field="title" width="350" headerAlign="center" allowSort="true" align="left">流程标题</div>
-										<div field="processInstanceId" width="80" headerAlign="center" allowSort="true" align="left">流程实例ID</div>
+										<div field="taskDefinitionKey" width="80" headerAlign="center" allowSort="true" align="left">任务Key</div>
+										<div field="candidateUserNames" width="150" headerAlign="center" allowSort="true" align="left">任务审批人</div>
+										<div field="businessFlowNo" width="80" headerAlign="center" allowSort="true" align="left">业务流水号</div>	
 										<div field="businessKey" width="80" headerAlign="center" allowSort="true" align="left">业务主键ID</div>
-										<div field="taskDefinitionKey" width="80" headerAlign="center" allowSort="true" align="left">节点Key</div>
+										<div field="title" width="350" headerAlign="center" allowSort="true" align="left">流程单据标题</div>
+										
 										
 										
 										<div field="startUserId" width="80" headerAlign="center" allowSort="true" align="left">发起人ID</div>
@@ -123,10 +161,12 @@
 										<div field="processDefinitionKey" width="240" headerAlign="center" allowSort="true" align="left">流程定义Key</div>
 									
 									
-										
+										<!-- 
 										<div field="parentTaskId" width="80" headerAlign="center" allowSort="true" align="center">父任务ID</div>
+										 -->
 										<div field="tenantId" width="80" headerAlign="center" allowSort="true" align="center">租户ID</div>
-										<div field="createTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">创建日期</div>
+										<div field="createTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">任务生成日期</div>
+										<div field="instanceCreateTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">流程发起日期</div>
 										
 									</div>
 									</div>

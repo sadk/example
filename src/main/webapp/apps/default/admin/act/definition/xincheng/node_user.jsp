@@ -49,7 +49,7 @@
 		        </div>
 		        <div class="mini-fit" >
 					<div id="dataGridOrg" class="mini-treegrid"" style="width:100%;height:100%;"
-					showTreeIcon="true" allowResize="true" expandOnLoad="true"  multiSelect="true" 
+					showTreeIcon="true" allowResize="true" expandOnLoad="false"  multiSelect="true" 
     				treeColumn="name" idField="id" parentField="pid" resultAsTree="false"  checkRecursive="true"  showCheckBox="false" 
 					url="${pageContext.request.contextPath}/syswin/org/all" > 
 					    <div property="columns">
@@ -86,7 +86,7 @@
 						        </div>
 						        <div class="mini-fit">
 									<div id="datagrid1" class="mini-treegrid"" style="width:100%;height:100%;"
-									showTreeIcon="true" allowResize="true" expandOnLoad="true"
+									showTreeIcon="true" allowResize="true" expandOnLoad="false"
 				    				treeColumn="name" idField="id" parentField="pid" resultAsTree="false"  checkRecursive="true"  showCheckBox="false" 
 									url="${pageContext.request.contextPath}/syswin/org/all" > 
 									    <div property="columns">
@@ -211,9 +211,9 @@
 		                showFilterRow="false" allowCellSelect="true" allowCellEdit="true" showPager="true" pageSize="50">
 		                <div property="columns">
 		                	<div type="checkcolumn"></div>   
-							<div field="id" width="60" headerAlign="center" allowSort="true" align="left">ID</div>
-							<div field="name" width="80" headerAlign="center" allowSort="true" align="left">名称</div>
-							<div field="code" width="80" headerAlign="center" allowSort="true" align="left">编码</div>
+							<div field="id" width="40" headerAlign="center" allowSort="true" align="left">ID</div>
+							<div field="name" width="150" headerAlign="center" allowSort="true" align="left">名称</div>
+							<div field="code" width="120" headerAlign="center" allowSort="true" align="left">编码</div>
 							<div field="categoryName" width="60" headerAlign="center" allowSort="true" align="left">分类名称</div>
 							<div field="resolveTypeDesc" width="80" headerAlign="center" allowSort="true" align="center">解析引擎</div>
 							<div field="content" width="180" headerAlign="center" allowSort="true" align="left">内容</div>
@@ -328,7 +328,7 @@
 			
 			// 组织
 			if(row && row.length>0) {
-				//结点用户类型: 1=职称 2=岗位 3=组织 5=用户 7=角色 4=用户组(与流程引擎的group不是一个概念，主要是第三方系统的UUM)；100= 角本计算 
+				// 结点用户类型: 1=职称 2=岗位 3=组织 5=用户 7=角色 4=用户组(与流程引擎的group不是一个概念，主要是第三方系统的UUM)；100= 脚本计算 
 				for(var i=0;i<row.length;i++) {
 					data.push({approveObjectId: row[i].id, name: row[i].name, approveObjectJson: mini.encode(row[i]), definitionId:definitionId,definitionName:definitionName,taskKey:taskKey,userType:3,userTypeDesc:"组织" ,userFromType:1})
 				}

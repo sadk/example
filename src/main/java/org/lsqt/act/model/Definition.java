@@ -25,6 +25,8 @@ public class Definition {
 	private Integer hasGraphicalNotation;
 	private String tenantId; 
 	
+	private String category ; //流程定义分类
+	
 	private String shortName; // 流程定义简称（新增字段用于移动端)
 	
 	private String enableMobile; // 手机端是否启用 0=不启用 1=启用  (新增字段用于移动端)
@@ -167,5 +169,13 @@ public class Definition {
 
 	public void setEnableMobile(String enableMobile) {
 		this.enableMobile = enableMobile;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 }

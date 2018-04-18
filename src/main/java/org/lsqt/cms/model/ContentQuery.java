@@ -18,18 +18,17 @@ public class ContentQuery {
 	
 	private String key; // 关键字
 	
-	
-	
 	public Long id ;
 	
 	public Long objectId; // 对象ID，如果内容为新闻，则是新闻表的ID
-	public String type; //类型:0=新闻 1=博客 2=贴子 3=ftl内容模板 4=vm内容模板
+	public String type; //类型:300=新闻 301=博客 302=贴子(3开头的都是FreeMark解析内容) 303=Html页面内容    见： 3xx=ftl内容模板 4xx=vm内容模板
 	 
 	
     public String  code ; //整表唯一编码
 	
     public String  title ;//内容标题
-	
+    
+    private Integer enable; // 是否启用
     
 	
     public String content  ;//内容
@@ -139,5 +138,11 @@ public class ContentQuery {
 	}
 	public void setKey(String key) {
 		this.key = key;
+	}
+	public Integer getEnable() {
+		return enable;
+	}
+	public void setEnable(Integer enable) {
+		this.enable = enable;
 	}
 }

@@ -40,6 +40,9 @@ public class TaskQuery {
 
 	/***/
 	private String taskDefinitionKey;
+	
+	/**多个定义以逗号分割 **/
+	private String taskDefinitionKeys;
 
 	/***/
 	private String owner;
@@ -106,15 +109,22 @@ public class TaskQuery {
 	
 	private String businessKey;
 	
-	/**我的待办="1";
+	private String businessFlowNo ;
+	
+	/**
+	我的待办="1";
 	我的已办="2";
 	抄送我的="3";
-	我发起的="4"*/
+	我发起的="4"
+	*/
 	private String type; // 辅助查询字段
 	
 	private String enableMobile; //手机端是否启用 0=不启用 1=启用  
 	
-
+	
+	// ----------------- 优化查询 -----------------
+	private String taskIdsIncludeAssignForward; // 包含 含加签、转发 用户的待办
+	private String taskIdsEscapeAssignForward; // 去除加签\转发的"主人"待办
 	// getter、setter
 	public void setRev(Integer rev) {
 		this.rev = rev;
@@ -467,6 +477,38 @@ public class TaskQuery {
 
 	public void setUserIdList(List<String> userIdList) {
 		this.userIdList = userIdList;
+	}
+
+	public String getTaskDefinitionKeys() {
+		return taskDefinitionKeys;
+	}
+
+	public void setTaskDefinitionKeys(String taskDefinitionKeys) {
+		this.taskDefinitionKeys = taskDefinitionKeys;
+	}
+
+	public String getBusinessFlowNo() {
+		return businessFlowNo;
+	}
+
+	public void setBusinessFlowNo(String businessFlowNo) {
+		this.businessFlowNo = businessFlowNo;
+	}
+
+	public String getTaskIdsIncludeAssignForward() {
+		return taskIdsIncludeAssignForward;
+	}
+
+	public void setTaskIdsIncludeAssignForward(String taskIdsIncludeAssignForward) {
+		this.taskIdsIncludeAssignForward = taskIdsIncludeAssignForward;
+	}
+
+	public String getTaskIdsEscapeAssignForward() {
+		return taskIdsEscapeAssignForward;
+	}
+
+	public void setTaskIdsEscapeAssignForward(String taskIdsEscapeAssignForward) {
+		this.taskIdsEscapeAssignForward = taskIdsEscapeAssignForward;
 	}
 
 }

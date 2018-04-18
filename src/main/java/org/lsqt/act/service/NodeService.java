@@ -24,4 +24,7 @@ public interface NodeService {
 	 * @return
 	 */
 	List<Node> importNode(String definitionId);
+	
+	
+	void setMeetingNodeType(String definitionId ,List<Node> list) ;
 }

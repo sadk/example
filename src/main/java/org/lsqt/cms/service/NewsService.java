@@ -16,9 +16,10 @@ public interface NewsService {
 	 * 
 	 * @param model
 	 * @param content 资讯Html内容
+	 * @param channelIds 资讯所属的多个频道
 	 * @return
 	 */
-	News saveOrUpdate(News model,String content);
+	News saveOrUpdate(News model,String content,String channelIds);
 
 	int deleteById(Long... ids);
 	

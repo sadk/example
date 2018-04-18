@@ -27,11 +27,13 @@
 		        left join
 		    sys_category B ON A.category_code = B.code where 1=1
 		<#if query??>
+			
 			<#if query.key??>
-		        or A.id like '%${StringUtil.escapeSql(query.key)}%' 
-		        or A.name like '%${StringUtil.escapeSql(query.key)}%' 
-		        or A.code like '%${StringUtil.escapeSql(query.key)}%' 
-		        or A.remark like '%${StringUtil.escapeSql(query.key)}%' 
+				and (
+			        A.name like '%${StringUtil.escapeSql(query.key)}%' 
+			        
+			        or A.remark like '%${StringUtil.escapeSql(query.key)}%' 
+		        )
 			</#if>
 			<#if query.id??>
 				and A.id = ${query.id} 
@@ -46,6 +48,11 @@
 					select id from cms_channel where code='${StringUtil.escapeSql(query.parentCode)}')
 			</#if>
 			
+			<#-- 获取租户下所有系统的栏目 -->
+			<#if query.tenantCode??>
+				and A.app_code in (select code from sys_application where tenant_code = '${StringUtil.escapeSql(query.tenantCode)}')
+			</#if>
+			
 			<#if query.name??>
 				and A.name = '${query.name}' 
 			</#if>
@@ -56,7 +63,11 @@
 			</#if>
 			
 			<#if query.appCode??>
-				and A.app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
+				and A.app_code = '${StringUtil.escapeSql(query.appCode)}' 
+			</#if>
+			
+			<#if query.newsId??>
+				and A.id in (select channel_id from cms_mid_channel_news where news_id = ${query.newsId}) 
 			</#if>
 			
 			<#if query.sortField?? && query.sortOrder??>

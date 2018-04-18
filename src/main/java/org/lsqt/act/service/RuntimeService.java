@@ -8,6 +8,7 @@ import org.lsqt.act.model.ApproveOpinionQuery;
 import org.lsqt.act.model.ProcessInstance;
 import org.lsqt.act.model.ProcessInstanceHis;
 import org.lsqt.act.model.ProcessInstanceQuery;
+import org.lsqt.act.model.Task;
 import org.lsqt.components.db.Page;
 
 /**
@@ -127,5 +128,12 @@ public interface RuntimeService {
 	 * @return
 	 */
 	boolean isInstanceEnded(String processInstanceId);
+	
+	/**
+	 * 当前实例调（会签并发）产生的任务
+	 * @param processInstanceId 流程实例ID
+	 * @return 注：如果不是“会签”或其它多实例分支产生的并发，返回任务数只有一个
+	 */
+	List<Task> getCurrentTaskList(String processInstanceId) ;
 	
 }

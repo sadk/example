@@ -22,6 +22,7 @@ public class ProcessInstanceQuery {
 	private String startUserName;
 
 	private String key; // 关键字
+	private String businessFlowNo; // 业务流水号
 	// -------------------------------------------------
 	
 	/**
@@ -343,5 +344,15 @@ public class ProcessInstanceQuery {
 
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+
+	public String getBusinessFlowNo() {
+		return businessFlowNo;
+	}
+
+
+	public void setBusinessFlowNo(String businessFlowNo) {
+		this.businessFlowNo = businessFlowNo;
 	}
 }

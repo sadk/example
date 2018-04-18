@@ -2,14 +2,14 @@ package org.lsqt.act.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.activiti.engine.repository.ProcessDefinition;
-import org.activiti.engine.task.IdentityLinkType;
 import org.lsqt.act.ActUtil;
 import org.lsqt.act.model.ApproveObject;
 import org.lsqt.act.model.ApproveOpinion;
+import org.lsqt.act.model.ApproveOpinionHis;
 import org.lsqt.act.model.ApproveOpinionQuery;
 import org.lsqt.act.model.JumpForm;
 import org.lsqt.act.model.ProcessInstance;
@@ -20,6 +20,7 @@ import org.lsqt.act.model.Task;
 import org.lsqt.act.service.NodeUserService;
 import org.lsqt.act.service.RuntimeService;
 import org.lsqt.act.service.TaskService;
+import org.lsqt.act.service.impl.TaskServiceImpl;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -29,6 +30,9 @@ import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.syswin.PlatformDb;
 import org.lsqt.syswin.uum.model.Org;
 import org.lsqt.syswin.uum.model.OrgQuery;
+import org.lsqt.syswin.uum.model.User;
+import org.lsqt.syswin.uum.model.UserQuery;
+import org.lsqt.syswin.uum.service.UserService;
 
 import com.alibaba.fastjson.JSON;
 
@@ -38,7 +42,7 @@ public class RuntimeController {
 	@Inject private RuntimeService runtimeService;
 	@Inject private TaskService taskService;
 	@Inject private NodeUserService nodeUserService;
-	 
+	@Inject private UserService userService;
 	
 	@Inject private Db db;
 	@Inject private PlatformDb db2;
@@ -65,7 +69,7 @@ public class RuntimeController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(mapping={"/complete","/m/complete"},text="流程下一步,其中approveOpinion.approveAction字段很重要")
-	public void complete(Long loginUserId,String taskId,String variables,ApproveOpinion approveOpinion) {
+	public String complete(Long loginUserId,String taskId,String variables,ApproveOpinion approveOpinion) {
 		
 		if(StringUtil.isNotBlank(taskId)) {
 			Map<String,Object> var= new HashMap<>();
@@ -74,12 +78,28 @@ public class RuntimeController {
 				var = JSON.parseObject(variables, Map.class);
 			}
 			
-			//处理前端送过来的审批动作code
+			// 处理前端送过来的审批动作code
 			String action = approveOpinion.getApproveAction();
 			if (action != null && action.startsWith("button_type_")) {
 				approveOpinion.setApproveAction(action.replace("button_type_", ""));
 			}
-			taskService.complete(loginUserId,taskId, var,approveOpinion);
+			//var.put("money", 50001);
+			String userIds = taskService.complete(loginUserId, taskId, var, approveOpinion);
+			
+			if (StringUtil.isNotBlank(userIds)) {
+				UserQuery query = new UserQuery();
+				query.setIds(userIds);
+				List<User> list = userService.queryForList(query);
+				StringBuilder cadiateUsers = new StringBuilder();
+				if (list != null && list.size() > 0) {
+					for (User e : list) {
+						cadiateUsers.append(e.getUserName() + "(" + e.getLoginNo() + "/" + e.getUserId() + ")");
+					}
+				}
+				return cadiateUsers.toString();
+			} else {
+				return "没有下一步处理人(流程可能已结束)";
+			}
 		}else {
 			throw new IllegalArgumentException("taskId不能为空");
 		}
@@ -105,7 +125,9 @@ public class RuntimeController {
 	
 	@RequestMapping(mapping = { "/page_running", "/m/page_running" }, text = "获取运行中的流程,act原始接口查询")
 	public Page<ProcessInstance> queryForPageRunning(ProcessInstanceQuery query) {
-		return runtimeService.queryForPageRunning(query);
+		Page<ProcessInstance> page = runtimeService.queryForPageRunning(query);
+		
+		return page;
 	}
 
 	@RequestMapping(mapping = { "/page_finished", "/m/page_finished" }, text = "获取已结束的流程,act原始接口查询")
@@ -149,9 +171,21 @@ public class RuntimeController {
 	
 	@RequestMapping(mapping={"/instance_delete","/m/instance_delete"},text="删除流程实例")
 	public void deleteInstance(String instanceIds) {
-		if(StringUtil.isNotBlank(instanceIds )) {
-			List<String> list = StringUtil.split(instanceIds, ",");
-			for(String id: list) {
+		if (StringUtil.isNotBlank(instanceIds)) {
+			
+			List<String> list = new ArrayList<>(new HashSet<>(StringUtil.split(instanceIds, ",")));
+			
+			for (String id : list) {
+				/*
+				List<Task> mutilTask = runtimeService.getCurrentTaskList(id); // 如果有会签并，找到根execution调用引擎API删除
+				if (mutilTask.size() > 1) {
+					String rootId = db.queryForObject(RunInstance.class.getName(), "getExecuteRootIdByInstance", String.class, id);
+					runtimeService.deleteProcessInstance(rootId, "管理员删除");
+				} else {
+					runtimeService.deleteProcessInstance(id, "管理员删除");
+				}
+				*/
+				
 				runtimeService.deleteProcessInstance(id, "管理员删除");
 			}
 		}
@@ -201,15 +235,34 @@ public class RuntimeController {
 			variables.put(form.getTaskKeyTarget(), StringUtil.split(Long.class,form.getTaskkeyTargetCandiateUserIds(), ","));
 		}
 
-		taskService.jump(task.getId(), form.getTaskKeyTarget(), variables);
+		org.activiti.engine.runtime.ProcessInstance actInstance =  ActUtil.getRuntimeService().createProcessInstanceQuery().includeProcessVariables().processInstanceId(task.getProcessInstanceId()).singleResult();
+		
+		TaskServiceImpl taskServiceImpl = (TaskServiceImpl)taskService;
+		Map<String,Object> vars = new HashMap<>();
+		vars.putAll(taskServiceImpl.prepareCompleteVariable(actInstance, vars)); // 会签条件变量
+		vars.putAll(taskService.prepareMeetingVariable(ActUtil.convert(actInstance), nodeUserMap)); // 会签用户变量
+		vars.putAll(variables); // 流程变量
+		taskService.jump(task.getId(), form.getTaskKeyTarget(), vars);
 		
 		
 		// 添加流程指定的处理人
-		Task nextTask = getNextNewTask(form.getInstanceId());
-		if(nextTask!=null && StringUtil.isNotBlank(form.getTaskkeyTargetCandiateUserIds())) {
-			List<String> ids = StringUtil.split(form.getTaskkeyTargetCandiateUserIds(),",");
-			for(String id: ids) {
-				ActUtil.getTaskService().addCandidateUser(nextTask.getId(), id);
+		List<Task> mutilTaskList = taskService.getCurrentMutilTaskList(form.getInstanceId());
+		if(mutilTaskList!=null && mutilTaskList.size()>1) { // 如果是加签节点，每个节点任务签加候选人
+			for (Task t: mutilTaskList) {
+				if(t!=null && StringUtil.isNotBlank(form.getTaskkeyTargetCandiateUserIds())) {
+					List<String> ids = StringUtil.split(form.getTaskkeyTargetCandiateUserIds(),",");
+					for(String id: ids) {
+						ActUtil.getTaskService().addCandidateUser(t.getId(), id);
+					}
+				}
+			}
+		} else {
+			Task nextTask = getNextNewTask(form.getInstanceId());
+			if(nextTask!=null && StringUtil.isNotBlank(form.getTaskkeyTargetCandiateUserIds())) {
+				List<String> ids = StringUtil.split(form.getTaskkeyTargetCandiateUserIds(),",");
+				for(String id: ids) {
+					ActUtil.getTaskService().addCandidateUser(nextTask.getId(), id);
+				}
 			}
 		}
 	}
@@ -266,11 +319,12 @@ public class RuntimeController {
 		}
 		
 		// 删除原始流程
-		ActUtil.getRuntimeService().deleteProcessInstance(form.getInstanceId(), "结束流程跳转调整");
+		ActUtil.getRuntimeService().deleteProcessInstance(form.getInstanceId(), "结束流程,跳转调整");
 		
 		db.executeUpdate("delete from ext_approve_opinion where process_instance_id=?", newInstance.getProcessInstanceId());
 		
 		// 拷贝旧流程审批意见
+		List<ApproveOpinion> newDataList = new ArrayList<>();
 		ApproveOpinionQuery aoq=new ApproveOpinionQuery();
 		aoq.setProcessInstanceId(form.getInstanceId());
 		List<ApproveOpinion> data = db.queryForList("queryForPage", ApproveOpinion.class, aoq);
@@ -278,8 +332,10 @@ public class RuntimeController {
 			for(ApproveOpinion e: data) {
 				e.setId(null);
 				e.setProcessInstanceId(newInstance.getProcessInstanceId());
-				db.save(e);
+				newDataList.add(e);
+				//db.save(e);
 			}
+			db.batchSave(newDataList);
 		}
 		
 	}
@@ -316,5 +372,92 @@ public class RuntimeController {
 		
 		Task task = taskList.get(0);
 		return task;
+	}
+	
+	
+	@RequestMapping(mapping = { "/onece_pass", "/m/onece_pass" }, text = "运行中的流程实例一键通过（实质为删除流程实例，更新业务状态为已完成)")
+	public void onecePass(String instanceIds,Boolean isDeleteOpinion) {
+		instanceIds = StringUtil.escapeSql(instanceIds);
+		
+		if(StringUtil.isNotBlank(instanceIds )) {
+			List<ApproveOpinionHis> data = new ArrayList<>();
+			
+			//流程意见迁移到历史表
+			if(isDeleteOpinion!=null && isDeleteOpinion) {
+				ApproveOpinionQuery query = new ApproveOpinionQuery();
+				query.setProcessInstanceIds(instanceIds);
+				List<ApproveOpinion> appinionList = db.queryForList("queryForPage", ApproveOpinion.class, query);
+				if (appinionList!=null) {
+					for(ApproveOpinion e: appinionList) {
+						ApproveOpinionHis model= new ApproveOpinionHis();
+						model.setApproveAction(e.getApproveAction());
+						model.setApproveOpinion(e.getApproveOpinion());
+						model.setApproveResult(e.getApproveResult());
+						model.setApproveTaskCandidateUserIds(e.getApproveTaskCandidateUserIds());
+						model.setApproveTaskId(e.getApproveTaskId());
+						model.setApproveTaskKey(e.getApproveTaskKey());
+						model.setApproveTaskName(e.getApproveTaskName());
+						model.setApproveUserId(e.getApproveUserId());
+						model.setApproveUserName(e.getApproveUserName());
+						model.setApproveUserOrgText(e.getApproveUserOrgText());
+						model.setApproveUserPositionText(e.getApproveUserPositionText());
+						model.setAssignForwardCcUserIds(e.getAssignForwardCcUserIds());
+						model.setBusinessKey(e.getBusinessKey());
+						model.setBusinessType(e.getBusinessType());
+						model.setDefinitionId(e.getDefinitionId());
+						model.setCreateTime(e.getCreateTime());
+						model.setDefinitionName(e.getDefinitionName());
+						model.setDefinitionKey(e.getDefinitionKey());
+						model.setProcessInstanceId(e.getProcessInstanceId());
+						model.setRejectReRunCompleteStatus(e.getRejectReRunCompleteStatus());
+						model.setRejectToChooseNodeTaskKey(e.getRejectToChooseNodeTaskKey());
+						model.setRemark("一键通过，保留审批意见");
+						model.setVariablesJson(e.getVariablesJson());
+						data.add(model);
+					}
+				}
+				db.executeUpdate(String.format("delete from ext_approve_opinion where process_instance_id in (%s)",StringUtil.join(StringUtil.split(instanceIds, ","), ",","'","'")));
+				if (!data.isEmpty()) {
+					db.batchSave(data);
+				}
+			}
+			
+			
+			// 更新扩展的流程实例表业务状态
+			db.executeUpdate(String.format("update ext_run_instance set business_status=?,business_status_desc=?,end_status=? where instance_id in (%s)",instanceIds),ActUtil.BUSINESS_STATUS_已通过,ActUtil.getBusinessStatusDesc(ActUtil.BUSINESS_STATUS_已通过),ActUtil.END_STATUS_已结束);
+			
+			// 删除act流程实例
+			List<String> list = StringUtil.split(instanceIds, ",");
+			for(String id: list) {
+				runtimeService.deleteProcessInstance(id, "管理员删除");
+			}
+			
+		}
+	}
+	
+	
+	@RequestMapping(mapping = { "/fix_business_status", "/m/fix_business_status" }, text = "一键修复流程状态，不关注业务")
+	public List<String> fixBusinessStatus() {
+		List<String> fixedInstanceIds = new ArrayList<>();
+		
+		// 已结束的流程，最后一个审批意见“同意”的，则为已通过，如果没有意见的就不处理；
+		List<RunInstance> list = db.queryForList("fixBusinessStatusQuery", RunInstance.class);
+		for(RunInstance e: list) {
+			ApproveOpinion opinion = db.queryForObject("fixBusinessStatusQuery", ApproveOpinion.class, e.getInstanceId());
+			if (opinion!=null) {
+				if("agree".equals(opinion.getApproveAction())) {
+					fixedInstanceIds.add(e.getInstanceId());
+					
+					e.setBusinessStatus(ActUtil.BUSINESS_STATUS_已通过);
+					e.setBusinessStatusDesc("已通过");
+					db.update(e, "businessStatus","businessStatusDesc");
+				}
+			}
+		}
+		
+		// 处理未结束的流程，验准状态
+		
+		
+		return fixedInstanceIds;
 	}
 }

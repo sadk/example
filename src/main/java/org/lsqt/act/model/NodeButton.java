@@ -119,6 +119,8 @@ public class NodeButton {
 		//if(NodeButton.BTN_TYPE_DISAGREE_TO_CLOSE.equals(code)) return "不同意(流程结束)"+message;
 		if(NodeButton.BTN_TYPE_DISAGREE_TO_CLEAR.equals(code)) return "不同意"+message;
 		if(NodeButton.BTN_TYPE_ANY_REBACK.equals(code)) return "撤回"+message;
+		
+		if(NodeButton.BTN_TYPE_RESUBMIT.equals(code))  return "提交";
 		return "";
 	}
 	
@@ -226,6 +228,8 @@ public class NodeButton {
 			if(17 == btnType) return "不同意(流程结束)";
 			if(18 == btnType) return "不同意(流程实例级联清除)";
 			if(19 == btnType) return "(任意)撤回";
+			
+			if(20 == btnType) return "(驳回到拟稿人重)提交";
 		}
 		return "";
 	}

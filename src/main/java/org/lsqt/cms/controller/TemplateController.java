@@ -51,19 +51,20 @@ public class TemplateController {
 		return templateService.getAll();
 	}
 	
-	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
+	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" },text="资讯类HTML模板")
 	public Template saveOrUpdate(Template form,String content) {
 		if(StringUtil.isBlank(form.getAppCode())) {
 			form.setAppCode(Application.APP_CODE_DEFAULT);
 		}
 		form =  templateService.saveOrUpdate(form);
 		
-		db.executeUpdate(String.format("delete from %s where object_id=? and type=?" , db.getFullTable(Content.class)), form.getId(),Content.TYPE_NEWS);
+		db.executeUpdate(String.format("delete from %s where object_id=? and type=?" , db.getFullTable(Content.class)), form.getId(),Content.TYPE_HTML_TEMPLATE_FREEMARK);
 		Content ct = new Content();
 		ct.setTitle(form.getTitle());
 		ct.setObjectId(form.getId());
-		ct.setType(Content.TYPE_NEWS); // 默认为Freemark的新闻资讯内容模板
+		ct.setType(Content.TYPE_HTML_TEMPLATE_FREEMARK); 
 		ct.setContent(content);
+		ct.setEnable(1);
 		db.save(ct);
 		return form;
 	}

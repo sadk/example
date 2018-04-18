@@ -45,9 +45,7 @@ public class File {
 	private String pathLarge; // 大
 	private String pathMedium; // 中
 	
-	// ---- 美好家专用!!! fuck
-	public String breviaryName ;
-	public String tfsFileName ;
+ 
 	
 	/** 备注 */
 	private String remark;
@@ -228,22 +226,6 @@ public class File {
 
 	public void setPathMedium(String pathMedium) {
 		this.pathMedium = pathMedium;
-	}
-
-	public String getBreviaryName() {
-		return breviaryName;
-	}
-
-	public void setBreviaryName(String breviaryName) {
-		this.breviaryName = breviaryName;
-	}
-
-	public String getTfsFileName() {
-		return tfsFileName;
-	}
-
-	public void setTfsFileName(String tfsFileName) {
-		this.tfsFileName = tfsFileName;
 	}
 
 }

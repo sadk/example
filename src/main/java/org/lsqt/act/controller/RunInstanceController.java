@@ -180,7 +180,7 @@ public class RunInstanceController {
 				e.setApproveUserText(approveUserText.toString());
 			}
 			
-			if(draftNode!=null && e.getTaskKey().equals(draftNode.getTaskKey())) {
+			if(draftNode!=null && e.getTaskKey()!=null && e.getTaskKey().equals(draftNode.getTaskKey())) {
 				User user = db2.getById(User.class, e.getStartUserId());
 				if (user!=null) {
 					e.setApproveUserText(e.getStartUserName()+"("+user.getLoginNo()+"/"+user.getUserId()+")");
@@ -213,5 +213,6 @@ public class RunInstanceController {
 		}
 		return "";
 	}
+
 }
  

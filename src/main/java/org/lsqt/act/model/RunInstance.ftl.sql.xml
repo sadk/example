@@ -10,7 +10,8 @@
 	 		<column name="process_definition_id" property="processDefinitionId" text="流程定义ID"/>
 	 		<column name="process_definition_key" property="processDefinitionKey" text="流程定义key"/>
 	 		<column name="process_definition_name" property="processDefinitionName" text="流程定义名称"/>
-	 	
+	 		<column name="end_status" property="endStatus" text="流程是否结束1=已结束 0=未结束"/>
+	 		
 	 		<column name="create_dept_id" property="createDeptId" text="填制人部门：一般从表单取值，如果没有取发起用户的主部门，主部门没有再取用户的普通部门第一个"/>
 	 		<column name="start_user_id" property="startUserId" text="发起人ID"/>
 	 		<column name="start_user_name" property="startUserName" text="发起人名称"/>
@@ -19,6 +20,7 @@
 	 		<column name="start_user_position_text" property="startUserPositionText" text="发起人岗位信息"/>
 	 		
 	 		<column name="business_key" property="businessKey" text="业务数据主键ID"/>
+	 		<column name="business_flow_no" property="businessFlowNo" text="业务流水号（全局唯一）"/>
 	 		<column name="business_status" property="businessStatus" text="业务自定义的状态,如自定义审批通过、未通过、正常、异常等(内置的状态是1=审批中 2=审批通过  3=审批未通过)"/>
 	 		<column name="business_status_desc" property="businessStatusDesc" text="业务状态中文表示"/>
 	 		<column name="business_category" property="businessCategory" text="业务自定义的分类"/>
@@ -34,10 +36,11 @@
 	 		
 	 		
 	 		<column name="taskKey" property="taskKey" text="当前活动节点key" isVirtual="true"/>
-	 		<column name="isActive" property="isActive" text="是否是活动" isVirtual="true"/>
-	 		<column name="isConcurrent" property="isConcurrent" text="是否是并发任务" isVirtual="true"/>
-	 		<column name="isSuspended" property="isSuspended" text="是否挂起" isVirtual="true"/>
 	 		<column name="version" property="version" text="流程版本" isVirtual="true"/>
+	 		
+	 		<column name="active" property="active" text="是否是活动" isVirtual="true"/>
+	 		<column name="concurrent" property="concurrent" text="是否是并发任务" isVirtual="true"/>
+	 		<column name="suspended" property="suspended" text="是否挂起" isVirtual="true"/>
 	 		
 	</table>
 	
@@ -125,16 +128,20 @@
 		    RES.PROC_DEF_ID_ process_definition_id,
 		    
 		    RES.ACT_ID_ taskKey,
-		    RES.IS_ACTIVE_ isActive,
-		    RES.IS_CONCURRENT_ isConcurrent,
-		    RES.SUSPENSION_STATE_  isSuspended,
+		    
+		    
+		    RES.IS_ACTIVE_ active,
+		    RES.IS_CONCURRENT_ concurrent,
+		    RES.SUSPENSION_STATE_  suspended,
 		    
 		    P.NAME_  process_definition_name, 
 		    P.KEY_  process_definition_key, 
 		    P.VERSION_  version, 
 		    P.DEPLOYMENT_ID_  DeploymentId , 
 		    C.title,
-		   	C.business_key , 
+		   	C.business_key ,
+		   	C.business_flow_no,
+		   	C.end_status,
 		    C.create_dept_id ,
 		    
 		    C.start_user_id ,
@@ -152,7 +159,7 @@
 		    C.gid,
 		    C.create_time,
 		    C.update_time
-		    
+		   
 		from ACT_RU_EXECUTION RES inner join ACT_RE_PROCDEF P on RES.PROC_DEF_ID_ = P.ID_ 
 		left join ext_run_instance C on RES.PROC_INST_ID_ = C.instance_id where 1=1
 		
@@ -165,6 +172,8 @@
 							
 							P.KEY_ like '%${key}%'  or 
 							P.NAME_ like '%${key}%'  or 
+							
+							C.business_flow_no like '%${key}%' or
 							C.start_user_id = '${key}'  or 
 							C.start_user_name like '%${key}%'  or 
 							C.business_key = '%${key}%'  or 
@@ -181,6 +190,7 @@
  						<#if query.processDefinitionName??> and P.NAME_  = '${StringUtil.escapeSql(query.processDefinitionName)}' </#if>
 				
 			
+						<#if query.businessFlowNo??> and C.business_flow_no = '${StringUtil.escapeSql(query.businessFlowNo)}' </#if>
  						<#if query.startUserId??> and C.start_user_id = '${StringUtil.escapeSql(query.startUserId)}' </#if>
  						<#if query.startUserName??> and C.start_user_name = '${StringUtil.escapeSql(query.startUserName)}' </#if>
  						
@@ -192,9 +202,36 @@
 		  						 	</#list>
 	  						 	)
 	  					</#if>
-			
+						
+						<#if query.isActive??> 
+							and RES.IS_ACTIVE_ = <#if query.isActive> 1 <#else> 0 </#if> 
+						</#if>
+						
+						<#if query.isConcurrent??> 
+							and RES.IS_CONCURRENT_ = <#if query.isConcurrent> 1 <#else> 0 </#if> 
+						</#if>
 		</#if>
 		
 	 	]]>
+ 	</statement>
+ 	
+ 	
+ 	<statement id="fixBusinessStatusQuery" parameterName="query">
+	 	<![CDATA[  
+	 		<#-- 查询2018年的已结束流程实例  -->
+	 		select * from ext_run_instance where create_time>='2018-01-01 00:00:01' and instance_id in (select PROC_INST_ID_ from ACT_HI_PROCINST)
+	 	]]>
+ 	</statement>
+ 	
+ 	<statement id="getExecuteRootIdByInstance" parameterName="instanceId">
+ 		<![CDATA[  
+ 			<#-- 
+				-- 并发的流程PARENT_ID_ = null ，
+				-- IS_SCOPE_ 这个字段我跟踪了一下不同的流程实例，如会签，子流程，同步等情况，发现主实例的情况这个字段为1，子实例这个字段为0
+				-- IS_ACTIVE_ = 0 （根记录=0）
+				-- IS_CONCURRENT_ =0 （根亲记录=0）
+			-->
+			select ID_ from act_ru_execution where PROC_INST_ID_='${StringUtil.escapeSql(instanceId)}' and PARENT_ID_ is null and IS_SCOPE_=1 and IS_ACTIVE_ = 0 and IS_CONCURRENT_=0
+ 		]]>
  	</statement>
 </statements>

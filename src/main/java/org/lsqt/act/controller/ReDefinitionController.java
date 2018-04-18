@@ -35,11 +35,7 @@ public class ReDefinitionController {
 	public ReDefinition getByDefinitionId(String definitionId) {
 		ReDefinitionQuery query = new ReDefinitionQuery();
 		query.setDefinitionId(definitionId);
-		List<ReDefinition> list = db.queryForList("queryForPage", ReDefinition.class,query);
-		if(list!=null && list.size()>0) {
-			return list.get(0);
-		}
-		return null;
+		return  db.queryForObject("queryForPage", ReDefinition.class,query);
 	}
 	
 	

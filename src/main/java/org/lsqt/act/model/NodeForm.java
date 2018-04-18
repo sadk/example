@@ -90,6 +90,10 @@ public class NodeForm {
 	private java.util.Date updateTime;
 
 	
+	// -----------辅助属性 ---------
+	private Integer taskType;
+	private String taskTypeDesc;
+	
 	// getter、setter
 	public void setId(Long id) {
 		this.id = id;
@@ -226,6 +230,24 @@ public class NodeForm {
 	public void setCustomUrl(String customUrl) {
 		this.customUrl = customUrl;
 	}
+
+	public Integer getTaskType() {
+		return taskType;
+	}
+
+	public void setTaskType(Integer taskType) {
+		this.taskType = taskType;
+	}
+
+	public String getTaskTypeDesc() {
+		return taskTypeDesc;
+	}
+
+	public void setTaskTypeDesc(String taskTypeDesc) {
+		this.taskTypeDesc = taskTypeDesc;
+	}
+
+
 
 	/*
 	public String getCustomUrl2() {

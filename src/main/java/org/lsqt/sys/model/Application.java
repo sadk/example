@@ -28,6 +28,7 @@ public class Application {
 	private String gid;
 	
 	private String tenantCode;
+	private String tenantName;
 	
 	//@JSONField (format="yyyy-MM-dd")  
 	private Date createTime;
@@ -131,6 +132,14 @@ public class Application {
 
 	public void setTenantCode(String tenantCode) {
 		this.tenantCode = tenantCode;
+	}
+
+	public String getTenantName() {
+		return tenantName;
+	}
+
+	public void setTenantName(String tenantName) {
+		this.tenantName = tenantName;
 	}
 	
 }

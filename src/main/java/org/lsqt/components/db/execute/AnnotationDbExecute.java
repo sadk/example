@@ -413,4 +413,20 @@ public class AnnotationDbExecute implements Db{
 		 
 		return 0;
 	}
+
+
+	@Override
+	public <T> T queryForObject(String nameSpace, String sqlID_or_SQL, Class<T> requiredType, Object... args)
+			throws DbException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public <T> List<T> queryForList(String nameSpace, String sqlID, Class<T> requiredType, Object... args)
+			throws DbException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

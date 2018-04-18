@@ -5,6 +5,7 @@
 		<column name="NAME_" property="name" />
 		<column name="KEY_" property="key" />
 		<column name="VERSION_" property="version" />
+		<column name="CATEGORY_" property="category" />
 		<column name="DEPLOYMENT_ID_" property="deploymentId" />
 		
 		<column name="RESOURCE_NAME_" property="resourceName"/>
@@ -31,12 +32,22 @@
 			<#if query.keyWord??>
 		        and (A.NAME_ like '%${StringUtil.escapeSql(query.keyWord)}%' 
 		        or A.KEY_ like '${StringUtil.escapeSql(query.keyWord)}' 
+		        or A.ID_ = '${StringUtil.escapeSql(query.keyWord)}' 
 		        or A.RESOURCE_NAME_ like '${StringUtil.escapeSql(query.keyWord)}' 
 		        or B.NAME_ like '${StringUtil.escapeSql(query.keyWord)}' )
 			</#if>
 			
 			<#if query.id??>
 				and A.ID_ = ${query.id} 
+			</#if>
+			
+			<#if query.ids??>
+				<#assign idList = StringUtil.split(query.ids,",") />
+				and A.ID_ in (
+					<#list idList as id> 
+						'${StringUtil.escapeSql(id)}' <#if id_has_next> , </#if> 
+					</#list> 
+				) 
 			</#if>
 			
 			<#if query.name??>
@@ -67,6 +78,9 @@
 				and B.CATEGORY_ like '%${StringUtil.escapeSql(query.deployCategory)}%' 
 			</#if>
 			
+			<#if query.category??>
+				and A.CATEGORY_ like '%${StringUtil.escapeSql(query.category)}%' 
+			</#if>
 			
 			<#if query.sortField?? && query.sortOrder??>
 				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}

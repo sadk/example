@@ -44,12 +44,12 @@
 							<tr>
 								<td>当前审批节点：</td>
 								<td>
-									<input id="approveTaskKey" name="approveTaskKey" width="100%" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="taskNameDesc" valueField="taskKey" url="${pageContext.request.contextPath}/act/definition/get_node_list?definitionId=${param.definitionId}" />
+									<input id="approveTaskKey" name="approveTaskKey" width="100%" class="mini-combobox"  onvaluechanged="onValueChanged" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="taskNameDesc" valueField="taskKey" url="${pageContext.request.contextPath}/act/definition/get_node_list?definitionId=${param.definitionId}" />
 									<input id="approveTaskName" name="approveTaskName" class="mini-hidden" />
 								</td>
 								<td>审批动作:</td>
 								<td>
-									<input id="approveAction" name="approveAction" onvaluechanged="onActionValueChanged" width="100%" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="btnName" valueField="btnCode" url="${pageContext.request.contextPath}/act/node_button/get_approve_action_list" style="width: 100%"/>
+									<input id="approveAction" name="approveAction" required="true"  onvaluechanged="onActionValueChanged" width="100%" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="btnName" valueField="btnCode" url="${pageContext.request.contextPath}/act/node_button/get_approve_action_list" style="width: 100%"/>
 									<input id="approveActionDesc" name="approveActionDesc" class="mini-hidden" />
 								</td>
 							</tr>
@@ -173,12 +173,28 @@
 	    var originalName = mini.get("originalName");
 	    
 	    var grid = mini.get("datagrid1");
+	    var approveTaskKey = mini.get("approveTaskKey");
+	    
 	    grid.load();
 	    
 	    var tab = mini.get("tabs1");
+	    
+	    function onValueChanged(e) {
+	    	//console.log(e)
+	    	var taskKey = approveTaskKey.getValue();
+	    	//console.log(approveTaskKey.data);
+	    	for(var i=0;i<approveTaskKey.data.length;i++) {
+	    		if(taskKey == approveTaskKey.data[i].taskKey) {
+	    			mini.get("approveTaskName").setValue(approveTaskKey.data[i].taskName);
+	    			break;
+	    		}
+	    	}
+	    }
+	    
 	    function onActionValueChanged(e){
-	    	console.log(e)
-	    	
+	    	//console.log(e)
+	    	var taskKey = approveTaskKey.getValue();
+	    	console.log(taskKey)
 	    }
 	    function deleteFile() {
 	    	var rows = grid.getSelecteds();

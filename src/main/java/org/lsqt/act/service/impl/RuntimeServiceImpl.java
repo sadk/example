@@ -31,6 +31,7 @@ import org.lsqt.act.model.Task;
 import org.lsqt.act.model.TaskQuery;
 import org.lsqt.act.service.NodeUserService;
 import org.lsqt.act.service.RuntimeService;
+import org.lsqt.act.service.TaskService;
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
@@ -71,6 +72,7 @@ public class RuntimeServiceImpl implements RuntimeService{
 	@Inject private PlatformDb db2;
 	
 	@Inject private NodeUserService nodeUserService;
+	@Inject private TaskService taskService;
 	
 	// ---------常规启动流程
 	public ProcessInstance startProcessInstanceById(String processDefinitionId) {
@@ -106,29 +108,29 @@ public class RuntimeServiceImpl implements RuntimeService{
 		return excuteStart(businessKey,variables,def);
 		
 	}
-	
+
 	/**
-	 * 获取填制人部门
-	 * @param loginUser
-	 * @param variables
-	 * @return
-	
-	String prepareCreateDeptId(User loginUser, Map<String, Object> variables) {
-		Object createDeptIdObj = variables.get(ActUtil.VARIABLES_CREATE_DEPT_ID);
-		if (createDeptIdObj != null) {
-			return createDeptIdObj.toString();
-		} else {
-			Org org = loginUser.getUserMainOrg();
-			if (org != null) {
-				return (org.getId() + "");
-				
-			} else if (loginUser.getUserOrgList() != null && loginUser.getUserOrgList().size() > 0) {
-				return (loginUser.getUserOrgList().get(0).getId() + "");
-			} else {
-				return null;
-			}
+	 * 填充会签节点流程变量
+	 * @param variables 用户传入的即时流程变量
+	 * @param definitionId 
+	 * @param map 即时审批用户
+	 */
+	void prepareVariablesForMeetingNode(Map<String, Object> variables,String definitionId,Map<String, List<ApproveObject>> map) {
+		List<Node> meetingNodeList = new ArrayList<>();
+		NodeQuery query = new NodeQuery();
+		query.setTaskBizType(Node.TASK_BIZ_TYPE_MEETINGNODE);
+		query.setDefinitionId(definitionId);
+		meetingNodeList = db.queryForList("queryForPage", Node.class, query);
+		
+		for(Node n: meetingNodeList) {
+			List<String> assigneeList = new ArrayList<String>(); // 会签分配任务的人员
+			
+			List<ApproveObject> assignObjList = map.get(n.getTaskKey());
+			assigneeList = ApproveObject.toIdList(String.class, assignObjList);
+			
+			variables.put(n.getTaskKey()+"List", assigneeList);
 		}
-	} */
+	}
 	
 	/**
 	 * 执行流程启动
@@ -151,6 +153,8 @@ public class RuntimeServiceImpl implements RuntimeService{
 		
 		businessKey = prepareBusinessKey(businessKey, variables);
 		
+		//final String businessFlowNo = prepareBusinessFlowNo(variables);
+		
 		// 获取填制人部门，用于用户规则解析
 		Map<String,Object> nodeUserVariable = new HashMap<>();
 		Object createDeptIdObj = variables.get(ActUtil.VARIABLES_CREATE_DEPT_ID);
@@ -167,16 +171,16 @@ public class RuntimeServiceImpl implements RuntimeService{
 	 	prepareVariablesForExistsDraftNode(variables, loginUserId, map, draftNode);  // 如果有拟稿节点，填充审批用户到流程变量
 		prepareVariablesForNodeUser(variables, map); 
 		prepareVariablesForEmptyNodeUser(variables, autoJumpNodeList);
-		
+		prepareVariablesForMeetingNode(variables, def.getId(), map);
 
-		log.debug(" --- 流程准备发起 >>>>>> 流程定义ID: "+def.getId()+" 流程业务主键:"+businessKey+"  流程变量:\n"+JSON.toJSONString(variables, true));
+		log.info(" --- 流程准备发起 >>>>>> 流程定义ID: "+def.getId()+" 流程业务主键:"+businessKey+"  流程变量:\n"+JSON.toJSONString(variables, true));
 		
 		org.activiti.engine.runtime.ProcessInstance e= actRuntimeService.startProcessInstanceById(def.getId(),businessKey,variables);
 		
 		org.lsqt.act.model.ProcessInstance instance = fillProcessDefinitionInfo(def, e);
 		
 		
-		saveOpinionForStart(loginUser,instance,variables); // 保存“发起意见”
+		ApproveOpinion approveOpinion = saveOpinionForStart(loginUser,instance,variables); // 保存“发起意见”
 		saveRunInstaceForStart(loginUser,instance,variables); //保存流程实例信息
 		saveInstanceVariable(def,instance,variables,variableJSONStart); //保存流程变量信息
 		 
@@ -195,7 +199,14 @@ public class RuntimeServiceImpl implements RuntimeService{
 				
 				Task task = taskList.get(0);
 				if(task.getTaskDefinitionKey().equals(draftNode.getTaskKey())) { //如果当前任务节点是“自动跳过拟稿节点”
-					ActUtil.getTaskService().complete(task.getId(), variables);
+					try{
+						ActUtil.getTaskService().complete(task.getId(), variables);
+					}catch(Exception ex) {
+						deleteProcessInstance(instance.getProcessInstanceId(), "流程发起出错删除实例");
+						db.executeUpdate("delete from ext_approve_opinion where process_instance_id=? and business_key=?", instance.getProcessInstanceId(),businessKey);
+						
+						throw ex;
+					}
 				}
 				
 				instance = ActUtil.convert(actRuntimeService.createProcessInstanceQuery().processInstanceId(instance.getProcessInstanceId()).singleResult());
@@ -221,8 +232,83 @@ public class RuntimeServiceImpl implements RuntimeService{
 		}
 		
 		instance.getExtProperty().put(org.lsqt.act.model.ProcessInstance.CANDIDATE_USER_IDS_KEY, StringUtil.join(userIds,","));
+		 
 		
-		processAutoJumpForEmptyApproveUserNode(loginUser,draftNode,instance,getNextNewTask(instance),variables,map);
+		
+		
+		
+		
+		
+		
+		
+		
+		TaskServiceImpl taskServiceImpl = (TaskServiceImpl) taskService;
+		List<Task> mutilTaskList = taskServiceImpl.getCurrentMutilTaskList(instance.getProcessInstanceId());
+		
+		if (mutilTaskList != null && mutilTaskList.size() > 1) {
+			Set<String> taskKeySet = new HashSet<>();
+			for(Task tk: mutilTaskList) {
+				taskKeySet.add(tk.getTaskDefinitionKey());
+			}
+			
+			boolean isNotSetUser=false; // 会签节点是否设置过用户
+			String meetingNode = null; // 会签节点
+			if (taskKeySet.size() == 1) {
+				meetingNode = taskKeySet.iterator().next();
+				List<ApproveObject> userList = map.get(meetingNode + "List");
+				if (userList == null || userList.isEmpty()) {
+					isNotSetUser = true;
+				}
+			}
+			
+			if(isNotSetUser) { //解析用户为空自动跳过
+				while (true) {
+					mutilTaskList = taskServiceImpl.getCurrentMutilTaskList(instance.getProcessInstanceId());// 当前流程的任务可能是（会签）多实例
+					if (mutilTaskList != null && mutilTaskList.size() > 1) {
+						for (int i=0; i < mutilTaskList.size(); i++) {
+							try{
+								List<Task> tempTask = taskServiceImpl.getCurrentMutilTaskList(instance.getProcessInstanceId());
+								if(tempTask!=null && tempTask.size()>1) {
+									actTaskService.complete(mutilTaskList.get(i).getId(), variables);
+								}
+							}catch(Exception ex) {
+								ex.printStackTrace();
+							}
+						}
+						String nextTaskCandidateUserIds = taskServiceImpl.getMutilTaskCandidateUserIds(mutilTaskList, map);
+						taskServiceImpl.executeGlobalAfterScript(loginUser, instance, instance.getProcessDefinitionId(), nextTaskCandidateUserIds);
+						////task.getProcessDefinitionId() task.getTaskDefinitionKey()   task.getProcessInstanceId() task.getid() task.getBusinessKey
+						
+						Task task = new Task();
+						task.setProcessDefinitionId(instance.getProcessDefinitionId());
+						task.setTaskDefinitionKey(mutilTaskList.get(0).getTaskDefinitionKey());
+						task.setProcessInstanceId(instance.getProcessInstanceId());
+						task.setId("-1");
+						task.setBusinessKey(instance.getBusinessKey());
+						
+						taskServiceImpl.executeAfterScript(loginUser,task,approveOpinion,draftNode,nextTaskCandidateUserIds);
+					} 
+					
+					if (isInstanceEnded(instance.getProcessInstanceId())) {
+						break;
+					}
+					if (mutilTaskList.size() == 1) {
+						Task lastTask = taskServiceImpl.getNextNewTask(instance.getProcessInstanceId());
+						String nextTaskCandidateUserIds = taskServiceImpl.getNextTaskCandidateUserIds(businessKey, instance.getProcessDefinitionId(), instance.getProcessInstanceId(), map, draftNode, lastTask);
+						instance.getExtProperty().put(org.lsqt.act.model.ProcessInstance.CANDIDATE_USER_IDS_KEY,nextTaskCandidateUserIds);
+						break;
+					}
+				}
+			}
+		} else {
+			processAutoJumpForEmptyApproveUserNode(loginUser,draftNode,instance,taskServiceImpl.getNextNewTask(instance),variables,map);
+		}
+		
+		
+		
+		
+		
+		
 		
 		final long endTime = System.currentTimeMillis();
 		log.debug(" ---- 流程起动耗时(ms)："+(endTime-beginTime)+",流程定义ID："+def.getId()+" ,流程实例:"+instance.getId());
@@ -230,28 +316,8 @@ public class RuntimeServiceImpl implements RuntimeService{
 		return instance;
 	}
 	
-	/**
-	 * 获取当前实例的任务（不支持并发模式）
-	 * @param instance
-	 * @return
-	 */
-	Task getNextNewTask(org.lsqt.act.model.ProcessInstance instance) {
-		org.lsqt.act.model.TaskQuery filter = new org.lsqt.act.model.TaskQuery();
-		filter.setProcessDefinitionId(instance.getProcessDefinitionId());
-		filter.setProcessInstanceId(instance.getId());
-		List<Task> taskList = db.queryForList("querySimple", Task.class, filter);
-		if (taskList != null && taskList.size() > 1) {
-			throw new RuntimeException("自动跳过的节点，不支持并发模式");
-		}
 
-		if(taskList.isEmpty()) {
-			return null;
-		}
-		
-		Task task = taskList.get(0);
-		return task;
-	}
-	
+
 	/**
 	 * 获取审批用户为空自动跳过的节点（不包含拟稿节点、也不包括设置“审批用户为空自动跳过”但是节点设置了用户）
 	 * @param def 流程定义
@@ -317,19 +383,18 @@ public class RuntimeServiceImpl implements RuntimeService{
 	 * @return
 	 */
 	Task processAutoJumpForEmptyApproveUserNode(User loginUser,Node draftNode,ProcessInstance instance,Task task,Map<String, Object> variable,Map<String, List<ApproveObject>> nodeUserMap) {
-		//Node draftNode = getDraftNode(instance.getProcessDefinitionId());
-		
-		//如果当前节点有设置审批人，直接break
-		List<ApproveObject> list = nodeUserMap.get(task.getTaskDefinitionKey());
-		if (list != null && list.size()>0) {
-			return task;
-		}
-		
+		TaskServiceImpl taskServiceImpl = (TaskServiceImpl) taskService;
 		while (true) {
 			if (task==null) { //任务为空，有可能流程已结束
 				if(isInstanceEnded(instance.getProcessInstanceId())){
 					return null;
 				}
+			}
+			
+			 //如果当前节点有设置审批人，不自动跳过
+			List<ApproveObject> list = nodeUserMap.get(task.getTaskDefinitionKey());
+			if (list != null && list.size()>0) {
+				return task;
 			}
 			
 			// 查询当前任务对应的节点
@@ -349,7 +414,7 @@ public class RuntimeServiceImpl implements RuntimeService{
 						Arrays.asList(Node.NODE_JUMP_TYPE_EMPTY_APPROVE_USER_AUTO_JUMP_VIRTUAL_USERID));
 				actTaskService.complete(task.getId(), variable);
 
-				task = getNextNewTask(instance);
+				task = taskServiceImpl.getNextNewTask(instance);
 				if(task == null) { // 流程节束没有任务
 					return null;
 				}
@@ -384,7 +449,7 @@ public class RuntimeServiceImpl implements RuntimeService{
 	}
 	
 	/**
-	 * 获聂拟稿节点
+	 * 获取拟稿节点
 	 * 
 	 * @param processDefinitionId
 	 * @return
@@ -474,6 +539,22 @@ public class RuntimeServiceImpl implements RuntimeService{
 		}
 		return businessKey;
 	}
+	
+	/**
+	 * 从流程变量里解析业务流水号
+	 * @param variables 流程变量
+	 * @return 业务流水号
+	 */
+	String prepareBusinessFlowNo(Map<String, Object> variables) {
+		if(variables.containsKey(ActUtil.VARIABLES_BUSINESS_FLOW_NO)){ 
+			Object flowNo = variables.get(ActUtil.VARIABLES_BUSINESS_FLOW_NO);
+			if(flowNo!=null){
+				return flowNo.toString();
+			}
+		}
+		return null;
+	}
+	
 
 	/**
 	 * 加载登陆用户(含主部门、主岗信息)
@@ -576,13 +657,11 @@ public class RuntimeServiceImpl implements RuntimeService{
 	// -------------- 删除 
 	public void deleteProcessInstance(String processInstanceId, String deleteReason) {
 		actRuntimeService.deleteProcessInstance(processInstanceId, deleteReason);
-		
 		//deleteProcessInstanceExt(processInstanceId);
 	}
 
 	public void deleteProcessInstance(String processInstanceId) {
 		actRuntimeService.deleteProcessInstance(processInstanceId,null);
-		
 		//deleteProcessInstanceExt(processInstanceId);
 	}
 
@@ -593,6 +672,18 @@ public class RuntimeServiceImpl implements RuntimeService{
 	}
 	
 	// ------------------------------------------------------  查询  ----------------------------------------------------------------
+	
+	public List<Task> getCurrentTaskList(String processInstanceId) {
+		ProcessInstance instance=getById(processInstanceId);
+		if(instance!=null) {
+			org.lsqt.act.model.TaskQuery filter = new org.lsqt.act.model.TaskQuery();
+			filter.setProcessDefinitionId(instance.getProcessDefinitionId());
+			filter.setProcessInstanceId(instance.getProcessInstanceId());
+			List<Task> taskList = db.queryForList("querySimple", Task.class, filter);
+			return taskList;
+		}
+		return new ArrayList<>();
+	}
 	
 	public ProcessInstance getById(String processInstanceId) {
 		org.activiti.engine.runtime.ProcessInstance p =  actRuntimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
@@ -696,7 +787,6 @@ public class RuntimeServiceImpl implements RuntimeService{
 				}
 			}
 		}
-		
 		
 		return page;
 	}
@@ -848,8 +938,12 @@ public class RuntimeServiceImpl implements RuntimeService{
 		model.setStartUserName(loginUser.getUserName());
 		model.setStartLoginNo(loginUser.getLoginNo());
 		model.setTitle(instance.getTitle());
-		model.setBusinessStatus(ActUtil.CLOSE_STATUS_NO);
-		model.setBusinessStatusDesc(ActUtil.getCloseStatusDesc(ActUtil.CLOSE_STATUS_NO));
+		
+		model.setBusinessStatus(ActUtil.BUSINESS_STATUS_审批中);
+		model.setBusinessStatusDesc(ActUtil.getBusinessStatusDesc(ActUtil.BUSINESS_STATUS_审批中));
+		model.setEndStatus(Integer.valueOf(ActUtil.END_STATUS_未结束));
+		
+		model.setBusinessFlowNo(prepareBusinessFlowNo(variables));
 		
 		if(variables.get(ActUtil.VARIABLES_CREATE_DEPT_ID)!=null) {
 			model.setCreateDeptId(variables.get(ActUtil.VARIABLES_CREATE_DEPT_ID)+"");

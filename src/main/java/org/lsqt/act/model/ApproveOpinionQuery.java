@@ -25,6 +25,8 @@ public class ApproveOpinionQuery {
 	
 	private String processInstanceId;
 	
+	private String processInstanceIds;
+	
 	/**表单数据ID**/
 	private String businessKey;
 	
@@ -239,6 +241,14 @@ public class ApproveOpinionQuery {
 
 	public void setRejectReRunCompleteStatus(String rejectReRunCompleteStatus) {
 		this.rejectReRunCompleteStatus = rejectReRunCompleteStatus;
+	}
+
+	public String getProcessInstanceIds() {
+		return processInstanceIds;
+	}
+
+	public void setProcessInstanceIds(String processInstanceIds) {
+		this.processInstanceIds = processInstanceIds;
 	}
 
 }

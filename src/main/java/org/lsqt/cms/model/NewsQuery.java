@@ -17,7 +17,7 @@ public class NewsQuery {
 	private String sortField;
 	
 	private String key; // 关键字
-	
+	private String tags ; // 标签，冗余字段，用于快速查询
 	
 	private Long id;
 	private String name; // 字典名称
@@ -90,5 +90,11 @@ public class NewsQuery {
 	}
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+	public String getTags() {
+		return tags;
+	}
+	public void setTags(String tags) {
+		this.tags = tags;
 	} 
 }

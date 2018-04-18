@@ -29,60 +29,62 @@ public final class ActUtil {
 	/**内置的流程变量key**/
 	public static final String VARIABLES_START_USER_ID ="startUserId";   //流程发起人
 	public static final String VARIABLES_BUSINESS_KEY = "businessKey"; // 业务主键 
+	public static final String VARIABLES_BUSINESS_FLOW_NO = "flowNo"; // 业务流水号
 	public static final String VARIABLES_TITLE="title";  // 流程标题
 	public static final String VARIABLES_CREATE_DEPT_ID="createDeptId"; // 单据填制人部门，如果没有取用户主部门，哪果再没有取user.userOrgList的第一个
 	public static final String VARIABLES_BUSINESS_TYPE = "businessType"; // 自定义的单据业务类型
+	
+	
 	public static final String VARIABLES_LOGIN_USER = "loginUser"; 
 	public static final String VARIABLES_APPROVE_OPINION = "approveOpinion"; // 流程发起变量里的审批意见key
 	
-	/**流程是否结束 4=已完成  3=审批中**/
-	public static final String CLOSE_STATUS_YES="4";
-	public static final String CLOSE_STATUS_NO="3";
-	public static String getCloseStatusDesc(String closeStatus) {
+	/**流程是否结束 1=已结束  0=未结束 **/
+	public static final String END_STATUS_已结束="1";
+	public static final String END_STATUS_未结束="0";
+	public static String getEndStatusDesc(String closeStatus) {
 		if(StringUtil.isBlank(closeStatus)){
 			return "";
 		}
-		if(CLOSE_STATUS_YES.equals(closeStatus)) {
-			return "已完成";
+		if(END_STATUS_已结束.equals(closeStatus)) {
+			return "已结束";
 		}
-		if(CLOSE_STATUS_NO.equals(closeStatus)) {
-			return "审批中";
+		if(END_STATUS_未结束.equals(closeStatus)) {
+			return "未结束";
 		}
 		return "";
 	}
 	
-	/** 暂自定义整个流程的业务状态 :待发起=0 待审批=1 审批中=3 审批通过=2 未通过=-1 已完成=4 
-	public static final String BUSINESS_STATUS_待发起="0";
-	public static final String BUSINESS_STATUS_待审批="1";
+	/** 与预算系统的业务状态保持一致 :已通过=2  审批中=3  已撤回=6   已作废=7 已退回=8 **/
+	public static final String BUSINESS_STATUS_已通过="2";
 	public static final String BUSINESS_STATUS_审批中="3";
-	public static final String BUSINESS_STATUS_审批通过="2";
-	public static final String BUSINESS_STATUS_未通过="-1";
-	public static final String BUSINESS_STATUS_已完成="4";
+	public static final String BUSINESS_STATUS_已撤回="6";
+	public static final String BUSINESS_STATUS_已作废="7";
+	public static final String BUSINESS_STATUS_已退回="8"; //驳回到拟稿人或不同意，都是这个状态
+	
+ 
 	public static String getBusinessStatusDesc(String businessStatus) {
 		if(StringUtil.isBlank(businessStatus)){
 			return "";
 		}
-		if(BUSINESS_STATUS_待发起.equals(businessStatus)) {
-			return "待发起";
-		}
-		if(BUSINESS_STATUS_待审批.equals(businessStatus)) {
-			return "待审批";
+		if(BUSINESS_STATUS_已通过.equals(businessStatus)) {
+			return "已通过";
 		}
 		if(BUSINESS_STATUS_审批中.equals(businessStatus)) {
 			return "审批中";
 		}
-		if(BUSINESS_STATUS_审批通过.equals(businessStatus)) {
-			return "审批通过";
+		if(BUSINESS_STATUS_已撤回.equals(businessStatus)) {
+			return "已撤回";
 		}
-		if(BUSINESS_STATUS_未通过.equals(businessStatus)) {
-			return "未通过";
+		if(BUSINESS_STATUS_已作废.equals(businessStatus)) {
+			return "已作废";
 		}
-		if(BUSINESS_STATUS_已完成.equals(businessStatus)) {
-			return "已完成";
+		if(BUSINESS_STATUS_已退回.equals(businessStatus)) {
+			return "已退回";
 		}
 		return "";
 	}
-	**/
+	 
+	
 	private ActUtil(){}
 	private static ProcessEngine PROCESS_ENGINE= null;
 	
@@ -128,6 +130,8 @@ public final class ActUtil {
 	
 	// --------------------------  常用的流程引擎对象转自定义的模型对象 ---------------
 	public static ProcessInstance convert(org.activiti.engine.runtime.ProcessInstance e) {
+		if(e==null) return null;
+		
 		ProcessInstance model = new ProcessInstance();
 		model.setActivityId(e.getActivityId());
 		model.setBusinessKey(e.getBusinessKey());

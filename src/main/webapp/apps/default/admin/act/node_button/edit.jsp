@@ -59,25 +59,25 @@
 								</td>
 							</tr>
 							<tr>
-								<td>前置角本类型:</td>
+								<td>前置脚本类型:</td>
 								<td colspan="3">
 									<input id="beforeScriptType" name="beforeScriptType" class="mini-combobox" style="width: 100%" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=node_button_script_type" />
 								</td>
 							</tr>
 							<tr>
-								<td>前置角本片断：</td>
+								<td>前置脚本片断：</td>
 								<td colspan="3">
 								 	<input id="beforeScript" name="beforeScript"  class="mini-textarea" style="width: 100%"  />
 								</td>
 							</tr>
 							<tr>
-								<td>后置角本类型:</td>
+								<td>后置脚本类型:</td>
 								<td colspan="3">
 									<input id="afterScriptType" name="afterScriptType" class="mini-combobox" style="width: 100%" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=node_button_script_type" />
 								</td>
 							</tr>
 							<tr>
-								<td>后置角本片断：</td>
+								<td>后置脚本片断：</td>
 								<td colspan="3">
 								 	<input name="afterScript" id="afterScript" class="mini-textarea" style="width: 100%"/>
 								</td>
@@ -87,7 +87,7 @@
 				</fieldset>
 				   
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
-					 <legend>角本片断内置变量说明：</legend>
+					 <legend>脚本片断内置变量说明：</legend>
 						<div style="width: 100%;border: 0;margin: 0;padding: 0;color: green">
 				    		 <ul style="margin: 2px;">
 				    			<li>loginUser=登陆用户（常用属性:userId、loginNo、userName等）</li>

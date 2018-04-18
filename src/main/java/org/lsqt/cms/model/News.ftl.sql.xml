@@ -40,15 +40,13 @@
 		select * from cms_news where 1=1
 		<#if query??>
 			<#if query.key??>
-		        or name like '%${StringUtil.escapeSql(query.key)}%' 
-		        or title like '%${StringUtil.escapeSql(query.key)}%' 
-		        or code like '%${StringUtil.escapeSql(query.key)}%' 
-		        or summary like '%${StringUtil.escapeSql(query.key)}%' 
-		        or tags like '%${StringUtil.escapeSql(query.key)}%' 
-		        or remark like '%${StringUtil.escapeSql(query.key)}%' 
-		        or address like '%${StringUtil.escapeSql(query.key)}%' 
-		        or person like '%${StringUtil.escapeSql(query.key)}%' 
-		        or source like '%${StringUtil.escapeSql(query.key)}%' 
+		        and (  name like '%${StringUtil.escapeSql(query.key)}%' 
+			        or title like '%${StringUtil.escapeSql(query.key)}%' 
+			        or code like '%${StringUtil.escapeSql(query.key)}%' 
+			        or summary like '%${StringUtil.escapeSql(query.key)}%' 
+			        or tags like '%${StringUtil.escapeSql(query.key)}%' 
+			        or remark like '%${StringUtil.escapeSql(query.key)}%' 
+		        )
 			</#if>
 			<#if query.id??>
 				and id = ${query.id} 

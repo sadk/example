@@ -31,7 +31,7 @@
 		        </div>
 		        <div class="mini-fit">
 		            <ul id="tree1" class="mini-tree" url="${pageContext.request.contextPath}/act/category/all?dataType=1" style="width:100%;"
-		                showTreeIcon="true" textField="name" idField="id" parentField="pid" resultAsTree="false" expandOnLoad="true">        
+		                showTreeIcon="true" textField="name" idField="id" parentField="pid" resultAsTree="false" expandOnLoad="false">        
 		            </ul>
 		        </div>
 			</div>
@@ -134,6 +134,7 @@
 												<a class="mini-button" iconCls="icon-split" onclick="refreshRes()">前置后置事件设置</a>
 												<a class="mini-button" iconCls="icon-wait" onclick="refreshRes()">任务催办设置</a> -->
 												<span class="separator"></span>
+												<a class="mini-button" iconCls="icon-remove" onclick="removeNode()">删除</a>
 												<a class="mini-button" iconCls="icon-save" onclick="saveNode()">保存</a>
 												<a class="mini-button" iconCls="icon-edit" onclick="nodeCCSetting()">节点抄送设置</a>
 												<span class="separator"></span>
@@ -146,10 +147,10 @@
 								<div class="mini-fit">
 									<div id="nodeGrid" class="mini-datagrid" style="width:100%;height:100%;" idField="id" multiSelect="true" allowResize="false"
 										showEmptyText="true" emptyText="查无数据"  allowCellEdit="true" allowCellSelect="true" editNextOnEnterKey="true"  editNextRowCell="true"
-										sizeList="[5,10,20,50]" pageSize="20" allowAlternating="true" sortMode="client" showPager="fales"
+										sizeList="[5,10,20,50]" pageSize="20" allowAlternating="false" sortMode="client" showPager="fales"
 										 url="${pageContext.request.contextPath}/act/node/list" >
 										<div property="columns">
-									        <div type="checkcolumn" ></div>
+									        <div type="indexcolumn" ></div>
 									        <div field="taskName" width="120" headerAlign="center">节点名称</div>
 									        <div field="taskKey" width="80" headerAlign="center">节点Key</div>
 									       
@@ -169,7 +170,7 @@
 									        <div field="formKey" width="100" headerAlign="center">formKey(也就是外置表单URL)</div>
 									        <div field="opinionToDoTypeDesc" width="80" align="right" headerAlign="center">意见处理类型</div>
 									        -->
-									        
+									         <div field="remark" width="80" headerAlign="center">备注</div>
 										</div>
 									</div>
 								</div>
@@ -190,6 +191,7 @@
 												<a class="mini-button" iconCls="icon-user" onclick="userSetting()">设置审批人</a>
 												<a class="mini-button" iconCls="icon-edit" onclick="viewUser()">预览审批人</a>
 												<span class="separator"></span>
+												<a class="mini-button" iconCls="icon-add" onclick="initNodeUser()">初使化审批人</a>
 												<a class="mini-button" iconCls="icon-reload" onclick="refreshNodeUser()">刷新</a>
 											</td>
 										</tr>
@@ -203,8 +205,9 @@
 										url="${pageContext.request.contextPath}/act/definition/get_node_list" >
 										<div property="columns">
 									        <div type="checkcolumn" ></div>
-									        <div field="taskName" width="120" headerAlign="center">节点名称</div>
+									        <div field="taskName" width="150" headerAlign="center">节点名称</div>
 									        <div field="taskKey" width="80" headerAlign="center">流程节点Key</div>
+									        <div field="taskBizTypeDesc" width="80" headerAlign="center" align="center">节点类型</div>
 									        
 									        <div field="approveObjectIds" width="150" headerAlign="center">审批对象ID</div>
 									        <div field="approveObjectNames" width="250" headerAlign="center">审批对象名称</div>
@@ -216,6 +219,7 @@
 									        <div field="opinionToDoTypeDesc" width="30" align="right" headerAlign="center">意见处理类型</div>
 									        <div field="nodeJumpTypeDesc" width="30" align="right" headerAlign="center">跳转类型</div>
 									         -->
+									          <div field="remark" width="180" headerAlign="center">备注</div>
 										</div>
 									</div>
 								</div>
@@ -239,9 +243,15 @@
 												<!-- <a class="mini-button" iconCls="icon-add" onclick="refreshRes()">设置URL表单</a> -->
 												
 												<span class="separator"></span>  
+												<a class="mini-button" iconCls="icon-node" onclick="initButton()">初使化操作按钮</a>
 												<a class="mini-button" iconCls="icon-tip" onclick="setButton()">设置操作按钮</a>
+												<a class="mini-button" iconCls="icon-edit" onclick="batchSetScript()">批量设置按钮脚本</a>
 												
 											</td>
+											<td style="white-space:nowrap;">
+						                        <input id="keyUserTaskyKey" name="keyUserTaskyKey" class="mini-textbox" emptyText="请输入关键字" style="width:100px;" onenter="search"/>   
+						                        <a class="mini-button" onclick="searchNodeForm()">查询</a>
+						                    </td>
 										</tr>
 									</table>
 								</div>
@@ -249,14 +259,15 @@
 									<div id="formSettingGrid" class="mini-datagrid" style="width:100%;height:100%;"
 										url="${pageContext.request.contextPath}/act/node_form/page"  idField="id" multiSelect="true" allowResize="false"
 										showEmptyText="true" emptyText="查无数据"  allowCellEdit="true" allowCellSelect="true" editNextOnEnterKey="true"  editNextRowCell="true"
-										sizeList="[5,10,20,50]" pageSize="20" allowAlternating="true" sortMode="client" showPager="true">
+										sizeList="[20,50,200,500,1000]" pageSize="20" allowAlternating="true" sortMode="client" showPager="true">
 										
 										<div property="columns">
 											<div type="checkcolumn" ></div>
-									        <div field="taskName" width="120" headerAlign="center">节点名称</div>
+									        <div field="taskName" width="150" headerAlign="center">节点名称</div>
+									        <div field="taskTypeDesc" width="80" headerAlign="center" align="center">节点类型</div>
 									        <div field="taskKey" width="80" headerAlign="center">节点Key</div>
 									        
-									        <div type="comboboxcolumn"  field="dataType" width="60" headerAlign="center" align="center">定义类别
+									        <div type="comboboxcolumn"  field="dataType" width="60" headerAlign="center" align="left">定义类别
 									        	<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=form_definition_type" />
 									        </div>
 											<div type="comboboxcolumn"  field="formType" width="60" headerAlign="center" align="center">表单类型
@@ -270,7 +281,7 @@
 									        	<input property="editor" class="mini-textbox" style="width:100%;" maxWidth="100" />
 									        </div>
 									        
-									        <div name="buttonListDesc" field="buttonListDesc" width="160" headerAlign="center">操作按钮</div>
+									        <div name="buttonListDesc" field="buttonListDesc" width="250" headerAlign="center">操作按钮</div>
 											
 											<!-- 
 											<div field="remark" width="80" headerAlign="center" allowSort="true" align="center">备注</div>
@@ -280,6 +291,7 @@
 											<div field="createTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">创建日期</div>
 											<div field="updateTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">更新日期</div>
 											 -->
+											 <div field="remark" width="80" headerAlign="center">备注</div>
 										</div>
 									</div>
 								</div>
@@ -415,10 +427,142 @@
 				formSettingGrid.load({definitionId:record.id,dataType: 1}); // 1=节点表单 2=全局表单 
 				//nodeMessageTemplateGrid.load({definitionId:record.id});
 			});			
+
+			function batchSetScript () {
+				var row = grid.getSelected();
+				if(!row){
+					mini.alert("请选择一个流程定义");
+					return ;
+				}
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/act/node_form/batch_set_script.jsp?definitionId="+row.id,
+					title : "批量设置按钮脚本",
+					width : 700,
+					height : 600,
+					ondestroy : function(action) {
+						/*
+						var iframe = this.getIFrameEl();
+						var users = iframe.contentWindow.GetData();
+						if(users.length==0) {
+							mini.alert("你没有选择用户");
+							return ;
+						}
+						
+						var userIds = new Array();
+						for (var i=0;i<users.length;i++) {
+							userIds.push(users[i].userId)
+						}
+						var data = {};
+						data.userIds= userIds.join(",");
+						data.definitionId = row.id;
+        	            $.ajax({
+        	                url: "${pageContext.request.contextPath}/act/node_user/init_node_user",
+        	                data: data ,
+        	                type: "post",
+        	                success: function (text) {
+        	                	userSettingGrid.reload();
+        	                },
+        	                error: function (jqXHR, textStatus, errorThrown) {
+        	                    alert(jqXHR.responseText);
+        	                }
+        	            });*/
+					}
+				})
+			}
+			
+			function searchNodeForm() {
+				var row = grid.getSelected();
+				if(!row){
+					mini.alert("请选择一个流程定义");
+					return ;
+				}
+				var keyUserTaskyKey = mini.get("keyUserTaskyKey").value;
+				formSettingGrid.load({definitionId:row.id,taskKey: keyUserTaskyKey,dataType: 1}); // 1=节点表单 2=全局表单 
+			}
+			
+			
+			function initNodeUser () { // 初使化审批人
+				var row = grid.getSelected();
+				if(!row) {
+					mini.alert("请选择一个流程定义");
+					return ;
+				}
+				
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/syswin/uum/user/selector_user.jsp",
+					title : "请选择初使化的节点审批【测试】用户",
+					width : 700,
+					height : 600,
+					ondestroy : function(action) {
+						var iframe = this.getIFrameEl();
+						var users = iframe.contentWindow.GetDatas();
+						if(users.length==0) {
+							mini.alert("你没有选择用户");
+							return ;
+						}
+						
+						if(action == 'ok') {
+							var userIds = new Array();
+							for (var i=0;i<users.length;i++) {
+								userIds.push(users[i].userId)
+							}
+							var data = {};
+							data.userIds= userIds.join(",");
+							data.definitionId = row.id;
+	        	            $.ajax({
+	        	                url: "${pageContext.request.contextPath}/act/node_user/init_node_user",
+	        	                data: data ,
+	        	                type: "post",
+	        	                success: function (text) {
+	        	                	userSettingGrid.reload();
+	        	                },
+	        	                error: function (jqXHR, textStatus, errorThrown) {
+	        	                    alert(jqXHR.responseText);
+	        	                }
+	        	            });
+						}
+        	            
+					}
+				})
+			}
+			
+			function removeNode() {
+				var row = nodeGrid.getSelected();
+				if (!row) {
+					mini.alert("请选择一个节点设置");
+					return ;
+				}
+		        mini.confirm("确定删除节点【"+row.taskName+"】设置？", "确定？",
+	                function (action) {
+	                    if (action == "ok") {
+	        	            $.ajax({
+	        	                url: "${pageContext.request.contextPath}/act/node/delete_by_ids",
+	        	                data: { ids: row.id },
+	        	                type: "post",
+	        	                success: function (text) {
+	        	                	nodeGrid.reload();
+	        	                },
+	        	                error: function (jqXHR, textStatus, errorThrown) {
+	        	                    alert(jqXHR.responseText);
+	        	                }
+	        	            });
+	                    }
+	        		})
+			}
 			
 			function onVersionValueChanged(e) {
 				var v = versionCmb.getValue();
-				
+				var node = tree.getSelectedNode();
+				definitionKey ="";
+				if(typeof(node) !='undifiend') {
+					category = node.code;
+				}
+				console.log(node)
+				if(v==1) {
+					grid.load({isDisplayNewest : true,category:category });
+				} else {
+					grid.load({category : category });
+				}
 			}
 			
 			function importDefinition() {
@@ -656,13 +800,13 @@
 				}
 				mini.open({
 					url : "${pageContext.request.contextPath}/apps/default/admin/act/definition/start_json.jsp",
-					title : "流程变量",
+					title : "发起流程",
 					width : 450,
 					height : 350,
 					onload : function() {
 						var iframe = this.getIFrameEl();
 						var data = {definitionId : t.id}
-						data.variables = mini.encode({"startUserId":1,"businessKey":5,"title":(t.name+"-流程标题"+getNowFormatDate())})
+						data.variables = mini.encode({"startUserId":1,"businessKey":-1,"createDeptId":-1,"title":(t.name+"-流程标题"+getNowFormatDate())})
 						iframe.contentWindow.SetData(data);
 					},
 					ondestroy : function(action) {
@@ -694,7 +838,7 @@
 				});
 			}
 			
-			function setGlobalScript() { //设置合局前置、后置角本（一般为http的回调)
+			function setGlobalScript() { //设置合局前置、后置脚本（一般为http的回调)
 				var t = grid.getSelected();
 				if(!t) {
 					mini.alert("请选择一个流程定义");
@@ -704,7 +848,7 @@
 				if(t) {
 					mini.open({
 						url : "${pageContext.request.contextPath}/apps/default/admin/act/definition/global_script_set.jsp",
-						title : "【"+t.name+"】全局（回调）角本设置",
+						title : "【"+t.name+"】全局（回调）脚本设置",
 						width : 700,
 						height : 600,
 						onload : function() {
@@ -719,6 +863,35 @@
 					});
 					return ;
 				}
+			}
+			
+			function initButton() {
+				var t = grid.getSelected();
+				if(!t) {
+					mini.alert("请选择一个流程定义");
+					return ;
+				}
+				var data={}
+				data.definitionId=t.id
+				mini.confirm("确定初使化所有节点的按钮设置(已配置的按钮和后置脚本将会被清除)？", "确定？",
+						function (action) {
+							if (action == "ok") {
+								$.ajax({
+									'url': "${pageContext.request.contextPath}/act/node_button/init_all",
+									type: 'post', dataType:'JSON', data: data,
+									success: function (json) {
+										if(json){
+											mini.alert("初使化成功");
+											formSettingGrid.reload();
+										}
+									},
+									error : function(data) {
+								  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
+								  		mini.alert(data.responseText);
+									}
+								});
+							}
+				})
 			}
 			
 			function setButton() {
@@ -822,14 +995,14 @@
 			}
 			
 	 
-			
+			/*
 			function displayNewestVersion() { // 只显示最新版本流程定义
 				grid.load({isDisplayNewest : true});
 			}
 		 
 			function displayAllVersion() {
 				grid.load({});
-			}
+			}*/
 			function deploy () {
 				mini.open({
 					url : "${pageContext.request.contextPath}/apps/default/admin/act/definition/upload.jsp",

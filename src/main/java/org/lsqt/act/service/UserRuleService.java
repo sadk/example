@@ -11,6 +11,8 @@ import org.lsqt.act.model.UserRuleQuery;
 public interface UserRuleService {
 	
 	Page<UserRule> queryForPage(UserRuleQuery query);
+	
+	List<UserRule> queryForList(UserRuleQuery query);
 
 	UserRule saveOrUpdate(UserRule model);
 	

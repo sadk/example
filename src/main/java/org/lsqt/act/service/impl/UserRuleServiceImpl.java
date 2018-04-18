@@ -44,6 +44,10 @@ public class UserRuleServiceImpl implements UserRuleService{
 		return db.queryForPage("queryForPage", query.getPageIndex(), query.getPageSize(), UserRule.class, query);
 	}
 
+	public List<UserRule>  queryForList(UserRuleQuery query) {
+		return db.queryForList("queryForPage",UserRule.class, query);
+	}
+	
 	public List<UserRule> getAll(){
 		  return db.queryForList("getAll", UserRule.class);
 	}

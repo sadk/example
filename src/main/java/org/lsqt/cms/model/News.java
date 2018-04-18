@@ -10,7 +10,8 @@ public class News {
 	private String code;
 	private String title;
 	private String summary;
-	private String tags;
+ 
+	private String tags ; // 标签，冗余字段，用于快速查询
 	
 	private String author; //作者
 	
@@ -44,6 +45,9 @@ public class News {
 	private Date createTime;
 	private Date updateTime;
 	
+	public static final int ENABLE_启用=1;
+	public static final int ENABLE_不启用=0;
+	
 	public Long getId() {
 		return id;
 	}
@@ -67,12 +71,6 @@ public class News {
 	}
 	public void setSummary(String summary) {
 		this.summary = summary;
-	}
-	public String getTags() {
-		return tags;
-	}
-	public void setTags(String tags) {
-		this.tags = tags;
 	}
 	public Date getPublishDate() {
 		return publishDate;
@@ -205,5 +203,11 @@ public class News {
 	}
 	public void setSourceUrl(String sourceUrl) {
 		this.sourceUrl = sourceUrl;
+	}
+	public String getTags() {
+		return tags;
+	}
+	public void setTags(String tags) {
+		this.tags = tags;
 	}
 }

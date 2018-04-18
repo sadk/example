@@ -92,7 +92,8 @@ CREATE TABLE `sys_application` (
   `create_time` datetime NOT NULL COMMENT 'createTime:创建日期',
   `update_time` datetime NOT NULL COMMENT 'updateTime:更新时间',
 
-  `tenant_code` varchar(100) NOT NULL COMMENT '租户编码',
+  `tenant_code` varchar(100) NULL COMMENT '租户编码',
+  `tenant_name` varchar(100) NULL COMMENT '租户名',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_app_code` (`code`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='应用表';
@@ -511,9 +512,9 @@ drop table  if exists cms_content;
 CREATE TABLE `cms_content` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `object_id` bigint(20) NOT NULL COMMENT '对象ID，如果内容为新闻，则是新闻表的ID',
-  
   `title` varchar(200) DEFAULT NULL  COMMENT '标题',
-  `type` int(10) DEFAULT NULL COMMENT '类型:0=新闻 1=博客 2=贴子 3=ftl内容模板 4=vm内容模板',
+  `type` int(10) DEFAULT NULL COMMENT '类型:300=新闻 301=博客 302=贴子(3开头的都是FreeMark解析内容) 303=Html页面内容    见： 3xx=ftl内容模板 4xx=vm内容模板',
+  `enable` int(4) DEFAULT NULL COMMENT '是否启用： 0=不启用 1=启用',
   `sn` int(10) default 0  COMMENT '排序号',
   `content` text DEFAULT NULL COMMENT '备注',
   `code` varchar(40) DEFAULT NULL  COMMENT '编码',
@@ -632,6 +633,7 @@ CREATE TABLE `cms_news` (
   `summary` text DEFAULT NULL  COMMENT '摘要',
   `author` varchar(200) DEFAULT NULL  COMMENT '作者',
   
+  `tags` varchar(500) DEFAULT NULL  COMMENT '新闻的标签',
   `publish_date` datetime DEFAULT NULL COMMENT '发布日期',
   `enable` int DEFAULT NULL COMMENT '0=未启用 1=启用 ',
   `status_auth` int DEFAULT NULL COMMENT '状态：0=未审 1=审核中 2=审核通过',
@@ -683,12 +685,64 @@ CREATE TABLE `cms_news_comment` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='新闻评论表';
 
 
+drop table  IF EXISTS  cms_resource ;
+CREATE TABLE `cms_resource` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `pid` bigint(20) DEFAULT NULL,
+  `name` varchar(255) NOT NULL COMMENT '资源名称',
+  `value` varchar(255) DEFAULT NULL COMMENT '资源值',
+  `code` varchar(255) NOT NULL COMMENT '资源编码',
+  
+  `type` varchar(2) DEFAULT NULL COMMENT '数据类型：10=目录 20=文件 ',
+  `enable` varchar(2) DEFAULT NULL COMMENT '是否启用: 1=启用  0=禁用',
+  `app_code` varchar(20) DEFAULT NULL,
+  `sn` int(11) DEFAULT '0' COMMENT '排序',
+  
+  `node_path` varchar(1000) DEFAULT NULL,
+  
+  `remark` varchar(256) DEFAULT NULL COMMENT '备注',
+  `gid` varchar(50) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_dic_name_code` (`code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='站点资源';
 
 
 
+drop table  IF EXISTS  cms_tags ;
+CREATE TABLE `cms_tags` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL COMMENT '标签名称',
+  `value` varchar(255) DEFAULT NULL COMMENT '标签值',
+  `code` varchar(255) NOT NULL COMMENT '标签编码',
+  
+  `remark` varchar(256) DEFAULT NULL COMMENT '备注',
+  `gid` varchar(50) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_dic_name_code` (`code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='标签表';
 
+-- 该中间表暂时不用
+-- drop table  IF EXISTS  cms_mid_news_tags ;
+-- CREATE TABLE `cms_mid_news_tags` (
+--   `tag_id` bigint(20) NOT NULL COMMENT '标签ID',
+--   `news_id` bigint(20) NOT NULL COMMENT '内容ID'
+-- ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='新闻与标签多对多中间表';
 
+drop table  IF EXISTS  cms_mid_channel_news ;
+CREATE TABLE `cms_mid_channel_news` (
+  `channel_id` bigint(20) NOT NULL COMMENT '标签ID',
+  `news_id` bigint(20) NOT NULL COMMENT '新闻ID'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='栏目与新闻多对多中间表';
 
+drop table  IF EXISTS  cms_mid_template_tags ;
+CREATE TABLE `cms_mid_template_tags` (
+  `template_id` bigint(20) NOT NULL COMMENT '模板定义ID',
+  `tags_id` bigint(20) NOT NULL COMMENT '标签ID'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='模板定义与标签多对多中间表';
 
 
 
@@ -1750,5 +1804,31 @@ INSERT INTO `ext_user_data_mapping` (`id`,`config_id`,`local_field`,`remote_fiel
 -- ---------------------------- 流程用户数据映射 配置 结束 -----------------------------------------
 
 
+
+
+-- 流程变量表
+drop table  IF EXISTS  ext_variable ;
+ CREATE TABLE `ext_variable` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  
+  `name` varchar(256) NOT NULL COMMENT '变量名',
+  `code` varchar(200) NOT NULL COMMENT '变量编码',
+  `type` int(2) NOT NULL COMMENT '是否是常用类,1=常用固定类(如流程发起人等） 0=自定义类',
+  
+  `category_type` int(2) NOT NULL COMMENT '变量所属分类',
+  
+  `data_type` int(4) NOT NULL COMMENT '变量使用类型 1=字符串 2=数字 3=日期',
+  `format` varchar(100) NOT NULL COMMENT '变量使用类型 1=字符串 2=数字 3=日期',
+  `requried` int(2) NOT NULL COMMENT '是否必填',
+  `default_value` text COMMENT '默认值',
+ 
+  `sn` int(4) DEFAULT '0',
+  `remark` varchar(100) DEFAULT NULL COMMENT '用户备注',
+  `app_code` varchar(40) DEFAULT NULL,
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='流程变量管理';
 
 commit;

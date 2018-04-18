@@ -1,5 +1,7 @@
 package org.lsqt.act.model;
 
+import org.lsqt.act.ActUtil;
+
 /**
  * 流程实例扩展
  */
@@ -44,15 +46,21 @@ public class RunInstance {
 
 	/** 业务数据主键ID */
 	private String businessKey;
+	
+	/** 业务流水号**/
+	private String businessFlowNo;
 
-	/** 业务自定义的状态,如 待发起=0 待审批=1 审批中=3 审批通过=2 未通过=-1 已完成=4 */
+	/** */
 	private String businessStatus;
 	
 	/** 业务状态中文表示 */
 	private String businessStatusDesc;
 	
-	
+	/**流程已结束=1 未结束=0**/
+	private Integer endStatus; 
 
+	
+	
 	/** 业务自定义的分类 */
 	private String businessCategory;
 
@@ -78,30 +86,58 @@ public class RunInstance {
 	private java.util.Date updateTime;
 
 	//---------------------------- activiti 属性
-	private Boolean isSuspended;
-	private Boolean isConcurrent;
-	private Boolean isActive;
+
+	private Integer suspended;  // 数据库：1=激活 2=挂起
+	private Integer concurrent; //数据库存储： 1=并行 0=串行 
+	private Integer active; //数据库存储：  1=激活 0=非激活  
+	
+	public static final int SUSPENDED_YES=2;
+	public static final int SUSPENDED_NO=1;
+	
+	public static final int CONCURRENT_YES=1;
+	public static final int CONCURRENT_NO=0;
+	
+	public static final int ACTIVE_YES=1;
+	public static final int ACTIVE_NO=0;
+	
+	
 	private String version;
 	
 	
 	// --------------------------- 活动节点的审批人,如：张三(zhang3),李四(li4)
 	private String approveUserText;
 	
-	public String getIsEndedDesc() {
-		if(isSuspended) {
-			return "已结束";
-		}else {
-			return "未结束";
+	public String getEndStatusDesc() {
+		if (endStatus != null) {
+			if (Integer.valueOf(ActUtil.END_STATUS_已结束).intValue() == endStatus) {
+				return "已结束";
+			} else {
+				return "未结束";
+			}
 		}
+		return "";
 	}
 	
-	public String getIsSuspendedDesc() {
-		if(isSuspended) {
-			return "已挂起";
-		}else {
-			return "未挂起";
+	public String getSuspendedDesc() {
+		if (suspended != null) {
+			if (SUSPENDED_YES == suspended) {
+				return "挂起";
+			} else {
+				return "激活";
+			}
 		}
-		
+		return "";
+	}
+
+	public String getConcurrentDesc() {
+		if (concurrent != null) {
+			if (CONCURRENT_YES == concurrent) {
+				return "(会签或其它)并发";
+			} else {
+				return "串行";
+			}
+		}
+		return "";
 	}
 	
 	
@@ -299,31 +335,6 @@ public class RunInstance {
 		this.taskKey = taskKey;
 	}
 
-	public Boolean getIsSuspended() {
-		return isSuspended;
-	}
-
-	public void setIsSuspended(Boolean isSuspended) {
-		this.isSuspended = isSuspended;
-	}
-	
-	
-	public Boolean getIsConcurrent() {
-		return isConcurrent;
-	}
-
-	public void setIsConcurrent(Boolean isConcurrent) {
-		this.isConcurrent = isConcurrent;
-	}
-
-	public Boolean getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
-
 	public String getVersion() {
 		return version;
 	}
@@ -370,6 +381,46 @@ public class RunInstance {
 
 	public void setStartLoginNo(String startLoginNo) {
 		this.startLoginNo = startLoginNo;
+	}
+
+	public String getBusinessFlowNo() {
+		return businessFlowNo;
+	}
+
+	public void setBusinessFlowNo(String businessFlowNo) {
+		this.businessFlowNo = businessFlowNo;
+	}
+
+	public Integer getEndStatus() {
+		return endStatus;
+	}
+
+	public void setEndStatus(Integer endStatus) {
+		this.endStatus = endStatus;
+	}
+
+	public Integer getSuspended() {
+		return suspended;
+	}
+
+	public void setSuspended(Integer suspended) {
+		this.suspended = suspended;
+	}
+
+	public Integer getConcurrent() {
+		return concurrent;
+	}
+
+	public void setConcurrent(Integer concurrent) {
+		this.concurrent = concurrent;
+	}
+
+	public Integer getActive() {
+		return active;
+	}
+
+	public void setActive(Integer active) {
+		this.active = active;
 	}
 	
 }

@@ -20,47 +20,20 @@
 	</head>
 	<body>
 		<div class="mini-splitter" style="width:100%;height:100%;">
-			<div size="270" showCollapseButton="true">
-				<div id="form1"  style="padding:8px;">
-					<table>						
-						<tr>
-							<td>关键字 ：</td>
-							<td>
-								<input id="key" name="key" style="width:140px" class="mini-textbox" emptyText="请输入关键字搜索" style="width: 150px;" onenter="search"/>
-							</td>
-						</tr>
-						<tr>
-							<td>所属应用：</td>
-							<td>
-								<input id="appCode" name="appCode" class="mini-combobox" style="width:140px"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/application/all" />
-							</td>
-						</tr>
-						<tr>
-							<td>名称：</td>
-							<td>
-								<input id="name" name="name"  style="width:140px" class="mini-textbox"  emptyText="请输入字典名称"  onenter="search"/>
-							</td>
-						</tr>
-						<tr>
-							<td>编码：</td>
-							<td>
-								<input id="code" name="code" class="mini-textbox" style="width:140px" emptyText="请输入备注" onenter="search"/>
-							</td>
-						</tr>
-						<tr>
-							<td>备注：</td>
-							<td>
-								<input id="remark" name="remark" class="mini-textbox" style="width:140px" emptyText="请输入备注" onenter="search"/>
-							</td>
-						</tr>
-						
-					</table>
-					<div style="text-align:center;padding:10px;">
-						<a class="mini-button" onclick="search()" iconCls="icon-search" style="width:60px;margin-right:20px;">查询</a>
-						<a class="mini-button" onclick="clear()" iconCls="icon-cancel" style="width:60px;margin-right:20px;">清空</a>
-					</div>
-				</div>
-			</div>
+		    <div size="240" showCollapseButton="true">
+		        <div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right:0;">                
+		            <span style="padding-left:5px;">租户：</span>
+		            <input id="tenantCode" name="tenantCode" width="180" class="mini-buttonedit" onbuttonclick="onButtonEdit" /> 
+		            <!--    
+		            <a class="mini-button" iconCls="icon-search" plain="true">查找</a>   
+		             -->               
+		        </div>
+		        <div class="mini-fit">
+		            <ul id="tree1" class="mini-tree" url="${pageContext.request.contextPath}/application/list" style="width:100%;"
+		                showTreeIcon="true" textField="name" idField="id" parentField="pid" resultAsTree="false">        
+		            </ul>
+		        </div>
+		    </div>
 			<div showCollapseButton="true">
 				<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
 					<table style="width:100%;">
@@ -87,7 +60,7 @@
 					<div id="datagrid1" class="mini-treegrid"" style="width:100%;height:100%;"
 					showTreeIcon="true" allowResize="true" expandOnLoad="true"
     				treeColumn="name" idField="id" parentField="pid" resultAsTree="false"  checkRecursive="true"  showCheckBox="false" 
-					url="${pageContext.request.contextPath}/channel/all" > 
+					url="${pageContext.request.contextPath}/channel/list" > 
 					    <div property="columns">
 					        <div type="indexcolumn"></div>
 					        <div name="name" field="name" width="160" headerAlign="center">名称</div>
@@ -107,31 +80,53 @@
 		</div>
 		<script type="text/javascript">
 		mini.parse();
-
-		var form = new mini.Form("#form1");
-		function clear() {
-			 form.clear();
-		}
-		 
+		
+		var tree = mini.get("tree1");
 		var grid = mini.get("datagrid1");
 		
-		function search() {
-			var data = form.getData();
-			
-			var createTimeBegin = mini.get('createTimeBegin').text;
-			var createTimeEnd = mini.get('createTimeEnd').text;
-			
-			data.createTimeBegin = createTimeBegin;
-			data.createTimeEnd = createTimeEnd;
-			
-			var key2 = mini.get("key2").value;
-			if( (data.key==null || data.key=="") && (key2!=null && key2!="")){
-				data.key = key2;
-			}
-			
-			grid.load(data);
-		}
+        tree.on("nodeselect", function (e) {
+        	//0=租户 1=应用 2=栏目
+        	/*
+        	if(e.node.nodeType == "2") {
+        		grid.load({ parentCode: e.node.code });
+        	} else if(e.node.nodeType == "1") {
+        		grid.load({ appCode: e.node.code });
+        	} else if(e.node.nodeType == "0") {
+        	 	grid.load({ tenantCode: e.node.code });
+        	}*/
+        	grid.load({ appCode: e.node.code });
+        });
+        
+        function onButtonEdit(e) {
+            var btnEdit = this;
+            mini.open({
+                url: "${pageContext.request.contextPath}/apps/default/admin/sys/tenant/selector_tenant.jsp",
+                title: "选择租户",
+                width: 650,
+                height: 380,
+                ondestroy: function (action) {
+                    
+                    if (action == "ok") {
+                        var iframe = this.getIFrameEl();
+                        var data = iframe.contentWindow.GetData();
+                        data = mini.clone(data);    //必须
+                        if (data) {
+                            btnEdit.setValue(data.code);
+                            btnEdit.setText(data.name);
+                            
+                           
+                            tree.load({tenantCode:data.code})
+                        } else {
+                        	btnEdit.setValue(null);
+                            btnEdit.setText(null);
+                        	tree.load()
+                        }
+                    }
 
+                }
+            });
+        }
+        
 		function remove() {
 			var row = grid.getSelected();
 			if(row) {
@@ -167,7 +162,7 @@
 				url : "${pageContext.request.contextPath}/apps/default/admin/cms/channel/edit.jsp",
 				title : "添加栏目",
 				width : 490,
-				height : 250,
+				height : 350,
 				onload : function() {
 					var iframe = this.getIFrameEl();
 					var data = {
@@ -197,7 +192,7 @@
 					url : "${pageContext.request.contextPath}/apps/default/admin/cms/channel/edit.jsp",
 					title : "编辑栏目",
 					width : 490,
-					height : 250,
+					height : 350,
 					onload : function() {
 						var iframe = this.getIFrameEl();
 						var data = {
@@ -215,19 +210,6 @@
 			}
 		}
 		
-		function exportData() {
-			var exportDataType = mini.get("exportDataType").value;
-			var exportFileType = mini.get("exportFileType").value;
-			mini.confirm("确定导出记录？", "确定？",
-		            function (action) {
-		                if (action == "ok") {
-		    				var o = form.getData();
-							var url = "${pageContext.request.contextPath}/channel/export?exportFileType="+exportFileType+"&exportDataType="+exportDataType;
-							location.href=url;
-						}
-					});
-			
-		}
 		</script>
 	</body>
 </html>

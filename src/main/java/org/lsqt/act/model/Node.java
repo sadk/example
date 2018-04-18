@@ -14,13 +14,34 @@ public class Node {
 	private String taskKey;
 	private String taskName;
 
-	private Integer taskDefType; // 节点定义类型: 1=usertask
-	public static final int TASK_DEF_TYPE_USERTASK=1;
 	
-	private Integer taskBizType; // 节点类型: 0=拟稿节点(退回到拟稿人时有用) 1=非草稿节点
+	@Deprecated	private Integer taskDefType; // 节点定义类型: 1=usertask
+	@Deprecated public static final int TASK_DEF_TYPE_USERTASK=1;
+	
+	/** 节点类型: 0=拟稿节点(退回到拟稿人时有用) 1=普通任务节点 2=结束节点  3=会签结点**/
+	private Integer taskBizType; 
 	public static final int TASK_BIZ_TYPE_DRAFTNODE=0;
 	public static final int TASK_BIZ_TYPE_UNDRAFTNODE=1;
-	//public static final int TASK_BIZ_TYPE_FIRSTNODE=2;
+	public static final int TASK_BIZ_TYPE_LASTNODE=2;
+	public static final int TASK_BIZ_TYPE_MEETINGNODE=3;
+	public String getTaskBizTypeDesc() {
+		if(taskBizType!=null) {
+			if(TASK_BIZ_TYPE_DRAFTNODE == taskBizType) {
+				return "拟稿节点";
+			}
+			if(TASK_BIZ_TYPE_UNDRAFTNODE == taskBizType) {
+				return "普通节点"; // 普通节点显示空串，好突显特殊节点
+			}
+			if(TASK_BIZ_TYPE_LASTNODE == taskBizType) {
+				return "结束节点 ";
+			}
+			if(TASK_BIZ_TYPE_MEETINGNODE == taskBizType) {
+				return "会签节点 ";
+			}
+		}
+		return "";
+	}
+	
 	
 	private String formKey ; // 表单url
 	

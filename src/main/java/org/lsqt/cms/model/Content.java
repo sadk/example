@@ -11,25 +11,39 @@ public class Content {
 	
 	public Long id ;
 	
-	public Long objectId; // 对象ID，如果内容为新闻，则是新闻表的ID
-	public String type; //类型:30=新闻 31=博客 32=贴子(3开头的都是FreeMark解析内容)         3=ftl内容模板 4=vm内容模板
+	public Long objectId; // 对象ID，如果内容为新闻，则是新闻表的ID,
 	
+	private String type; // 类型:300=新闻 301=博客 302=贴子(3开头的都是FreeMark解析内容) 303=Html页面内容    见： 3xx=ftl内容模板 4xx=vm内容模板
+	public static final String TYPE_NEWS = "300";
+	public static final String TYPE_BLOG = "301";
+	public static final String TYPE_FORUM = "302";
+	public static final String TYPE_HTML_TEMPLATE_FREEMARK = "303";
 	
-    public String  code ; //整表唯一编码
+	public String getTypeDesc() {
+		if(TYPE_HTML_TEMPLATE_FREEMARK.equals(type)) {
+			return "HTML模板（Freemark引擎）";
+		}
+		return "";
+	}
 	
-    public String  title ;//内容标题
+    private String  code ; //整表唯一编码
+	
+    private String  title ;//内容标题
 	
   
 	 
-    public Long createDate  ;//创建日期
+    private Long createDate  ;//创建日期
 	
-    public String content  ;//内容
+    private String content  ;//内容
 	
-    public String  appCode ;// 所属应用
+    private String  appCode ;// 所属应用
 	
-    public String  remark  ; 
+    private String  remark  ; 
     
-    public Integer sn;//排序号，当内容分割存储时有效！
+    private Integer sn;//排序号，当内容分割存储时有效！
+    
+    private Integer enable; // 是否启用：1=启用 0=不启用
+    
 	
 	public String gid; //整系统局唯一码
 	
@@ -37,12 +51,6 @@ public class Content {
     
 	public Date createTime;
 	 
-	public static final String TYPE_NEWS = "30";
-	public static final String TYPE_BLOG = "31";
-	public static final String TYPE_FORUM = "32";
-	public static final String TYPE_FTL_CONTENT = "3";
-	public static final String TYPE_VM_CONTENT = "4";
-	
 	public Long getId() {
 		return id;
 	}
@@ -120,5 +128,11 @@ public class Content {
 	}
 	public void setSn(Integer sn) {
 		this.sn = sn;
+	}
+	public Integer getEnable() {
+		return enable;
+	}
+	public void setEnable(Integer enable) {
+		this.enable = enable;
 	}
 }

@@ -139,6 +139,16 @@ public interface Db extends Closeable{
 	<T> T queryForObject(String sqlID_or_SQL, Class<T> requiredType, Object... args) throws DbException;
 	
 	/**
+	 * @param nameSpace SQL定义的命名空间
+	 * @param sql_or_sqlID 如果用XML做模型映射，则传入sqlID； 如果用注解做模型映射，测传入SQL语句
+	 * @param requiredType 可以是基础类型、Map、POJO
+	 * @param args
+	 * @return
+	 * @throws DbException
+	 */
+	<T> T queryForObject(String nameSpace,String sqlID_or_SQL, Class<T> requiredType, Object... args) throws DbException;
+	
+	/**
 	 * 
 	 * @param sql_or_sqlID 如果用XML做表和POJO映射，则传入sqlID； 如果用注解做POJO映射，测传入SQL语句
 	 * @param requiredType 可以是基础类型、Map、POJO
@@ -147,6 +157,9 @@ public interface Db extends Closeable{
 	 * @throws DbException
 	 */
 	<T> List<T> queryForList(String sqlID_or_SQL, Class<T> requiredType, Object... args) throws DbException;
+	
+	
+	<T> List<T> queryForList(String nameSpace,String sqlID, Class<T> requiredType, Object... args) throws DbException;
 	
 	/**
 	 * 
@@ -217,72 +230,72 @@ public interface Db extends Closeable{
 	interface DbDialect{
 		 
 		/**DB2**/
-		static final int DB2Dialect=0;
+		int DB2Dialect=0;
 		
 		/** DB2 AS/400**/
-		static final int DB2400Dialect=1;
+		int DB2400Dialect=1;
 		
 		/**DB2 OS390**/
-		static final int DB2390Dialect=2;
+		int DB2390Dialect=2;
 		
 		/**PostgreSQL**/
-		static final int PostgreSQLDialect=3;
+		int PostgreSQLDialect=3;
 		
 		/**MySQL**/
-		static final int MySQLDialect=4;
+		int MySQLDialect=4;
 		
 		/**MySQL with InnoDB**/
-		static final int MySQLInnoDBDialect=5;
+		int MySQLInnoDBDialect=5;
 		
 		/**MySQL with MyISAM**/
-		static final int MySQLMyISAMDialect=6;
+		int MySQLMyISAMDialect=6;
 		
 		/**Oracle（any version）**/
-		static final int OracleDialect=7;
+		int OracleDialect=7;
 		
 		/**Oracle 9i**/
-		static final int Oracle9iDialect=8;
+		int Oracle9iDialect=8;
 		
 		/**Oracle 10g**/
-		static final int Oracle10gDialect=9;
+		int Oracle10gDialect=9;
 		
 		/**Sybase**/
-		static final int SybaseDialect=10;
+		int SybaseDialect=10;
 	
 		/**Sybase Anywhere**/
-		static final int SybaseAnywhereDialect=11;
+		int SybaseAnywhereDialect=11;
 		
 		/**Microsoft SQL Server**/
-		static final int SQLServerDialect=12;
+		int SQLServerDialect=12;
 		
 		/**SAP DB**/
-		static final int SAPDBDialect=13;
+		int SAPDBDialect=13;
 		
 		/**Informix**/
-		static final int InformixDialect=14;
+		int InformixDialect=14;
 		
 		/**HypersonicSQL**/
-		static final int HSQLDialect=15;
+		int HSQLDialect=15;
 		
 		/**Ingres**/
-		static final int IngresDialect=16;
+		int IngresDialect=16;
 		
 		/**Progress**/
-		static final int ProgressDialect=17;
+		int ProgressDialect=17;
 
 		/**Mckoi SQL**/
-		static final int MckoiDialect=18;
+		int MckoiDialect=18;
 		
 		/**Interbase**/
-		static final int InterbaseDialect=19;
+		int InterbaseDialect=19;
 		
 		/**Pointbase**/
-		static final int PointbaseDialect=20;
+		int PointbaseDialect=20;
 		
 		/**FrontBase**/
-		static final int FrontbaseDialect=21;
+		int FrontbaseDialect=21;
 		
 		/**Firebird**/
-		static final int FirebirdDialect=22;
+		int FirebirdDialect=22;
 	}
 }

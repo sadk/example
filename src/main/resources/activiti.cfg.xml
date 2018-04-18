@@ -7,7 +7,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
 	<bean id="dataSourceDruidWorkFlow" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">   
 	    <property name="url">
-	   	 	<value><![CDATA[jdbc:mysql://localhost:3306/ets_work_flow?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&connectTimeout=6000&socketTimeout=6000]]></value>
+	   	 	<value><![CDATA[jdbc:mysql://localhost:3306/test?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&connectTimeout=6000&socketTimeout=6000]]></value>
 	    </property>  
 	    <property name="username" value="root" />  
 	    <property name="password" value="123456" />  

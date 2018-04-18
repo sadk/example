@@ -67,7 +67,17 @@
 	  						<#if query.businessKey??> and business_key = '${query.businessKey}' </#if>
 	  						
 	  						<#if query.processInstanceId??> and process_instance_id = '${query.processInstanceId}' </#if>
-					
+							<#if query.processInstanceIds??> 
+								<#assign list = StringUtil.split(query.processInstanceIds,",") />
+								and process_instance_id in 
+								(
+									<#list list as instance>
+										 '${StringUtil.escapeSql(instance)}'  <#if instance_has_next> , </#if> 
+									</#list> 
+								 )
+							
+							</#if>
+							
 	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
 							
 							<#if query.definitionKey??> and definition_key = '${StringUtil.escapeSql(query.definitionKey)}' </#if>
@@ -133,5 +143,7 @@
 		]]>
 	</statement>
 	
-	 
+	<statement id="fixBusinessStatusQuery" parameterName="processInstanceId">
+	 <![CDATA[ select  * from ext_approve_opinion   where process_instance_id = '${StringUtil.escapeSql(processInstanceId)}' order by id desc limit 1	 ]]>
+	 </statement>
 </statements>

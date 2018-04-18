@@ -34,11 +34,13 @@ public class DefinitionQuery {
 	private Integer hasStartFormKey;  // 0=没有
 	private Integer hasGraphicalNotation;
 	private String tenantId; 
-
+	
+	private String category ; //流程定义分类
+	
 	private Boolean isDisplayNewest = false ; // 只显示最新版本流程
 	
 	// ----------------------------------------
-	private String deployCategory; //辅助属性，流程布署分类（一般和流程定义分类保持一致！！！）
+	private String deployCategory; //辅助属性，流程布署分类（一般和流程定义分类保持一致！！！但不是流程定义分类）
 	
 	public Integer getPageIndex() {
 		return pageIndex;
@@ -236,5 +238,15 @@ public class DefinitionQuery {
 
 	public void setDeployCategory(String deployCategory) {
 		this.deployCategory = deployCategory;
+	}
+
+
+	public String getCategory() {
+		return category;
+	}
+
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 }

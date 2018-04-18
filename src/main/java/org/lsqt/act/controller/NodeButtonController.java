@@ -6,10 +6,17 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.FlowElement;
+import org.activiti.bpmn.model.UserTask;
+import org.activiti.engine.RepositoryService;
+import org.lsqt.act.ActUtil;
+import org.lsqt.act.model.Definition;
 import org.lsqt.act.model.NodeButton;
 import org.lsqt.act.model.NodeButtonQuery;
 import org.lsqt.act.model.NodeForm;
 import org.lsqt.act.model.NodeFormQuery;
+import org.lsqt.act.model.NodeQuery;
 import org.lsqt.act.service.NodeButtonService;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
@@ -187,7 +194,7 @@ public class NodeButtonController {
 		List<Dictionary> list = dictionaryService.getOptionByCode("form_node_button_type", Application.APP_CODE_DEFAULT);
 		if (list != null) {
 			for (Dictionary d : list) {
-				System.out.println(d.getCode());
+				//System.out.println(d.getCode());
 				
 				//去除"保存表单、保存草稿、发起"审批动作
 				if(("button_type_"+NodeButton.BTN_TYPE_START).equals(d.getCode())){
@@ -210,5 +217,90 @@ public class NodeButtonController {
 			}
 		}
 		return rs;
+	}
+	
+	// ----------------------------------- 批量设置节点的后置角本 -------------------------------------------------
+	/**
+	 * 
+	 * @param definitionId 流程定义
+	 * @param taskType 节点类别:0=拟稿节点(退回到拟稿人时有用) 1=普通任务节点 2=结束节点
+	 * @return
+	 */
+	@RequestMapping(mapping = { "/get_tree_node", "/m/get_tree_node" },text="批量设置按钮页所用的树")
+	public Collection<Node> getTreeNode(String definitionId,String taskType) {
+		
+		List<Node> diagramNodeList = new ArrayList<>(); // 流程图里的任务节点
+		RepositoryService repositoryService = ActUtil.getRepositoryService();
+		BpmnModel model = repositoryService.getBpmnModel(definitionId);
+		if (model != null) {
+			
+			Definition def = db.getById(Definition.class, definitionId);
+			Node root = new Node();
+			root.name = def.getName().endsWith("流程") ? def.getName() : def.getName() + "流程";
+			root.id = def.getId();
+			root.pid = "-1";
+			diagramNodeList.add(root);
+		 	
+			List<org.lsqt.act.model.Node> nodeList = null;
+			if (StringUtil.isNotBlank(taskType)) {
+				NodeQuery nquery = new NodeQuery();
+				nquery.setDefinitionId(definitionId);
+				nquery.setTaskBizType(Integer.valueOf(taskType));
+				nodeList = db.queryForList("queryForPage", org.lsqt.act.model.Node.class, nquery);
+			}
+			
+			Collection<FlowElement> flowElements = model.getMainProcess().getFlowElements();
+			for (FlowElement e : flowElements) {
+				 
+				if (UserTask.class.isAssignableFrom(e.getClass())) {
+					UserTask task = (UserTask) e;
+					Node nd = new Node();
+					nd.id = task.getId();
+					nd.pid = root.id;
+					nd.name = task.getName()+"("+task.getId()+")";
+					
+					if(StringUtil.isBlank(taskType)) {
+						diagramNodeList.add(nd);
+					} else {
+						if (nodeList!=null) {
+							for(org.lsqt.act.model.Node t:nodeList) {
+								if (task.getId().equals(t.getTaskKey())) {
+									diagramNodeList.add(nd);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		NodeButtonQuery query = new NodeButtonQuery();
+		query.setDefinitionId(definitionId);
+		query.setDataType(NodeButton.DATA_TYPE_TASK_BUTTON);
+		List<NodeButton> list = db.queryForList("queryForPage", NodeButton.class, query);
+		List<Node> subNodeList = new ArrayList<>();
+		if(list!=null) {
+			for (Node d: diagramNodeList) {
+				for(NodeButton e: list) {
+					if(d.id.equals(e.getTaskKey())) {
+						Node nd = new Node();
+						nd.id = "btn_"+e.getId();
+						nd.pid = d.id;
+						nd.name = e.getBtnName()+"("+e.getBtnCode().replace("button_type_", "")+")";
+						subNodeList.add(nd);
+						//break;
+					}
+				}
+			}
+		}
+		diagramNodeList.addAll(subNodeList);
+		return diagramNodeList;
+	
+	}
+	
+	static class Node {
+		public String id;
+		public String pid;
+		public String name;
 	}
 }

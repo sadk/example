@@ -60,8 +60,6 @@
 						
 	  						<#if query.taskKey??> and task_key = '${StringUtil.escapeSql(query.taskKey)}' </#if>
 						
-							<#if query.dataType??> and id = ${query.dataType} </#if>
-							
 	  						<#if query.btnName??> and btn_name = '${StringUtil.escapeSql(query.btnName)}' </#if>
 						
 	  						<#if query.btnCode??> and btn_code = '${StringUtil.escapeSql(query.btnCode)}' </#if>

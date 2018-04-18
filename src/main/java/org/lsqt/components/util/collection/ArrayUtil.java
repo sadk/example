@@ -7,9 +7,23 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-@SuppressWarnings("rawtypes")
+
 public class ArrayUtil {
+	@SuppressWarnings("rawtypes")
 	public static final List EMPTY_LIST = new ArrayList(0);
+
+	/**
+	 * 给定集合为 null或长度为0返回true
+	 * @param collection 
+	 * @return 
+	 */
+	public static boolean isBlank(Collection<?> collection) {
+		return (collection == null || collection.isEmpty());
+	}
+	
+	public static boolean isNotBlank(Collection<?> collection) {
+		return !isBlank(collection);
+	}
 	
 	public static String join(Collection<?> collection,String separator){
 		if(collection == null || collection.size() == 0 || separator==null) return "";

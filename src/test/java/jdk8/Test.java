@@ -12,14 +12,19 @@ public class Test {
 		
         JButton button1 = new JButton("点我!");
         JButton button2 = new JButton("也点我!");
+        JButton button3 = new JButton("退出!");
+		
 		
         frame.getContentPane().add(button1);
         frame.getContentPane().add(button2);
+        frame.getContentPane().add(button3);
 
         button1.addActionListener(e -> { System.out.println("这里是Lambda实现方式"); });
         
         //使用方法引用方式
         button2.addActionListener(Test::doSomething);
+        
+        button3.addActionListener(e->System.exit(0));
 	}
 
     public static void doSomething(ActionEvent e) {

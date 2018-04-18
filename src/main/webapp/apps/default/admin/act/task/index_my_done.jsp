@@ -29,33 +29,68 @@
 											<input id="key" name="key"  class="mini-textbox" emptyText="请输入关键字搜索" style="width: 150px;" onenter="search"/>
 										</td>
 									</tr>
-						
 									<tr>
-										<td>名称：</td>
+										<td>流程单据标题 ：</td>
 										<td>
-											<input id="name" name="name"   class="mini-textbox"  emptyText="请输入姓名"  onenter="search"/>
+											<input id="title" name="title"   class="mini-textbox"  emptyText="请输入流程单据标题"  onenter="search"/>
 										</td>
 									</tr>
+									<tr>
+										<td>用户ID ：</td>
+										<td>
+											<input id="userId" name="userId"   class="mini-textbox"  emptyText="请输入用户名ID"  onenter="search"/>
+										</td>
+									</tr>
+									<tr>
+										<td>用户名 ：</td>
+										<td>
+											<input id="userName" name="userName"   class="mini-textbox"  emptyText="请输入用户名"  onenter="search"/>
+										</td>
+									</tr>
+									<tr>
+										<td>用户账号：</td>
+										<td>
+											<input id="loginNo" name="loginNo"   class="mini-textbox"  emptyText="请输入用户账号"  onenter="search"/>
+										</td>
+									</tr>
+									<tr>
+										<td>流程发起人：</td>
+										<td>
+											<input id="startUserName" name="startUserName"   class="mini-textbox"  emptyText="请输入流程发起人"  onenter="search"/>
+										</td>
+									</tr>
+									<tr>
+										<td>单据主键：</td>
+										<td>
+											<input id="businessKey" name="businessKey"   class="mini-textbox"  emptyText="请输入单据主键"  onenter="search"/>
+										</td>
+									</tr>
+     								
 									
-     								<tr>
-										<td>已办用户：</td>
-										<td>
-											<input id="userId" name="userId"   class="mini-textbox"  emptyText="请输入userId"  onenter="search"/>
-										</td>
-									</tr>
 									<tr>
-										<td>创建日期(开始)：</td>
+										<td>办理日期(开始)：</td>
 										<td>
 											<input id="createTimeBegin" name="createTimeBegin" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入创建日期(开始)" />
 										</td>
 									</tr>
 									<tr>
-										<td>创建日期(结束)：</td>
+										<td>办理日期(结束)：</td>
 										<td>
 											<input id="createTimeEnd" name="createTimeEnd" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入创建日期(结束)" />
 										</td>
 									</tr>
-									
+									<tr>
+										<td>流程日期(开始)：</td>
+										<td>
+											<input id="instanceCreateTimeBegin" name="instanceCreateTimeBegin" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入流程创建日期(开始)" />
+										</td>
+									</tr>
+									<tr>
+										<td>流程日期(结束)：</td>
+										<td>
+											<input id="instanceCreateTimeEnd" name="instanceCreateTimeEnd" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入流程创建日期(结束)" />
+										</td>
+									</tr>
 					</table>
 					<div style="text-align:center;padding:10px;">
 						<a class="mini-button" onclick="search()" iconCls="icon-search" style="width:60px;margin-right:20px;">查询</a>
@@ -87,12 +122,13 @@
 									url="${pageContext.request.contextPath}/act/task/list_my_started_and_done"  idField="id" sizeList="[5,10,20,50,100]" pageSize="20" >
 									<div property="columns">
 										<div type="checkcolumn" ></div>
-										
+										<div field="processInstanceId" width="80" headerAlign="center" allowSort="true" align="left">流程实例ID</div>
+										<div field="closeStatusDesc" width="100" headerAlign="center" allowSort="true" align="center">流程是否结束</div>
 										<div field="id" width="80" headerAlign="center" allowSort="true" align="center">任务ID</div>
 										<div field="name" width="100" headerAlign="center" allowSort="true" align="left">任务名称</div>
 										
 										<div field="title" width="350" headerAlign="center" allowSort="true" align="left">流程标题</div>
-										<div field="processInstanceId" width="80" headerAlign="center" allowSort="true" align="left">流程实例ID</div>
+										
 										<div field="businessKey" width="80" headerAlign="center" allowSort="true" align="left">业务主键ID</div>
 										
 										
@@ -111,8 +147,8 @@
 										
 										<div field="parentTaskId" width="80" headerAlign="center" allowSort="true" align="center">父任务ID</div>
 										<div field="tenantId" width="80" headerAlign="center" allowSort="true" align="center">租户ID</div>
-										<div field="createTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">创建日期</div>
-										
+										<div field="createTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">办理日期</div>
+										<div field="instanceCreateTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">流程创建日期</div>
 									</div>
 									</div>
 						        </div>
@@ -258,9 +294,16 @@
 				var createTimeBegin = mini.get('createTimeBegin').text;
 				var createTimeEnd = mini.get('createTimeEnd').text;
 				
+				
+				var instanceCreateTimeBegin = mini.get('instanceCreateTimeBegin').text;
+				var instanceCreateTimeEnd = mini.get('instanceCreateTimeEnd').text;
+				
+				
 				data.createTimeBegin = createTimeBegin;
 				data.createTimeEnd = createTimeEnd;
 				
+				data.instanceCreateTimeBegin = instanceCreateTimeBegin;
+				data.instanceCreateTimeEnd = instanceCreateTimeEnd;
 				var key2 = mini.get("key2").value;
 				if( (data.key==null || data.key=="") && (key2!=null && key2!="")){
 					data.key = key2;

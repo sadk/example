@@ -3,7 +3,10 @@ package org.lsqt.act.service;
 import java.util.List;
 import java.util.Map;
 
+import org.lsqt.act.model.ActRunningContext;
+import org.lsqt.act.model.ApproveObject;
 import org.lsqt.act.model.ApproveOpinion;
+import org.lsqt.act.model.ProcessInstance;
 import org.lsqt.act.model.Task;
 import org.lsqt.act.model.TaskQuery;
 import org.lsqt.components.db.Page;
@@ -104,19 +107,39 @@ public interface TaskService {
 	List<Task> queryForList(TaskQuery query);
 	
 	
+	
 	/**
-	 * 获取待办 （含发起人、流程标题等信息）
+	 * 获取待办 （含发起人、流程标题等信息）,生产环境性能慢
 	 * @param query
 	 * @return
 	 */
+	@Deprecated
 	Page<Task> queryForPageDetail(org.lsqt.act.model.TaskQuery query) ;
 	
 	/**
-	 * 获取待办 （含发起人、流程标题等信息）
+	 * 获取待办 （含发起人、流程标题等信息），生产环境性能慢
 	 * @param query
 	 * @return
 	 */
+	@Deprecated
 	List<Task> queryForListDetail(org.lsqt.act.model.TaskQuery query) ;
+	
+	
+	/**
+	 * 获取待办 （含发起人、流程标题等信息），已优化到"极致"！
+	 * @param query
+	 * @return
+	 */
+	Page<Task> queryMyToDoTaskPage(org.lsqt.act.model.TaskQuery query);
+	
+	/**
+	 * 获取待办 （含发起人、流程标题等信息），已优化到"极致"！
+	 * @param query
+	 * @return
+	 */
+	List<Task> queryMyToDoTaskList(org.lsqt.act.model.TaskQuery query);
+	
+	
 	
 	/**
 	 * 获取当前实例的活动任务（不支持并发模式）
@@ -124,4 +147,19 @@ public interface TaskService {
 	 * @return
 	 */
 	Task getNextNewTask(String processInstanceId) ;
+	
+	/**
+	 * 获取当前实例的活动任务（并发模式）
+	 * @param processInstanceId 
+	 * @return
+	 */
+	List<Task> getCurrentMutilTaskList(String processInstanceId);
+	
+	/**
+	 * 填充会签流程变量（供流程complete用）
+	 * @param instance 流程实例
+	 * @param nodeUserMap 审批用户
+	 * @return
+	 */
+	Map<String,Object> prepareMeetingVariable(ProcessInstance instance,Map<String, List<ApproveObject>> nodeUserMap);
 }

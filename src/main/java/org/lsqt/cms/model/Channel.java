@@ -36,6 +36,7 @@ public class Channel {
 	
 	// 辅助字段: 1=应用 2=栏目
 	private String nodeType;
+	public static final String NODE_TYPE_租户="0";
 	public static final String NODE_TYPE_应用="1";
 	public static final String NODE_TYPE_栏目="2";
 	

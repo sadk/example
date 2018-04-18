@@ -21,15 +21,21 @@ public class ChannelQuery {
 	
 	private Long id;
 	private String name; // 字典名称
-	 
+	private String code; // 编码
 	
 	private String parentCode; // 获取下级(一层)
-	private String code; // 字典编码
- 
 	
 	private String appCode;
+	
+	private String tenantCode; // 用于获取租户下所有系统的栏目
+	
 	private Date createTime;
 	private String remark;
+	
+	// ----------------
+	private Long newsId; // 用于查询一个新闻所属的栏目
+	
+	
 	public Integer getPageIndex() {
 		return pageIndex;
 	}
@@ -101,5 +107,17 @@ public class ChannelQuery {
 	}
 	public void setParentCode(String parentCode) {
 		this.parentCode = parentCode;
+	}
+	public String getTenantCode() {
+		return tenantCode;
+	}
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
+	}
+	public Long getNewsId() {
+		return newsId;
+	}
+	public void setNewsId(Long newsId) {
+		this.newsId = newsId;
 	} 
 }

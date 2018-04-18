@@ -93,6 +93,8 @@
 					url="${pageContext.request.contextPath}/application/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
 					<div property="columns">
 						<div type="checkcolumn" ></div>
+						
+						<div field="tenantName" width="80" headerAlign="center" allowSort="true" align="left" >租户</div>
 						<div field="name" width="160" headerAlign="center" allowSort="true" align="left" >系统名称</div>
 						<div field="code" width="80" headerAlign="center" allowSort="true" align="left">系统编码</div>
 						<div field="sn" width="60" headerAlign="center" allowSort="true" align="right">排序号</div>

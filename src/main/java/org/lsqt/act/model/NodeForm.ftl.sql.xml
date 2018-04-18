@@ -62,7 +62,7 @@
 	  						<#if query.id??> and id = ${query.id} </#if>
 	  						
 	  						<#if query.dataType??> and data_type = ${query.dataType} </#if>
-					
+	  						
 	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
 						
 							<#if query.definitionIdList??>

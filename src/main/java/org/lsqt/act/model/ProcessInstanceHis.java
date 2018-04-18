@@ -3,6 +3,8 @@ package org.lsqt.act.model;
 import java.util.Date;
 import java.util.Map;
 
+import org.lsqt.act.ActUtil;
+
 /**
  * 已结束的流程实例
  * @author mmyuan
@@ -20,7 +22,8 @@ public class ProcessInstanceHis {
 	private String startUserName;
 	private String startUserOrgText;
 	private String startUserPositionText;
-	private String businessStatus; //业务自定义的状态,如自定义审批通过、未通过、正常、异常等(内置的状态是1=审批中 2=审批通过  3=审批未通过)
+	private String businessFlowNo; 
+	private String businessStatus; 
 	private String businessStatusDesc;
 	private Integer sn;
 	private String remark;
@@ -28,7 +31,19 @@ public class ProcessInstanceHis {
 	private String endAcitivityId;
 	private String businessCategory;
 	
+	private Integer endStatus;
 	//private String taskName;
+	
+	public String getEndStatusDesc() {
+		if (endStatus != null) {
+			if (Integer.valueOf(ActUtil.END_STATUS_已结束).intValue() == endStatus) {
+				return "已结束";
+			} else {
+				return "未结束";
+			}
+		}
+		return "";
+	}
 	
 	
 	  /** The process instance id (== as the id for the runtime {@link ProcessInstance process instance}). */
@@ -311,6 +326,22 @@ public class ProcessInstanceHis {
 
 	public void setBusinessCategory(String businessCategory) {
 		this.businessCategory = businessCategory;
+	}
+
+	public String getBusinessFlowNo() {
+		return businessFlowNo;
+	}
+
+	public void setBusinessFlowNo(String businessFlowNo) {
+		this.businessFlowNo = businessFlowNo;
+	}
+
+	public Integer getEndStatus() {
+		return endStatus;
+	}
+
+	public void setEndStatus(Integer endStatus) {
+		this.endStatus = endStatus;
 	}
 
 /*	public String getTaskName() {

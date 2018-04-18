@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.lsqt.act.model.Node;
 import org.lsqt.act.model.NodeButton;
 import org.lsqt.act.model.NodeButtonQuery;
 import org.lsqt.act.model.NodeForm;
 import org.lsqt.act.model.NodeFormQuery;
+import org.lsqt.act.model.NodeQuery;
 import org.lsqt.act.service.NodeButtonService;
 import org.lsqt.act.service.NodeFormService;
+import org.lsqt.act.service.impl.NodeServiceImpl;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -47,6 +50,22 @@ public class NodeFormController {
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<NodeForm> queryForPage(NodeFormQuery query) throws IOException {
 		Page<NodeForm> page = nodeFormService.queryForPage(query);
+		
+		//节点类型
+		NodeQuery nquery = new NodeQuery();
+		nquery.setDefinitionId(query.getDefinitionId());
+		List<Node> nodeList = db.queryForList("queryForPage", Node.class, nquery);
+		if (nodeList != null) {
+			for (NodeForm nf : page.getData()) {
+				for (Node e : nodeList) {
+					if (e.getTaskKey().equals(nf.getTaskKey())) {
+						nf.setTaskType(e.getTaskBizType());
+						nf.setTaskTypeDesc(e.getTaskBizTypeDesc());
+						break;
+					}
+				}
+			}
+		}
 		
 		// 加载节点表单的操作按钮
 		if(page!=null && page.getData()!=null) {

@@ -11,6 +11,7 @@
 		<column name="remark" property="remark" />
 		
 		<column name="tenant_code" property="tenantCode" text="租户码" />
+		<column name="tenant_name" property="tenantName" text="租户名" />
 		
 		<column gid="gid" property="gid" text="全局唯一编号"/>
 		<column createTime="create_time" property="createTime" text="创建时间"/>
@@ -29,6 +30,7 @@
 				<#if query.id??> and id=${query.id} </#if>
 				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 				<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+				<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
 				<#if query.value??> and value = '${StringUtil.escapeSql(query.value)}' </#if>
 				<#if query.name??> and name like '%${StringUtil.escapeSql(query.name)}%' </#if>
 				<#if query.remark??> and remark like '%${StringUtil.escapeSql(query.remark)}%' </#if>

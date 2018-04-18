@@ -165,10 +165,10 @@
         function onButtonEdit(e) {
             var btnEdit = this;
             mini.open({
-                url: "${pageContext.request.contextPath}/apps/default/admin/cms/channel/seletor_channel.jsp",
+                url: "${pageContext.request.contextPath}/apps/default/admin/cms/channel/selector_channel.jsp",
                 title: "选择列表",
-                width: 650,
-                height: 380,
+                width: 900,
+                height: 600,
                 ondestroy: function (action) {
                    
                     if (action == "ok") {
@@ -229,15 +229,16 @@
 						mini.get("channelId").setValue(o.channelId);
 						mini.get("channelId").setText(o.channelName);
 						
-						loadContent(data.id)
+						ue.setContent(o.content);
+						//loadContent(data.id)
 					}
 				});
 			}
 		}
 
-		function loadContent(newsId){ // 加载新闻模板内容
+		function loadContent(objectId){ // 加载HTML模板内容
 			$.ajax({
-				url : "${pageContext.request.contextPath}/content/page?objectId=" + newsId+"&type=30", //类型:30=新闻 31=博客 32=贴子 
+				url : "${pageContext.request.contextPath}/content/page?objectId=" + objectId+"&type=303&enable=1", //类型:300=新闻 301=博客 302=贴子 303=HTML内容模板 
 				dataType: 'json',
 				cache : false,
 				success : function(text) {

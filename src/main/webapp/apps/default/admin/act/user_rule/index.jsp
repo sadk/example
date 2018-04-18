@@ -47,6 +47,7 @@
 												<a class="mini-button" iconCls="icon-add" onclick="edit('add')">添加</a>
 												<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
 												<a class="mini-button" iconCls="icon-edit" onclick="edit('edit')">编辑</a>
+												<a class="mini-button" iconCls="icon-save" onclick="saveSimple()">保存</a>
 												<span class="separator"></span>  
 												<a class="mini-button" iconCls="icon-node" onclick="viewUser()">预览用户</a>
 											</td>
@@ -64,12 +65,18 @@
 						            <div id="userRuleGrid" class="mini-datagrid" style="width:100%;height:100%;" showReloadButton="true"
 						            	 idField="id" allowResize="false" multiSelect="true"  sizeList="[5,10,20,50]" 
 						            	 pageSize="20" showEmptyText="true" emptyText="暂无查询信息" sortMode="client"
+						            	  
+						            	 allowCellEdit="true" allowCellSelect="true" editNextOnEnterKey="true"  editNextRowCell="true" 
+						            	  
 						              	 url="${pageContext.request.contextPath}/act/user_rule/page" >
 						                <div property="columns">
 											<div type="checkcolumn" ></div>
 											<div field="id" width="60" headerAlign="center" allowSort="true" align="left">ID</div>
 											<div field="name" width="80" headerAlign="center" allowSort="true" align="left">名称</div>
 											<div field="code" width="80" headerAlign="center" allowSort="true" align="left">编码</div>
+											<div type="comboboxcolumn" field="enable" width="80" headerAlign="center" align="center" allowSort="true">启用规则矩阵
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
+											</div>
 											<div field="categoryName" width="60" headerAlign="center" allowSort="true" align="left">分类名称</div>
 											<div field="resolveTypeDesc" width="80" headerAlign="center" allowSort="true" align="center">解析引擎</div>
 											<div field="content" width="180" headerAlign="center" allowSort="true" align="left">内容</div>
@@ -161,6 +168,28 @@
 	        	grid.load({ categoryId: e.node.id });
 	        });
 
+	        function saveSimple() {
+	        	var rows = grid.getChanges(); 
+	         	
+	        	var data={};
+	         	data.userRulesJson = mini.encode(rows);
+	         	
+	        	if (rows.length!=0) {
+					$.ajax({
+					    'url': "${pageContext.request.contextPath}/act/user_rule/save_or_update_simple",
+						type: 'post', dataType:'JSON', data:data ,
+						success: function (json) {
+							mini.alert("保存成功");
+							grid.reload();
+						},
+						error : function(data) {
+					  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
+					  		mini.alert(data.responseText);
+						}
+					});
+	        	}
+	        }
+	        
 	        function viewUser(){
 	        	var row = grid.getSelected();
         		if(!row){

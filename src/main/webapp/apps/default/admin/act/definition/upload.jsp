@@ -95,7 +95,7 @@
 	        function onButtonEdit(e) {
 	            var btnEdit = this;
 	            mini.open({
-	                url: "${pageContext.request.contextPath}/apps/default/admin/act/category/seletor_category.jsp",
+	                url: "${pageContext.request.contextPath}/apps/default/admin/act/category/seletor_category.jsp?dataType=1",
 	                title: "选择列表",
 	                width: 650,
 	                height: 380,

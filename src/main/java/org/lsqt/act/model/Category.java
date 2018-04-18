@@ -27,10 +27,11 @@ public class Category {
 	private String appCode;
 	private String remark;
 	
-	/** 业务类型：1=流程分类  2=用户规则分类 **/
+	/** 业务类型：1=流程定义分类  2=用户规则分类 3=流程变量分类**/
 	private String dataType;
 	public static final String DATA_TYPE_FLOW="1";
 	public static final String DATA_TYPE_USER_RULE="2";
+	public static final String DATA_TYPE_VARIABLE="3";
 	
 	public String getDataTypeDesc() {
 		if(DATA_TYPE_FLOW.equals(dataType)) {

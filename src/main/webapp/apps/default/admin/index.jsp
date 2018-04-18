@@ -103,7 +103,7 @@
 				contextMenu="#tabsMenu"
 				plain="false" onactivechanged="onTabsActiveChanged"
 				>
-					<div name="first" title="首页" url="${pageContext.request.contextPath}/apps/default/syswin/uum/user/index.jsp"></div>
+					<div name="first" title="首页" url="http://baidu.com"></div>
 				</div>
 				<ul id="tabsMenu" class="mini-contextmenu" onbeforeopen="onBeforeOpen">
 					<li onclick="reloadTab">

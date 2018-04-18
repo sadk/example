@@ -36,6 +36,9 @@ public class ApplicationQuery {
 	
 	private String ids; // 用逗号分割的id字符
 	
+	private String tenantCode;
+	private String tenantName;
+	
 	public Long getId() {
 		return id;
 	}
@@ -131,6 +134,18 @@ public class ApplicationQuery {
 	}
 	public void setValue(String value) {
 		this.value = value;
+	}
+	public String getTenantName() {
+		return tenantName;
+	}
+	public void setTenantName(String tenantName) {
+		this.tenantName = tenantName;
+	}
+	public String getTenantCode() {
+		return tenantCode;
+	}
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
 	}
 	
 }

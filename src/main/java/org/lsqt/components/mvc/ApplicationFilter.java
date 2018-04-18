@@ -164,6 +164,7 @@ public class ApplicationFilter implements Filter{
 		
 		if(uri.endsWith(".gif")) return true;
 		if(uri.endsWith(".png")) return true;
+		if(uri.endsWith(".jpg")) return true;
 		if(uri.endsWith(".swf")) return true;
 		if(uri.endsWith(request.getContextPath()+"/")) return true;
 		

@@ -21,9 +21,11 @@
 		<div class="mini-splitter" style="width:100%;height:100%; overflow:auto;">
 			<div size="240" showCollapseButton="true">
 		        <div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right:0;">                
-		           <span style="padding-left:5px;">分类名称：</span>
+		           <span style="padding-left:5px;">租户：</span>
+		           <!-- 
 		           <input showNullItem="false" width="140" class="mini-combobox" url="${pageContext.request.contextPath}/application/all" textField="name" valueField="id" />
-		           <!--  <a class="mini-button" iconCls="icon-search" plain="true">加载分类</a>     -->              
+					-->
+					 <input id="tenantCode" name="tenantCode" width="180" class="mini-buttonedit" onbuttonclick="onButtonEdit" />  
 		        </div>
 		        <div class="mini-fit">
 		            <ul id="tree1" class="mini-tree" url="${pageContext.request.contextPath}/channel/tree" style="width:100%;"
@@ -163,6 +165,43 @@
 			
 			
 			grid.load();
+
+	        function onButtonEdit(e) {
+	        	var node = tree.getSelectedNode();
+	        	console.log(node)
+	        	if(node) {
+	        		
+	        		return ;
+	        	}
+	            var btnEdit = this;
+	            mini.open({
+	                url: "${pageContext.request.contextPath}/apps/default/admin/sys/tenant/selector_tenant.jsp",
+	                title: "选择租户",
+	                width: 650,
+	                height: 380,
+	                ondestroy: function (action) {
+	                    
+	                    if (action == "ok") {
+	                        var iframe = this.getIFrameEl();
+	                        var data = iframe.contentWindow.GetData();
+	                        data = mini.clone(data);    //必须
+	                        if (data) {
+	                            btnEdit.setValue(data.code);
+	                            btnEdit.setText(data.name);
+	                            
+	                           
+	                            tree.load({tenantCode:data.code})
+	                        } else {
+	                        	btnEdit.setValue(null);
+	                            btnEdit.setText(null);
+	                        	tree.load()
+	                        }
+	                    }
+
+	                }
+	            });
+	        }
+			
 			
 			function removeComment() {
 				var rows = commentGrid.getSelecteds();

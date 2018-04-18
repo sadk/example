@@ -67,9 +67,10 @@
 								<td>
 									<input name="code" id="code" class="mini-textbox" required="true"/>
 								</td>
-								<td>备注：</td>
+								<td>所属栏目：</td>
 								<td>
-								 	<input id="remark" name="remark" class="mini-textbox"/>
+								 	<input id="channelIds" name="channelIds" class="mini-buttonedit" required="true"  onbuttonclick="onButtonEdit" />
+								 	
 								</td>
 							</tr>
 							<tr>
@@ -215,8 +216,40 @@
 	<script type="text/javascript">
 	    mini.parse();
 	    var form = new mini.Form("edit-form1");
-	     
 	    
+	    var channelIds = mini.get("channelIds");
+	    var channelNames = mini.get("channelNames");
+	    
+        function onButtonEdit(e) {
+            var btnEdit = this;
+            mini.open({
+                url: "${pageContext.request.contextPath}/apps/default/admin/cms/channel/selector_channel.jsp",
+                title: "选择列表",
+                width: 900,
+                height: 600,
+                ondestroy: function (action) {
+                   
+                    if (action == "ok") {
+                        var iframe = this.getIFrameEl();
+                        var data = iframe.contentWindow.GetDatas();
+                        data = mini.clone(data);    //必须
+                        if (data && data.length>0) {
+                        	var channelIds = new Array();
+                        	var channelNames = new Array();
+                        	for(var i=0;i<data.length;i++) {
+                        		channelIds.push(data[i].id);
+                        		channelNames.push(data[i].name);
+                        	}
+                            btnEdit.setValue(channelIds.join(","));
+                            btnEdit.setText(channelNames.join(","));
+                        } else {
+                        	mini.alert("请至少选择一个所属栏目");
+                        }
+                    }
+                }
+            });
+
+        }
 		function loading(){
 			mini.mask({
                 el: document.body,
@@ -272,6 +305,7 @@
 						}
 						
 						loadContent(data.id)
+						loadChannels(data.id)
 					}
 				});
 			}
@@ -286,6 +320,21 @@
 					var o = mini.decode(text);
 					if(o!=null) {
 						ue.setContent(o.content);
+					}
+				}
+			});
+		}
+		
+		function loadChannels(newsId){ // 加载新闻所属的栏目
+			$.ajax({
+				url : "${pageContext.request.contextPath}/news/get_channels_by_id?id=" + newsId,
+				dataType: 'json',
+				cache : false,
+				success : function(text) {
+					var o = mini.decode(text);
+					if(o!=null && o.channelIds) {
+						channelIds.setText(o.channelNames);
+						channelIds.setValue(o.channelIds);
 					}
 				}
 			});

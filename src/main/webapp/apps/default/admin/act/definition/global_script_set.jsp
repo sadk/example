@@ -22,7 +22,7 @@
 
 <div id="tabs1" class="mini-tabs" activeIndex="0" style="width:100%;height:530px;">
    
-    <div title="全局前置角本"  >
+    <div title="全局前置脚本"  >
 	    <div class="mini-toolbar">
 	         <a class="mini-button" iconCls="icon-save" plain="false"  onclick="save()">保存</a>
 	          <!--  
@@ -44,7 +44,7 @@
 	    	</div>
        	</div>
     </div>
-    <div title="全局后置角本">
+    <div title="全局后置脚本">
 	    <div class="mini-toolbar">
 	         <a class="mini-button" iconCls="icon-save" plain="false" onclick="save()">保存</a>
 	    </div>

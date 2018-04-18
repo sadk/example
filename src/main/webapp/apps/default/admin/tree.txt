@@ -1,61 +1,84 @@
 ﻿﻿[
 
-	{id: "sys", text: "系统管理"},
-	{id: "sys-0", text: "租户管理", pid: "sys", url:"/apps/default/admin/sys/tenant/index.jsp" },	
-	{id: "sys-1", text: "应用管理", pid: "sys", url:"/apps/default/admin/sys/application/index.jsp" },	
-	{id: "sys-2", text: "分类管理" , pid: "sys", url: "/apps/default/admin/sys/category/index.jsp"},
-	{id: "sys-3", text: "字典管理" , pid: "sys", url: "/apps/default/admin/sys/dictionary/index.jsp"},
-	{id: "sys-4", text: "地区管理" , pid: "sys", url: "/apps/default/admin/sys/region/index.jsp"},
-	{id: "sys-11", text: "服务器管理" , pid: "sys", url: "/apps/default/admin/sys/machine/index.jsp"},	
+	{id: "sys", text: "快速开发平台"},
+	{id: "sys1", text: "数据源管理", pid: "sys", url:"/apps/default/admin/sys/datasource/index.jsp" },	
+	{id: "sys2", text: "代码模板", pid: "sys", url:"/apps/default/admin/sys/project/index.jsp" },			
+	{id: "sys3", text: "表定义", pid: "sys", url:"/apps/default/admin/sys/table/index.jsp" },	
+	{id: "sys4", text: "字段定义", pid: "sys", url:"/apps/default/admin/sys/column/index.jsp" },			
+	{id: "sys5", text: "生成代码", pid: "sys", url:"/apps/default/admin/sys/code_template/index.jsp" },
 	/*文件服务器、*/
+
+	
+	{id: "cms", text: "内容管理平台"},
+	{id: "meta1",pid: "cms", text: "基础数据"},
+	{id: "meta2", text: "分类管理" , pid: "meta1", url: "/apps/default/admin/sys/category/index.jsp"},
+	{id: "meta3", text: "字典管理" , pid: "meta1", url: "/apps/default/admin/sys/dictionary/index.jsp"},
+	{id: "meta4", text: "地区管理" , pid: "meta1", url: "/apps/default/admin/sys/region/index.jsp"},
+	{id: "meta5", text: "服务器管理" , pid: "meta1", url: "/apps/default/admin/sys/machine/index.jsp"},
 	
 	
-	{id: "sys-5", text: "代码生成器", pid: "sys", url:"/apps/default/admin/sys/project/index.jsp" },
-	{id: "sys-6", text: "数据源管理", pid: "sys-5", url:"/apps/default/admin/sys/datasource/index.jsp" },	
-	{id: "sys-7", text: "代码模板", pid: "sys-5", url:"/apps/default/admin/sys/project/index.jsp" },			
-	{id: "sys-8", text: "表定义", pid: "sys-5", url:"/apps/default/admin/sys/table/index.jsp" },	
-	{id: "sys-9", text: "字段定义", pid: "sys-5", url:"/apps/default/admin/sys/column/index.jsp" },			
-	{id: "sys-10", text: "生成代码", pid: "sys-5", url:"/apps/default/admin/sys/code_template/index.jsp" },
+	{id: "cms0",pid: "cms", text: "内容管理"},
+	{id: "cms1", text: "租户管理", pid: "cms0", url:"/apps/default/admin/sys/tenant/index.jsp" },	
+	{id: "cms2", text: "系统定义" , pid: "cms0", url: "/apps/default/admin/sys/application/index.jsp"} ,
+	{id: "cms3", text: "栏目管理" , pid: "cms0", url: "/apps/default/admin/cms/channel/index.jsp"} ,
 	
-	/**/
-	{id: "buss", text: "填报专区"},
-	{id: "buss-1", text: "业务表数据库" , pid: "buss", url: "/apps/default/buss/factory/index.jsp"} ,
-	{id: "buss-2", text: "表单管理" , pid: "buss", url: "/apps/default/buss/product/index.jsp"} ,
-	{id: "buss-3", text: "RIA报表配置" , pid: "buss", url: "/apps/default/buss/quality/index.jsp"} ,
+	{id: "cms4", text: "模板管理" , pid: "cms0", url: "/apps/default/admin/cms/template/index.jsp"} ,
+	/*
+	{id: "cms5", text: "资讯管理" , pid: "cms0", url: "/apps/default/admin/cms/news/index.jsp"} ,
+	*/
+	{id: "cms6", text: "资讯管理" , pid: "cms0", url: "/apps/default/admin/cms/comment/index.jsp"} ,
+	{id: "cms7", text: "标签管理" , pid: "cms0", url: "/apps/default/admin/cms/tags/index.jsp"} ,
+	{id: "cms8", text: "站点管理" , pid: "cms0", url: "/apps/default/admin/cms/resource/file_manager/index2.jsp"} ,
 	
 	
-	{id: "cms", text: "建站系统"},
-	{id: "cms-1", text: "站点管理" , pid: "cms", url: "/apps/default/admin/sys/application/index.jsp"} ,
-	{id: "cms-6", text: "栏目管理" , pid: "cms", url: "/apps/default/admin/cms/channel/index.jsp"} ,
-	{id: "cms-2", text: "资讯内容" , pid: "cms", url: "/apps/default/admin/cms/news/index.jsp"} ,
-	{id: "cms-3", text: "模板管理" , pid: "cms", url: "/apps/default/admin/cms/template/index.jsp"} ,
-	{id: "cms-4", text: "评价管理" , pid: "cms", url: "/apps/default/admin/cms/comment/index.jsp"} ,
-	{id: "cms-5", text: "标签管理" , pid: "cms", url: ""} ,
+	{id: "weixin",pid: "cms",  text: "微信系统"},
+	{id: "weixin1", text: "微信消息", pid: "weixin", url: ""},
+	{id: "weixin2", text: "微信用户", pid: "weixin", url: ""},
+	{id: "weixin3", text: "微信支付", pid: "weixin", url: ""},
+	
+	
+	{id: "bbs", pid: "cms",  text: "论坛系统"},
+	{id: "bbs1", text: "版块管理", pid: "bbs", url:"" },
+	{id: "bbs2", text: "贴子管理", pid: "bbs", url:"" },
+	
+	{id: "blog",pid: "cms",  text: "博客系统"},
+	{id: "blog1", text: "博客模板管理", pid: "blog", url:"" },
+	{id: "blog2", text: "博客内容管理", pid: "blog", url:"" },
+	
+	
+	{id: "pro", pid: "cms", text: "项目管理"},
+	{id: "pro1", text: "bug管理", pid: "pro", url:"/apps/default/admin/sys/project/index.jsp" },
+	{id: "pro2", text: "博客内容管理", pid: "pro", url:"" },
+	
+	{id: "wiki", pid: "cms", text: "Wiki系统"},
+	{id: "wiki1", text: "cccc", pid: "wiki", url:"/apps/default/admin/sys/project/index.jsp" },
+	{id: "wiki2", text: "dddd", pid: "wiki", url:"" },
+	
 	
 	
 	{id: "uum", text: "用户系统"},
-	{id: "uum-0", text: "基础数据" , pid: "uum"},
-	{id: "uum-1", text: "用户管理" , pid: "uum-0", url: "/apps/default/admin/uum/user/index.jsp"} ,
-	{id: "uum-2", text: "角色管理" , pid: "uum-0", url: "/apps/default/admin/uum/role/index.jsp"} ,
-	{id: "uum-3", text: "组织机构" , pid: "uum-0", url: "/apps/default/admin/uum/org/index.jsp"} ,
-	{id: "uum-4", text: "称谓管理" , pid: "uum-0", url: "/apps/default/admin/uum/title/index.jsp"} ,
-	{id: "uum-5", text: "资源管理" , pid: "uum-0", url: "/apps/default/admin/uum/res/index.jsp"},
-	{id: "uum-12", text: "组管理" , pid: "uum-0", url: "/apps/default/admin/uum/group/index.jsp"},
-	 
-	{id: "uum-6", text: "权限管理" , pid: "uum", url: ""},
-	{id: "uum-7", text: "用户" , pid: "uum-6", url: "/apps/default/admin/uum/user/permission_index.jsp"},
+	{id: "uum0",pid:"uum", text: "本地用户系统"},
+	{id: "uum1", text: "基础数据" , pid: "uum0"},
+	{id: "uum2", text: "用户管理" , pid: "uum0", url: "/apps/default/admin/uum/user/index.jsp"} ,
+	{id: "uum3", text: "角色管理" , pid: "uum0", url: "/apps/default/admin/uum/role/index.jsp"} ,
+	{id: "uum4", text: "组织机构" , pid: "uum0", url: "/apps/default/admin/uum/org/index.jsp"} ,
+	{id: "uum5", text: "称谓管理" , pid: "uum0", url: "/apps/default/admin/uum/title/index.jsp"} ,
+	{id: "uum6", text: "资源管理" , pid: "uum0", url: "/apps/default/admin/uum/res/index.jsp"},
+	{id: "uum7", text: "组管理" , pid: "uum0", url: "/apps/default/admin/uum/group/index.jsp"},
 	
+	{id: "uum8", text: "权限管理" , pid: "uum0", url: ""},
+	{id: "uum9", text: "用户" , pid: "uum6", url: "/apps/default/admin/uum/user/permission_index.jsp"},
 	
-	{id: "uum-8", text: "机构" , pid: "uum-6", url: ""},
-	{id: "uum-13", text: "机构-(通讯录)" , pid: "uum-8", url: "/apps/default/admin/uum/org/permission_contact.jsp"},
-	{id: "uum-14", text: "机构" , pid: "uum-8", url: "/apps/default/admin/uum/org/permission_index.jsp"},
+	{id: "uum10", text: "机构" , pid: "uum6", url: ""},
+	{id: "uum11", text: "机构-(通讯录)" , pid: "uum8", url: "/apps/default/admin/uum/org/permission_contact.jsp"},
+	{id: "uum12", text: "机构" , pid: "uum8", url: "/apps/default/admin/uum/org/permission_index.jsp"},
 	
-	{id: "uum-9", text: "角色" , pid: "uum-6", url: "/apps/default/admin/uum/role/permission_index.jsp"},
-	{id: "uum-10", text: "组" , pid: "uum-6", url: "/apps/default/admin/uum/group/permission_index.jsp"},
-	{id: "uum-11", text: "称谓" , pid: "uum-6", url: "/apps/default/admin/uum/title/permission_index.jsp"},
+	{id: "uum13", text: "角色" , pid: "uum6", url: "/apps/default/admin/uum/role/permission_index.jsp"},
+	{id: "uum14", text: "组" , pid: "uum6", url: "/apps/default/admin/uum/group/permission_index.jsp"},
+	{id: "uum15", text: "称谓" , pid: "uum6", url: "/apps/default/admin/uum/title/permission_index.jsp"},
 	
 
-	{id: "uum_syswin", text: "思源用户系统"},
+	{id: "uum_syswin",pid:"uum", text: "思源用户系统"},
 	{id: "uum_syswin_0", text: "基础数据" , pid: "uum_syswin"},
 	
 	{id: "uum_syswin_6", text: "角色数据" , pid: "uum_syswin_0"},
@@ -79,26 +102,7 @@
 	*/
 	{id: "uum_syswin_authority_5", text: "角色授权" , pid: "uum_syswin_authority", url: "/apps/default/syswin/uum/role/authority.jsp"} ,
 	
-	/**/
-	{id: "weixin", text: "微信系统"},
-	{id: "weixin-1", text: "微信消息", pid: "weixin", url: ""},
-	{id: "weixin-2", text: "微信用户", pid: "weixin", url: ""},
-	{id: "weixin-3", text: "微信支付", pid: "weixin", url: ""},
-	
-	
-	{id: "bbs", text: "论坛系统"},
-	{id: "bbs-1", text: "版块管理", pid: "bbs", url:"" },
-	{id: "bbs-2", text: "贴子管理", pid: "bbs", url:"" },
-	
-	{id: "blog", text: "博客系统"},
-	{id: "blog-1", text: "博客模板管理", pid: "blog", url:"" },
-	{id: "blog-2", text: "博客内容管理", pid: "blog", url:"" },
-	
-	{id: "pro", text: "项目管理"},
-	{id: "pro-1", text: "bug管理", pid: "pro", url:"" },
-	{id: "pro-2", text: "博客内容管理", pid: "pro", url:"" },
-	
-	
+
 	
 	{id: "flow", text: "办公系统"},
 	{id: "flow-1", text: "个人办公", pid: "flow", url:"" },
@@ -108,7 +112,17 @@
 	{id: "flow-104", text: "我的已办", pid: "flow-1", url:"/apps/default/admin/act/task/index_my_done.jsp" },
 	{id: "flow-105", text: "我的发起", pid: "flow-1", url:"/apps/default/admin/act/task/index_my_start.jsp" },
 	{id: "flow-106", text: "抄送我的", pid: "flow-1", url:"/apps/default/admin/act/task/index_cc_my.jsp" },
-		
+
+	{id: "flow-107", text: "邮件管理", pid: "flow", url:"" },
+	{id: "flow-108", text: "我的邮件（内部、外部）", pid: "flow-107", url:"" },
+	{id: "flow-109", text: "邮件配置管理", pid: "flow-107", url:"" },
+
+	{id: "flow-107", text: "考勤管理", pid: "flow", url:"" },
+	{id: "flow-108", text: "我的考勤", pid: "flow-107", url:"" },
+	
+	{id: "flow-109", text: "日程管理", pid: "flow", url:"" },
+	{id: "flow-110", text: "我的日程", pid: "flow-107", url:"" },
+	
 	{id: "flow-5", text: "流程设计", pid: "flow", url:"" },
 	{id: "flow-6", text: "流程分类", pid: "flow-5", url:"/apps/default/admin/act/category/index.jsp" },
 	{id: "flow-13", text: "用户规则", pid: "flow-5", url:"/apps/default/admin/act/user_rule/index.jsp" },
@@ -121,7 +135,17 @@
 
 	{id: "flow-12", text: "用户适配", pid: "flow-5", url:"/apps/default/admin/act/user_data/index.jsp" },
 	
-	/**/
+
+
+
+
+	{id: "buss", text: "填报系统"},
+	{id: "buss1", text: "业务表数据库" , pid: "buss", url: "/apps/default/buss/factory/index.jsp"} ,
+	{id: "buss2", text: "表单管理" , pid: "buss", url: "/apps/default/buss/product/index.jsp"} ,
+	{id: "buss3", text: "RIA报表配置" , pid: "buss", url: "/apps/default/buss/quality/index.jsp"} ,
+	
+
+
 	{id: "dev", text: "在线开发"},
 	{id: "dev-1", text: "数据源管理", pid: "dev", url:""},
 	{id: "dev-1", text: "页面模板", pid: "dev", url:"" },
@@ -136,9 +160,18 @@
 	{id: "dataManager", text: "数据抽取"},
 	{id: "dataManager1", text: "数据映射",pid: "dataManager"},
 	{id: "dataManager2", text: "数据对抽",pid: "dataManager"},
-	{id: "dataManager3", text: "作业抽取",pid: "dataManager"}
+	{id: "dataManager3", text: "作业抽取",pid: "dataManager"},
 	
-		
+	
+	
+	{id: "shop_1", text: "电商系统"},
+	{id: "shop_2", text: "订单子系统",pid: "shop_2"},
+	{id: "shop_4", text: "网店系统",pid: "shop_2"},
+	
+	{id: "tv_1", text: "视频系统"},
+	{id: "tv_2", text: "aaaaaa",pid: "tv_1"},
+	{id: "tv_3", text: "bbbbbb",pid: "tv_1"}
+	
 ]
 
 

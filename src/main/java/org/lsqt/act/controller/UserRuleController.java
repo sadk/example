@@ -8,32 +8,23 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.lsqt.components.context.ContextUtil;
+import org.lsqt.act.ActUtil;
+import org.lsqt.act.model.UserRule;
+import org.lsqt.act.model.UserRuleQuery;
+import org.lsqt.act.service.UserRuleService;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
-import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.ExceptionUtil;
-import org.lsqt.components.util.collection.ArrayUtil;
-import org.lsqt.components.util.collection.MapUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.syswin.uum.model.User;
 import org.lsqt.syswin.uum.model.UserQuery;
 import org.lsqt.syswin.uum.service.UserService;
 
 import com.alibaba.fastjson.JSON;
-
-import org.lsqt.act.ActUtil;
-import org.lsqt.act.model.UserRule;
-import org.lsqt.act.model.UserRuleMatrixDeptUser;
-import org.lsqt.act.model.UserRuleQuery;
-import org.lsqt.act.service.UserRuleService;
 
 
 
@@ -49,6 +40,11 @@ public class UserRuleController {
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<UserRule> queryForPage(UserRuleQuery query) throws IOException {
 		return userRuleService.queryForPage(query); //  
+	}
+	
+	@RequestMapping(mapping = { "/list", "/m/list" })
+	public List<UserRule> queryForlist(UserRuleQuery query) throws IOException {
+		return userRuleService.queryForList(query);
 	}
 	
 	@RequestMapping(mapping = { "/all", "/m/all" })

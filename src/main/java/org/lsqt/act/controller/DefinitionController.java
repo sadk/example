@@ -16,6 +16,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.UserTask;
@@ -42,6 +43,7 @@ import org.lsqt.act.service.NodeService;
 import org.lsqt.act.service.NodeUserService;
 import org.lsqt.act.service.ReDefinitionService;
 import org.lsqt.act.service.impl.DefinitionServiceImpl;
+import org.lsqt.act.service.impl.NodeServiceImpl;
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
@@ -71,6 +73,8 @@ public class DefinitionController {
 	@Inject private ReDefinitionService reDefinitionService ;
 	
 	@Inject private NodeUserService nodeUserService;
+	@Inject private NodeService nodeService;
+	
 	@Inject private Db db;
 
 	@RequestMapping(mapping = { "/save_or_update_json_short_name", "/m/save_or_update_json_short_name" })
@@ -114,8 +118,8 @@ public class DefinitionController {
 	
 	
 	@RequestMapping(mapping = { "/get_node_list", "/m/get_node_list" })
-	public List<NodeObject> getNodeList(String definitionId) {
-		List<NodeObject> rs = new ArrayList<>();
+	public List<Node> getNodeList(String definitionId) {
+		List<Node> rs = new ArrayList<>();
 		if (StringUtil.isBlank(definitionId)) {
 			return rs;
 		}
@@ -125,7 +129,6 @@ public class DefinitionController {
 		if (model != null) {
 			Collection<FlowElement> flowElements = model.getMainProcess().getFlowElements();
 			for (FlowElement e : flowElements) {
-				//System.out.println(e);
 				if (UserTask.class.isAssignableFrom(e.getClass())) {
 					UserTask task = (UserTask) e;
 					NodeObject st = new NodeObject();
@@ -135,35 +138,44 @@ public class DefinitionController {
 					st.setFormProperties(task.getFormProperties());
 					st.setTaskKey(task.getId());
 					st.setTaskName(task.getName());
-					
+					st.setRemark(task.getDocumentation());
+					st.setTaskBizType(Node.TASK_BIZ_TYPE_UNDRAFTNODE);
 					rs.add(st);
 				}
 			}
 		}
 		
-		if(!rs.isEmpty()) { // 加载节点审批对象
+		if(!rs.isEmpty()) { // 加载节点审批对象和节点类型
+			NodeServiceImpl util = new NodeServiceImpl();
+			util.resolveStartEndNodeType(definitionId,rs);
+			
+			
 			NodeUserQuery query = new NodeUserQuery();
 			query.setDefinitionId(definitionId);
 			List<NodeUser> list = nodeUserService.queryForList(query);
 			
-			for(NodeObject e:rs) {
+			for(Node e:rs) {
 				List<String> approveIds = new ArrayList<>();
 				List<String> approveNames = new ArrayList<>();
 				List<String> approveTypes = new ArrayList<>();
 				
 				for(NodeUser u: list) {
 					if(e.getTaskKey().equals(u.getTaskKey())){
-						approveIds.add(u.getApproveObjectId());
-						approveNames.add(u.getName());
-						approveTypes.add(NodeUser.getUserTypeDesc(u.getUserType()));
+						if(StringUtil.isNotBlank(u.getApproveObjectId() )) {
+							approveIds.add(u.getApproveObjectId());
+							approveNames.add(u.getName());
+							approveTypes.add(NodeUser.getUserTypeDesc(u.getUserType()));
+						}
 					}
 				}
-				
-				e.setApproveObjectIds(StringUtil.join(approveIds, ","));
-				e.setApproveObjectNames(StringUtil.join(approveNames, ","));
-				e.setApproveObjectTypes(StringUtil.join(approveTypes, ","));
+				NodeObject ele = (NodeObject)e;
+				ele.setApproveObjectIds(StringUtil.join(approveIds, ","));
+				ele.setApproveObjectNames(StringUtil.join(approveNames, ","));
+				ele.setApproveObjectTypes(StringUtil.join(approveTypes, ","));
 			}
 		}
+		
+		nodeService.setMeetingNodeType(definitionId, rs);
 		return rs;
 	}
 	
@@ -308,6 +320,13 @@ public class DefinitionController {
 		//String sql = String.format("update %s set NAME_=? where ID_=?",db.getFullTable(Definition.class));
 		//db.executeUpdate(sql, serverPath,dep.getId());
 		
+		// 自动导入节点和表单节点
+		//nodeService.importNode(definitionId);
+		/*
+	    StreamSource xmlSource = new InputStreamSource(xmlStream);
+	    BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xmlSource, false, false, processEngineConfiguration.getXmlEncoding());
+	    return bpmnModel;
+		*/
 		return dep;
 		
 	}
@@ -317,7 +336,7 @@ public class DefinitionController {
 		org.lsqt.act.model.Definition model = definitionService.getById(hisDefinitionId);
 		
 		if (model != null) {
-			synchronized (this) {
+			synchronized (DefinitionController.class) {
 				Deployment dep = deploy(serverPath, categoryCode, definitionName);
 				log.debug("布署成功?:"+(dep!=null));
 				DefinitionQuery query = new DefinitionQuery();

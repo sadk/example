@@ -47,6 +47,28 @@ public class TaskController {
 	@Inject private Db db;
 	@Inject private PlatformDb db2;
 	
+	
+	public void setTaskService(TaskService taskService) {
+		this.taskService = taskService;
+	}
+
+	public void setNodeUserService(NodeUserService nodeUserService) {
+		this.nodeUserService = nodeUserService;
+	}
+
+	public void setRuntimeService(RuntimeService runtimeService) {
+		this.runtimeService = runtimeService;
+	}
+
+	public void setDb(Db db) {
+		this.db = db;
+	}
+
+	public void setDb2(PlatformDb db2) {
+		this.db2 = db2;
+	}
+	
+	
 	@Deprecated
 	@RequestMapping(mapping = { "/list", "/m/list" })
 	public List<Task> queryForList(TaskQuery query) {
@@ -91,6 +113,25 @@ public class TaskController {
 		
 		 
 		
+		loadApproveUser(page);
+		return page;
+	}
+	
+	@RequestMapping(mapping = { "/page_fast", "/m/page_fast" },text="获取我的待办(含流程标题、发起人信息)")
+	public Page<Task> queryForPageFast(TaskQuery query) {
+		prepareQuery(query);
+		
+		if(StringUtil.isBlank(query.getUserIds()) && query.getIsQueryTaskUser()) {
+			return new Page.PageModel<>();
+		}
+		
+		Page<Task> page = taskService.queryMyToDoTaskPage(query);
+		
+		loadApproveUser(page);
+		return page;
+	}
+
+	void loadApproveUser(Page<Task> page) {
 		List<String> instanceIds =new ArrayList<>();
 		for (Task t: page.getData()) {
 			if (StringUtil.isNotBlank(t.getProcessInstanceId())) {
@@ -98,66 +139,67 @@ public class TaskController {
 			}
 		}
 		
-		RunInstanceQuery riq = new RunInstanceQuery();
-		riq.setInstanceIdList(instanceIds);
-		List<RunInstance> data = db.queryForList("queryForPageRunningDetail", RunInstance.class, riq);
-		
-		Map<String,RunInstance> mapData = new HashMap<>();
-		for(RunInstance e: data) {
+		if(!instanceIds.isEmpty()) {
+			RunInstanceQuery riq = new RunInstanceQuery();
+			riq.setInstanceIdList(instanceIds);
+			List<RunInstance> data = db.queryForList("queryForPageRunningDetail", RunInstance.class, riq);
 			
-			Map<String, Object> map = new HashMap<>();
-			
-			if(StringUtil.isNotBlank(e.getCreateDeptId())) {
-				map.put(ActUtil.VARIABLES_CREATE_DEPT_ID, Long.valueOf(e.getCreateDeptId()));
-			}else {
-				log.error("流程实例ID="+e.getInstanceId()+"的流程找不到填制人部门");
-			}
-			map.put(ActUtil.VARIABLES_START_USER_ID, e.getStartUserId());
-			//map.put(ActUtil.VARIABLES_LOGIN_USER,null);
-			List<ApproveObject> approveUsers =null;
-			try{
-				approveUsers = nodeUserService.getNodeUsers(null, e.getProcessDefinitionId(), e.getTaskKey(), map);
-			}catch(Exception ex) {
-				ex.printStackTrace();
-			}
-			StringBuilder approveUserText = new StringBuilder();
-
-			
-			
-			if (approveUsers != null) {
-				for (ApproveObject t : approveUsers) {
-					User user = db2.getById(User.class, t.getId());
-					if (user != null) {
-						approveUserText.append(t.getName() + "(" + user.getLoginNo()+"/"+user.getUserId() + ")");
+			Map<String,RunInstance> mapData = new HashMap<>();
+			for(RunInstance e: data) {
+				
+				Map<String, Object> map = new HashMap<>();
+				
+				if(StringUtil.isNotBlank(e.getCreateDeptId())) {
+					map.put(ActUtil.VARIABLES_CREATE_DEPT_ID, Long.valueOf(e.getCreateDeptId()));
+				}else {
+					log.error("流程实例ID="+e.getInstanceId()+"的流程找不到填制人部门");
+				}
+				map.put(ActUtil.VARIABLES_START_USER_ID, e.getStartUserId());
+				//map.put(ActUtil.VARIABLES_LOGIN_USER,null);
+				List<ApproveObject> approveUsers =null;
+				try{
+					approveUsers = nodeUserService.getNodeUsers(null, e.getProcessDefinitionId(), e.getTaskKey(), map);
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+				StringBuilder approveUserText = new StringBuilder();
+	
+				
+				
+				if (approveUsers != null) {
+					for (ApproveObject t : approveUsers) {
+						User user = db2.getById(User.class, t.getId());
+						if (user != null) {
+							approveUserText.append(t.getName() + "(" + user.getLoginNo()+"/"+user.getUserId() + ")");
+						}
+					}
+					e.setApproveUserText(approveUserText.toString());
+				}
+				
+				
+				// 拟稿节点审批人就是发起人自己
+				NodeQuery nq =new NodeQuery();
+				nq.setTaskBizType(Node.TASK_BIZ_TYPE_DRAFTNODE);
+				nq.setDefinitionId(e.getProcessDefinitionId());
+				Node draftNode = db.queryForObject("queryForPage", Node.class, nq);
+				if(draftNode!=null && e.getTaskKey() !=null && e.getTaskKey().equals(draftNode.getTaskKey())) {
+					User user = db2.getById(User.class, e.getStartUserId());
+					if (user!=null) {
+						e.setApproveUserText(e.getStartUserName()+"("+user.getLoginNo()+"/"+user.getUserId()+")");
 					}
 				}
-				e.setApproveUserText(approveUserText.toString());
+				
+				mapData.put(e.getInstanceId(), e);
 			}
 			
 			
-			// 拟稿节点审批人就是发起人自己
-			NodeQuery nq =new NodeQuery();
-			nq.setTaskBizType(Node.TASK_BIZ_TYPE_DRAFTNODE);
-			nq.setDefinitionId(e.getProcessDefinitionId());
-			Node draftNode = db.queryForObject("queryForPage", Node.class, nq);
-			if(draftNode!=null && e.getTaskKey().equals(draftNode.getTaskKey())) {
-				User user = db2.getById(User.class, e.getStartUserId());
-				if (user!=null) {
-					e.setApproveUserText(e.getStartUserName()+"("+user.getLoginNo()+"/"+user.getUserId()+")");
+			for(Task t: page.getData()) {
+				RunInstance ri = mapData.get(t.getProcessInstanceId());
+				if (ri!=null) {
+					t.setCandidateUserNames(mapData.get(t.getProcessInstanceId()).getApproveUserText());
 				}
-			}
-			
-			mapData.put(e.getInstanceId(), e);
+			} 
 		}
-		
-		
-		for(Task t: page.getData()) {
-			RunInstance ri = mapData.get(t.getProcessInstanceId());
-			if (ri!=null) {
-				t.setCandidateUserNames(mapData.get(t.getProcessInstanceId()).getApproveUserText());
-			}
-		} 
-		return page;
 	}
 
 	/**
@@ -218,7 +260,7 @@ public class TaskController {
 		for (Task t: taskData) {
 			if(StringUtil.isNotBlank(t.getProcessInstanceId())) {
 				boolean isEnded = runtimeService.isInstanceEnded(t.getProcessInstanceId());
-				t.setCloseStatus( isEnded ? ActUtil.CLOSE_STATUS_YES:ActUtil.CLOSE_STATUS_NO);
+				t.setCloseStatus( isEnded ? ActUtil.END_STATUS_已结束:ActUtil.END_STATUS_未结束);
 			}
 		}
 		return page;
@@ -232,4 +274,5 @@ public class TaskController {
 			taskService.deleteTask(idList.toArray(new String[idList.size()]));
 		}
 	}
+
 }

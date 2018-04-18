@@ -48,7 +48,10 @@
 							</tr> 
 							<tr>
 								<td>所属租户:</td>
-								<td><input id="tenantCode" name="tenantCode" class="mini-buttonedit" onbuttonclick="onButtonEdit" />   </td>
+								<td>
+									<input id="tenantCode" name="tenantCode" class="mini-buttonedit" onbuttonclick="onButtonEdit" />   
+									<input id="tenantName" name="tenantName"  class="mini-hidden" />
+								</td>
 								<td>备注：</td>
 								<td>
 								 	<input id="remark" name="remark" class="mini-textbox"/>
@@ -144,6 +147,7 @@
 						if(o!=null && o.data!=null && o.data.length>0) {
 							o = o.data[0];
 							mini.get("tenantCode").setText(o.name);
+							mini.get("tenantName").setValue(o.name);
 						}
 					}
 				});
