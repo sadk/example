@@ -488,6 +488,8 @@ CREATE TABLE `sys_machine` (
   `user_name` varchar(255) NOT NULL COMMENT '登陆名称',
   `user_password` varchar(255) NOT NULL COMMENT '登陆密码',
   `url` varchar(500) DEFAULT NULL COMMENT '链接url',
+  `type` varchar(40) DEFAULT NULL COMMENT 'datasource=数据库服务器 、redis = redis服务器',
+ 
   
   `status` int(4) DEFAULT '0' COMMENT '数据源状态：1=可用 0=不可用',
   `address` varchar(255) DEFAULT NULL COMMENT '地址,可以是ip也可以是域名',
@@ -690,23 +692,24 @@ CREATE TABLE `cms_resource` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `pid` bigint(20) DEFAULT NULL,
   `name` varchar(255) NOT NULL COMMENT '资源名称',
+  `alias` varchar(255) NOT NULL COMMENT '资源别名：一般是中文有意义的名称',
   `value` varchar(255) DEFAULT NULL COMMENT '资源值',
   `code` varchar(255) NOT NULL COMMENT '资源编码',
   
-  `type` varchar(2) DEFAULT NULL COMMENT '数据类型：10=目录 20=文件 ',
+  `url` varchar(500) NULL COMMENT '资源路径标识符可以是http的url，也可以是磁盘路径',
+  `type` int(2) DEFAULT NULL COMMENT '数据类型：100=目录 2xx=文件:200=txt 201=html 202=css 203=js ',
   `enable` varchar(2) DEFAULT NULL COMMENT '是否启用: 1=启用  0=禁用',
   `app_code` varchar(20) DEFAULT NULL,
   `sn` int(11) DEFAULT '0' COMMENT '排序',
   
   `node_path` varchar(1000) DEFAULT NULL,
-  
   `remark` varchar(256) DEFAULT NULL COMMENT '备注',
   `gid` varchar(50) DEFAULT NULL,
   `create_time` datetime NOT NULL COMMENT '创建日期',
   `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_dic_name_code` (`code`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='站点资源';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='站点资源,描述CSS、HTML、文件夹等径信息';
 
 
 
@@ -801,6 +804,8 @@ CREATE TABLE `sys_property` (
   `app_code` varchar(40) DEFAULT NULL COMMENT '所属应用' ,
   `sn` int(4) DEFAULT '0' ,
 
+  `type` varchar(20) DEFAULT NULL COMMENT 'datasource=jdbc数据源属性  redis=redis数据源属性' ,
+
   `gid` varchar(200) DEFAULT NULL,
   `create_time` datetime NOT NULL COMMENT '创建日期',
   `update_time` datetime DEFAULT NULL,
@@ -809,41 +814,41 @@ CREATE TABLE `sys_property` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='属性管理';
  
 -- 初使化本地数据源连接池数据
-insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time) values 
-(1,'localhost','initialSize','1','链接池初使化大小','1000',0,'localhost_initialSize',now(),now());
+insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time,type) values 
+(1,'localhost','initialSize','1','链接池初使化大小','1000',0,'localhost_initialSize',now(),now(),'datasource');
 
-insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time) values 
-(2,'localhost','minIdle','1','链接池初使化大小.最小','1000',0,'localhost_minIdle',now(),now());
+insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time,type) values 
+(2,'localhost','minIdle','1','链接池初使化大小.最小','1000',0,'localhost_minIdle',now(),now(),'datasource');
  
-insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time) values 
-(3,'localhost','maxActive','20','链接池初使化大小.最大','1000',0,'localhost_maxActive',now(),now());
+insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time,type) values 
+(3,'localhost','maxActive','20','链接池初使化大小.最大','1000',0,'localhost_maxActive',now(),now(),'datasource');
 
-insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time) values 
-(4,'localhost','maxWait','60000','配置获取连接等待超时的时间','1000',0,'localhost_maxWait',now(),now());
+insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time,type) values 
+(4,'localhost','maxWait','60000','配置获取连接等待超时的时间','1000',0,'localhost_maxWait',now(),now(),'datasource');
 
-insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time) values 
-(5,'localhost','timeBetweenEvictionRunsMillis','60000','配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒','1000',0,'localhost_timeBetweenEvictionRunsMillis',now(),now());
+insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time,type) values 
+(5,'localhost','timeBetweenEvictionRunsMillis','60000','配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒','1000',0,'localhost_timeBetweenEvictionRunsMillis',now(),now(),'datasource');
 
-insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time) values 
-(6,'localhost','minEvictableIdleTimeMillis','300000','配置一个连接在池中最小生存的时间，单位是毫秒','1000',0,'localhost_minEvictableIdleTimeMillis',now(),now());
+insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time,type) values 
+(6,'localhost','minEvictableIdleTimeMillis','300000','配置一个连接在池中最小生存的时间，单位是毫秒','1000',0,'localhost_minEvictableIdleTimeMillis',now(),now(),'datasource');
 
-insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time) values 
-(7,'localhost','validationQuery','select 1 ','验证查询','1000',0,'localhost_validationQuery',now(),now());
+insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time,type) values 
+(7,'localhost','validationQuery','select 1 ','验证查询','1000',0,'localhost_validationQuery',now(),now(),'datasource');
 
-insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time) values 
-(8,'localhost','testWhileIdle','true','','1000',0,'localhost_testWhileIdle',now(),now());
+insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time,type) values 
+(8,'localhost','testWhileIdle','true','','1000',0,'localhost_testWhileIdle',now(),now(),'datasource');
 
-insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time) values 
-(9,'localhost','testOnBorrow','false','','1000',0,'localhost_testOnBorrow',now(),now());
+insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time,type) values 
+(9,'localhost','testOnBorrow','false','','1000',0,'localhost_testOnBorrow',now(),now(),'datasource');
 
-insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time) values 
-(10,'localhost','testOnReturn','false','','1000',0,'localhost_testOnReturn',now(),now());
+insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time,type) values 
+(10,'localhost','testOnReturn','false','','1000',0,'localhost_testOnReturn',now(),now(),'datasource');
 
-insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time) values 
-(11,'localhost','poolPreparedStatements','true','打开PSCache，并且指定每个连接上PSCache的大小','1000',0,'localhost_poolPreparedStatements',now(),now());
+insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time,type) values 
+(11,'localhost','poolPreparedStatements','true','打开PSCache，并且指定每个连接上PSCache的大小','1000',0,'localhost_poolPreparedStatements',now(),now(),'datasource');
 
-insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time) values 
-(12,'localhost','maxPoolPreparedStatementPerConnectionSize','20','打开PSCache，并且指定每个连接上PSCache的大小','1000',0,'localhost_maxPoolPreparedStatementPerConnectionSize',now(),now());
+insert into sys_property (id,parent_code,name,value,remark,app_code,sn,gid,create_time,update_time,type) values 
+(12,'localhost','maxPoolPreparedStatementPerConnectionSize','20','打开PSCache，并且指定每个连接上PSCache的大小','1000',0,'localhost_maxPoolPreparedStatementPerConnectionSize',now(),now(),'datasource');
 
 
 -- 表定义管理
