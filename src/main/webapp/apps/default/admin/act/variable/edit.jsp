@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>数据源属性</title>
+		<title>流程变量管理</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
@@ -21,32 +21,19 @@
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
 			<input name="id" class="mini-hidden" />
-			<input name="type" class="mini-hidden" value=""/>
 			<div style="padding:4px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
-		            <legend>连接信息</legend>
+		            <legend>流程变量信息</legend>
 		            <div style="padding:5px;">
 				        <table>
 							<tr>
-								<td style="width:120px;">数据源名称：</td>
+								<td style="width:100px;">名称：</td>
 								<td style="width:150px;">
 								 	<input name="name" id="name" class="mini-textbox"  />
 								</td>
-								
-								<td style="width:120px;">数据源编码：</td>
+								<td style="width:100px;">编码：</td>
 								<td style="width:150px;">
 									<input name="code" id="code" class="mini-textbox" />
-								</td>
-							</tr>
-							
-							<tr>
-								<td  style="width:120px;">属性名：</td>
-								<td  style="width:150px;">
-								 	<input name="url" id="url" class="mini-textbox"  />
-								</td>
-								<td style="width:110px;">属性值：</td>
-								<td style="width:150px;">
-									<input name="driverClassName" id="driverClassName" class="mini-textbox" />
 								</td>
 							</tr>
 							<tr>
@@ -54,8 +41,25 @@
 								<td>
 								 	<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
 								</td>
-								<td>备注：</td>
+								<td>数据类型：</td>
 								<td>
+								 	<input id="enable" name="enable" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" data='[{id:"1",text:"启用"},{id:"0",text:"禁用"}]' />
+								</td>
+							</tr> 
+							
+							<tr>
+								<td>排序号：</td>
+								<td>
+								 	<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
+								</td>
+								<td>是否启用：</td>
+								<td>
+								 	<input id="enable" name="enable" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" data='[{id:"1",text:"启用"},{id:"0",text:"禁用"}]' />
+								</td>
+							</tr> 
+							<tr>
+								<td>备注：</td>
+								<td colspan="3">
 								 	<input id="remark" name="remark" class="mini-textbox"/>
 								</td>
 							</tr>
@@ -64,25 +68,21 @@
 				</fieldset>
 			</div>
 			<div id="subbtn" style="text-align:center;padding:10px;">
-				<a class="mini-button" onclick="onOk" id="btnOk" style="width:60px;margin-right:20px;">确定</a>
-				<a class="mini-button" onclick="onCancel" id="btnCancel" style="width:60px;">取消</a>
+				<a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>
+				<a class="mini-button" onclick="onCancel" style="width:60px;">取消</a>
 			</div>
 		</form>
 		<script type="text/javascript">
 			mini.parse();
 
 			var form = new mini.Form("edit-form1");
-			
-			var btnTest = mini.get("btnTest");
-			var btnOk =  mini.get("btnOk");
-			var btnCancel =  mini.get("btnCancel");
-			
+		
 			function SaveData() {
 				var o = form.getData();
 				form.validate();
 				if(form.isValid() == false) return;
 				$.ajax({
-					url : "${pageContext.request.contextPath}/property/save_or_update",
+					url : "${pageContext.request.contextPath}/application/save_or_update",
 					dataType: 'json',
 					type : 'post',
 					cache : false,
@@ -92,8 +92,7 @@
 					}
 				});
 			}
-			
- 
+
 			////////////////////
 			//标准方法接口定义
 			function SetData(data) {
@@ -101,7 +100,7 @@
 				
 				 if(data.action == "edit" || data.action=='view') {
 					$.ajax({
-						url : "${pageContext.request.contextPath}/property/page?id=" + data.id,
+						url : "${pageContext.request.contextPath}/application/page?id=" + data.id,
 						dataType: 'json',
 						cache : false,
 						success : function(text) {
@@ -114,10 +113,6 @@
 							
 							if (data.action == 'view') {
 								form.setEnabled(false);
-								btnTest.hide();
-								btnOk.hide();
-								//btnCancel.hide();
-								btnCancel.setText("关闭");
 							}
 						}
 					});

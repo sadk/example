@@ -1,6 +1,6 @@
-package org.lsqt.sys.model;
+package org.lsqt.cms.model;
 
-import java.util.Date;
+import java.util.List;
 
 import org.lsqt.components.db.Page;
 
@@ -9,7 +9,7 @@ import org.lsqt.components.db.Page;
  * @author yuanmm
  *
  */
-public class PropertyQuery {
+public class TagsQuery {
 	private Integer pageIndex=Page.DEFAULT_PAGE_INDEX;
 	private Integer pageSize=Page.DEFAULT_PAGE_SIZE;
 	
@@ -17,20 +17,14 @@ public class PropertyQuery {
 	private String sortField;
 	
 	private String key; // 关键字
-	
-	
+ 
 	private Long id;
-	private String name; // 字典名称
-	private String value; // 字典值
-	private String code; // 字典编码
-	private String appCode;
-	private Date createTime;
-	private String remark;
+	private String name; // 名称
+	private String code; // 编码
+	private String value; 
 	
-	private String parentCode;
-	
-	private String type; // datasource=Jdbc数据源连接属性 redis=redis连接属性
-	
+	private List<String> nameList; // 用于批量查询
+	 
 	public Integer getPageIndex() {
 		return pageIndex;
 	}
@@ -73,46 +67,22 @@ public class PropertyQuery {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getValue() {
-		return value;
-	}
-	public void setValue(String value) {
-		this.value = value;
-	}
 	public String getCode() {
 		return code;
 	}
 	public void setCode(String code) {
 		this.code = code;
 	}
-	public String getAppCode() {
-		return appCode;
+	public String getValue() {
+		return value;
 	}
-	public void setAppCode(String appCode) {
-		this.appCode = appCode;
+	public void setValue(String value) {
+		this.value = value;
 	}
-	public Date getCreateTime() {
-		return createTime;
+	public List<String> getNameList() {
+		return nameList;
 	}
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
+	public void setNameList(List<String> nameList) {
+		this.nameList = nameList;
 	}
-	public String getRemark() {
-		return remark;
-	}
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-	public String getParentCode() {
-		return parentCode;
-	}
-	public void setParentCode(String parentCode) {
-		this.parentCode = parentCode;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	} 
 }

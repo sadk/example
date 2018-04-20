@@ -22,13 +22,12 @@
 		<div class="mini-splitter" style="width:100%;height:100%; overflow:auto;">
 		    <div size="240" showCollapseButton="true">
 		        <div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right:0;">                
-		            <span style="padding-left:5px;">名称：</span>
-		            <input class="mini-textbox" width="120"/>
-		            <a class="mini-button" iconCls="icon-search" plain="true" onclick="search()">查找</a>                  
+		            <span style="padding-left:5px;">租户：</span>
+		            <input id="tenantCode" name="tenantCode" width="180" class="mini-buttonedit" onbuttonclick="onButtonEdit" />                 
 		        </div>
 		        <div class="mini-fit">
-		            <ul id="tree1" class="mini-tree" url="${pageContext.request.contextPath}/application/all_tree" style="width:100%;"
-		                showTreeIcon="true" textField="name" idField="id" parentField="pid" resultAsTree="false" >        
+		            <ul id="tree1" class="mini-tree" url="${pageContext.request.contextPath}/application/list" style="width:100%;"
+		                showTreeIcon="true" textField="name" idField="id" parentField="pid" resultAsTree="false">        
 		            </ul>
 		        </div>
 		    </div>
@@ -41,9 +40,9 @@
 									<table style="width:100%;">
 										<tr>
 											<td style="width:100%;">
-												<a class="mini-button" iconCls="icon-add" onclick="editPosition('add')">添加</a>
-												<a class="mini-button" iconCls="icon-remove" onclick="removePosition()">删除</a>
-												<a class="mini-button" iconCls="icon-edit" onclick="editPosition('edit')">编辑</a>
+												<a class="mini-button" iconCls="icon-add" onclick="edit('add')">添加</a>
+												<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
+												<a class="mini-button" iconCls="icon-edit" onclick="edit('edit')">编辑</a>
 												<!-- 
 												<a class="mini-button" iconCls="icon-node" onclick="edit('view')">查看</a>
 												
@@ -69,13 +68,18 @@
 									        <div type="checkcolumn"></div>
 									        <div name="id" field="id" width="60" headerAlign="center">编码</div>
 									        <div name="name" field="name" width="160" headerAlign="center">名称</div>
-									        <div name="nodePath" field="nodePath" width="160" headerAlign="center">登陆用户名</div>
-									        <div name="code" field="code" width="160" headerAlign="center">登陆密码</div>
-									        <div field="orgNodeText" width="260" headerAlign="center">链接</div>
-									        <div field="typeDesc" width="80" headerAlign="center" align="center">状态</div>
 									        
-									        <div field="pid" width="80" headerAlign="center">地址</div>
-									        <div field="parentName" width="80" headerAlign="center">端口</div>
+									        <div name="userName" field="userName" width="160" headerAlign="center">登陆用户名</div>
+									        <div name="userPassword" field="userPassword" width="160" headerAlign="center">登陆密码</div>
+									        <div field="address" width="80" headerAlign="center">IP或域名</div>
+									        <div field="port" width="80" headerAlign="center">端口</div>
+									        
+									        <div field="url" width="260" headerAlign="center">链接字符</div>
+											
+											<div type="comboboxcolumn" field="type" width="160" headerAlign="center" align="left" allowSort="true">服务器类型
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=datasource" />
+											</div>
+											
 									        <div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
 									        <div field="updateTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>     
 											              
@@ -130,16 +134,74 @@
 			mini.parse();
 			
 	        var tree = mini.get("tree1");
-	        var machineGrid = mini.get("machineGrid");
+	        var grid = mini.get("machineGrid");
 	        var linkPropGrid = mini.get("linkPropGrid");
 	       
+	        grid.load();
+	        
 	        tree.on("nodeselect", function (e) {
-	        	machineGrid.load({ appCode: e.node.code });
+	        	grid.load({ appCode: e.node.code });
 	        });
 		 
-			function search() { // 查询岗位
+			function edit(action) {
+				var row = grid.getSelected();
+				if(typeof(action) == 'undefined') {
+					action = "edit";
+				}
+				
+				if(action == 'edit' && !row) {
+					mini.alert("请选择一条记录");
+					return ;
+				}
+					mini.open({
+						url : "${pageContext.request.contextPath}/apps/default/admin/sys/machine/edit.jsp",
+						title : "编辑",
+						width : 490,
+						height : 350,
+						onload : function() {
+							var iframe = this.getIFrameEl();
+							var data = {
+								action : action,
+								id : row.id
+							};
+							iframe.contentWindow.SetData(data);
+						},
+						ondestroy : function(action) {
+							grid.reload();
+						}
+					});
+				 
+			}	
+	        
+	        function onButtonEdit(e) {
+	            var btnEdit = this;
+	            mini.open({
+	                url: "${pageContext.request.contextPath}/apps/default/admin/sys/tenant/selector_tenant.jsp",
+	                title: "选择租户",
+	                width: 650,
+	                height: 380,
+	                ondestroy: function (action) {
+	                    
+	                    if (action == "ok") {
+	                        var iframe = this.getIFrameEl();
+	                        var data = iframe.contentWindow.GetData();
+	                        data = mini.clone(data);    //必须
+	                        if (data) {
+	                            btnEdit.setValue(data.code);
+	                            btnEdit.setText(data.name);
+	                            
+	                           
+	                            tree.load({tenantCode:data.code})
+	                        } else {
+	                        	btnEdit.setValue(null);
+	                            btnEdit.setText(null);
+	                        	tree.load()
+	                        }
+	                    }
 
-			}
+	                }
+	            });
+	        }
 			
 		    function loading() {
 		        mini.mask({

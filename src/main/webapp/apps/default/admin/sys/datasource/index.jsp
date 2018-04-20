@@ -226,7 +226,7 @@
 			grid.on("rowclick", function(e){
 				var record = e.record;
 				//propertyGrid.setUrl("${pageContext.request.contextPath}/property/page?parentCode="+record.code);
-				propertyGrid.load({parentCode:record.code});
+				propertyGrid.load({parentCode:record.code,type:'datasource'});
 			});
 			
 			/*

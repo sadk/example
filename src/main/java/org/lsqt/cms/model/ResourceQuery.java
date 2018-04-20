@@ -1,11 +1,11 @@
-package org.lsqt.sys.model;
+package org.lsqt.cms.model;
 
 import org.lsqt.components.db.Page;
 
 /**
- * 服务器管理
+ * 站点资源
  */
-public class MachineQuery {
+public class ResourceQuery {
 	private Integer pageIndex = Page.DEFAULT_PAGE_INDEX;
 	private Integer pageSize = Page.DEFAULT_PAGE_SIZE;
 
@@ -17,59 +17,51 @@ public class MachineQuery {
 
 	private Long id;
 	
-	private String type; // datasource=数据库服务器 、redis = redis服务器，Machine.type
-
-	/** 服务器编码 */
-	private String code;
-
+	private String idNotIn; // 树状结构不能选择自己做为父节点，否则会出现死循环 
+	
 	/***/
-	private String appCode;
+	private Long pid;
 
-	/** 服务器名称 */
+	/** 资源名称 */
 	private String name;
 
-	/** 登陆名称 */
-	private String userName;
+	/** 资源值 */
+	private String value;
 
-	/** 登陆密码 */
-	private String userPassword;
+	/** 资源编码 */
+	private String code;
 
-	/** 链接url */
-	private String url;
+	/** 数据类型：100=目录 2xx=文件:200=txt 201=html 202=css 203=js */
+	private Integer type;
 
-	/** 数据源状态：1=可用 0=不可用 */
+	/** 是否启用: 1=启用 0=禁用 */
+	private String enable;
 
-	private Integer status;
-
-	/** 地址,可以是ip也可以是域名 */
-	private String address;
-
-	/** 端口 */
-	private String port;
+	/** 系统编码 */
+	private String appCode;
+	
+	/** 租户编码 **/
+	private String tenantCode;
 
 	/** 排序 */
 
 	private Integer sn;
+
+	/***/
+	private String nodePath;
 
 	/** 备注 */
 	private String remark;
 
 	// getter、setter
 
-	public void setCode(String code) {
-		this.code = code;
+	
+	public void setPid(Long pid) {
+		this.pid = pid;
 	}
 
-	public String getCode() {
-		return this.code;
-	}
-
-	public void setAppCode(String appCode) {
-		this.appCode = appCode;
-	}
-
-	public String getAppCode() {
-		return this.appCode;
+	public Long getPid() {
+		return this.pid;
 	}
 
 	public void setName(String name) {
@@ -80,52 +72,36 @@ public class MachineQuery {
 		return this.name;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setValue(String value) {
+		this.value = value;
 	}
 
-	public String getUserName() {
-		return this.userName;
+	public String getValue() {
+		return this.value;
 	}
 
-	public void setUserPassword(String userPassword) {
-		this.userPassword = userPassword;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
-	public String getUserPassword() {
-		return this.userPassword;
+	public String getCode() {
+		return this.code;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setEnable(String enable) {
+		this.enable = enable;
 	}
 
-	public String getUrl() {
-		return this.url;
+	public String getEnable() {
+		return this.enable;
 	}
 
-	public void setStatus(Integer status) {
-		this.status = status;
+	public void setAppCode(String appCode) {
+		this.appCode = appCode;
 	}
 
-	public Integer getStatus() {
-		return this.status;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getAddress() {
-		return this.address;
-	}
-
-	public void setPort(String port) {
-		this.port = port;
-	}
-
-	public String getPort() {
-		return this.port;
+	public String getAppCode() {
+		return this.appCode;
 	}
 
 	public void setSn(Integer sn) {
@@ -134,6 +110,14 @@ public class MachineQuery {
 
 	public Integer getSn() {
 		return this.sn;
+	}
+
+	public void setNodePath(String nodePath) {
+		this.nodePath = nodePath;
+	}
+
+	public String getNodePath() {
+		return this.nodePath;
 	}
 
 	public void setRemark(String remark) {
@@ -200,12 +184,28 @@ public class MachineQuery {
 		this.id = id;
 	}
 
-	public String getType() {
+	public Integer getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(Integer type) {
 		this.type = type;
+	}
+
+	public String getIdNotIn() {
+		return idNotIn;
+	}
+
+	public void setIdNotIn(String idNotIn) {
+		this.idNotIn = idNotIn;
+	}
+
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
 	}
 
 }
