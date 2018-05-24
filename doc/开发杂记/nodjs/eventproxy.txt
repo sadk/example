@@ -1,0 +1,4 @@
+https://www.npmjs.com/package/eventproxy 
+
+
+http://wiki.jikexueyuan.com/project/node-lessons/superagent-cheerio.html (node.js实现简单爬虫）

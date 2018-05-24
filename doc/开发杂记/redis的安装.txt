@@ -1,0 +1,28 @@
+1 https://yq.aliyun.com/articles/183749?spm=5176.11156439.0.0.24fb44eeaqIvjr  （阿里云慢SQL优化挑战大赛分析）
+2 https://www.cnblogs.com/hz-it/p/7483920.html (CentOS7安装Redis4.0)
+3 http://blog.csdn.net/lgh1117/article/details/48270085 (redis linux安装 [adlist.o] Error jemalloc/jemalloc.h: No such file or directory)
+
+
+4 http://www.runoob.com/docker/docker-tutorial.html  
+
+5 https://www.cnblogs.com/simonbaker/p/5131019.html   (centos下wget: command not found的解决方法)
+6 http://blog.csdn.net/keda8997110/article/details/8735735 (-bash: wget: command not found的两种解决方法)
+
+
+7 https://www.cnblogs.com/hzzll/p/6728680.html （redis的启动和关闭）
+
+8 http://developer.51cto.com/art/201804/570478.htm  (3台机器轻松搭建一个高可用Redis服务架构,可参考)
+
+redis关闭--》到redis节点目录下执行如下命令 ：redis-cli -p 端口号 shutdown
+redis启动--》 ./redis-server 参数    （参数：redis.conf文件全路径）
+
+需要到redis所在目录去重新启动redis，此时redis中的数据仍然可以恢复
+
+8 安装lua报错 ： https://www.cnblogs.com/softidea/archive/2016/03/02/5236498.html
+解决方法：
+缺少libreadline-dev依赖包
+centos: yum install readline-devel
+debian: apt-get install libreadline-dev.
+
+
+9 http://blog.csdn.net/chwshuang/article/details/55258004 （redis命令行查看中文不乱码） by:在 redis-cli 后面加上–raw

@@ -1,0 +1,10 @@
+https://www.cnblogs.com/garfieldcgf/p/6393579.html
+
+
+2. 使用场景 
+分布式缓存，通常使用在数据库之前的那一层 
+缓存服务器 
+NoSql的数据存储 
+Spring cache 
+微服务的结构 
+储存临时数据，如web的session等 

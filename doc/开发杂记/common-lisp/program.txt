@@ -1,0 +1,2 @@
+
+https://media.readthedocs.org/htmlzip/ansi-common-lisp/latest/ansi-common-lisp.zip  (标准common-lisp中文doc)

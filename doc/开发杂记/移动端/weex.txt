@@ -1,0 +1,1 @@
+http://weex.apache.org/cn/guide/advanced/app-architecture.html
