@@ -1,0 +1,71 @@
+1.注入有问题 ,如下写法没问题 见2)
+@Controller(mapping={"/region"})
+public class RegionController {
+	@Inject private Db db;
+	
+	
+2) 没有声明private 注入不进去！！！
+@Controller(mapping={"/region"})
+public class RegionController {
+	@Inject Db db;
+	
+	
+3) 代码生成器，指定的查询条件为"是"的字段，才生成出查询条件框
+
+
+4) 所有表有id和父id的，自动增长列起始值最好设置从10000开始，如果从1开始,那么node_path值有可能是以下值
+1
+1,2 
+11,22
+3851,22222
+ 注意：删除第二个节点以下的数据是用 where node_path like '1,2%' 这样会把第3条和第4条也删除!!!!!!!!
+
+
+
+5) 还差一个爬虫系统，在线配置界面可参照：https://my.oschina.net/seamanmei/blog/338019
+
+6）JGroups---一个入门的简单程序
+
+
+7) controller里的beanParam, 当属性没有添加private 时， 不能填充请求的字段
+
+8）DB增强接口，主要服务于存储过程，ORO的占位符原样输出安全隐藏
+/**
+ * <pre>
+ * 获取数据集
+ * DataSet ds = db.execute("",Object [] args,Param ... paramType).dataSet();
+ * 
+ * 获取表格
+ * Table table = db.execute("",Object [] args,Param ... paramType).table();
+ * 
+ * 获取多个表格
+ * List&ltTable&gt tables = db.execute("",Object [] args,Param ... paramType).tables();
+ * 
+ * 获取过程输出参数值
+ * Object obj = db.execute("",Object [] args,Param ... paramType).outputObject();
+ * 
+ * 获取过程多个输出参数值
+ * List&ltObject&gt objs = db.execute("",Object [] args,Param ... paramType).outputObjects();
+ * 
+ * 获取表格数据转JavaBean、Map、Integer
+ * db.execute("",Object [] args,Param ... paramType).table().forList(Bean.class);
+ * db.execute("",Object [] args,Param ... paramType).tables(0).forList(Map.class);
+ * db.execute("",Object [] args,Param ... paramType).tables(0).forList(Integer.class);
+ * </pre>
+ * @author mmyuan
+ */
+ 
+ 9) db的读写分离、心跳包开发（长连接或短连接形式）、 SQL解析自动开启事务\ 怎么样实施框架缓存？（在web可以写注解，服务层呢？，还有就是db层，缓存刷新是什么时候）
+ 
+ 10) 流程引擎支持并发分支、流程图设计器集成、运行中的流程审批人查看、运行中的流程图
+ 
+ 11）做一个uugirl(优质女孩网,社交 “约吧"APP,面向校园女和社会女， 主打约单模式，如约一起看电影等，做服务收费担保 )  + avgirl(一个推性用品的网站）
+ 
+ 12）缺少一个应用系统的服务器的IP管理，如：文件服务器、缓存服务器
+ 
+ 13) 趣相投APP    一些社交软件设置有做任务功能，比如：完善基本资料，完成照片上传获取奖励;
+            社交软件有速配功能，说白了就是类似婚恋网站的功能社交化， 轻式化
+           给默生用户送虚拟礼物，冲值刷，打赏，又有类似直播的功能
+           还可以把动弹加进去，比如说说的功能 
+ 14）约单APP 
+          
