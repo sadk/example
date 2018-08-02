@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.yue.model.TechInfo" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="yue_tech_info">
+			<column id="id" type="auto" property="id" text="主键" />
+	 		<column name="tech_id" property="techId" text="引用技能表ID"/>
+	 		<column name="name" property="name" text="如：培训课程"/>
+	 		<column name="code" property="code" text=""/>
+	 		<column name="remark" property="remark" text=""/>
+	 		<column name="app_code" property="appCode" text=""/>
+	 	
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	 		
+	 		<column name="tech_name" property="techName" isVirtual="true"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select B.name tech_name,A.* from yue_tech_info A left join yue_tech B on A.tech_id=B.id where 1=1 
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							name like '%${key}%'  or 
+							code like '%${key}%'  or 
+							remark like '%${key}%'  or 
+							app_code like '%${key}%' 
+					)
+				</#if>
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.techId??> and tech_id = ${query.techId} </#if>
+					
+	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+					
+	  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+					
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select B.name tech_name,A.* from yue_tech_info A left join yue_tech B on A.tech_id=B.id where 1=1  ]]>
+	</statement>
+	
+</statements>
