@@ -3,6 +3,7 @@ package org.lsqt.act.service;
 import java.util.List;
 import java.util.Map;
 
+import org.lsqt.act.model.ActRunningContext;
 import org.lsqt.act.model.ApproveOpinion;
 import org.lsqt.act.model.ApproveOpinionQuery;
 import org.lsqt.act.model.ProcessInstance;
@@ -23,7 +24,7 @@ public interface RuntimeService {
 	 * @param processDefinitionKey 流程定义Key
 	 * @return processInstanceId 返回流程实例
 	 */
-	ProcessInstance startProcessInstanceById(String processDefinitionId);
+	ActRunningContext startProcessInstanceById(String processDefinitionId);
 	
 	/**
 	 * 启动流程(跟据流程定义Id)
@@ -31,7 +32,7 @@ public interface RuntimeService {
 	 * @param variables
 	 * @return
 	 */
-	ProcessInstance startProcessInstanceById(String processDefinitionId,Map<String, Object> variables);
+	ActRunningContext startProcessInstanceById(String processDefinitionId,Map<String, Object> variables);
 	
 	/**
 	 * 启动流程（重要！！！！）
@@ -40,7 +41,7 @@ public interface RuntimeService {
 	 * @param variables 流程变量
 	 * @return
 	 */
-	ProcessInstance startProcessInstanceById(String processDefinitionId,String businessKey,Map<String, Object> variables);
+	ActRunningContext startProcessInstanceById(String processDefinitionId,String businessKey,Map<String, Object> variables);
 	
 	
 	/**
@@ -48,7 +49,7 @@ public interface RuntimeService {
 	 * @param processDefinitionKey 流程定义Key
 	 * @return processInstanceId 返回流程实例
 	 */
-	ProcessInstance startProcessInstanceByKey(String processDefinitionKey);
+	ActRunningContext startProcessInstanceByKey(String processDefinitionKey);
 	
 	/**
 	 * 
@@ -56,7 +57,7 @@ public interface RuntimeService {
 	 * @param variables 流程变量Map
 	 * @return processInstanceId 返回流程实例
 	 */
-	ProcessInstance startProcessInstanceByKey(String processDefinitionKey,Map<String,Object> variables);
+	ActRunningContext startProcessInstanceByKey(String processDefinitionKey,Map<String,Object> variables);
 	
 	/**
 	 *
@@ -65,7 +66,7 @@ public interface RuntimeService {
 	 * @param variables 流程变量
 	 * @return
 	 */
-	ProcessInstance startProcessInstanceByKey(String processDefinitionKey,String businessKey,Map<String,Object> variables);
+	ActRunningContext startProcessInstanceByKey(String processDefinitionKey,String businessKey,Map<String,Object> variables);
 	
 	/**
 	 *  启动流程（核心方法）
@@ -75,7 +76,7 @@ public interface RuntimeService {
 	 * @param variables 
 	 * @return
 	 */
-	ProcessInstance startProcessInstanceByKey(String processDefinitionKey,String businessKey,String businessType, Map<String, Object> variables);
+	ActRunningContext startProcessInstanceByKey(String processDefinitionKey,String businessKey,String businessType, Map<String, Object> variables);
 	
 	/**
 	 * 流程挂起
@@ -122,12 +123,7 @@ public interface RuntimeService {
 	 */
 	List<ApproveOpinion> queryForListOpinion(ApproveOpinionQuery query) ;
 	
-	/**
-	 * 流程是否结束
-	 * @param processInstanceId
-	 * @return
-	 */
-	boolean isInstanceEnded(String processInstanceId);
+
 	
 	/**
 	 * 当前实例调（会签并发）产生的任务

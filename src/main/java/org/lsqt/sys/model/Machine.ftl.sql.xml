@@ -13,6 +13,7 @@
 	 		<column name="port" property="port" text="端口"/>
 	 		<column name="sn" property="sn" text="排序"/>
 	 		<column name="remark" property="remark" text="备注"/>
+	 		<column name="type" property="type" text="datasource=数据库服务器 、redis = redis服务器"/>
 	 	
 	 	 
 	 		<column gid="gid" property="gid" text="全局唯一编号"/>
@@ -39,6 +40,8 @@
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						<#if query.type??> and type = '${query.type}' </#if>
 					
 	  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
 						

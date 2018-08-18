@@ -59,7 +59,11 @@ public class RunInstance {
 	/**流程已结束=1 未结束=0**/
 	private Integer endStatus; 
 
+	/**用印公司**/
+	private String companyNamePrint;
 	
+	/**用印公司ID**/
+	private String companyIdPrint;
 	
 	/** 业务自定义的分类 */
 	private String businessCategory;
@@ -104,8 +108,9 @@ public class RunInstance {
 	private String version;
 	
 	
-	// --------------------------- 活动节点的审批人,如：张三(zhang3),李四(li4)
-	private String approveUserText;
+	// --------------------------- 
+	private String approveUserText; //活动节点的审批人,如：张三(zhang3),李四(li4)
+	private String approveUserIds; // 活动节点的审批人ID (逗号分割)
 	
 	public String getEndStatusDesc() {
 		if (endStatus != null) {
@@ -421,6 +426,30 @@ public class RunInstance {
 
 	public void setActive(Integer active) {
 		this.active = active;
+	}
+
+	public String getCompanyNamePrint() {
+		return companyNamePrint;
+	}
+
+	public void setCompanyNamePrint(String companyNamePrint) {
+		this.companyNamePrint = companyNamePrint;
+	}
+
+	public String getCompanyIdPrint() {
+		return companyIdPrint;
+	}
+
+	public void setCompanyIdPrint(String companyIdPrint) {
+		this.companyIdPrint = companyIdPrint;
+	}
+
+	public String getApproveUserIds() {
+		return approveUserIds;
+	}
+
+	public void setApproveUserIds(String approveUserIds) {
+		this.approveUserIds = approveUserIds;
 	}
 	
 }

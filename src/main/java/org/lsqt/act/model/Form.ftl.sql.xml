@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.Form" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_form">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 		<column name="name" property="name" text="表单名称"/>
+	 	
+	 		<column name="code" property="code" text="表单编码"/>
+	 	
+	 		<column name="category" property="category" text="分类编码"/>
+	 	
+	 		<column name="version" property="version" text="表单版本"/>
+	 	
+	 		<column name="table_name" property="tableName" text="表单对应的表名称"/>
+	 	
+	 		<column name="model_name" property="modelName" text="表单对的模型名"/>
+	 	
+	 		<column name="datasource_code" property="dataSourceCode" text="表单对的表所在的数据源"/>
+	 		
+	 		<column name="db_name" property="dbName" text="表单对的主表所在的数据库"/>
+	 	
+	 		<column name="sn" property="sn" text=""/>
+	 	
+	 		<column name="remark" property="remark" text="用户备注"/>
+	 	
+	 		<column name="app_code" property="appCode" text=""/>
+	 	
+	 		<column name="category_name" property="categoryName" text="分类名"/>
+	 	
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_form where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							name like '%${key}%'  or 
+							 
+							code like '%${key}%'  or 
+							 
+							category like '%${key}%'  or 
+							
+							category_name like '%${key}%'  or 
+							
+							version like '%${key}%'  or 
+							
+							table_name like '%${key}%'  or 
+							
+							db_name like '%${key}%'  or 
+							 
+							model_name like '%${key}%'  or 
+							 
+							datasource_code like '%${key}%'  or 
+							 
+							remark like '%${key}%'  or 
+							 
+							app_code like '%${key}%' 
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+					
+	  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+					
+	  						<#if query.category??> and category = '${StringUtil.escapeSql(query.category)}' </#if>
+	  						
+	  						<#if query.categoryName??> and category = '${StringUtil.escapeSql(query.categoryName)}' </#if>
+					
+	  						<#if query.version??> and version = '${StringUtil.escapeSql(query.version)}' </#if>
+					
+							<#if query.dbName??> and db_name = '${StringUtil.escapeSql(query.dbName)}' </#if>
+							
+	  						<#if query.tableName??> and table_name = '${StringUtil.escapeSql(query.tableName)}' </#if>
+					
+	  						<#if query.modelName??> and model_name = '${StringUtil.escapeSql(query.modelName)}' </#if>
+						
+	  						<#if query.dataSourceCode??> and datasource_code = '${StringUtil.escapeSql(query.dataSourceCode)}' </#if>
+					
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_form ]]>
+	</statement>
+	
+</statements>

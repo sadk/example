@@ -95,19 +95,15 @@
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
-							RES.NAME_ like '%${key}%'  or 
-							RES.TENANT_ID_ = '%${key}%'  or 
-							RES.PROC_INST_ID_ = '%${key}%' or
-							
-							C.business_flow_no like '%${key}%' or
+							 
+							C.instance_id = '${key}' or
+							C.business_flow_no = '${key}' or
 							C.title like '%${key}%'  or 
 							C.start_user_id = '${key}'  or 
 							C.start_user_name like '%${key}%'  or 
-							C.business_key = '%${key}%'  or 
+							C.business_key = '${key}'  or 
 							C.business_status_desc like '%${key}%' or
 							C.remark like '%${key}%'  
-							
-							
 					)
 				</#if>
 				

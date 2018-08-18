@@ -12,7 +12,7 @@ public class Main {
 	
 	public static void main(String[] args) throws Exception {
 	    long start = System.currentTimeMillis();
-		Server server = new Server(80);
+		Server server = new Server(8080);
 		WebAppContext webappHandler = new WebAppContext("src/main/webapp", "/");
 		server.setHandler(webappHandler);
 		server.start();

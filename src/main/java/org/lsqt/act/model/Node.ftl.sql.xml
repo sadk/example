@@ -11,13 +11,27 @@
 	 		
 	 		<column name="task_key" property="taskKey" text="节点定义Key"/>
 	 	
-	 		<column name="task_name" property="taskName" text="按钮名称"/>
+	 		<column name="task_name" property="taskName" text="任务名称"/>
+	 		
+	 		<column name="task_name_alias" property="taskNameAlias" text="任务节点别名"/>
 	 	
 	 		<column name="task_def_type" property="taskDefType" text="节点定义类型: 1=usertask"/>
 	 	
 	 		<column name="task_biz_type" property="taskBizType" text="节点类型: 0=拟稿节点"/>
 	 	
+	 		<column name="print_node" property="printNode" text="是否是用印：1=用印  0=不是用印"/>
 	 	
+	 	
+	 	
+	 		<column name="before_script" property="beforeScript" text="前置角本"/>
+	 		<column name="before_script_type" property="beforeScriptType" text="前置角本类型:1=url 2=javascript_code 3=javacode  "/>
+	 	
+	 		<column name="after_script" property="afterScript" text="后置角本"/>
+	 		<column name="after_script_type" property="afterScriptType" text="后置角本类型:1=url 2=javascript_code 3=javacode"/>
+	 		
+	 		<column name="once_script" property="onceScript" text="中间（一次性）角本"/>
+	 		<column name="once_script_type" property="onceScriptType" text="中间（一次性）角本"/>
+	 		
 	 		<column name="app_code" property="appCode" text="租户编码"/>
 	 		<column name="sn" property="sn" text="排序"/>
 	 		<column name="remark" property="remark" text="备注"/>
@@ -46,18 +60,38 @@
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						<#if query.printNode??> and print_node = ${query.printNode} </#if>
+	  						
+	  						<#if query.printNodes??> and print_node in (${StringUtil.escapeSql(query.printNodes)}) </#if>
 					
 	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
+							
+							<#if query.definitionIdList?? && (query.definitionIdList?size > 0)> 
+								and definition_id in (
+									<#list query.definitionIdList as e>
+										'${e}'<#if e_has_next> , </#if> 
+									</#list>
+								)
+							</#if>	
 						
 	  						<#if query.taskKey??> and task_key = '${StringUtil.escapeSql(query.taskKey)}' </#if>
 						
 	  						<#if query.taskName??> and task_name like '%${StringUtil.escapeSql(query.taskName)}%' </#if>
 						 
+						 	<#if query.taskNameAlias??> and task_name like '%${StringUtil.escapeSql(query.taskNameAlias)}%' </#if>
 						 
 							<#if query.nodeVariableCopy??> and node_variable_copy = ${query.nodeVariableCopy} </#if>
 							
 							<#if query.nodeJumpType??> and node_jump_type = ${query.nodeJumpType} </#if>
-								 
+							<#if query.nodeJumpTypeList?? && (query.nodeJumpTypeList?size > 0)> 
+								and node_jump_type in (
+									<#list query.nodeJumpTypeList as e>
+										'${e}'<#if e_has_next> , </#if> 
+									</#list>
+								)
+							</#if>	 
+						
 								 
 							<#if query.taskDefType??> and task_def_type = ${query.taskDefType} </#if>
 							
@@ -85,4 +119,7 @@
 		<![CDATA[ select * from ext_node ]]>
 	</statement>
 	
+	<statement id="getNodeCount" parameterName="query">
+		<![CDATA[ select count(1) from ext_node where definition_id='${StringUtil.escapeSql(query.definitionId)}']]>
+	</statement>
 </statements>

@@ -1,5 +1,7 @@
 package org.lsqt.act.model;
 
+import java.util.List;
+
 import org.lsqt.components.db.Page;
 
 /**
@@ -23,6 +25,8 @@ public class RunTaskAssignForwardCcQuery {
 
 	/** 流程实例id */
 	private String processInstanceId;
+	
+	private List<String> processInstanceIdList;
 
 	/** 流程定义ID */
 	private String definitionId;
@@ -35,7 +39,7 @@ public class RunTaskAssignForwardCcQuery {
 
 	/** 记录审批时的节点ID（待办任务ID） */
 	private String taskId;
-
+	
 	/** 任务是否已完成（用以区分数据）：0=没有完成 1=已完成 */
 	private String taskCompleteType;
 
@@ -61,6 +65,9 @@ public class RunTaskAssignForwardCcQuery {
 	private String remark;
 
 	// getter、setter
+
+	// --------------------
+	private List<String> taskIdList;
 
 	public void setBusinessKey(String businessKey) {
 		this.businessKey = businessKey;
@@ -228,6 +235,22 @@ public class RunTaskAssignForwardCcQuery {
 
 	public void setIds(String ids) {
 		this.ids = ids;
+	}
+
+	public List<String> getProcessInstanceIdList() {
+		return processInstanceIdList;
+	}
+
+	public void setProcessInstanceIdList(List<String> processInstanceIdList) {
+		this.processInstanceIdList = processInstanceIdList;
+	}
+
+	public List<String> getTaskIdList() {
+		return taskIdList;
+	}
+
+	public void setTaskIdList(List<String> taskIdList) {
+		this.taskIdList = taskIdList;
 	}
 
 }

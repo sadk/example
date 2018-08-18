@@ -80,17 +80,23 @@ public class DefinitionServiceImpl implements DefinitionService{
 			delete(id,cascade);
 		}
 		
-		//删除节点设置、人员设置、表单设置、按钮设置
+		//删除节点设置、人员设置、表单设置、按钮设置、流程定义全局角本、流程发起变量设置
+		
 		String sql1 = "delete from ext_node where definition_id=?" ;
 		String sql2 = "delete from ext_node_button where definition_id=?" ;
 		String sql3 = "delete from ext_node_form where definition_id=?" ;
 		String sql4 = "delete from ext_node_user where definition_id=?";
+		String sql5 = "delete from ext_definition  where definition_id=?";
+		String sql6 = "delete from ext_variable where definition_id=?";
+		
 		for(String id: ids){
 			if(StringUtil.isNotBlank(id)){
 				db.executeUpdate(sql1, id);
 				db.executeUpdate(sql2, id);
 				db.executeUpdate(sql3, id);
 				db.executeUpdate(sql4, id);
+				db.executeUpdate(sql5, id);
+				db.executeUpdate(sql6, id);
 			}
 		}
 	}
@@ -149,6 +155,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 						if(t.getId().equals(e.getId())) {
 							e.setShortName(t.getShortName());
 							e.setEnableMobile(t.getEnableMobile());
+							e.setDeployTime(t.getDeployTime());
 							break;
 						}
 					}

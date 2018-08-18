@@ -109,6 +109,8 @@ public class NodeUserController {
 		return 0;
 	}
 	
+	
+	
 	@RequestMapping(mapping = { "/init_node_user", "/m/init_node_user" },text="初使化整个流程节点的审批人，初使化的是具体用户")
 	public int initNodeUser(String definitionId, String userIds) {
 		if (StringUtil.isNotBlank(definitionId,userIds)) {

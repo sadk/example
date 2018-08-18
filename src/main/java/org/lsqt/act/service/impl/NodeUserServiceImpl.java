@@ -35,6 +35,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.lsqt.act.ActUtil;
 import org.lsqt.act.model.ApproveObject;
+import org.lsqt.act.model.Definition;
+import org.lsqt.act.model.Node;
+import org.lsqt.act.model.NodeQuery;
 import org.lsqt.act.model.NodeUser;
 import org.lsqt.act.model.NodeUserQuery;
 import org.lsqt.act.model.UserRule;
@@ -86,7 +89,11 @@ public class NodeUserServiceImpl implements NodeUserService{
 	public void saveOrUpdate(String definitionId,String taskKey,List<NodeUser> models) {
 		db.executeUpdate("delete from ext_node_user where definition_id=? and task_key=? ", definitionId,taskKey);
 		
+		Definition def = db.getById(Definition.class, definitionId);
 		for (NodeUser m : models) {
+			if(StringUtil.isBlank(m.getDefinitionName()) && def!=null) {
+				m.setDefinitionName(def.getName());
+			}
 			db.save(m);
 		}
 		
@@ -167,6 +174,7 @@ public class NodeUserServiceImpl implements NodeUserService{
 				}
 			}
 		}
+		
 		return result;
 	}
 	

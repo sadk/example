@@ -3,6 +3,7 @@ package org.lsqt.act.controller;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
@@ -20,6 +21,7 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,7 @@ import com.alibaba.fastjson.JSON;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.FileRenamePolicy;
 
+import org.eclipse.jetty.deploy.App;
 import org.lsqt.act.FastDFSUtil;
 import org.lsqt.act.model.ApproveOpinion;
 import org.lsqt.act.model.ApproveOpinionFile;
@@ -250,4 +253,66 @@ public class ApproveOpinionController {
 	}
 	
 
+	@RequestMapping(mapping = { "/do_data", "/m/do_data" },text="流程意见批量处理数据，兼容新代码：fix上下节点死循环审批!!")
+	public void doData() {
+		String sql = "select distinct(process_instance_id) instanceId from ext_approve_opinion where approve_action = 'reject_to_choose_node' and (reject_re_run_complete_status is null or reject_re_run_complete_status='') ";
+		List<Map<String,Object>> list = db.executeQuery(sql);
+		
+		List<String> instanceIdList = new ArrayList<>();
+		for (Map<String, Object> row : list) {
+			Object instanceId = row.get("instanceId");
+			if (instanceId != null) {
+				instanceIdList.add(instanceId.toString());
+			}
+		}
+		
+		if (ArrayUtil.isNotBlank(instanceIdList)) {
+			ApproveOpinionQuery query = new ApproveOpinionQuery();
+			query.setProcessInstanceIds(StringUtil.join(instanceIdList));
+			
+			List<ApproveOpinion> data = db.queryForList("doData", ApproveOpinion.class, query);
+			Map<String,List<ApproveOpinion>> dataMap = new HashMap<>();
+			
+		
+			if (ArrayUtil.isNotBlank(data)) {
+				for (String instanceId : instanceIdList) {
+					dataMap.put(instanceId, new ArrayList<>());
+				}
+				for(ApproveOpinion e: data) {
+					dataMap.get(e.getProcessInstanceId()).add(e);
+				}
+				
+				List<Long> updateList = new ArrayList<>();
+				
+				for(String key : dataMap.keySet()) {
+					List<ApproveOpinion> blok = dataMap.get(key);
+					for(int i=0;i<blok.size();i++) {
+						ApproveOpinion curr = blok.get(i);
+						if(curr.getProcessInstanceId().equals("8603081")) {
+							System.out.println(curr);
+						}
+						if ("reject_to_choose_node".equals(curr.getApproveAction())) {
+							int next = i+1;
+							if (next < blok.size()) {
+								ApproveOpinion nxtObj = blok.get(next);
+								if ("agree".equals(nxtObj.getApproveAction())
+										|| "resubmit".equals(nxtObj.getApproveAction())
+										|| "start_user_reback".equals(nxtObj.getApproveAction())
+										|| "reject_to_starter".equals(nxtObj.getApproveAction())
+										|| "abort".equals(nxtObj.getApproveAction())) {
+									updateList.add(curr.getId());
+								}
+							}
+						}
+					}
+				}
+				
+				if(ArrayUtil.isNotBlank(updateList)) {
+					//db.executeUpdate("update ext_approve_opinion set reject_re_run_complete_status=1 where id in ("+StringUtil.join(updateList)+")");
+					System.out.println("update ext_approve_opinion set reject_re_run_complete_status=1 where id in ("+StringUtil.join(updateList)+")");
+				}
+			}
+			 
+		}
+	}
 }

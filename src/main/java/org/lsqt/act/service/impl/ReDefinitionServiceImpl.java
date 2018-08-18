@@ -5,11 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.lsqt.components.context.annotation.Inject;
-import org.lsqt.components.context.annotation.Service;
-import org.lsqt.components.db.Db;
-import org.lsqt.components.db.Page;
-import org.lsqt.components.util.lang.StringUtil;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.UserTask;
@@ -29,6 +24,11 @@ import org.lsqt.act.model.ReDefinitionQuery;
 import org.lsqt.act.model.UserRuleMatrixFlow;
 import org.lsqt.act.model.UserRuleMatrixFlowQuery;
 import org.lsqt.act.service.ReDefinitionService;
+import org.lsqt.components.context.annotation.Inject;
+import org.lsqt.components.context.annotation.Service;
+import org.lsqt.components.db.Db;
+import org.lsqt.components.db.Page;
+import org.lsqt.components.util.lang.StringUtil;
 
 @Service
 public class ReDefinitionServiceImpl implements ReDefinitionService{
@@ -79,16 +79,25 @@ public class ReDefinitionServiceImpl implements ReDefinitionService{
 		}
 		
 		final Definition targetDefinition = db.getById(Definition.class, targetDefinitionId);
+		final Definition sourceDefinition = db.getById(Definition.class, sourceDefinitionId);
 		
 		List<UserTask> diagramNodeList = getDiagramTaskNodeList(targetDefinitionId);
 		
+		
 		ReDefinitionQuery query = new ReDefinitionQuery();
 		query.setDefinitionId(sourceDefinitionId);
-		ReDefinition reDef= db.queryForObject("queryForPage",ReDefinition.class, query);
-		if(reDef == null) {
-			return null;
+		ReDefinition reDef= db.queryForObject("queryForPage",ReDefinition.class, query); //源流程Re定义
+		if(reDef == null) { // 如源流程没有Re定义，则新建
+			reDef = new ReDefinition();
+			reDef.setDefinitionId(sourceDefinitionId);
+			reDef.setDefinitionKey(sourceDefinition.getKey());
+			reDef.setDefinitionName(sourceDefinition.getName());
+			reDef.setDefinitionShortName(sourceDefinition.getShortName());
+			reDef.setRemark(sourceDefinition.getDescription());
+			reDef.setSn(0);
+			db.save(reDef);
 		}
-		
+			
 		//1.拷贝流程定义配置
 		reDef.setId(null);
 		reDef.setDefinitionId(targetDefinitionId);

@@ -153,6 +153,8 @@ public class NodeButton {
 	 * 19=(任意)撤回， any_reback
 	 * 
 	 * 20=退回到选择节点，多级退回！(reject_to_choose_node_for_mutil_back)
+	 * 
+	 * 21=(当流程驳回到）拟稿人（后）重新提交
 	 * */
 	private Integer btnType;
 	
@@ -204,6 +206,7 @@ public class NodeButton {
 	/**(任意)撤回**/
 	public static final String  BTN_TYPE_ANY_REBACK ="any_reback";
 	
+	@Deprecated
 	public static final String BTN_TYPE_REJECT_TO_CHOOSE_NODE_FOR_MUTIL_BACK="reject_to_choose_node_for_mutil_back";
 	
 	public String getBtnTypeDesc() {
@@ -229,7 +232,8 @@ public class NodeButton {
 			if(18 == btnType) return "不同意(流程实例级联清除)";
 			if(19 == btnType) return "(任意)撤回";
 			
-			if(20 == btnType) return "(驳回到拟稿人重)提交";
+			if(21 == btnType) return "(驳回到拟稿人重)提交";
+			
 		}
 		return "";
 	}
@@ -242,11 +246,11 @@ public class NodeButton {
 	private String afterScript;
 	private String afterScriptType;
 
-	public static final String SCRIPT_TYPE_URL="1";
-	public static final String SCRIPT_TYPE_JAVASCRIPT_CODE="2";
-	public static final String SCRIPT_TYPE_JAVA_CODE="3";
-	public static final String SCRIPT_TYPE_GROOVY= "4";
-	public static final String SCRIPT_TYPE_SQL= "5";
+	public static final String SCRIPT_TYPE_URL=Node.SCRIPT_TYPE_URL;
+	public static final String SCRIPT_TYPE_JAVASCRIPT_CODE=Node.SCRIPT_TYPE_JAVASCRIPT_CODE;
+	public static final String SCRIPT_TYPE_JAVA_CODE=Node.SCRIPT_TYPE_JAVA_CODE;
+	public static final String SCRIPT_TYPE_GROOVY= Node.SCRIPT_TYPE_GROOVY;
+	public static final String SCRIPT_TYPE_SQL= Node.SCRIPT_TYPE_SQL;
 	
 	/** 租户编码 */
 	private String appCode;

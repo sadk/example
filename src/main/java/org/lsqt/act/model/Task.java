@@ -1,10 +1,13 @@
 package org.lsqt.act.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.lsqt.act.ActUtil;
+import org.lsqt.components.util.collection.ArrayUtil;
 
 /**
  * 流程任务相关
@@ -44,6 +47,9 @@ public class Task {
 	private String businessFlowNo;
 	
 	// -------------------------------------------------------------- 辅助字段  ----------------------------
+	private String companyNamePrint; // 用印公司名
+	private boolean isHistoryTask; // 是否是历史任务标志，
+	
 	// 当前任务对应的流程实例关联的业务主键 !!!
 	private String businessKey;
 	
@@ -81,12 +87,28 @@ public class Task {
 	private String businessStatusDesc;
 	
 	private String closeStatus; // 流程是否结束 1=已结束  0=未结束
+	
+	private Integer readed ; //1=已读 (0或null)=未读
+	private String gid;
+	
+	
 	public String getCloseStatusDesc() {
 		if(ActUtil.END_STATUS_已结束.equals(closeStatus)) {
 			return "已结束";
 		}else {
 			return "未结束";
 		}
+	}
+	
+	public static List<String> toTaskIdList(List<Task> taskList) {
+		List<String> taskIdList = new ArrayList<>();
+		if(ArrayUtil.isBlank(taskList)){
+			return taskIdList;
+		}
+		for(Task t: taskList) {
+			taskIdList.add(t.getId());
+		}
+		return taskIdList;
 	}
 	/**
 	 * 手工克隆任务对象
@@ -399,5 +421,37 @@ public class Task {
 	}
 	public void setBusinessFlowNo(String businessFlowNo) {
 		this.businessFlowNo = businessFlowNo;
+	}
+
+	public boolean getIsHistoryTask() {
+		return isHistoryTask;
+	}
+
+	public void setIsHistoryTask(boolean isHistory) {
+		this.isHistoryTask = isHistory;
+	}
+
+	public String getCompanyNamePrint() {
+		return companyNamePrint;
+	}
+
+	public void setCompanyNamePrint(String companyNamePrint) {
+		this.companyNamePrint = companyNamePrint;
+	}
+
+	public String getGid() {
+		return gid;
+	}
+
+	public void setGid(String gid) {
+		this.gid = gid;
+	}
+
+	public Integer getReaded() {
+		return readed;
+	}
+
+	public void setReaded(Integer readed) {
+		this.readed = readed;
 	}
 }

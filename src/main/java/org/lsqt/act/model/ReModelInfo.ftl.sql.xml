@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.ReModelInfo" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="act_re_model">
+			<column id="ID_" type="auto" property="id" text="主键" />
+			
+	 		<column name="REV_" property="rev" text="并发版本号"/>
+	 		<column name="NAME_" property="name" text="模型名称"/>
+	 		<column name="KEY_" property="key" text="自定key或命名空间"/>
+	 		<column name="CATEGORY_" property="category" text="分类"/>
+	 		<column name="VERSION_" property="version" text=""/>
+	 		<column name="META_INFO_" property="metaInfo" text="流程图元信息"/>
+	 		<column name="DEPLOYMENT_ID_" property="deployeId" text="布署 ID"/>
+	 		<column name="EDITOR_SOURCE_VALUE_ID_" property="editorSourceValueId" text="流程文件放在ACT_GE_BYTEARRAY中的ID"/>
+	 		<column name="EDITOR_SOURCE_EXTRA_VALUE_ID_" property="editSourceExtraValueId" text="流程文件图像放在ACT_GE_BYTEARRAY中的ID"/>
+	 		<column name="TENANT_ID_" property="tenantId" text=""/>
+
+	 		<column createTime="CREATE_TIME_" property="createTime" text="创建时间"/>	 		
+	 		<column updateTime="LAST_UPDATE_TIME_" property="updateTime" text="更新时间"/>
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from act_re_model where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							ID_ = '${key}'  or 
+							NAME_ like '%${key}%'  or 
+							KEY_ like '%${key}%'  or 
+							CATEGORY_ like '%${key}%'  or 
+							TENANT_ID_ like '%${key}%' 
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+	  						
+	  						<#if query.id??> and ID_ = '${StringUtil.escapeSql(query.id)}' </#if>
+						
+	  						<#if query.rev??> and REV_ = ${query.rev} </#if>
+					
+	  						<#if query.name??> and NAME_ = '${StringUtil.escapeSql(query.name)}' </#if>
+					
+	  						<#if query.key??> and KEY_ = '${StringUtil.escapeSql(query.key)}' </#if>
+					
+	  						<#if query.category??> and CATEGORY_ = '${StringUtil.escapeSql(query.category)}' </#if>
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(CREATE_TIME_,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+						
+	  						<#if query.version??> and VERSION_ = ${query.version} </#if>
+					
+	  						<#if query.metaInfo??> and META_INFO_ = '${StringUtil.escapeSql(query.metaInfo)}' </#if>
+						
+	  						<#if query.deployeId??> and DEPLOYMENT_ID_ = '${StringUtil.escapeSql(query.deployeId)}' </#if>
+						
+	  						<#if query.editorSourceValueId??> and EDITOR_SOURCE_VALUE_ID_ = '${StringUtil.escapeSql(query.editorSourceValueId)}' </#if>
+					
+	  						<#if query.editSourceExtraValueId??> and EDITOR_SOURCE_EXTRA_VALUE_ID_ = '${StringUtil.escapeSql(query.editSourceExtraValueId)}' </#if>
+					
+	  						<#if query.tenantId??> and TENANT_ID_ = '${StringUtil.escapeSql(query.tenantId)}' </#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from act_re_model ]]>
+	</statement>
+	
+</statements>

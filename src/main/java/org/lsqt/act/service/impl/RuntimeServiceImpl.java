@@ -1,55 +1,65 @@
 package org.lsqt.act.service.impl;
 
+import java.io.BufferedWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.lsqt.act.ActUtil;
+import org.lsqt.act.model.ActRunningContext;
 import org.lsqt.act.model.ApproveObject;
 import org.lsqt.act.model.ApproveOpinion;
 import org.lsqt.act.model.ApproveOpinionQuery;
-import org.lsqt.act.model.InstanceVariable;
+import org.lsqt.act.model.Definition;
+import org.lsqt.act.model.DefinitionQuery;
 import org.lsqt.act.model.Node;
-import org.lsqt.act.model.NodeButton;
-import org.lsqt.act.model.NodeQuery;
+import org.lsqt.act.model.NodeForm;
+import org.lsqt.act.model.NodeFormQuery;
 import org.lsqt.act.model.ProcessInstance;
 import org.lsqt.act.model.ProcessInstanceHis;
 import org.lsqt.act.model.ProcessInstanceQuery;
+import org.lsqt.act.model.ReDefinition;
 import org.lsqt.act.model.RunInstance;
 import org.lsqt.act.model.RunInstanceQuery;
+import org.lsqt.act.model.RunTask;
+import org.lsqt.act.model.RunTaskQuery;
 import org.lsqt.act.model.Task;
-import org.lsqt.act.model.TaskQuery;
 import org.lsqt.act.service.NodeUserService;
 import org.lsqt.act.service.RuntimeService;
 import org.lsqt.act.service.TaskService;
-import org.lsqt.components.context.ContextUtil;
+import org.lsqt.act.service.support.CompleteCommand;
+import org.lsqt.act.service.support.EkpTaskUtil;
+import org.lsqt.act.service.support.StartCommand;
+import org.lsqt.act.service.support.StartHandler;
+import org.lsqt.act.service.support.TaskQueryUtil;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.collection.ArrayUtil;
+import org.lsqt.components.util.file.PropertiesUtil;
 import org.lsqt.components.util.lang.StringUtil;
-import org.lsqt.sys.model.Application;
 import org.lsqt.syswin.PlatformDb;
-import org.lsqt.syswin.uum.model.Org;
-import org.lsqt.syswin.uum.model.OrgQuery;
-import org.lsqt.syswin.uum.model.Position;
-import org.lsqt.syswin.uum.model.PositionQuery;
+import org.lsqt.syswin.uum.controller.CodeUtil;
 import org.lsqt.syswin.uum.model.User;
+import org.lsqt.syswin.uum.model.UserQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
+
+import freemarker.template.Template;
 
 
 
@@ -75,61 +85,140 @@ public class RuntimeServiceImpl implements RuntimeService{
 	@Inject private TaskService taskService;
 	
 	// ---------常规启动流程
-	public ProcessInstance startProcessInstanceById(String processDefinitionId) {
+	public ActRunningContext startProcessInstanceById(String processDefinitionId) {
 		return startProcessInstanceById(processDefinitionId, null, new HashMap<>());
 	}
 
-	public ProcessInstance startProcessInstanceById(String processDefinitionId,Map<String, Object> variables) {
+	public ActRunningContext startProcessInstanceById(String processDefinitionId,Map<String, Object> variables) {
 		return startProcessInstanceById(processDefinitionId, null , variables);
 	}
 	
-	public ProcessInstance startProcessInstanceById(String processDefinitionId,String businessKey,Map<String, Object> variables) { // startById核心启动方法
+	public ActRunningContext startProcessInstanceById(String processDefinitionId,String businessKey,Map<String, Object> variables) { // startById核心启动方法
 		
 		ProcessDefinition def = actRepositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
 
 		return excuteStart(businessKey, variables, def);
 	}
 
-	public ProcessInstance startProcessInstanceByKey(String processDefinitionKey) {
+	public ActRunningContext startProcessInstanceByKey(String processDefinitionKey) {
 		return startProcessInstanceByKey(processDefinitionKey,null,new HashMap<>());
 	}
 
-	public ProcessInstance startProcessInstanceByKey(String processDefinitionKey, Map<String, Object> variables) {
+	public ActRunningContext startProcessInstanceByKey(String processDefinitionKey, Map<String, Object> variables) {
 		return startProcessInstanceByKey(processDefinitionKey,null,variables);
 	}
 
-	public ProcessInstance startProcessInstanceByKey(String processDefinitionKey,String businessKey, Map<String, Object> variables) {
+	public ActRunningContext startProcessInstanceByKey(String processDefinitionKey,String businessKey, Map<String, Object> variables) {
 		return startProcessInstanceByKey(processDefinitionKey,businessKey,null,variables);
 	}
  
-	public ProcessInstance startProcessInstanceByKey(String processDefinitionKey,String businessKey,String businessType, Map<String, Object> variables) { // startByKey核心启动方法
-		ProcessDefinition def = actRepositoryService.createProcessDefinitionQuery().latestVersion().processDefinitionKey(processDefinitionKey).singleResult();
+	public ActRunningContext startProcessInstanceByKey(String processDefinitionKey,String businessKey,String businessType, Map<String, Object> variables) { // startByKey核心启动方法
 		
-		return excuteStart(businessKey,variables,def);
+		DefinitionQuery query = new DefinitionQuery();
+		query.setKey(processDefinitionKey);
+		query.setSortOrder("desc");
+		query.setSortField("B.DEPLOY_TIME_");
+		List<Definition> list = db.queryForList("queryForPage", Definition.class, query); //获取最新的版本（也就是最新的发布版本)
+		if (list != null && !list.isEmpty()) {
+			ProcessDefinition def = actRepositoryService.createProcessDefinitionQuery().processDefinitionId(list.get(0).getId()).singleResult();
+			if(def!=null) {
+				return excuteStart(businessKey,variables,def);
+			}
+		}
+		
+		//ProcessDefinition def = actRepositoryService.createProcessDefinitionQuery().latestVersion().processDefinitionKey(processDefinitionKey).singleResult();
+		
+		return null;
 		
 	}
 
-	/**
-	 * 填充会签节点流程变量
-	 * @param variables 用户传入的即时流程变量
-	 * @param definitionId 
-	 * @param map 即时审批用户
-	 */
-	void prepareVariablesForMeetingNode(Map<String, Object> variables,String definitionId,Map<String, List<ApproveObject>> map) {
-		List<Node> meetingNodeList = new ArrayList<>();
-		NodeQuery query = new NodeQuery();
-		query.setTaskBizType(Node.TASK_BIZ_TYPE_MEETINGNODE);
-		query.setDefinitionId(definitionId);
-		meetingNodeList = db.queryForList("queryForPage", Node.class, query);
+
+	
+	private ActRunningContext createRunningContext(String businessKey, Map<String, Object> variable, ProcessDefinition def) {
+		final ActRunningContext context = new ActRunningContext(db);
 		
-		for(Node n: meetingNodeList) {
-			List<String> assigneeList = new ArrayList<String>(); // 会签分配任务的人员
-			
-			List<ApproveObject> assignObjList = map.get(n.getTaskKey());
-			assigneeList = ApproveObject.toIdList(String.class, assignObjList);
-			
-			variables.put(n.getTaskKey()+"List", assigneeList);
+		final String loginUserId = TaskQueryUtil.resolveStartUserId(variable); // 解析登陆用户ID
+		final User loginUser = TaskQueryUtil.loadLoginUser(db2,Long.valueOf(loginUserId)); // 加载登陆用户对象(含主岗、主部门)
+		
+		
+		final String bussinessKey = TaskQueryUtil.resolveBusinessKey(businessKey,variable);
+		final String businessFlowNo = TaskQueryUtil.resolveBusinessFlowNo(variable);
+		final String createDeptId = TaskQueryUtil.resolveBusinessCreateDeptId(variable);
+		final String approveOpinion = TaskQueryUtil.resolveBusinessOpinion(variable);
+		final String bussinessType = TaskQueryUtil.resolveBusinessType(variable);
+		final String title = TaskQueryUtil.resolveBusinessTitle(variable);
+		final String companyNamePrint = TaskQueryUtil.resolveCompany4Print(variable);
+		
+		final Node draftNode = TaskQueryUtil.getDraftNode(db, def.getId());
+
+		final Map<String, List<ApproveObject>> nodeUserMap = nodeUserService.getNodeUsers(Long.valueOf(loginUserId), def.getId(),variable);
+		if (draftNode != null) {
+			nodeUserMap.put(draftNode.getTaskKey(), Arrays.asList(new ApproveObject(loginUserId))); // 流程发起人加进去
 		}
+ 
+		
+		context.setLoginUser(loginUser);
+		context.setCurrActDefinition(def);
+		context.setNodeUserMap(nodeUserMap);
+		
+		context.getCompleteVariable().putAll(TaskQueryUtil.toApproveUserMap(nodeUserMap)); // 设置审批用户！！！
+		context.getCompleteVariable().putAll(variable); // 设置业务变量！！！！
+		
+		
+		context.setInputVariable(variable);
+		context.setDb(db);
+		context.setDraftNode(draftNode);
+		
+		
+		context.getForm().setBusinessFlowNo(businessFlowNo);
+		context.getForm().setBusinessKey(bussinessKey);
+		context.getForm().setCreateDeptId(createDeptId);
+		context.getForm().setProcessDefinitionId(def.getId());
+		context.getForm().setStartUserId(loginUserId);
+		context.getForm().setApproveOpinion(approveOpinion);
+		context.getForm().setTitle(title);
+		context.getForm().setBusinessType(bussinessType);
+		context.getForm().setCompanyNamePrint(companyNamePrint);
+		
+		//context.getForm().setProcessInstanceId(processInstanceId);
+		
+		
+		final ReDefinition currReDefinion = TaskQueryUtil.loadReDefinion(context);
+		context.setCurrReDefinion(currReDefinion);
+		
+		final int nodeCount = TaskQueryUtil.getNodeCount(context);
+		context.setNodeCount(nodeCount);
+		
+		return context;
+	}
+	
+	private void checkBussiness(ActRunningContext context) {
+		final ActRunningContext.RunningForm form = context.getForm();
+		final Node draftNode = context.getDraftNode();
+		
+		// 1.填制人部门、业务主键 、流水号、流程发起人、单据标题不能为空
+		if (StringUtil.isBlank(form.getCreateDeptId())) {
+			throw new IllegalArgumentException("单据申请部门不能为空");
+		}
+		if (StringUtil.isBlank(form.getBusinessKey())) {
+			throw new IllegalArgumentException("单据主键不能为空");
+		}
+		if (StringUtil.isBlank(form.getBusinessFlowNo())) {
+			//throw new IllegalArgumentException("单据流水号不能为空");
+		}
+		if (StringUtil.isBlank(form.getStartUserId())) {
+			throw new IllegalArgumentException("单据发起人不能为空");
+		}
+		if (StringUtil.isBlank(form.getTitle())) {
+			throw new IllegalArgumentException("单据标题不能为空");
+		}
+		
+		if (draftNode == null) {
+			throw new IllegalArgumentException("拟稿节点不能为空");
+		}
+		
+		// 1.检查发起变量的key，与业务变量的key是否有冲突，有冲突不让发起
+		
 	}
 	
 	/**
@@ -139,515 +228,232 @@ public class RuntimeServiceImpl implements RuntimeService{
 	 * @param def 流程定义
 	 * @return 
 	 */
-	private ProcessInstance excuteStart(String businessKey, Map<String, Object> variables, ProcessDefinition def) {
-		if(def==null) return null;
-		log.debug("########发起流程("+def.getName()+")：" + variables);
+	private ActRunningContext excuteStart(String businessKey, Map<String, Object> variable, ProcessDefinition def) {
 		
-		final long beginTime = System.currentTimeMillis();
+		final ActRunningContext context = createRunningContext(businessKey,variable,def) ;
+ 
+		checkBussiness(context);
 		
-		final String variableJSONStart = JSON.toJSONString(variables);
+		actIdentityService.setAuthenticatedUserId(context.getForm().getStartUserId());
 		
-		final String loginUserId = prepareStartUserId(variables); // 解析登陆用户ID
+		StartHandler startHanler = new StartHandler();
+		org.lsqt.act.service.support.Command<Void> startCmd = new StartCommand(startHanler);
 		
-		final User loginUser = prepareLoginUser(loginUserId); // 加载登陆用户对象(含主岗、主部门)
-		
-		businessKey = prepareBusinessKey(businessKey, variables);
-		
-		//final String businessFlowNo = prepareBusinessFlowNo(variables);
-		
-		// 获取填制人部门，用于用户规则解析
-		Map<String,Object> nodeUserVariable = new HashMap<>();
-		Object createDeptIdObj = variables.get(ActUtil.VARIABLES_CREATE_DEPT_ID);
-		if(createDeptIdObj == null) {
-			throw new RuntimeException("填制人部门不能为空");
+		org.lsqt.act.service.support.Command<Void> macroCmd = new CompleteCommand(Arrays.asList(startCmd));
+		try {
+			macroCmd.execute(context);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			macroCmd.executeCancel(context);
+			throw new RuntimeException(ex.getMessage());
 		}
-		nodeUserVariable.put(ActUtil.VARIABLES_CREATE_DEPT_ID,Long.valueOf(createDeptIdObj.toString()));
-		
-		Map<String, List<ApproveObject>> map = nodeUserService.getNodeUsers(Long.valueOf(loginUserId), def.getId(),nodeUserVariable);
-		
-	 	final Node draftNode = getDraftNode(def);
-	 	final List<Node> autoJumpNodeList = getAutoJumpNodeList(def.getId(),map);
-	 	
-	 	prepareVariablesForExistsDraftNode(variables, loginUserId, map, draftNode);  // 如果有拟稿节点，填充审批用户到流程变量
-		prepareVariablesForNodeUser(variables, map); 
-		prepareVariablesForEmptyNodeUser(variables, autoJumpNodeList);
-		prepareVariablesForMeetingNode(variables, def.getId(), map);
 
-		log.info(" --- 流程准备发起 >>>>>> 流程定义ID: "+def.getId()+" 流程业务主键:"+businessKey+"  流程变量:\n"+JSON.toJSONString(variables, true));
+		loadNextUserNamesIfExists(context);
 		
-		org.activiti.engine.runtime.ProcessInstance e= actRuntimeService.startProcessInstanceById(def.getId(),businessKey,variables);
+		saveRunTask(context);
 		
-		org.lsqt.act.model.ProcessInstance instance = fillProcessDefinitionInfo(def, e);
-		
-		
-		ApproveOpinion approveOpinion = saveOpinionForStart(loginUser,instance,variables); // 保存“发起意见”
-		saveRunInstaceForStart(loginUser,instance,variables); //保存流程实例信息
-		saveInstanceVariable(def,instance,variables,variableJSONStart); //保存流程变量信息
-		 
-		
-		//填充（当前流程实例的）待办任务的审批人
-		List<String> userIds = new ArrayList<>();
-		if (draftNode!=null) { //如果设置了首个拟稿节点
-			if (draftNode.getNodeJumpType()!=null && Node.NODE_JUMP_TYPE_AUTO_JUMP.equals(draftNode.getNodeJumpType())) { //如果设置拟稿节点自动跳过
-				TaskQuery filter = new TaskQuery();
-				filter.setProcessDefinitionId(def.getId());
-				filter.setProcessInstanceId(instance.getId());
-				List<Task> taskList = db.queryForList("querySimple", Task.class, filter);
-				if(taskList!=null && taskList.size()>1) {
-					throw new RuntimeException("自动跳过的节点，不支持并发模式");
-				}
-				
-				Task task = taskList.get(0);
-				if(task.getTaskDefinitionKey().equals(draftNode.getTaskKey())) { //如果当前任务节点是“自动跳过拟稿节点”
-					try{
-						ActUtil.getTaskService().complete(task.getId(), variables);
-					}catch(Exception ex) {
-						deleteProcessInstance(instance.getProcessInstanceId(), "流程发起出错删除实例");
-						db.executeUpdate("delete from ext_approve_opinion where process_instance_id=? and business_key=?", instance.getProcessInstanceId(),businessKey);
-						
-						throw ex;
-					}
-				}
-				
-				instance = ActUtil.convert(actRuntimeService.createProcessInstanceQuery().processInstanceId(instance.getProcessInstanceId()).singleResult());
-				instance.setProcessDefinitionKey(def.getKey());
-				instance.setProcessDefinitionName(def.getName());
-				
-				Set<String> nextUids = getNextTaskUserIds(instance,map);
-				userIds.addAll(nextUids);
-				
-				if(!nextUids.contains(loginUserId)) { // (注意：有可能流程发起人和审批人是同一个人）
-					userIds.remove(loginUserId);
-				}
-				
-			} else {
-				//List<ApproveObject> users = map.get(draftNode.getTaskKey());
-				//List<String> uids = ApproveObject.toIdList(users);
-				//userIds.addAll(uids);
-				//userIds.add(loginUserId); //拟稿人节点，添加startUserId
-				userIds.addAll(getNextTaskUserIds(instance,map));
-			}
-		} else {
-			userIds.addAll(getNextTaskUserIds(instance,map));
-		}
-		
-		instance.getExtProperty().put(org.lsqt.act.model.ProcessInstance.CANDIDATE_USER_IDS_KEY, StringUtil.join(userIds,","));
-		 
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		TaskServiceImpl taskServiceImpl = (TaskServiceImpl) taskService;
-		List<Task> mutilTaskList = taskServiceImpl.getCurrentMutilTaskList(instance.getProcessInstanceId());
-		
-		if (mutilTaskList != null && mutilTaskList.size() > 1) {
-			Set<String> taskKeySet = new HashSet<>();
-			for(Task tk: mutilTaskList) {
-				taskKeySet.add(tk.getTaskDefinitionKey());
-			}
-			
-			boolean isNotSetUser=false; // 会签节点是否设置过用户
-			String meetingNode = null; // 会签节点
-			if (taskKeySet.size() == 1) {
-				meetingNode = taskKeySet.iterator().next();
-				List<ApproveObject> userList = map.get(meetingNode + "List");
-				if (userList == null || userList.isEmpty()) {
-					isNotSetUser = true;
-				}
-			}
-			
-			if(isNotSetUser) { //解析用户为空自动跳过
-				while (true) {
-					mutilTaskList = taskServiceImpl.getCurrentMutilTaskList(instance.getProcessInstanceId());// 当前流程的任务可能是（会签）多实例
-					if (mutilTaskList != null && mutilTaskList.size() > 1) {
-						for (int i=0; i < mutilTaskList.size(); i++) {
-							try{
-								List<Task> tempTask = taskServiceImpl.getCurrentMutilTaskList(instance.getProcessInstanceId());
-								if(tempTask!=null && tempTask.size()>1) {
-									actTaskService.complete(mutilTaskList.get(i).getId(), variables);
-								}
-							}catch(Exception ex) {
-								ex.printStackTrace();
-							}
-						}
-						String nextTaskCandidateUserIds = taskServiceImpl.getMutilTaskCandidateUserIds(mutilTaskList, map);
-						taskServiceImpl.executeGlobalAfterScript(loginUser, instance, instance.getProcessDefinitionId(), nextTaskCandidateUserIds);
-						////task.getProcessDefinitionId() task.getTaskDefinitionKey()   task.getProcessInstanceId() task.getid() task.getBusinessKey
-						
-						Task task = new Task();
-						task.setProcessDefinitionId(instance.getProcessDefinitionId());
-						task.setTaskDefinitionKey(mutilTaskList.get(0).getTaskDefinitionKey());
-						task.setProcessInstanceId(instance.getProcessInstanceId());
-						task.setId("-1");
-						task.setBusinessKey(instance.getBusinessKey());
-						
-						taskServiceImpl.executeAfterScript(loginUser,task,approveOpinion,draftNode,nextTaskCandidateUserIds);
-					} 
-					
-					if (isInstanceEnded(instance.getProcessInstanceId())) {
-						break;
-					}
-					if (mutilTaskList.size() == 1) {
-						Task lastTask = taskServiceImpl.getNextNewTask(instance.getProcessInstanceId());
-						String nextTaskCandidateUserIds = taskServiceImpl.getNextTaskCandidateUserIds(businessKey, instance.getProcessDefinitionId(), instance.getProcessInstanceId(), map, draftNode, lastTask);
-						instance.getExtProperty().put(org.lsqt.act.model.ProcessInstance.CANDIDATE_USER_IDS_KEY,nextTaskCandidateUserIds);
-						break;
-					}
-				}
-			}
-		} else {
-			processAutoJumpForEmptyApproveUserNode(loginUser,draftNode,instance,taskServiceImpl.getNextNewTask(instance),variables,map);
-		}
-		
-		
-		
-		
-		
-		
-		
-		final long endTime = System.currentTimeMillis();
-		log.debug(" ---- 流程起动耗时(ms)："+(endTime-beginTime)+",流程定义ID："+def.getId()+" ,流程实例:"+instance.getId());
-		log.debug(" --- 流程发起，获取发起后的任务处理人:"+instance.getExtProperty().get(org.lsqt.act.model.ProcessInstance.CANDIDATE_USER_IDS_KEY));
-		return instance;
-	}
-	
-
-
-	/**
-	 * 获取审批用户为空自动跳过的节点（不包含拟稿节点、也不包括设置“审批用户为空自动跳过”但是节点设置了用户）
-	 * @param def 流程定义
-	 * @return 
-	 */
-	List<Node> getAutoJumpNodeList(String processDefinitionId,Map<String, List<ApproveObject>> nodeUserMap) {
-		List<Node> autoJumpNodeList = new ArrayList<>();
-		NodeQuery nodeQuery = new NodeQuery();
-		nodeQuery.setNodeJumpType(Node.NODE_JUMP_TYPE_EMPTY_APPROVE_USER_AUTO_JUMP);
-		nodeQuery.setDefinitionId(processDefinitionId);
-		List<Node> autoJumpNodeSetedList = db.queryForList("queryForPage", Node.class, nodeQuery); // 获取"设置审批用户为空自动跳过"的节点
-		
-		Set<java.util.Map.Entry<String,List<ApproveObject>>> entrys = nodeUserMap.entrySet();
-		for(Node t: autoJumpNodeSetedList) {
-			boolean isRealAutoJump = true;
-			for(java.util.Map.Entry<String,List<ApproveObject>> e: entrys) {
-				List<ApproveObject> vs = e.getValue();
-				if(vs!=null && vs.size()>0) {
-					isRealAutoJump = false;
-					break;
-				}
-			}
-			if(isRealAutoJump) {
-				autoJumpNodeList.add(t);
-			}
-		}
-		return autoJumpNodeList;
+		return context;//.getStartedProcessInstance();
 	}
 
-	/**
-	 * 自动跳过的节点，添加虚拟审批用户
-	 * @param variables
-	 * @param autoJumpNodeList
-	 */
-	void prepareVariablesForEmptyNodeUser(Map<String, Object> variables,List<Node> autoJumpNodeList ) {
-		if(autoJumpNodeList == null || autoJumpNodeList.isEmpty()) {
+	private void saveRunTask(ActRunningContext runContext) {
+		List<RunTask> todoTaskList = new ArrayList<>();
+		
+		String nextTaskCandidateUserIds = runContext.getNextTaskCandidateUserIds();
+		if (nextTaskCandidateUserIds == null || StringUtil.isBlank(nextTaskCandidateUserIds)) {
 			return ;
 		}
 		
-		for(Node node : autoJumpNodeList) {
-			variables.put(node.getTaskKey(), Node.NODE_JUMP_TYPE_EMPTY_APPROVE_USER_AUTO_JUMP_VIRTUAL_USERID);
+		final RunInstance instance = runContext.getCurrProcessInstance();
+		
+		List<Task> currMutilTaskList = TaskQueryUtil.getCurrentMutilTaskList(db, instance.getInstanceId());
+		if (currMutilTaskList != null && currMutilTaskList.size() > 1) {
+			log.error("暂时不支持会签");
+			return ;
 		}
-	}
-	
-	/**
-	 * 在流程发起前把流程审批用户"放置"到流程变量
-	 * @param variables 流程变量
-	 * @param map 流程设置的用户
-	 */
-	void prepareVariablesForNodeUser(Map<String, Object> variables, Map<String, List<ApproveObject>> map) {
-		for (String taskKey : map.keySet()) {
-			List<ApproveObject> users = map.get(taskKey);
-			variables.put(taskKey,ApproveObject.toIdList(users));
+		
+		if (ArrayUtil.isBlank(currMutilTaskList)) {
+			return ;
 		}
-	}
-	
-	/**
-	 * 处理设置审批用户为空的节点自动跳过(如果有连续多个循环处理)
-	 * @param actInstance 流程实例
-	 * @param task 当前任务对象
-	 * @param variable 任务对象的流程变量
-	 * @param nodeUserMap 流程实例所有节点的审批用户
-	 * @return
-	 */
-	Task processAutoJumpForEmptyApproveUserNode(User loginUser,Node draftNode,ProcessInstance instance,Task task,Map<String, Object> variable,Map<String, List<ApproveObject>> nodeUserMap) {
-		TaskServiceImpl taskServiceImpl = (TaskServiceImpl) taskService;
-		while (true) {
-			if (task==null) { //任务为空，有可能流程已结束
-				if(isInstanceEnded(instance.getProcessInstanceId())){
-					return null;
-				}
+		
+		List<String> nextUserIdList = StringUtil.split(nextTaskCandidateUserIds.toString(),",");
+		
+		for (String uid : nextUserIdList) {
+			RunTask runTask = new RunTask();
+			
+			runTask.setBusinessFlowNo(runContext.getForm().getBusinessFlowNo());
+			runTask.setBusinessKey(runContext.getForm().getBusinessKey());
+			
+			if (instance != null) {
+				runTask.setBusinessStatus(instance.getBusinessStatus());
+				runTask.setBusinessStatusDesc(instance.getBusinessStatusDesc());
+				runTask.setCompanyIdPrint(instance.getCompanyIdPrint());
+				runTask.setCompanyNamePrint(instance.getCompanyNamePrint());
+				runTask.setCreateDeptId(instance.getCreateDeptId());
+				runTask.setCreateDeptText(instance.getCreateDeptName());
+				runTask.setInstanceId(Long.valueOf(instance.getInstanceId()));
+				runTask.setProcessDefinitionId(instance.getProcessDefinitionId());
+				runTask.setProcessDefinitionKey(instance.getProcessDefinitionKey());
+				runTask.setProcessDefinitionName(instance.getProcessDefinitionName());
+				runTask.setStartLoginNo(instance.getStartLoginNo());
+				runTask.setStartUserId(instance.getStartUserId());
+				runTask.setStartUserName(instance.getStartUserName());
+				runTask.setStartUserOrgText(instance.getStartUserOrgText());
+				runTask.setStartUserPositionText(instance.getStartUserPositionText());
+				
+				runTask.setTitle( instance.getTitle());
+			}
+			runTask.setTaskId(Long.valueOf(currMutilTaskList.get(0).getId()));
+			runTask.setTaskKey(currMutilTaskList.get(0).getTaskDefinitionKey());
+			runTask.setTaskUserId(uid);
+			User taskUser = db2.getById(User.class, uid);
+			if (taskUser!=null) {
+				runTask.setTaskUserLoginNo(taskUser.getLoginNo());
+				runTask.setTaskUserName(taskUser.getUserName());
 			}
 			
-			 //如果当前节点有设置审批人，不自动跳过
-			List<ApproveObject> list = nodeUserMap.get(task.getTaskDefinitionKey());
-			if (list != null && list.size()>0) {
-				return task;
-			}
-			
-			// 查询当前任务对应的节点
-			NodeQuery nodeQuery = new NodeQuery();
-			nodeQuery.setDefinitionId(task.getProcessDefinitionId());
-			nodeQuery.setTaskKey(task.getTaskDefinitionKey());
-			List<Node> temp = db.queryForList("queryForPage", Node.class, nodeQuery);
-			if (temp == null || temp.isEmpty()) {
-				return task;
-			}
-			Node currNode = temp.get(0);
 
-			// 当前任务节点是否是自动跳过
-			if (Node.NODE_JUMP_TYPE_EMPTY_APPROVE_USER_AUTO_JUMP.equals(currNode.getNodeJumpType()) 
-					|| Node.NODE_JUMP_TYPE_RESOLVED_USER_EMPTY_AUTO_JUMP.equals(currNode.getNodeJumpType())) {
-				variable.put(task.getTaskDefinitionKey(), 
-						Arrays.asList(Node.NODE_JUMP_TYPE_EMPTY_APPROVE_USER_AUTO_JUMP_VIRTUAL_USERID));
-				actTaskService.complete(task.getId(), variable);
-
-				task = taskServiceImpl.getNextNewTask(instance);
-				if(task == null) { // 流程节束没有任务
-					return null;
-				}
-				
-				// 拟稿人节点审批人是发起人
-				if(draftNode!=null && task.getTaskDefinitionKey().equals(draftNode.getTaskKey())) {
-					instance.getExtProperty().put(org.lsqt.act.model.ProcessInstance.CANDIDATE_USER_IDS_KEY, instance.getStartUserId()) ;
-				} else {
-					instance.getExtProperty().put(org.lsqt.act.model.ProcessInstance.CANDIDATE_USER_IDS_KEY, ArrayUtil.join(getNextTaskUserIds(instance, nodeUserMap),",")) ;
-				}
-				
-				// 执行全局回调
-				TaskServiceImpl impl = new TaskServiceImpl();
-				impl.setDb(db);
-				Object candidateUserIdsTemp = instance.getExtProperty().get(org.lsqt.act.model.ProcessInstance.CANDIDATE_USER_IDS_KEY);
-				String candidateUserIds = "";
-				if(candidateUserIdsTemp != null) {
-					candidateUserIds = candidateUserIdsTemp.toString();
-				}
-				impl.executeGlobalAfterScript(loginUser, instance, instance.getProcessDefinitionId(),candidateUserIds);
-				
-			} else {
-				break;
-
+			boolean isSetUrl = doAdapterUrl(runTask); //待办地址为空，发送待办到EKP将会失败!!
+			if(isSetUrl) {
+				todoTaskList.add(runTask);
 			}
 		}
 		
-		if(StringUtil.isBlank(task.getBusinessKey())){
-			task.setBusinessKey(instance.getBusinessKey());
+		if (ArrayUtil.isNotBlank(todoTaskList)) {
+			String authorityWeb = PropertiesUtil.getValue("api.authority");
+			if (StringUtil.isBlank(authorityWeb)) {
+				log.error("syswin.properties配置文件错误,请配置api.authority参数");
+				return ;
+			}
+			
+			for (RunTask m: todoTaskList) {
+				db.saveOrUpdate(m); //先保存
+				
+				m.setTaskLink(authorityWeb + "/api/task_url_service/converted_redirect?runTaskId=" + m.getId());
+				db.update(m, "taskLink");
+			}
 		}
-		return task;
+		
+		runContext.setDataHook(todoTaskList);
 	}
 	
 	/**
-	 * 获取拟稿节点
+	 * 点击待办任务时，打开的地址（适配移动端和PC端）
+	 * @param runTask
+	 */
+	private boolean doAdapterUrl(RunTask runTask) {
+		String authorityWeb = PropertiesUtil.getValue("api.authority");
+		if (StringUtil.isBlank(authorityWeb)) {
+			log.error("syswin.properties配置文件错误,请配置api.authority参数");
+			return false;
+		}
+
+		String budgetMobile = PropertiesUtil.getValue("api.mobile.budget"); //移动端布署的地址
+		if (StringUtil.isBlank(budgetMobile)) {
+			log.error("syswin.properties配置文件错误,请配置api.mobile.budget参数");
+			return false;
+		}
+		
+		NodeFormQuery filter = new NodeFormQuery();
+		filter.setDataType(NodeForm.DATA_TYPE_GLOBAL_FORM);
+		filter.setFormType(NodeForm.FORM_TYPE_URL);
+		filter.setDefinitionIdList(new ArrayList<>(Arrays.asList(runTask.getProcessDefinitionId())));
+		NodeForm nodeForm = db.queryForObject("queryForPage", NodeForm.class, filter);
+		if(nodeForm == null) {
+			log.error("待办详情地址适配移动端和PC端错误，没有找到全局表单配置");
+			return false;
+		}
+		
+		if(StringUtil.isBlank(nodeForm.getCustomUrl())) {
+			log.error("待办详情地址适配移动端和PC端错误，全局表单地址配置为空");
+			return false;
+		}
+		
+		final Map<String, Object> root = new HashMap<>();
+		root.put("taskId", runTask.getTaskId());
+		root.put("processInstanceId", runTask.getInstanceId());
+		root.put("processDefinitionId",runTask.getProcessDefinitionId());
+		root.put("businessKey", runTask.getBusinessKey());
+		root.put("processDefinitionKey", runTask.getProcessDefinitionKey());
+		root.put("taskDefinitionKey", runTask.getTaskKey());
+		
+		User loginUser = db2.getById(User.class, runTask.getTaskUserId());
+		if (loginUser == null) {
+			log.error("预算系统没有找到ID为" + runTask.getTaskUserId() + "的用户,请联系管理员同步用户");
+			return false;
+		}
+		
+		// 只要必要的登陆用户信息
+		Map<String,Object> simpleUser= new HashMap<>();
+		simpleUser.put("userId", loginUser.getUserId());
+		simpleUser.put("loginNo", loginUser.getLoginNo());
+		simpleUser.put("userName", loginUser.getUserName());
+		root.put("loginUser", simpleUser);
+		
+		
+		Map<String,Object> data = new HashMap<>(); // 中转链接的整个数据包
+		
+		Map<String,Object> mobileTaskDetailParam = new HashMap<>(); // 手机端待办详情需要的参数
+		mobileTaskDetailParam.putAll(root);
+
+		
+		try{
+			Template tmpl = new Template("custom_url_"+runTask.getTaskId(), new StringReader(nodeForm.getCustomUrl()), ActFreemarkUtil.FTL_CONFIGURATION);
+			StringWriter stringWriter = new StringWriter();
+			BufferedWriter writer = new BufferedWriter(stringWriter);
+			tmpl.process(root, writer);
+	
+			writer.flush();
+			writer.close();
+			
+			String pcUrl =  stringWriter.toString().trim();
+			
+			data.put("pcUrl", pcUrl);
+			
+			
+			String json = JSON.toJSONString(mobileTaskDetailParam);
+			
+			String paramData = URLEncoder.encode(Base64.getEncoder().encodeToString(json.getBytes("utf8")),"utf8");// base64加密转码-->URL的encode
+			data.put("mobileUrl", budgetMobile+"/mobileApproval?paramData="+paramData+"#page=1");
+
+		}catch(Exception ex) {
+			log.error(ex.getMessage());
+			return false;
+		}
+		
+		String dataText = JSON.toJSONString(data);
+		 
+		log.debug("整个参数包长度:"+dataText.length());
+		
+		runTask.setExtData(dataText);
+		log.debug("整个中转链接的长度、值："+runTask.getExtData().length()+"、"+runTask.getExtData());
+		
+		return true;
+	}
+	
+	
+	/**
+	 * 流程发起后，加载审批人名称
 	 * 
-	 * @param processDefinitionId
-	 * @return
+	 * @param context
 	 */
-	private Node getDraftNode(String processDefinitionId) {
-		NodeQuery query = new NodeQuery();
-		query.setTaskBizType(Node.TASK_BIZ_TYPE_DRAFTNODE);
-		query.setDefinitionId(processDefinitionId);
-		final List<Node> draftNodeList = db.queryForList("queryForPage", Node.class, query);
-		final Node draftNode = (draftNodeList == null || draftNodeList.isEmpty() ? null : draftNodeList.get(0));
-		return draftNode;
-	}
-	
-	/**
-	 * 将流程定义的信息，设置到流程实例对象里
-	 * @param def
-	 * @param e
-	 * @return
-	 */
-	org.lsqt.act.model.ProcessInstance fillProcessDefinitionInfo(ProcessDefinition def, org.activiti.engine.runtime.ProcessInstance e) {
-		org.lsqt.act.model.ProcessInstance instance = ActUtil.convert(e);
-		instance.setProcessDefinitionKey(def.getKey());// activiti没有返回这两个属性，补全！！
-		instance.setProcessDefinitionName(def.getName());
-		return instance;
-	}
-
-	/**
-	 * 给存在的拟稿节点设置审批用户
-	 * @param variables 流程变量
-	 * @param loginUserId 登陆用户
-	 * @param map 流程设置的审批用户
-	 * @param draftNode 拟稿节点
-	 */
-	void prepareVariablesForExistsDraftNode(Map<String, Object> variables, String loginUserId,
-			Map<String, List<ApproveObject>> map, final Node draftNode) {
-		if (draftNode!=null) {
-			List<ApproveObject> users = map.get(draftNode.getTaskKey());
-			if (users == null || users.isEmpty()) {
-				ApproveObject obj = new ApproveObject();
-				obj.setId(loginUserId);
-				map.put(draftNode.getTaskKey(), Arrays.asList(obj)); // 拟稿节点用户
-
-				users = new ArrayList<>();
-				users.add(obj);
-			}
-			List<String> uids = ApproveObject.toIdList(users);
-			
-			log.debug(String.format( " --- 流程【%s】启动，设置节点【%s】,审批用户ID【%s】",draftNode.getTaskKey(),draftNode.getTaskKey(),StringUtil.join(uids, ",")));
-			variables.put(draftNode.getTaskKey(), uids);
-		}
-	}
-
-	/**
-	 * 跟据流程定义，获取拟稿节点
-	 * 
-	 * @param def
-	 * @return
-	 */
-	Node getDraftNode(ProcessDefinition def) {
-		// 流程默认以taskKey值为审批对象的变量（流程图的节点属性"Candidate user"设置）
-		NodeQuery query = new NodeQuery();
-		query.setTaskBizType(Node.TASK_BIZ_TYPE_DRAFTNODE);
-		query.setDefinitionId(def.getId());
-		List<Node> nodes = db.queryForList("queryForPage", Node.class, query);
-		if (nodes == null || nodes.isEmpty()) {
-			return null;
-		}
-
-		if (nodes.size() > 1) {
-			throw new RuntimeException("拟稿节点设置不能多于两个");
-		}
-		return nodes.get(0);
-	}
-
-	/**
-	 * 如果没有业务主键，从流程变量里解析业务主键
-	 * @param businessKey 
-	 * @param variables 流程变量
-	 * @return 业务主键
-	 */
-	String prepareBusinessKey(String businessKey, Map<String, Object> variables) {
-		if(StringUtil.isBlank(businessKey)){ 
-			Object bk = variables.get(ActUtil.VARIABLES_BUSINESS_KEY);
-			if(bk!=null){
-				businessKey = bk.toString();
-			}
-		}
-		return businessKey;
-	}
-	
-	/**
-	 * 从流程变量里解析业务流水号
-	 * @param variables 流程变量
-	 * @return 业务流水号
-	 */
-	String prepareBusinessFlowNo(Map<String, Object> variables) {
-		if(variables.containsKey(ActUtil.VARIABLES_BUSINESS_FLOW_NO)){ 
-			Object flowNo = variables.get(ActUtil.VARIABLES_BUSINESS_FLOW_NO);
-			if(flowNo!=null){
-				return flowNo.toString();
-			}
-		}
-		return null;
-	}
-	
-
-	/**
-	 * 加载登陆用户(含主部门、主岗信息)
-	 * @param loginUserId 
-	 * @return
-	 */
-	User prepareLoginUser(final String loginUserId) {
-		final User loginUser = db2.getById(User.class, loginUserId);
-		if(loginUser == null) {
-			throw new RuntimeException(String.format("没有找到登陆用户(ID=%s)",loginUserId));
-		}
-		
-		// 填充用户信息
-		loginUser.setUserMainOrg(db2.queryForObject("getUserMainOrg", Org.class, loginUser.getUserId())); // 用户的主部门
-		loginUser.setUserMainPosition(db2.queryForObject("getUserMainPosition", Position.class, loginUser.getUserId()));// 用户的主岗位
-		
-		if(loginUser.getUserMainOrg() == null) {
-			OrgQuery qr=new OrgQuery();
-			qr.setUserId(loginUser.getUserId());
-			List<Org> tempOrg = db2.queryForList("queryForPage", Org.class, qr);
-			if(tempOrg!=null && tempOrg.size()>0){
-				loginUser.setUserMainOrg(tempOrg.get(0));
-			}
-		}
-		
-		if(loginUser.getUserMainPosition() == null) {
-			PositionQuery qr = new PositionQuery();
-			qr.setUserId(loginUser.getUserId());
-			List<Position> tempPostion = db2.queryForList("queryForPage", Position.class, qr);
-			if(tempPostion!=null && tempPostion.size()>0) {
-				loginUser.setUserMainPosition(tempPostion.get(0));
-			}
-		}
-		return loginUser;
-	}
-	
-	/**
-	 * 获取流程下一步处理人
-	 * @param def
-	 * @param instance 
-	 * @param nodeUserMap 所有节点的审批用户（即时调用即时解析出来)
-	 * @return
-	 */
-	Set<String> getNextTaskUserIds(org.lsqt.act.model.ProcessInstance instance,Map<String, List<ApproveObject>> nodeUserMap) {
-		Set<String> userIds = new HashSet<>();
-		TaskQuery filter = new TaskQuery();
-		filter.setProcessDefinitionId(instance.getProcessDefinitionId());
-		filter.setProcessInstanceId(instance.getId());
-		filter.setBusinessKey(instance.getBusinessKey());
-		List<Task> taskList = db.queryForList("querySimple", Task.class, filter);//有可能是“并发”的待办
-		if(taskList!=null && !taskList.isEmpty()) {
-			
-			for(Task t: taskList) {
-				List<ApproveObject> temp = nodeUserMap.get(t.getTaskDefinitionKey());
-				if(temp!=null){
-					for(ApproveObject obj: temp) {
-						userIds.add(obj.getId());
-					}
+	private void loadNextUserNamesIfExists(ActRunningContext context) {
+		ProcessInstance inst = context.getStartedProcessInstance();
+		Object candiateUserIds = inst.getExtProperty().get(ProcessInstance.CANDIDATE_USER_IDS_KEY);
+		if (candiateUserIds != null && StringUtil.isNotBlank(candiateUserIds.toString())) {
+			UserQuery uq = new UserQuery();
+			uq.setIds(candiateUserIds.toString());
+			List<User> list = db2.queryForList("queryForPage", User.class, uq);
+			if (ArrayUtil.isNotBlank(list)) {
+				List<String> userNames = new ArrayList<>();
+				for (User u : list) {
+					userNames.add(u.getUserName());
 				}
+				inst.getExtProperty().put(ProcessInstance.CANDIDATE_USER_NAMES_KEY, StringUtil.join(userNames));
 			}
 		}
-		return userIds;
 	}
 	
-	/**
-	 * 全局流程变量，填充到当间节点变量（就近原则）
-	 * @param actInstance
-	 * @param currVariable
-	
-	void globalVariableFill(Map<String,Object> currVariable,Map<String,Object> variables) {
-		if(variables!=null && !variables.isEmpty()){
-			for(String key: variables.keySet()) {
-				if(currVariable.get(key) == null) {
-					currVariable.put(key, variables.get(key));
-				}
-				if(currVariable.get(key)!=null && StringUtil.isBlank(currVariable.get(key).toString())){
-					currVariable.put(key,variables.get(key));
-				}
-			}
-		}
-	} */
-	
-	InstanceVariable saveInstanceVariable(ProcessDefinition definition, org.lsqt.act.model.ProcessInstance instance,Map<String,Object> variables,String variableJSONStart) {
-		InstanceVariable model = new InstanceVariable();
-		model.setBusinessKey(instance.getBusinessKey());
-		model.setDefinitionId(definition.getId());
-		model.setInstanceId(instance.getId());
-		model.setTitle(instance.getTitle());
-		model.setVariableJson(JSON.toJSONString(variables));
-		model.setVariableJSONStart(variableJSONStart);
-		db.save(model);
-		return model;
-	}
+
 	
 	// ------------- 挂起:如果一个流程实例状态暂停，与该实例的流程相关活动将不执行工作（定时器、消息）
 	public void suspendProcessInstanceById(String processInstanceId) {
@@ -658,17 +464,38 @@ public class RuntimeServiceImpl implements RuntimeService{
 	public void deleteProcessInstance(String processInstanceId, String deleteReason) {
 		actRuntimeService.deleteProcessInstance(processInstanceId, deleteReason);
 		//deleteProcessInstanceExt(processInstanceId);
+		cascadeEkpTaskIfExists(processInstanceId);
 	}
 
 	public void deleteProcessInstance(String processInstanceId) {
 		actRuntimeService.deleteProcessInstance(processInstanceId,null);
 		//deleteProcessInstanceExt(processInstanceId);
+		
+		cascadeEkpTaskIfExists(processInstanceId);
 	}
 
 	void deleteProcessInstanceExt(String processInstanceId) {
 		db.executeUpdate("delete from ext_approve_opinion where process_instance_id=?", processInstanceId);
 		db.executeUpdate("delete from ext_run_instance where instance_id=?", processInstanceId);
 		db.executeUpdate("delete from ext_instance_variable where instance_id=?", processInstanceId);
+		db.executeUpdate("delete from ext_run_task_assign_forward_cc where process_instance_id=?", processInstanceId);
+		
+		cascadeEkpTaskIfExists(processInstanceId);
+	}
+	
+	/**
+	 * 同步删除（旭辉）EKP里的待办消息
+	 * @param processInstanceId
+	 */
+	private void cascadeEkpTaskIfExists(String processInstanceId) {
+		RunTaskQuery query = new RunTaskQuery();
+		query.setInstanceId(Long.valueOf(processInstanceId));
+		List<RunTask> list = db.queryForList("queryForPage", RunTask.class, query);
+		if(ArrayUtil.isNotBlank(list)) {
+			for(RunTask e: list) {
+				EkpTaskUtil.exeEkpDeleteTask(e.getTaskId()+"");
+			}
+		}
 	}
 	
 	// ------------------------------------------------------  查询  ----------------------------------------------------------------
@@ -848,7 +675,6 @@ public class RuntimeServiceImpl implements RuntimeService{
 		return page;
 	}
 
-
 	/**
 	 * 流程审批意见查询
 	 */
@@ -856,167 +682,7 @@ public class RuntimeServiceImpl implements RuntimeService{
 		return 	db.queryForList("queryForPage", ApproveOpinion.class, query);
 	}
 	
-	
-	// -----------------------------------------------------------------  辅助方法 -----------------------------------------------------------------------------------
-	ApproveOpinion saveOpinionForStart(User loginUser,ProcessInstance instance,Map<String,Object> variables) {
-		
-		//补充流程标题
-		String title = variables.get(ActUtil.VARIABLES_TITLE) ==null ? null:variables.get(ActUtil.VARIABLES_TITLE).toString();
-		instance.setTitle(title);
-		
-		// 补充业务类型
-		String businessType = variables.get(ActUtil.VARIABLES_BUSINESS_TYPE) == null ? null : variables.get(ActUtil.VARIABLES_BUSINESS_TYPE).toString();
-		
-		// 补充发起时，传入审批意见（备注）
-		String opinionContent = variables.get(ActUtil.VARIABLES_APPROVE_OPINION) == null ? null : variables.get(ActUtil.VARIABLES_APPROVE_OPINION).toString();
-		
-		ApproveOpinion approveOpinion = new ApproveOpinion();
-		
-		approveOpinion.setProcessInstanceId(instance.getProcessInstanceId());
-		approveOpinion.setBusinessKey(instance.getBusinessKey());
-		approveOpinion.setCreateTime(new Date());
-		approveOpinion.setDefinitionId(instance.getProcessDefinitionId());
-		approveOpinion.setDefinitionKey(instance.getProcessDefinitionKey());
-		approveOpinion.setDefinitionName(instance.getProcessDefinitionName());
-		approveOpinion.setApproveAction(NodeButton.BTN_TYPE_START);
-		approveOpinion.setApproveResult(NodeButton.getApproveActionShortDesc(NodeButton.BTN_TYPE_START));
-		approveOpinion.setRemark(NodeButton.getApproveActionDesc(NodeButton.BTN_TYPE_START));
-		approveOpinion.setApproveTaskName("拟稿人");
-		
-		if(StringUtil.isNotBlank(opinionContent)) {
-			approveOpinion.setApproveOpinion(opinionContent);
-		}else if(StringUtil.isNotBlank(ContextUtil.getLoginName())) {
-			approveOpinion.setApproveOpinion(String.format("%s发起流程",ContextUtil.getLoginName()));
-		}
-		
-		approveOpinion.setBusinessType(businessType);
-		
-		if (loginUser != null) {
-			approveOpinion.setApproveUserId(loginUser.getUserId() + "");
-			approveOpinion.setApproveUserName(loginUser.getUserName());
-			
-			if(loginUser.getUserMainOrg()!=null) {
-				approveOpinion.setApproveUserOrgText(loginUser.getUserMainOrg().getName());
-			}
-			
-			if(loginUser.getUserMainPosition()!=null) {
-				approveOpinion.setApproveUserPositionText(loginUser.getUserMainPosition().getName());
-			}
-		}
-		
-		String variableAndApproveUserIdsJSON = JSON.toJSONString(variables, true);
-		//approveOpinion.setApproveTaskCandidateUserIds();
-		approveOpinion.setVariablesJson(variableAndApproveUserIdsJSON);
-		
-		//approveOpinion.setGid(new AnnotationIdGenerator().getUUID58()+"");
-		approveOpinion.setUpdateTime(new Date());
-		db.save(approveOpinion);
-		return approveOpinion ;
-	}
-	
-	/**
-	 * 发起流程时，保存流程实例扩展信息
-	 * @param instance 
-	 * @param businessType 用户自定义的业务类型
-	 */
-	RunInstance saveRunInstaceForStart(User loginUser,ProcessInstance instance,Map<String,Object> variables) {
-		
-		RunInstance model = new RunInstance();
-		model.setAppCode(StringUtil.isNotBlank(instance.getTenantId()) ? Application.APP_CODE_DEFAULT:instance.getTenantId());
-		
-		// 补充业务类型
-		String businessType = variables.get(ActUtil.VARIABLES_BUSINESS_TYPE) == null ? null : variables.get(ActUtil.VARIABLES_BUSINESS_TYPE).toString();
-		model.setBusinessCategory(businessType);
-		
-		model.setBusinessKey(instance.getBusinessKey());
-		model.setCreateTime(new Date());
-		model.setProcessDefinitionId(instance.getProcessDefinitionId());
-		model.setProcessDefinitionKey(instance.getProcessDefinitionKey());
-		model.setProcessDefinitionName(instance.getProcessDefinitionName());
-		model.setInstanceId(instance.getId());
-		model.setStartUserId(loginUser.getUserId()+"");
-		model.setStartUserName(loginUser.getUserName());
-		model.setStartLoginNo(loginUser.getLoginNo());
-		model.setTitle(instance.getTitle());
-		
-		model.setBusinessStatus(ActUtil.BUSINESS_STATUS_审批中);
-		model.setBusinessStatusDesc(ActUtil.getBusinessStatusDesc(ActUtil.BUSINESS_STATUS_审批中));
-		model.setEndStatus(Integer.valueOf(ActUtil.END_STATUS_未结束));
-		
-		model.setBusinessFlowNo(prepareBusinessFlowNo(variables));
-		
-		if(variables.get(ActUtil.VARIABLES_CREATE_DEPT_ID)!=null) {
-			model.setCreateDeptId(variables.get(ActUtil.VARIABLES_CREATE_DEPT_ID)+"");
-		}else {
-			throw new RuntimeException("填制人不能为空");
-		}
-		
-		if(loginUser.getUserMainOrg()!=null) {
-			model.setStartUserOrgText(loginUser.getUserMainOrg().getName());
-		}else if(loginUser.getUserOrgList()!=null && !loginUser.getUserOrgList().isEmpty()) {
-			model.setStartUserOrgText(loginUser.getUserOrgList().get(0).getName());
-		}
-			
-		if(loginUser.getUserMainPosition()!=null) {
-			model.setStartUserPositionText(loginUser.getUserMainPosition().getName());
-		} else {
-			if(loginUser.getUserPositionList()!=null && !loginUser.getUserPositionList().isEmpty()) {
-				model.setStartUserPositionText(loginUser.getUserPositionList().get(0).getName());
-			}
-		}
-		
-		db.save(model);
-		
-		return model;
-	}
 
 
-	/**
-	 * 优先从上下文取登陆用户，如果没有则从map获取key值为startUserId的字段作为登陆用户ID
-	 * @param variables
-	 */
-	String prepareStartUserId(Map<String, Object> variables) {
-		String startUserId = null;
-
-		Object contextLoginId = ContextUtil.getLoginId();
-		if (contextLoginId == null) {
-			Object user = variables.get(ActUtil.VARIABLES_START_USER_ID);
-			if (user != null) {
-				startUserId = user.toString();
-				actIdentityService.setAuthenticatedUserId(startUserId);
-				return startUserId;
-			} else {
-				log.warn(" --- 没有找到流程发起用户(登陆用户),请指定"+ActUtil.VARIABLES_START_USER_ID);
-			}
-		} else {
-			actIdentityService.setAuthenticatedUserId(contextLoginId.toString());
-			startUserId = contextLoginId.toString();
-		}
-		return startUserId;
-	}
-	
-
-	/**
-	 * 判断流程是否已经结束
-	 * @param processInstanceId
-	 * @return
-	 */
-	public boolean isInstanceEnded(String processInstanceId) {
-		log.debug(" --- 更新流程实例状态,流程实例"+processInstanceId);
-		
-		org.activiti.engine.RuntimeService actRuntimeService = ActUtil.getRuntimeService();
-		org.activiti.engine.runtime.ProcessInstance processInstance = actRuntimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
-		log.debug(" --- 流程实例对象是否为空:"+(processInstance == null));
-		
-		boolean isEnded = false;
-		
-		if(processInstance != null) {
-			isEnded = processInstance.isEnded();
-		}else {
-			isEnded = true;
-		}
-		log.debug(" --- 流程是否结束的值："+isEnded);
-		return isEnded;
-	}
 
 }

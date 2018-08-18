@@ -1,5 +1,7 @@
 package org.lsqt.act.model;
 
+import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -10,6 +12,8 @@ import java.util.Date;
 public class Definition {
 	private String id;
 	private String name;
+	
+	private String modelId;
 	
 	private String key; // 流程定义key
 	private Integer version;
@@ -32,13 +36,26 @@ public class Definition {
 	private String enableMobile; // 手机端是否启用 0=不启用 1=启用  (新增字段用于移动端)
 	public static final String ENABLE_MOBILE_DISABLE="0";
 	public static final String ENABLE_MOBILE_ENABLE="1";
-
+	
+	private String enableNeighborJump; // 启用相邻节点相同审批人就自动跳过
+	public static final String ENABLE_NEIGHBOR_JUMP_DISABLE="0";
+	public static final String ENABLE_NEIGHBOR_JUMP_ENABLE="1";
 	
 	// ---------------- 辅助属性 ------------------------
 	private String deployName;
 	private Date deployTime;
-	
 
+	/**
+	 * 以发布时间作为流程版本显示
+	 * @return
+	 */
+	public String getDeployVersion() {
+		if (this.deployTime != null) {
+			return new SimpleDateFormat("yyyyMMddHHmmss").format(this.deployTime);
+		}
+		return "";
+	}
+	
 	public String getVersionDesc(){
 		return this.name+"（版本"+version+"）";
 	}
@@ -177,5 +194,21 @@ public class Definition {
 
 	public void setCategory(String category) {
 		this.category = category;
+	}
+
+	public String getEnableNeighborJump() {
+		return enableNeighborJump;
+	}
+
+	public void setEnableNeighborJump(String enableNeighborJump) {
+		this.enableNeighborJump = enableNeighborJump;
+	}
+
+	public String getModelId() {
+		return modelId;
+	}
+
+	public void setModelId(String modelId) {
+		this.modelId = modelId;
 	}
 }

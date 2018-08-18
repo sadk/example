@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.HiInstanceForwardCc" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_hi_inst_forward_cc">
+				<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="process_instance_id" property="processInstanceId" text="流程实例id"/>
+	 	
+	 		<column name="definition_id" property="definitionId" text="流程定义ID"/>
+	 	
+	 		<column name="definition_name" property="definitionName" text="流程定义名称"/>
+	 	
+	 		<column name="definition_key" property="definitionKey" text=""/>
+	 	
+	 		<column name="business_key" property="businessKey" text="表单业务主键id"/>
+	 	
+	 		<column name="business_flow_no" property="businessFlowNo" text=""/>
+	 	
+	 		<column name="business_status" property="businessStatus" text=""/>
+	 	
+	 		<column name="business_status_desc" property="businessStatusDesc" text=""/>
+	 	
+	 		<column name="start_user_id" property="startUserId" text=""/>
+	 	
+	 		<column name="start_user_name" property="startUserName" text=""/>
+	 	
+	 		<column name="start_user_org_text" property="startUserOrgText" text=""/>
+	 	
+	 		<column name="start_user_position_text" property="startUserPositionText" text=""/>
+	 	
+	 		<column name="title" property="title" text=""/>
+	 	
+	 		<column name="forward_cc_user_ids" property="forwardCcUserIds" text="转发抄送的用户"/>
+	 	
+	 		<column name="update_user_id" property="updateUserId" text=""/>
+	 	
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 	
+	 	
+	 	
+		
+		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		
+	 		
+	 		
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		
+	 		
+	 		
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_hi_inst_forward_cc where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 												
+							 
+							process_instance_id like '%${key}%'  or 
+							
+							 
+							definition_id like '%${key}%'  or 
+							
+							 
+							definition_name like '%${key}%'  or 
+							
+							 
+							definition_key like '%${key}%'  or 
+							
+							 
+							business_key like '%${key}%'  or 
+							
+							 
+							business_flow_no like '%${key}%'  or 
+							
+							 
+							business_status like '%${key}%'  or 
+							
+							 
+							business_status_desc like '%${key}%'  or 
+							
+							 
+							start_user_id like '%${key}%'  or 
+							
+							 
+							start_user_name like '%${key}%'  or 
+							
+							 
+							start_user_org_text like '%${key}%'  or 
+							
+							 
+							start_user_position_text like '%${key}%'  or 
+							
+							 
+							title like '%${key}%'  or 
+							
+							 
+							forward_cc_user_ids like '%${key}%'  or 
+							
+							 
+							update_user_id like '%${key}%'  or 
+							
+							 
+							remark like '%${key}%' 
+							
+														
+					)
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+	
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  					<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.processInstanceId??> and process_instance_id = '${StringUtil.escapeSql(query.processInstanceId)}' </#if>
+						
+					
+	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
+						
+					
+	  						<#if query.definitionName??> and definition_name = '${StringUtil.escapeSql(query.definitionName)}' </#if>
+						
+					
+	  						<#if query.definitionKey??> and definition_key = '${StringUtil.escapeSql(query.definitionKey)}' </#if>
+						
+					
+	  						<#if query.businessKey??> and business_key = '${StringUtil.escapeSql(query.businessKey)}' </#if>
+						
+					
+	  						<#if query.businessFlowNo??> and business_flow_no = '${StringUtil.escapeSql(query.businessFlowNo)}' </#if>
+						
+					
+	  						<#if query.businessStatus??> and business_status = '${StringUtil.escapeSql(query.businessStatus)}' </#if>
+						
+					
+	  						<#if query.businessStatusDesc??> and business_status_desc = '${StringUtil.escapeSql(query.businessStatusDesc)}' </#if>
+						
+					
+	  						<#if query.startUserId??> and start_user_id = '${StringUtil.escapeSql(query.startUserId)}' </#if>
+						
+					
+	  						<#if query.startUserName??> and start_user_name = '${StringUtil.escapeSql(query.startUserName)}' </#if>
+						
+					
+	  						<#if query.startUserOrgText??> and start_user_org_text = '${StringUtil.escapeSql(query.startUserOrgText)}' </#if>
+						
+					
+	  						<#if query.startUserPositionText??> and start_user_position_text = '${StringUtil.escapeSql(query.startUserPositionText)}' </#if>
+						
+					
+	  						<#if query.title??> and title = '${StringUtil.escapeSql(query.title)}' </#if>
+						
+					
+	  						<#if query.forwardCcUserIds??> and forward_cc_user_ids = '${StringUtil.escapeSql(query.forwardCcUserIds)}' </#if>
+						
+					
+	  						<#if query.updateUserId??> and update_user_id = '${StringUtil.escapeSql(query.updateUserId)}' </#if>
+						
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+					
+						
+					
+						
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+						
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_hi_inst_forward_cc ]]>
+	</statement>
+	
+</statements>

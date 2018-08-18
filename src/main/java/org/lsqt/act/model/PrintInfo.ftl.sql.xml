@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.PrintInfo" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_print_info">
+			<column id="id" type="auto" property="id" text="主键" />
+	 	
+	 		<column name="name" property="name" text="公司名称"/>
+	 		<column name="code" property="code" text="公司编码"/>
+	 	
+	 		<column name="print_man" property="printMan" text="用印人"/>
+	 		<column name="print_man_user_id" property="printManUserId" text="用印人"/>
+	 	
+	 		<column name="print_archive" property="printArchive" text="用印归档"/>
+	 		<column name="print_archive_user_id" property="printArchiveUserId" text="用印归档"/>
+	 	
+	 		<column name="doc_admin" property="docAdmin" text="档案管理员"/>
+	 		<column name="doc_admin_user_id" property="docAdminUserId" text="档案管理员"/>
+	 	
+	 		<column name="protect_man" property="protectMan" text="现保管员"/>
+	 		<column name="protect_man_user_id" property="protectManUserId" text="现保管员"/>
+	 	
+	 		<column name="area_id" property="areaId" text="计划划分区域"/>
+	 		<column name="area_name" property="areaName" text="计划划分区域"/>
+	 	
+	 		<column name="status" property="status" text="启停用状态: 0=停用 1=启用"/>
+	 		<column name="app_code" property="appCode" text="租户编码"/>
+	 		<column name="sn" property="sn" text="排序"/>
+	 		<column name="remark" property="remark" text="备注"/>
+	 		<column name="is_refer_contract" property="referContract" text="合同是否引用 : 0=无引用 1=已引用"/>
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	 		
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_print_info where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							name like '%${key}%'  or 
+							code like '%${key}%'  or 
+							print_man like '%${key}%'  or 
+							print_archive like '%${key}%'  or 
+							doc_admin like '%${key}%'  or 
+							protect_man like '%${key}%'  or 
+							area_name like '%${key}%'  or 
+							app_code = '${key}'  or 
+							remark like '%${key}%' 
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.name??> and name like '%${StringUtil.escapeSql(query.name)}%' </#if>
+						
+	  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+	  						<#if query.printMan??> and print_man = '${StringUtil.escapeSql(query.printMan)}' </#if>
+					
+	  						<#if query.printArchive??> and print_archive = '${StringUtil.escapeSql(query.printArchive)}' </#if>
+					
+	  						<#if query.docAdmin??> and doc_admin = '${StringUtil.escapeSql(query.docAdmin)}' </#if>
+					
+	  						<#if query.protectMan??> and protect_man = '${StringUtil.escapeSql(query.protectMan)}' </#if>
+					
+	  						<#if query.areaId??> and area_id = ${query.areaId} </#if>
+					
+	  						<#if query.areaName??> and area_name = '${StringUtil.escapeSql(query.areaName)}' </#if>
+						
+	  						<#if query.status??> and status = ${query.status} </#if>
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_print_info ]]>
+	</statement>
+	
+</statements>

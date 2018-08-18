@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.ApproveOpinionHis" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_approve_opinion_his">
+			
+			<column id="id" type="auto" property="id" text="主键" />
+			
+			<column name="business_key" property="businessKey" text="表单数据ID"/>
+			
+			<column name="process_instance_id" property="processInstanceId" text="流程实例ID"/>
+			
+	 		<column name="definition_id" property="definitionId" text="流程定义ID"/>
+	 		<column name="definition_key" property="definitionKey" text="流程定义Key"/>
+	 		<column name="definition_name" property="definitionName" text="流程定义名称"/>
+	 		
+	 		
+	 		<column name="approve_task_id" property="approveTaskId" text="记录审批时的节点ID"/>
+	 		<column name="approve_task_key" property="approveTaskKey" text="记录审批时的节点Key"/>
+	 		<column name="approve_task_name" property="approveTaskName" text="记录审批时的节点名称"/>
+	 		
+	 		<column name="approve_task_candidate_user_ids" property="approveTaskCandidateUserIds" text="记录审批任务时，候选的审批用户（例如，驳回时，需要使用此字段)"/>
+	 		<column name="reject_to_choose_node_task_key" property="rejectToChooseNodeTaskKey" text="当用户驳回到选择节点时，该属性值就是用户选择的节点key"/>
+	 		<column name="reject_re_run_complete_status" property="rejectReRunCompleteStatus" text="（分级）驳回后是否已归位再往下走的状态：1=已归位"/>
+	 		
+	 		
+	 		<column name="approve_action" property="approveAction" text="审批动作编码"/>
+	 		
+	 		<column name="approve_result" property="approveResult" text="审批动作(文本值:同意、退回字样)"/>
+	 		<column name="approve_opinion" property="approveOpinion" text="意见内容"/>
+	 		
+	 		<column name="approve_user_id" property="approveUserId" text="审批用户Id"/>
+	 		<column name="approve_user_name" property="approveUserName" text="审批用户名"/>
+	 		<column name="approve_user_position_text" property="approveUserPositionText" text="审批用户岗位信息"/>
+	 		<column name="approve_user_org_text" property="approveUserOrgText" text="审批用户组织信息"/>
+	 		
+	 		<column name="variables_json" property="variablesJson" text="记录审批任务的流程变量Map 的JSON表示"/>
+	 		
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_approve_opinion_his where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							definition_name like '%${key}%'  or 
+							task_key like '%${key}%'  or 
+							approve_result like '%${key}%'  or 
+							approve_opinion like '%${key}%'  or 
+							approve_user_name like '%${key}%'  or 
+							remark like '%${key}%' 
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						<#if query.idNotIn??> and id not in(${StringUtil.escapeSql(query.idNotIn)}) </#if>
+	  						
+	  						<#if query.businessKey??> and business_key = '${query.businessKey}' </#if>
+	  						
+	  						<#if query.processInstanceId??> and process_instance_id = '${query.processInstanceId}' </#if>
+					
+	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
+							
+							<#if query.definitionKey??> and definition_key = '${StringUtil.escapeSql(query.definitionKey)}' </#if>
+					
+	  						<#if query.definitionName??> and definition_name = '${StringUtil.escapeSql(query.definitionName)}' </#if>
+						
+	  						<#if query.taskId??> and approve_task_id = '${StringUtil.escapeSql(query.approveTaskId)}' </#if>
+					
+	  						<#if query.approveTaskKey??> and approve_task_key = '${StringUtil.escapeSql(query.approveTaskKey)}' </#if>
+					
+							<#if query.rejectReRunCompleteStatus??>
+								 and reject_re_run_complete_status = '${StringUtil.escapeSql(query.rejectReRunCompleteStatus)}' 
+							</#if>
+					
+					
+	  						<#if query.approveResult??> and approve_result = '${StringUtil.escapeSql(query.approveResult)}' </#if>
+							
+							<#if query.approveAction??> and approve_action = '${StringUtil.escapeSql(query.approveAction)}' </#if>
+					
+	  						<#if query.approveOpinion??> and approve_opinion = '${StringUtil.escapeSql(query.approveOpinion)}' </#if>
+						
+	  						<#if query.approveUserId??> and approve_user_id = '${StringUtil.escapeSql(query.approveUserId)}' </#if>
+						
+					
+	  						<#if query.approveUserName??> and approve_user_name = '${StringUtil.escapeSql(query.approveUserName)}' </#if>
+						
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+	  						<#-- 去除加签、转发、抄送意见 -->
+	  						<#if query.approveActionListNotIn?? && (query.approveActionListNotIn?size>0)> and approve_action not in 
+	  						(
+	  							<#list query.approveActionListNotIn as approveAction>
+	  								'${StringUtil.escapeSql(approveAction)}'
+	  								 <#if approveAction_has_next>,</#if>
+	  							</#list>
+	  						)
+	  						</#if>
+	  						
+	  						
+							<#if query.sortOrder?? && query.sortField??> 
+								order by ${StringUtil.escapeSql(query.sortField)} ${StringUtil.escapeSql(query.sortOrder)} 
+							</#if>
+							
+							<#if query.limit??> limit ${query.limit} </#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_approve_opinion_his ]]>
+	</statement>
+	 
+</statements>

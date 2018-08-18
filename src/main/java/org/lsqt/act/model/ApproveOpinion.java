@@ -38,6 +38,9 @@ public class ApproveOpinion {
 	
 	/** 记录审批时的节点名称 */
 	private String approveTaskName;
+	
+	/** 记录审批时的节点别名 */
+	private String approveTaskNameAlias;
 
 	/** 审批操作 ： 同意、拒绝结果等code，详情见  */
 	private String approveAction;
@@ -85,12 +88,15 @@ public class ApproveOpinion {
 
 	private java.util.Date updateTime;
 	
-	
+	/** 待办（手机）消息是否已删除，可用于消息是否已阅、已处理等业务**/
+	private Integer deleteMsgFlag;
+	public static final int DELETE_MSG_FLAG_已删除=1;
 	
 	// --- 辅助字段，用户加签、转发、抄送的用户ID
 	private String assignForwardCcUserIds;
 	
-	
+	// --- 辅助字段，审批意见对应的节点是否是会签节点
+	private boolean isMeetingNode; 
 	
 	public static List<Long> getIdList(List<ApproveOpinion> list) {
 		List<Long> data = new ArrayList<>();
@@ -304,6 +310,30 @@ public class ApproveOpinion {
 
 	public void setRejectReRunCompleteStatus(String rejectReRunCompleteStatus) {
 		this.rejectReRunCompleteStatus = rejectReRunCompleteStatus;
+	}
+
+	public boolean getIsMeetingNode() {
+		return isMeetingNode;
+	}
+
+	public void setIsMeetingNode(boolean isMeetingNode) {
+		this.isMeetingNode = isMeetingNode;
+	}
+
+	public String getApproveTaskNameAlias() {
+		return approveTaskNameAlias;
+	}
+
+	public void setApproveTaskNameAlias(String approveTaskNameAlias) {
+		this.approveTaskNameAlias = approveTaskNameAlias;
+	}
+
+	public Integer getDeleteMsgFlag() {
+		return deleteMsgFlag;
+	}
+
+	public void setDeleteMsgFlag(Integer deleteMsgFlag) {
+		this.deleteMsgFlag = deleteMsgFlag;
 	}
 
 

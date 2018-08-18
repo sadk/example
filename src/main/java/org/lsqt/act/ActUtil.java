@@ -33,10 +33,11 @@ public final class ActUtil {
 	public static final String VARIABLES_TITLE="title";  // 流程标题
 	public static final String VARIABLES_CREATE_DEPT_ID="createDeptId"; // 单据填制人部门，如果没有取用户主部门，哪果再没有取user.userOrgList的第一个
 	public static final String VARIABLES_BUSINESS_TYPE = "businessType"; // 自定义的单据业务类型
-	
+	public static final String VARIABLES_PRINT_COMPANY="companyName"; // 用印公司名称
 	
 	public static final String VARIABLES_LOGIN_USER = "loginUser"; 
-	public static final String VARIABLES_APPROVE_OPINION = "approveOpinion"; // 流程发起变量里的审批意见key
+	public static final String VARIABLES_APPROVE_OPINION = "approveOpinion"; // 流程发起时，就传入审批意见
+	
 	
 	/**流程是否结束 1=已结束  0=未结束 **/
 	public static final String END_STATUS_已结束="1";

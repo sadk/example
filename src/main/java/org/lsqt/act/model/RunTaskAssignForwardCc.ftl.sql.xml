@@ -22,8 +22,10 @@
 	 		<column name="approve_user_name" property="approveUserName" text="审批用户名"/>
 	 		<column name="approve_action" property="approveAction" text="审批操作 code： 同意、拒绝等"/>
 	 		
-	 		<column name="assign_forward_cc_user_ids" property="assignForwardCcUserIds" text="加签、转发、抄送的用户（多个以逗号隔开）"/>
-	 	
+	 		<column name="assign_forward_cc_user_ids" property="assignForwardCcUserIds" text="加签、转发、抄送的用户"/>
+	 		
+	 		<column name="approve_candiate_user_ids" property="approveCandiateUserIds" text="加签操作时的那个节点可审批的用户"/>
+	 		
 	 		<column name="remark" property="remark" text="备注"/>
 	 	
 	 	
@@ -75,6 +77,15 @@
 	  						<#if query.businessType??> and business_type = '${StringUtil.escapeSql(query.businessType)}' </#if>
 						
 	  						<#if query.processInstanceId??> and process_instance_id = '${StringUtil.escapeSql(query.processInstanceId)}' </#if>
+							
+							<#if query.processInstanceIdList?? && (query.processInstanceIdList?size > 0) > 
+								and process_instance_id in (
+									<#list query.processInstanceIdList as instId> 
+										'${StringUtil.escapeSql(instId)}' <#if instId_has_next> , </#if> 
+									</#list> 
+								) 
+							</#if>
+							
 						
 	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
 					
@@ -83,6 +94,14 @@
 	  						<#if query.definitionKey??> and definition_key = '${StringUtil.escapeSql(query.definitionKey)}' </#if>
 						
 	  						<#if query.taskId??> and task_id = '${StringUtil.escapeSql(query.taskId)}' </#if>
+	  						
+	  						<#if query.taskIdList?? && (query.taskIdList?size > 0) > 
+	  							<#list query.taskIdList as tskId>
+	  								and task_id in (
+	  									'${StringUtil.escapeSql(tskId)}' <#if tskId_has_next>,</#if>
+	  								)
+	  							</#list>
+	  						</#if>
 					
 	  						<#if query.taskCompleteType??> and task_complete_type = '${StringUtil.escapeSql(query.taskCompleteType)}' </#if>
 					
@@ -96,7 +115,7 @@
 						
 	  						<#if query.approveAction??> and approve_action = '${StringUtil.escapeSql(query.approveAction)}' </#if>
 						
-	  						<#if query.assignForwardCcUserIds??> and assign_forward_cc_user_ids like '%,${StringUtil.escapeSql(query.assignForwardCcUserIds)},%' </#if>
+	  						<#if query.assignForwardCcUserIds??> and assign_forward_cc_user_ids in ('${StringUtil.escapeSql(query.assignForwardCcUserIds)}') </#if>
 							
 	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
 					
@@ -105,6 +124,9 @@
 	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 	  						</#if>
 	  						
+	  						<#if query.sortOrder?? && query.sortField??> 
+								order by ${StringUtil.escapeSql(query.sortField)} ${StringUtil.escapeSql(query.sortOrder)} 
+							</#if>
         	</#if>
         	
 		]]>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.Variable" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_variable">
+			<column id="id" type="auto" property="id" text="主键" />
+			<column name="definition_id" property="definitionId" text="流程ID"/>
+	 		<column name="name" property="name" text="变量名"/>
+	 		<column name="code" property="code" text="变量编码"/>
+	 	
+	 		<column name="type" property="type" text="是否是常用类,1=常用固定类(如流程发起人等） 0=自定义类"/>
+	 		<column name="data_type" property="dataType" text="变量使用类型 1=字符串 2=数字 3=日期"/>
+	 		<column name="format" property="format" text="变量使用类型 1=字符串 2=数字 3=日期"/>
+	 		<column name="requried" property="requried" text="是否必填"/>
+	 		<column name="default_value" property="defaultValue" text="默认值"/>
+	 		<column name="sn" property="sn" text=""/>
+	 		<column name="remark" property="remark" text="用户备注"/>
+	 		<column name="app_code" property="appCode" text=""/>
+	 	
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_variable where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							name like '%${key}%'  or 
+							code = '${key}'  or 
+							remark like '%${key}%'  or 
+							app_code = '${key}' 
+					)
+				</#if>
+	
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}'</#if>
+	  						
+	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+	  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+	  						<#if query.type??> and type = ${query.type} </#if>
+					
+	  						<#if query.categoryType??> and category_type = ${query.categoryType} </#if>
+					
+	  						<#if query.dataType??> and data_type = ${query.dataType} </#if>
+					
+	  						<#if query.format??> and format = '${StringUtil.escapeSql(query.format)}' </#if>
+						
+	  						<#if query.requried??> and requried = ${query.requried} </#if>
+					
+	  						<#if query.defaultValue??> and default_value = '${StringUtil.escapeSql(query.defaultValue)}' </#if>
+						
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_variable ]]>
+	</statement>
+	
+</statements>

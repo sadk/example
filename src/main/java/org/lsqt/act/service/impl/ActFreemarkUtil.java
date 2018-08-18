@@ -19,7 +19,7 @@ public class ActFreemarkUtil {
 		FTL_CONFIGURATION = new Configuration();
 		FTL_CONFIGURATION.setDefaultEncoding("UTF-8");
 		FTL_CONFIGURATION.setNumberFormat("#"); // 数字格式化不打逗号,如: 123,335,23
-		//FTL_CONFIGURATION.setClassicCompatible(true); // null则替换为空字符串
+		FTL_CONFIGURATION.setClassicCompatible(true); // null则替换为空字符串
 		
 		FTL_STRING_TEMPLATE_LOADER = new StringTemplateLoader() ;
 	}

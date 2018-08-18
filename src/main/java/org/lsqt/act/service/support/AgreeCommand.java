@@ -4,7 +4,7 @@ import org.lsqt.act.model.ActRunningContext;
 
 /**
  * 同意
- * @author admin
+ * @author mmyuan
  *
  */
 public class AgreeCommand implements Command<Void> {
@@ -18,7 +18,13 @@ public class AgreeCommand implements Command<Void> {
 	public Void execute(ActRunningContext context) {
 		handler.setActRunningConext(context);
 		handler.handle();
+		handler.printCost();
 		return null;
+	}
+
+	@Override
+	public void executeCancel(ActRunningContext context) {
+		handler.handleCancel(context);
 	}
 
 }

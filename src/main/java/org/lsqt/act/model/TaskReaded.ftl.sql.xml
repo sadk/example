@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.TaskReaded" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_task_readed">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 		<column name="source_gid" property="sourceGid" text="全局记录ID"/>
+	 		<column name="readed" property="readed" text="1=已阅 0=未阅"/>
+	 		 
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_task_readed  WHERE 1=1 
+				<#if query.id??> and id = ${query.id} </#if>
+				<#if query.readed??> and readed = ${query.readed} </#if>
+				<#if query.sourceGid??> and source_gid = '${query.sourceGid}' </#if>
+				
+			    <#if query.sourceGidList?? && (query.sourceGidList?size > 0)>
+			   		and source_gid in (
+			   			<#list query.sourceGidList as sid>
+			   				'${sid}' <#if sid_has_next>,</#if>
+			   			</#list>
+			   			)
+		    	</#if>
+		]]>
+	</statement>
+	
+</statements>

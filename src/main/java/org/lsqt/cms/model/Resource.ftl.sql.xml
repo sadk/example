@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.cms.model.Resource" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="cms_resource">
+			<column id="id" type="auto" property="id" text="主键" />
+	 		<column name="pid" property="pid" text=""/>
+	 		<column name="name" property="name" text="资源名称"/>
+	 		<column name="alias" property="alias" text="别名：一般是有意义的中文，好识别用途"/>
+	 		<column name="value" property="value" text="资源值"/>
+	 		<column name="code" property="code" text="资源编码"/>
+	 		<column name="type" property="type" text="数据类型：100=目录 2xx=文件:200=txt 201=html 202=css 203=js "/>
+	 		<column name="enable" property="enable" text="是否启用: 1=启用  0=禁用"/>
+			<column name="node_path" property="nodePath" text="结点路径"/>
+			<column name="url" property="url" text="资源路径标识符可以是http的url，也可以是磁盘路径"/>
+			
+	 		<column name="app_code" property="appCode" text="系统编码"/>
+	 		<column name="sn" property="sn" text="排序"/>
+	 		<column name="remark" property="remark" text="备注"/>
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	 		
+	 		<column name="app_name" property="appName" text="应用名称" isVirtual = "true"/>
+	 		<column name="parent_name" property="parentName" text="上级资源名称" isVirtual = "true"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	SELECT A.*,B.name appName , C.name parent_name  FROM  cms_resource A left join sys_application B on A.app_code = B.code left join  cms_resource C on C.id = A.pid where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							name like '%${key}%'  or 
+							name code = '${key}' or 
+							remark like '%${key}%' 
+					)
+				</#if>
+	
+							<#if query.ids??> and A.id in (${StringUtil.escapeSql(query.ids)}) </#if>
+							
+							<#if query.idNotIn??> and A.id not in (${StringUtil.escapeSql(query.idNotIn)}) </#if>
+							
+	  						<#if query.id??> and A.id = ${query.id} </#if>
+					
+	  						<#if query.pid??> and A.pid = ${query.pid} </#if>
+					
+	  						<#if query.name??> and A.name = '${StringUtil.escapeSql(query.name)}' </#if>
+
+	  						<#if query.value??> and A.value = '${StringUtil.escapeSql(query.value)}' </#if>
+
+	  						<#if query.code??> and A.code = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+	  						<#if query.type??> and A.type = '${StringUtil.escapeSql(query.type)}' </#if>
+						
+	  						<#if query.enable??> and A.enable = '${StringUtil.escapeSql(query.enable)}' </#if>
+						
+	  						<#if query.appCode??> and A.app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+	  						
+	  						<#if query.tenantCode??> and A.app_code in (select code from sys_application where tenant_code = '${StringUtil.escapeSql(query.tenantCode)}') </#if>
+									
+	  						<#if query.sn??> and A.sn = ${query.sn} </#if>
+					
+	  						<#if query.nodePath??> and A.node_path like '${StringUtil.escapeSql(query.nodePath)}%' </#if>
+						
+	  						<#if query.remark??> and A.remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+					
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ SELECT A.*,B.name app_name FROM  cms_resource A left join sys_application B on A.app_code = B.code  ]]>
+	</statement>
+	
+</statements>

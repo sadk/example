@@ -28,6 +28,10 @@ public class NodeFormServiceImpl implements NodeFormService{
 	public Page<NodeForm>  queryForPage(NodeFormQuery query) {
 		return db.queryForPage("queryForPage", query.getPageIndex(), query.getPageSize(), NodeForm.class, query);
 	}
+	
+	public List<NodeForm>  queryForList(NodeFormQuery query) {
+		return db.queryForList("queryForPage", NodeForm.class, query);
+	}
 
 	public List<NodeForm> getAll(){
 		  return db.queryForList("getAll", NodeForm.class);

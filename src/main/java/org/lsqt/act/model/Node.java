@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.activiti.bpmn.model.FormProperty;
+import org.lsqt.act.ActUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
 
 public class Node {
@@ -13,17 +14,45 @@ public class Node {
 	private String definitionId;
 	private String taskKey;
 	private String taskName;
+	private String taskNameAlias;
+	
 
+	/** 前置角本 、类型（1=url 2=javascript_code 3=javacode 4=groovy 5=sql）*/
+	private String beforeScript;
+	private String beforeScriptType;
+	
+	/** 后置角本、类型（1=url 2=javascript_code 3=javacode 5=groovy 5=sql） */
+	private String afterScript;
+	private String afterScriptType;
+	
+	/** 中间脚本、类型（1=url 2=javascript_code 3=javacode 5=groovy 5=sql）**/
+	private String onceScriptType;
+	private String onceScript;
+	
+	
+	public static final String SCRIPT_TYPE_URL="1";
+	public static final String SCRIPT_TYPE_JAVASCRIPT_CODE="2";
+	public static final String SCRIPT_TYPE_JAVA_CODE="3";
+	public static final String SCRIPT_TYPE_GROOVY= "4";
+	public static final String SCRIPT_TYPE_SQL= "5";
+	
+	private Integer printNode; //是否是用印节点
+	public static final int PRINT_NODE_YES_用印=1;
+	public static final int PRINT_NODE_YES_用印归档=2;
+	public static final int PRINT_NODE_YES_档案管理员=3;
+	public static final int PRINT_NODE_YES_现保管员=4;
+	public static final int PRINT_NODE_NO=0;
 	
 	@Deprecated	private Integer taskDefType; // 节点定义类型: 1=usertask
 	@Deprecated public static final int TASK_DEF_TYPE_USERTASK=1;
 	
-	/** 节点类型: 0=拟稿节点(退回到拟稿人时有用) 1=普通任务节点 2=结束节点  3=会签结点**/
+	/** 节点类型: 0=拟稿节点(退回到拟稿人时有用) 1=普通任务节点 2=结束节点  3=会签结点 **/
 	private Integer taskBizType; 
 	public static final int TASK_BIZ_TYPE_DRAFTNODE=0;
 	public static final int TASK_BIZ_TYPE_UNDRAFTNODE=1;
 	public static final int TASK_BIZ_TYPE_LASTNODE=2;
 	public static final int TASK_BIZ_TYPE_MEETINGNODE=3;
+	
 	public String getTaskBizTypeDesc() {
 		if(taskBizType!=null) {
 			if(TASK_BIZ_TYPE_DRAFTNODE == taskBizType) {
@@ -45,15 +74,16 @@ public class Node {
 	
 	private String formKey ; // 表单url
 	
-	private String nodeJumpType; // 1=正常跳转 2=选择路径跳转 3=自由跳转 4=发起时自动跳过 5=审批用户为空自动跳过(节点用户设置为空）   6=解析用户为空自动跳过（节点用户设置不为空，但程序解析不到用户）
+	private String nodeJumpType; // 1=正常跳转 2=选择路径跳转 3=自由跳转 4=发起时拟稿节点自动跳过 5=当审批人设置为空时   6=当审批人解析为空时 7=强制跳过
 	public static final String NODE_JUMP_TYPE_NORMAL = "1";
 	@Deprecated public static final String NODE_JUMP_TYPE_CHOOSE_ROAD = "2";
 	@Deprecated public static final String NODE_JUMP_TYPE_ANY_JUMP = "3";
 	public static final String NODE_JUMP_TYPE_AUTO_JUMP = "4";
 	public static final String NODE_JUMP_TYPE_EMPTY_APPROVE_USER_AUTO_JUMP = "5";
 	public static final String NODE_JUMP_TYPE_RESOLVED_USER_EMPTY_AUTO_JUMP="6";
+	public static final String NODE_JUMP_TYPE_FORCE_JUMP= "7" ;
 	
-	public static final String NODE_JUMP_TYPE_EMPTY_APPROVE_USER_AUTO_JUMP_VIRTUAL_USERID="-1"; // 当设置流程节点审批用户为空时，节点自动跳过使用此虚拟用户ID
+	public static final String NODE_JUMP_TYPE_EMPTY_APPROVE_USER_AUTO_JUMP_VIRTUAL_USERID=ActUtil.AUTO_JUMP_USER_ID; // 当设置流程节点审批用户为空时，节点自动跳过使用此虚拟用户ID
 	
 	/** 是否从全局变量里copy流程变量值到当前节点 0=否  1=是 2=第三方接口设置 **/
 	private Integer nodeVariableCopy;
@@ -112,12 +142,17 @@ public class Node {
 			return "自由跳转";
 		}
 		if (nodeJumpType.equals(NODE_JUMP_TYPE_AUTO_JUMP)) {
-			return "发起时自动跳过";
+			return "发起时拟稿节点自动跳过";
 		}
 		if (nodeJumpType.equals(NODE_JUMP_TYPE_EMPTY_APPROVE_USER_AUTO_JUMP)) {
-			return "审批用户为空自动跳过";
+			return "当审批人设置为空时";
 		}
-		
+		if (nodeJumpType.equals(NODE_JUMP_TYPE_RESOLVED_USER_EMPTY_AUTO_JUMP)) {
+			return "审批人解析为空时";
+		}
+		if (nodeJumpType.equals(NODE_JUMP_TYPE_FORCE_JUMP)) {
+			return "强制跳过";
+		}
 		return "";
 	}
 	
@@ -312,4 +347,69 @@ public class Node {
 	public void setExtProperty(Map<String, Object> extProperty) {
 		this.extProperty = extProperty;
 	}
+
+	public Integer getPrintNode() {
+		return printNode;
+	}
+
+	public void setPrintNode(Integer printNode) {
+		this.printNode = printNode;
+	}
+
+	public String getBeforeScript() {
+		return beforeScript;
+	}
+
+	public void setBeforeScript(String beforeScript) {
+		this.beforeScript = beforeScript;
+	}
+
+	public String getBeforeScriptType() {
+		return beforeScriptType;
+	}
+
+	public void setBeforeScriptType(String beforeScriptType) {
+		this.beforeScriptType = beforeScriptType;
+	}
+
+	public String getAfterScript() {
+		return afterScript;
+	}
+
+	public void setAfterScript(String afterScript) {
+		this.afterScript = afterScript;
+	}
+
+	public String getAfterScriptType() {
+		return afterScriptType;
+	}
+
+	public void setAfterScriptType(String afterScriptType) {
+		this.afterScriptType = afterScriptType;
+	}
+
+	public String getOnceScriptType() {
+		return onceScriptType;
+	}
+
+	public void setOnceScriptType(String onceScriptType) {
+		this.onceScriptType = onceScriptType;
+	}
+
+	public String getOnceScript() {
+		return onceScript;
+	}
+
+	public void setOnceScript(String onceScript) {
+		this.onceScript = onceScript;
+	}
+
+	public String getTaskNameAlias() {
+		return taskNameAlias;
+	}
+
+	public void setTaskNameAlias(String taskNameAlias) {
+		this.taskNameAlias = taskNameAlias;
+	}
+
 }

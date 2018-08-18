@@ -1,29 +1,41 @@
 package org.lsqt.act.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.activiti.engine.runtime.ProcessInstance;
 import org.lsqt.act.ActUtil;
+import org.lsqt.act.model.ActRunningContext;
 import org.lsqt.act.model.ApproveObject;
 import org.lsqt.act.model.Node;
+import org.lsqt.act.model.NodeButton;
 import org.lsqt.act.model.NodeQuery;
+import org.lsqt.act.model.PrintInfo;
+import org.lsqt.act.model.PrintInfoQuery;
 import org.lsqt.act.model.ProcessInstanceHis;
 import org.lsqt.act.model.ProcessInstanceHisQuery;
 import org.lsqt.act.model.RunInstance;
 import org.lsqt.act.model.RunInstanceQuery;
+import org.lsqt.act.model.RunTaskAssignForwardCc;
+import org.lsqt.act.model.RunTaskAssignForwardCcQuery;
 import org.lsqt.act.model.Task;
 import org.lsqt.act.model.TaskQuery;
 import org.lsqt.act.service.NodeUserService;
 import org.lsqt.act.service.RuntimeService;
 import org.lsqt.act.service.TaskService;
+import org.lsqt.act.service.support.TaskQueryUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.syswin.PlatformDb;
 import org.lsqt.syswin.uum.model.User;
@@ -31,6 +43,8 @@ import org.lsqt.syswin.uum.model.UserQuery;
 import org.lsqt.syswin.uum.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
 
 /**
  * 流程任务相关
@@ -113,94 +127,30 @@ public class TaskController {
 		
 		 
 		
-		loadApproveUser(page);
+		taskService.loadApproveUser(page.getData());
 		return page;
 	}
 	
-	@RequestMapping(mapping = { "/page_fast", "/m/page_fast" },text="获取我的待办(含流程标题、发起人信息)")
+	@RequestMapping(mapping = { "/page_fast", "/m/page_fast" }, text = "获取我的待办(含流程标题、发起人信息)")
 	public Page<Task> queryForPageFast(TaskQuery query) {
 		prepareQuery(query);
-		
-		if(StringUtil.isBlank(query.getUserIds()) && query.getIsQueryTaskUser()) {
+
+		if (StringUtil.isBlank(query.getUserIds()) && query.getIsQueryTaskUser()) {
 			return new Page.PageModel<>();
 		}
-		
+
+		long start = System.currentTimeMillis();
+		System.out.println("后台我的待办："+JSON.toJSONString(query, true));
 		Page<Task> page = taskService.queryMyToDoTaskPage(query);
-		
-		loadApproveUser(page);
+		log.info("我的待办cost:" + (System.currentTimeMillis() - start));
+
+		start = System.currentTimeMillis();
+		taskService.loadApproveUser(page.getData());
+		log.info("加载待办的审批用户cost:" + (System.currentTimeMillis() - start));
 		return page;
 	}
-
-	void loadApproveUser(Page<Task> page) {
-		List<String> instanceIds =new ArrayList<>();
-		for (Task t: page.getData()) {
-			if (StringUtil.isNotBlank(t.getProcessInstanceId())) {
-				instanceIds.add(t.getProcessInstanceId());
-			}
-		}
-		
-		if(!instanceIds.isEmpty()) {
-			RunInstanceQuery riq = new RunInstanceQuery();
-			riq.setInstanceIdList(instanceIds);
-			List<RunInstance> data = db.queryForList("queryForPageRunningDetail", RunInstance.class, riq);
-			
-			Map<String,RunInstance> mapData = new HashMap<>();
-			for(RunInstance e: data) {
-				
-				Map<String, Object> map = new HashMap<>();
-				
-				if(StringUtil.isNotBlank(e.getCreateDeptId())) {
-					map.put(ActUtil.VARIABLES_CREATE_DEPT_ID, Long.valueOf(e.getCreateDeptId()));
-				}else {
-					log.error("流程实例ID="+e.getInstanceId()+"的流程找不到填制人部门");
-				}
-				map.put(ActUtil.VARIABLES_START_USER_ID, e.getStartUserId());
-				//map.put(ActUtil.VARIABLES_LOGIN_USER,null);
-				List<ApproveObject> approveUsers =null;
-				try{
-					approveUsers = nodeUserService.getNodeUsers(null, e.getProcessDefinitionId(), e.getTaskKey(), map);
-				}catch(Exception ex) {
-					ex.printStackTrace();
-				}
-				StringBuilder approveUserText = new StringBuilder();
 	
-				
-				
-				if (approveUsers != null) {
-					for (ApproveObject t : approveUsers) {
-						User user = db2.getById(User.class, t.getId());
-						if (user != null) {
-							approveUserText.append(t.getName() + "(" + user.getLoginNo()+"/"+user.getUserId() + ")");
-						}
-					}
-					e.setApproveUserText(approveUserText.toString());
-				}
-				
-				
-				// 拟稿节点审批人就是发起人自己
-				NodeQuery nq =new NodeQuery();
-				nq.setTaskBizType(Node.TASK_BIZ_TYPE_DRAFTNODE);
-				nq.setDefinitionId(e.getProcessDefinitionId());
-				Node draftNode = db.queryForObject("queryForPage", Node.class, nq);
-				if(draftNode!=null && e.getTaskKey() !=null && e.getTaskKey().equals(draftNode.getTaskKey())) {
-					User user = db2.getById(User.class, e.getStartUserId());
-					if (user!=null) {
-						e.setApproveUserText(e.getStartUserName()+"("+user.getLoginNo()+"/"+user.getUserId()+")");
-					}
-				}
-				
-				mapData.put(e.getInstanceId(), e);
-			}
-			
-			
-			for(Task t: page.getData()) {
-				RunInstance ri = mapData.get(t.getProcessInstanceId());
-				if (ri!=null) {
-					t.setCandidateUserNames(mapData.get(t.getProcessInstanceId()).getApproveUserText());
-				}
-			} 
-		}
-	}
+
 
 	/**
 	 * 填充多个用户
@@ -227,6 +177,7 @@ public class TaskController {
 			}
 			query.setUserIds(StringUtil.join(uids, ","));
 			query.setUserId(null);
+			
 		}
 	}
 	
@@ -259,7 +210,7 @@ public class TaskController {
 		
 		for (Task t: taskData) {
 			if(StringUtil.isNotBlank(t.getProcessInstanceId())) {
-				boolean isEnded = runtimeService.isInstanceEnded(t.getProcessInstanceId());
+				boolean isEnded = TaskQueryUtil.isInstanceEnded(t.getProcessInstanceId());
 				t.setCloseStatus( isEnded ? ActUtil.END_STATUS_已结束:ActUtil.END_STATUS_未结束);
 			}
 		}

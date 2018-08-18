@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.cms.model.Tags" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="cms_tags">
+		<column id="id" type="auto" property="id" text="主键" />
+		<column name="name" property="name"/>
+		<column name="code" property="code"/>
+		<column name="value" property="value"/>
+		  
+		<column name="remark" property="remark" />
+		
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		select * from cms_tags where 1=1
+		<#if query??>
+			<#if query.key??>
+			and ( 		name like '%${StringUtil.escapeSql(query.key)}%' 
+			        or 	value = '${StringUtil.escapeSql(query.key)}' 
+			        or 	code = '${StringUtil.escapeSql(query.key)}' 
+		    	)
+			</#if>
+			<#if query.id??>
+				and id = ${query.id} 
+			</#if>
+			<#if query.code??>
+				and code = '${StringUtil.escapeSql(query.code)}' 
+			</#if>
+			<#if query.name??>
+				and name like '%${StringUtil.escapeSql(query.name)}%' 
+			</#if>
+			<#if query.value??>
+				and value = '${StringUtil.escapeSql(query.value)}' 
+			</#if>
+			 
+			<#if query.nameList?? && (query.nameList?size>0)>
+				and name in
+				(
+					<#list query.nameList as item>
+				 		 '${StringUtil.escapeSql(item)}' <#if item_has_next>,</#if>
+				 	</#list>
+			 	)
+			 </#if>
+	  						 
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			</#if>
+			
+			<#if query.createTimeBegin?? && query.createTimeEnd??>
+				 and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+			</#if>
+        </#if>
+		]]>
+	</statement>
+	
+</statements>

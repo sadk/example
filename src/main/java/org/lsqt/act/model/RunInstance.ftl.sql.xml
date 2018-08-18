@@ -18,6 +18,8 @@
 	 		<column name="start_login_no" property="startLoginNo" text="发起人账号"/>
 	 		<column name="start_user_org_text" property="startUserOrgText" text="发起人组织信息"/>
 	 		<column name="start_user_position_text" property="startUserPositionText" text="发起人岗位信息"/>
+	 		<column name="company_id_print" property="companyIdPrint" text="用印公司ID"/>
+	 		<column name="company_name_print" property="companyNamePrint" text="用印公司名称"/>
 	 		
 	 		<column name="business_key" property="businessKey" text="业务数据主键ID"/>
 	 		<column name="business_flow_no" property="businessFlowNo" text="业务流水号（全局唯一）"/>
@@ -152,6 +154,8 @@
 		    C.business_status,
 		    C.business_status_desc,
 		    C.business_category,
+			C.company_name_print,
+			C.company_id_print,
 
 		    C.app_code,
 		    C.sn,
@@ -167,12 +171,8 @@
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
-							RES.PROC_INST_ID_ = '${key}' or
+							C.instance_id = '${key}'  or 
 							C.title like '%${key}%'  or 
-							
-							P.KEY_ like '%${key}%'  or 
-							P.NAME_ like '%${key}%'  or 
-							
 							C.business_flow_no like '%${key}%' or
 							C.start_user_id = '${key}'  or 
 							C.start_user_name like '%${key}%'  or 
@@ -185,7 +185,12 @@
 						<#if query.businessKey??> and C.business_key = '${StringUtil.escapeSql(query.businessKey)}' </#if>
  						<#if query.title??> and C.title = '${StringUtil.escapeSql(query.title)}' </#if>
 			
+						<#-- 优化性能
  						<#if query.processDefinitionId??> and RES.PROC_DEF_ID_  = '${StringUtil.escapeSql(query.processDefinitionId)}' </#if>
+ 						 -->
+ 						<#if query.processDefinitionId??> and C.process_definition_id  = '${StringUtil.escapeSql(query.processDefinitionId)}' </#if>
+ 						 
+ 						 
  						<#if query.processDefinitionKey??> and P.KEY_ = '${StringUtil.escapeSql(query.processDefinitionKey)}' </#if>
  						<#if query.processDefinitionName??> and P.NAME_  = '${StringUtil.escapeSql(query.processDefinitionName)}' </#if>
 				

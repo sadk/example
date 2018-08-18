@@ -38,7 +38,6 @@
 	 	<![CDATA[
 		 	select * from ext_definition where 1=1
 		 	<#if query??>
-		 		<#-- -------------------关键字查询开始 --------------- -->
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
@@ -76,13 +75,10 @@
 														
 					)
 				</#if>
-				<#-- -------------------关键字查询结束 --------------- -->
-	
-				<#-- -------------------综合查询开始 --------------- -->
 				
 				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
-	  					<#if query.id??> and id = ${query.id} </#if>
+	  						<#if query.id??> and id = ${query.id} </#if>
 					
 	  						<#if query.definitionId??> and definition_id = '${StringUtil.escapeSql(query.definitionId)}' </#if>
 						
@@ -112,23 +108,18 @@
 						
 					
 						
-	  					<#if query.sn??> and sn = ${query.sn} </#if>
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
 					
 	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
 						
-					
-						
-					
-						
-					
 						
 							<#if query.createTimeBegin?? && query.createTimeEnd??>
 	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 	  						</#if>
 	  						
-						
-					
-				<#-- -------------------综合查询结束 --------------- -->
+							<#if query.sortField?? && query.sortOrder??>
+								order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+							</#if>
         	</#if>
         	
 		]]>

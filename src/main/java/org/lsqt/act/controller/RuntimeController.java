@@ -1,12 +1,16 @@
 package org.lsqt.act.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.lsqt.act.ActUtil;
+import org.lsqt.act.model.ActRunningContext;
 import org.lsqt.act.model.ApproveObject;
 import org.lsqt.act.model.ApproveOpinion;
 import org.lsqt.act.model.ApproveOpinionHis;
@@ -16,16 +20,21 @@ import org.lsqt.act.model.ProcessInstance;
 import org.lsqt.act.model.ProcessInstanceHis;
 import org.lsqt.act.model.ProcessInstanceQuery;
 import org.lsqt.act.model.RunInstance;
+import org.lsqt.act.model.RunTask;
 import org.lsqt.act.model.Task;
 import org.lsqt.act.service.NodeUserService;
 import org.lsqt.act.service.RuntimeService;
 import org.lsqt.act.service.TaskService;
 import org.lsqt.act.service.impl.TaskServiceImpl;
+import org.lsqt.act.service.support.EkpTaskUtil;
+import org.lsqt.act.service.support.HttpClientUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.collection.ArrayUtil;
+import org.lsqt.components.util.file.PropertiesUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.syswin.PlatformDb;
 import org.lsqt.syswin.uum.model.Org;
@@ -33,12 +42,16 @@ import org.lsqt.syswin.uum.model.OrgQuery;
 import org.lsqt.syswin.uum.model.User;
 import org.lsqt.syswin.uum.model.UserQuery;
 import org.lsqt.syswin.uum.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
 
 @Controller(mapping = { "/act/runtime","/nv2/act/runtime"  })
 public class RuntimeController {
+	private static final Logger  log = LoggerFactory.getLogger(RuntimeController.class);
+	
 	@Inject private RuntimeService runtimeService;
 	@Inject private TaskService taskService;
 	@Inject private NodeUserService nodeUserService;
@@ -52,7 +65,16 @@ public class RuntimeController {
 	public ProcessInstance startByDefinitionId(String definitionId,String variables) {
 		if(StringUtil.isNotBlank(definitionId,variables)) {
 			Map<String,Object> data = JSON.parseObject(variables, Map.class);
-			return runtimeService.startProcessInstanceById(definitionId,data);
+			ActRunningContext runContext = runtimeService.startProcessInstanceById(definitionId,data);
+			
+			// 推送待办到旭辉系统
+			if (runContext.getDataHook() != null && runContext.getDataHook() instanceof List) {
+				List<RunTask> taskData = (List<RunTask>) runContext.getDataHook();
+
+				EkpTaskUtil.exeEkpSendTask(taskData);
+			}
+			
+			return runContext.getStartedProcessInstance() ;
 		}
 		return null;
 	}
@@ -62,7 +84,7 @@ public class RuntimeController {
 	public ProcessInstance startByDefinitionKey(String definitionKey,String variables) {
 		if(StringUtil.isNotBlank(definitionKey,variables)) {
 			Map<String,Object> data = JSON.parseObject(variables, Map.class);
-			return runtimeService.startProcessInstanceByKey(definitionKey,data);
+			return runtimeService.startProcessInstanceByKey(definitionKey,data).getStartedProcessInstance();
 		}
 		return null;
 	}
@@ -83,8 +105,24 @@ public class RuntimeController {
 			if (action != null && action.startsWith("button_type_")) {
 				approveOpinion.setApproveAction(action.replace("button_type_", ""));
 			}
-			//var.put("money", 50001);
-			String userIds = taskService.complete(loginUserId, taskId, var, approveOpinion);
+
+
+			ActRunningContext runContext = taskService.complete(loginUserId, taskId, var, approveOpinion);
+			String userIds = runContext.getNextTaskCandidateUserIds();
+			
+			
+			
+			// 推送待办到旭辉系统(并把当前任务从旭辉待办里删除)
+			if (runContext.getDataHook() != null && runContext.getDataHook() instanceof List) {
+				List<RunTask> taskData = (List<RunTask>) runContext.getDataHook();
+
+				if (runContext.getInputTask() != null) {
+					EkpTaskUtil.exeEkpDeleteTask(runContext.getInputTask().getId());
+				}
+				EkpTaskUtil.exeEkpSendTask(taskData);
+			}
+			
+			
 			
 			if (StringUtil.isNotBlank(userIds)) {
 				UserQuery query = new UserQuery();
@@ -98,12 +136,16 @@ public class RuntimeController {
 				}
 				return cadiateUsers.toString();
 			} else {
-				return "没有下一步处理人(流程可能已结束)";
+				return "没有下一步处理人(流程可能已结束或退回至拟稿人)";
 			}
 		}else {
 			throw new IllegalArgumentException("taskId不能为空");
 		}
 	}
+	
+	
+	
+	
 	
 	@RequestMapping(mapping={"/list_opinion","/m/list_opinion"},text="流程审批意见(含附件)")
 	public List<ApproveOpinion> opinionList(String taskId) {
@@ -291,7 +333,7 @@ public class RuntimeController {
 			variables.putAll(variablesJump);
 		}
 		
-		org.lsqt.act.model.ProcessInstance newInstance = runtimeService.startProcessInstanceById(form.getProcessDefinitionIdTarget(), form.getBusinessKey(), variables);
+		org.lsqt.act.model.ProcessInstance newInstance = runtimeService.startProcessInstanceById(form.getProcessDefinitionIdTarget(), form.getBusinessKey(), variables).getStartedProcessInstance();
 		
 		Task task = getNextNewTask(newInstance.getProcessInstanceId());
 		
@@ -459,5 +501,26 @@ public class RuntimeController {
 		
 		
 		return fixedInstanceIds;
+	}
+	
+	
+	@RequestMapping(mapping = { "/delete_third_task", "/m/delete_third_task" }, text = "删除第三方待办任务")
+	public void deleteThirdTask(String instanceIds) {
+		if (StringUtil.isNotBlank(instanceIds)) {
+			List<String> ids = StringUtil.split(instanceIds, ",");
+			
+			ApproveOpinionQuery query = new ApproveOpinionQuery();
+			query.setProcessInstanceIds(StringUtil.join(ids));
+			List<ApproveOpinion> list = db.queryForList("queryForPage", ApproveOpinion.class, query);
+			if(ArrayUtil.isNotBlank(list)) {
+				for (ApproveOpinion m: list) {
+					if (StringUtil.isNotBlank(m.getApproveTaskId())) {
+						EkpTaskUtil.exeEkpDeleteTask(m.getApproveTaskId());
+					}
+					
+					db.delete(m);
+				}
+			}
+		}
 	}
 }

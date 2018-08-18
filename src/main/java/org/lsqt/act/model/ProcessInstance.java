@@ -11,7 +11,7 @@ import java.util.Map;
 public class ProcessInstance {
 	
 	public  static final String CANDIDATE_USER_IDS_KEY="candidateUserIds";
-	
+	public  static final String CANDIDATE_USER_NAMES_KEY="candidateUserNames";
 	/**流程发起人**/
 	private String startUserId;
 	

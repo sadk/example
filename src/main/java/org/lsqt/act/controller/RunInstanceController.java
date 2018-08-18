@@ -3,10 +3,8 @@ package org.lsqt.act.controller;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowElement;
@@ -16,12 +14,10 @@ import org.lsqt.act.model.InstanceVariable;
 import org.lsqt.act.model.InstanceVariableQuery;
 import org.lsqt.act.model.Node;
 import org.lsqt.act.model.NodeQuery;
-import org.lsqt.act.model.ProcessInstance;
 import org.lsqt.act.model.ProcessInstanceHis;
 import org.lsqt.act.model.RunInstance;
 import org.lsqt.act.model.RunInstanceQuery;
 import org.lsqt.act.service.NodeUserService;
-import org.lsqt.act.service.impl.NodeUserServiceImpl;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -41,7 +37,7 @@ import com.alibaba.fastjson.JSON;
  * 自定义的流程实例查询
  *
  */
-@Controller(mapping = { "/act/runinstance","/nv2/act/runinstance" })
+@Controller(mapping = { "/act/runinstance" })
 public class RunInstanceController {
 	private static final Logger log = LoggerFactory.getLogger(RunInstanceController.class);
 	
@@ -147,7 +143,7 @@ public class RunInstanceController {
 		NodeQuery nq =new NodeQuery();
 		nq.setTaskBizType(Node.TASK_BIZ_TYPE_DRAFTNODE);
 		nq.setDefinitionId(query.getProcessDefinitionId());
-		Node draftNode = db.queryForObject("queryForPage", Node.class, nq);
+		List<Node> draftNodeList = db.queryForList("queryForPage", Node.class, nq);
 		
 		// 加载流程当前活动节点的审批人
 		for (RunInstance e: page.getData()) {
@@ -162,7 +158,11 @@ public class RunInstanceController {
 			//map.put(ActUtil.VARIABLES_LOGIN_USER,null);
 			List<ApproveObject> approveUsers =null;
 			try{
-				approveUsers = nodeUserService.getNodeUsers(null, e.getProcessDefinitionId(), e.getTaskKey(), map);
+				Long startUserId = null;
+				if(StringUtil.isNotBlank(e.getStartUserId())) {
+					startUserId = Long.valueOf(e.getStartUserId());
+				}
+				approveUsers = nodeUserService.getNodeUsers(startUserId, e.getProcessDefinitionId(), e.getTaskKey(), map);
 			}catch(Exception ex) {
 				ex.printStackTrace();
 			}
@@ -180,12 +180,17 @@ public class RunInstanceController {
 				e.setApproveUserText(approveUserText.toString());
 			}
 			
-			if(draftNode!=null && e.getTaskKey()!=null && e.getTaskKey().equals(draftNode.getTaskKey())) {
-				User user = db2.getById(User.class, e.getStartUserId());
-				if (user!=null) {
-					e.setApproveUserText(e.getStartUserName()+"("+user.getLoginNo()+"/"+user.getUserId()+")");
+			for(Node draftNode: draftNodeList) {
+				if(draftNode!=null && e.getTaskKey()!=null 
+						&& e.getTaskKey().equals(draftNode.getTaskKey())
+						&& draftNode.getDefinitionId().equals(e.getProcessDefinitionId()) ) {
+					
+					User user = db2.getById(User.class, e.getStartUserId());
+					if (user!=null) {
+						e.setApproveUserText(e.getStartUserName()+"("+user.getLoginNo()+"/"+user.getUserId()+")");
+					}
+					break;
 				}
-				
 			}
 		}
 		

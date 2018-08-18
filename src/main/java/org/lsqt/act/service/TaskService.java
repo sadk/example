@@ -1,5 +1,6 @@
 package org.lsqt.act.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public interface TaskService {
 	 * @param approveOpinion 流程审批意见，其中approveOpinion.approveAction字段很重要
 	 * @param isSaveOpinionAttachment 是否保存意见的附件
 	 */
-	String complete(Long loginUserId,String taskId, Map<String, Object> variable,ApproveOpinion approveOpinion) ;
+	ActRunningContext complete(Long loginUserId,String taskId, Map<String, Object> variable,ApproveOpinion approveOpinion) ;
 	
 	/**
 	 * 流程任意跳转
@@ -162,4 +163,23 @@ public interface TaskService {
 	 * @return
 	 */
 	Map<String,Object> prepareMeetingVariable(ProcessInstance instance,Map<String, List<ApproveObject>> nodeUserMap);
+	
+	/**
+	 * 加载任务的审批用户
+	 * @param taskData
+	 */
+	void loadApproveUser(Collection<Task> taskData) ;
+	
+	/**
+	 * 加载任务是否是历史任务，见标志isHistoryTask
+	 * @param taskData
+	 
+	void loadIsHistoryTask(Collection<Task> taskData) ;
+	*/
+	
+	/**
+	 * 我已审批，替换taskKey为最新的待办任务taskKey
+	 * @param taskData
+	 */
+	void replaceTaskKey(Collection<Task> taskData);
 }

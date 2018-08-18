@@ -14,11 +14,14 @@
 		<column name="HAS_START_FORM_KEY_" property="hasStartFormKey"  />
 		<column name="HAS_GRAPHICAL_NOTATION_" property="hasGraphicalNotation" />
 		
+		<column name="model_id" property="modelId" text="模型ID,暂手维护数据" />
+		
 		<column name="SUSPENSION_STATE_" property="suspensionState" text = "1=激活 2=挂起"/>
 		<column name="TENANT_ID_" property="tenantId"/>
 		
 		<column name="short_name" property="shortName" text="流程定义简称(新增字段，用于手机端)"/>
 		<column name="enable_mobile" property="enableMobile" text="手机端是否显示"/>
+		<column name="enable_neighbor_jump" property="enableNeighborJump" text="启用相邻节点相同审批人就自动跳过"/>
 		
 		<column name="DEPLOY_NAME" property="deployName" isVirtual = "true" text="虚拟列，发布名称"/>
 		<column name="DEPLOY_TIME" property="deployTime" isVirtual = "true" text="虚拟列，发布时间"/>
@@ -38,7 +41,7 @@
 			</#if>
 			
 			<#if query.id??>
-				and A.ID_ = ${query.id} 
+				and A.ID_ = '${query.id}' 
 			</#if>
 			
 			<#if query.ids??>
@@ -92,4 +95,14 @@
 		]]>
 	</statement>
 
+	<statement id="getExtendDefinitionNotExists">
+		<![CDATA[ SELECT * FROM act_re_procdef WHERE ID_ NOT IN (SELECT definition_id FROM ext_definition ) ]]>
+	</statement>
+
+	<statement id="getAll">
+		<![CDATA[ 
+			SELECT A.*,B.name_ DEPLOY_NAME, B.DEPLOY_TIME_ DEPLOY_TIME FROM  act_re_procdef A left join act_re_deployment B on A.DEPLOYMENT_ID_ = B.ID_  where 1=1 
+		]]>
+	</statement>
+	
 </statements>

@@ -27,6 +27,10 @@ public class ApproveObject {
 	// --- 审批对象，所有的详情信息
 	private Map<String,Object> object = new HashMap<>();
 	
+	public ApproveObject(){}
+	public ApproveObject(String id) {
+		this.id = id;
+	}
 	
 	public static List<String> toIdList(List<ApproveObject> list) {
 		List<String> idList = new ArrayList<>();

@@ -21,4 +21,9 @@ public class RejectUpCommand implements Command<Void> {
 		return null;
 	}
 
+	@Override
+	public void executeCancel(ActRunningContext context) {
+		
+	}
+
 }

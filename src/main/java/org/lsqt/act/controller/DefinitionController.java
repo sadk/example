@@ -1,22 +1,31 @@
 package org.lsqt.act.controller;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.UserTask;
@@ -26,24 +35,27 @@ import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.pvm.process.ProcessDefinitionImpl;
 import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
-import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.lsqt.act.ActUtil;
-import org.lsqt.act.model.ApproveObject;
+import org.lsqt.act.model.Category;
+import org.lsqt.act.model.CategoryQuery;
 import org.lsqt.act.model.Definition;
 import org.lsqt.act.model.DefinitionQuery;
 import org.lsqt.act.model.Node;
 import org.lsqt.act.model.NodeUser;
 import org.lsqt.act.model.NodeUserQuery;
 import org.lsqt.act.model.ReDefinition;
+import org.lsqt.act.model.ReDefinitionQuery;
+import org.lsqt.act.service.CategoryService;
 import org.lsqt.act.service.DefinitionService;
 import org.lsqt.act.service.NodeService;
 import org.lsqt.act.service.NodeUserService;
 import org.lsqt.act.service.ReDefinitionService;
-import org.lsqt.act.service.impl.DefinitionServiceImpl;
 import org.lsqt.act.service.impl.NodeServiceImpl;
+import org.lsqt.act.service.support.TaskQueryUtil;
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
@@ -51,10 +63,13 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
-import org.lsqt.components.util.file.FileUtil;
+import org.lsqt.components.util.collection.ArrayUtil;
+import org.lsqt.components.util.file.ZipUtil;
 import org.lsqt.components.util.lang.StringUtil;
+import org.lsqt.sys.model.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.alibaba.fastjson.JSON;
 import com.oreilly.servlet.MultipartRequest;
@@ -62,10 +77,11 @@ import com.oreilly.servlet.multipart.FileRenamePolicy;
 
 /**
  * 流程定义相关
+ * 
  * @author mmyuan
  *
  */
-@Controller(mapping={"/act/definition","/nv2/act/definition"})
+@Controller(mapping={"/act/definition"})
 public class DefinitionController {
 	private static final Logger  log = LoggerFactory.getLogger(DefinitionController.class);
 	
@@ -75,6 +91,8 @@ public class DefinitionController {
 	@Inject private NodeUserService nodeUserService;
 	@Inject private NodeService nodeService;
 	
+	@Inject private CategoryService categroyService; 
+	
 	@Inject private Db db;
 
 	@RequestMapping(mapping = { "/save_or_update_json_short_name", "/m/save_or_update_json_short_name" })
@@ -83,8 +101,38 @@ public class DefinitionController {
 			List<Definition> list = JSON.parseArray(data,Definition.class);
 			for(Definition def : list){
 				if(StringUtil.isNotBlank(def.getId())){
-					db.update(def, "shortName","enableMobile");
+					db.update(def, "shortName","enableMobile","enableNeighborJump");
 				}
+			}
+		}
+	}
+	
+	@RequestMapping(mapping = { "/update_short", "/m/update_short" })
+	public void updateShort(Definition data) {
+		if(data!=null && StringUtil.isNotBlank(data.getId())){
+			db.update(data, "shortName","enableMobile","enableNeighborJump");
+			
+			Definition defModel = db.getById(Definition.class, data.getId());
+			
+			// 检查流程定义是否有值
+			ReDefinitionQuery query = new ReDefinitionQuery();
+			query.setDefinitionId(data.getId());
+			ReDefinition model = db.queryForObject("queryForPage", ReDefinition.class, query);
+			if (model == null) {
+				model = new ReDefinition();
+				model.setDefinitionId(data.getId());
+
+				if (defModel != null) {
+					model.setDefinitionName(defModel.getName());
+					model.setDefinitionKey(defModel.getKey());
+					model.setDefinitionShortName(defModel.getShortName());
+				}
+				db.save(model);
+			} else {
+				model.setDefinitionName(defModel.getName());
+				model.setDefinitionKey(defModel.getKey());
+				model.setDefinitionShortName(defModel.getShortName());
+				db.update(model);
 			}
 		}
 	}
@@ -116,16 +164,17 @@ public class DefinitionController {
 		return definitionService.queryForList(query);
 	}
 	
-	
-	@RequestMapping(mapping = { "/get_node_list", "/m/get_node_list" })
-	public List<Node> getNodeList(String definitionId) {
-		List<Node> rs = new ArrayList<>();
-		if (StringUtil.isBlank(definitionId)) {
-			return rs;
+	@RequestMapping(mapping = { "/get_node_list", "/m/get_node_list" },text="加载所有节点")
+	public List<Node> getNodeList(NodeUserQuery query) {
+		List<Node> result = new ArrayList<>();
+		
+		List<Node> fullNodeList = new ArrayList<>();
+		if (StringUtil.isBlank(query.getDefinitionId())) {
+			return result;
 		}
 		
 		RepositoryService repositoryService = ActUtil.getRepositoryService();
-		BpmnModel model = repositoryService.getBpmnModel(definitionId);
+		BpmnModel model = repositoryService.getBpmnModel(query.getDefinitionId());
 		if (model != null) {
 			Collection<FlowElement> flowElements = model.getMainProcess().getFlowElements();
 			for (FlowElement e : flowElements) {
@@ -137,24 +186,24 @@ public class DefinitionController {
 					st.setFormKey(task.getFormKey());
 					st.setFormProperties(task.getFormProperties());
 					st.setTaskKey(task.getId());
-					st.setTaskName(task.getName());
+					st.setTaskName(task.getName()+" - ("+task.getId()+")");
 					st.setRemark(task.getDocumentation());
 					st.setTaskBizType(Node.TASK_BIZ_TYPE_UNDRAFTNODE);
-					rs.add(st);
+					fullNodeList.add(st);
 				}
 			}
 		}
 		
-		if(!rs.isEmpty()) { // 加载节点审批对象和节点类型
+		if(!fullNodeList.isEmpty()) { // 加载节点审批对象和节点类型
 			NodeServiceImpl util = new NodeServiceImpl();
-			util.resolveStartEndNodeType(definitionId,rs);
+			util.resolveStartEndNodeType(query.getDefinitionId(),fullNodeList);
 			
 			
-			NodeUserQuery query = new NodeUserQuery();
-			query.setDefinitionId(definitionId);
+			//NodeUserQuery query = new NodeUserQuery();
+			//query.setDefinitionId(definitionId);
 			List<NodeUser> list = nodeUserService.queryForList(query);
 			
-			for(Node e:rs) {
+			for(Node e:fullNodeList) {
 				List<String> approveIds = new ArrayList<>();
 				List<String> approveNames = new ArrayList<>();
 				List<String> approveTypes = new ArrayList<>();
@@ -166,6 +215,7 @@ public class DefinitionController {
 							approveNames.add(u.getName());
 							approveTypes.add(NodeUser.getUserTypeDesc(u.getUserType()));
 						}
+						//result.add(e);
 					}
 				}
 				NodeObject ele = (NodeObject)e;
@@ -175,8 +225,18 @@ public class DefinitionController {
 			}
 		}
 		
-		nodeService.setMeetingNodeType(definitionId, rs);
-		return rs;
+		if (StringUtil.isNotBlank(query.getTaskKey())) {
+			for (Node e : fullNodeList) {
+				if (e.getTaskKey().equals(query.getTaskKey())) {
+					result.add(e);
+				}
+			}
+		} else {
+			result.addAll(fullNodeList);
+		}
+		nodeService.setMeetingNodeType(query.getDefinitionId(), result);
+		
+		return result;
 	}
 	
 	public static class NodeObject extends Node {
@@ -209,8 +269,49 @@ public class DefinitionController {
 		}
 	}
 	// -------------------------------------------------  流程上传、布署相关 --------------------------------------
+	
 	static final String MULTIPART = "multipart/";
 	static final String METHOD_POST = "post";
+
+	
+    /**
+     * 导出流程文件xml或图片
+     *
+     * @param processDefinitionId 流程定义
+     * @param resourceType        资源类型(xml|image)
+     * @throws Exception
+     */
+	@RequestMapping(mapping = { "/export_xml_or_img", "/m/export_xml_or_img" },text="导出流程文件")
+    public void exportDefinitionXmlOrImg(String processDefinitionId, @RequestParam("resourceType") String resourceType) throws Exception {
+		HttpServletResponse response = ContextUtil.getResponse();
+		
+		org.activiti.engine.RepositoryService repositoryService = ActUtil.getRepositoryService();
+		
+        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
+        
+        DefinitionQuery myQuery = new DefinitionQuery();
+        myQuery.setId(processDefinitionId);
+        Definition extDefinition = db.queryForObject("queryForPage",Definition.class,myQuery);
+        
+        String resourceName = "";
+        if ("image".equals(resourceType)) {
+            resourceName = processDefinition.getDiagramResourceName();
+        } else if ("xml".equals(resourceType)) {
+            resourceName = processDefinition.getResourceName();
+        } else {
+        	 resourceName = processDefinition.getResourceName(); //默认导出XML
+        }
+        
+        InputStream resourceAsStream = repositoryService.getResourceAsStream(processDefinition.getDeploymentId(), resourceName);
+        byte[] b = new byte[1024];
+        int len = -1;
+        while ((len = resourceAsStream.read(b, 0, 1024)) != -1) {
+            response.getOutputStream().write(b, 0, len);
+        }
+        
+        response.setContentType("text/xml;charset=UTF-8"); 
+        response.addHeader("Content-Disposition", "attachment; filename=" +URLEncoder.encode(processDefinition.getName(),"utf-8")+"_v"+extDefinition.getDeployVersion()+".bpmn20.xml");
+    }
 	
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(mapping = { "/upload", "/m/upload" },text="上传流程定义",view=View.JSON)
@@ -317,6 +418,7 @@ public class DefinitionController {
 				.category(categoryCode)
 				.tenantId("1000").deploy();
 		
+		
 		//String sql = String.format("update %s set NAME_=? where ID_=?",db.getFullTable(Definition.class));
 		//db.executeUpdate(sql, serverPath,dep.getId());
 		
@@ -327,6 +429,21 @@ public class DefinitionController {
 	    BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xmlSource, false, false, processEngineConfiguration.getXmlEncoding());
 	    return bpmnModel;
 		*/
+		
+		List<ReDefinition> extDefList = new ArrayList<>();
+		List<Definition> defIdList = db.queryForList("getExtendDefinitionNotExists", Definition.class);//添加流程扩展定义
+		if(ArrayUtil.isNotBlank(defIdList)) {
+			for(Definition def: defIdList) {
+				ReDefinition model = new ReDefinition();
+				model.setAppCode(Application.APP_CODE_DEFAULT);
+				model.setDefinitionId(def.getId());
+				model.setDefinitionKey(def.getKey());
+				model.setDefinitionName(def.getName());
+				model.setDefinitionShortName(def.getName());
+				extDefList.add(model);
+			}
+			db.batchSave(extDefList);
+		}
 		return dep;
 		
 	}
@@ -352,48 +469,232 @@ public class DefinitionController {
 	}
 	
 	
+	/**
+	 * 导出图片文件，以ZIP包的形式返回给客户
+	 */
+	@RequestMapping(mapping = { "/export_img", "/m/export_img" },text="导出流程图")
+	public void exportImg(String processDefinitionId) throws IOException {
+		
+		HttpServletResponse response = ContextUtil.getResponse();
+		
+		if(StringUtil.isBlank(processDefinitionId) ) {
+			return ;
+		}
+		
+		org.activiti.engine.repository.ProcessDefinition processDefinition =  ActUtil.getRepositoryService().createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
+		 
+		InputStream resourceAsStream = ActUtil.getRepositoryService().getResourceAsStream(
+				processDefinition.getDeploymentId(), processDefinition.getName());
+		
+		byte[] b = new byte[1024];
+		int len = -1;
+		while ((len = resourceAsStream.read(b, 0, 1024)) != -1) {
+			response.getOutputStream().write(b, 0, len);
+		}
+	}
+	
 	
 	/**
-	 * 导出图片文件到硬盘
+	 * 导出图片文件，以ZIP包的形式返回给客户
 	 */
 	@RequestMapping(mapping = { "/export_diagrams", "/m/export_diagrams" },text="导出流程图")
-	public List<String> exportDiagrams(String exportDir) throws IOException {
+	public void exportDiagrams(String processDefinitionIds) throws IOException {
+		if(StringUtil.isBlank(processDefinitionIds) ) {
+			return ;
+		}
+		Set<String> processDefinitionIdSet = new HashSet<>();
+		processDefinitionIdSet.addAll(StringUtil.split(processDefinitionIds, ","));
+		
 		HttpServletRequest request = ContextUtil.getRequest();
+		HttpServletResponse response = ContextUtil.getResponse();
+		
 		String root = request.getServletContext().getRealPath("/");
 		
-		List<String> files = new ArrayList<String>();
-		List<ProcessDefinition> list = ActUtil.getRepositoryService().createProcessDefinitionQuery().list();
+	
+		List<ProcessDefinition> list = ActUtil.getRepositoryService().createProcessDefinitionQuery().processDefinitionIds(processDefinitionIdSet).list();
 		
+		List<File> imgs = new ArrayList<>();
 		for (ProcessDefinition processDefinition : list) {
-			String diagramResourceName = processDefinition.getDiagramResourceName();
+			String diagramResourceName = processDefinition.getDiagramResourceName(); //导出图片，导出流程xml用 processDefinition.getResourceName
 			String key = processDefinition.getKey();
 			int version = processDefinition.getVersion();
 
+			//System.out.println("++++"+ActUtil.getRepositoryService().getBpmnModel(processDefinition.getId()));
 			
 			InputStream resourceAsStream = ActUtil.getRepositoryService().getResourceAsStream(
 					processDefinition.getDeploymentId(), diagramResourceName);
+			
+			 
+			
 			byte[] b = new byte[resourceAsStream.available()];
 
-			@SuppressWarnings("unused")
-			int len = -1;
 			resourceAsStream.read(b, 0, b.length);
 
 			// create file if not exist
-			String diagramDir = root+"/"+exportDir + "/" + key + "/" + version+".png";
+			String diagramDir = root+"/upload/" + key + "/" + version+".png";
 			File file = new File(diagramDir);
 			
 			// wirte bytes to file
-			FileUtils.writeByteArrayToFile(file, b, true);
-				
-		 
+			FileUtils.writeByteArrayToFile(file, b);
 			
+			imgs.add(file);
 		}
 		
-		return files;
+		
+		for(File e: imgs) {
+			log.debug("导出流程图路径："+e);
+		}
+		
+		File zipFile = new File(root+"/upload/"+System.currentTimeMillis()+".zip");
+		if(!zipFile.exists()) {
+			zipFile.createNewFile();
+		}
+		ZipUtil.zipFiles(imgs.toArray(new File[imgs.size()]), zipFile);
+		
+		
+		 // 输入流
+        FileInputStream input = new FileInputStream(zipFile);
+
+        // 设置头
+        response.setHeader("Content-Type","application/x-zip-compressed");
+
+        // 获取绑定了客户端的流
+        ServletOutputStream output = response.getOutputStream();
+
+        // 把输入流中的数据写入到输出流中
+        IOUtils.copy(input,output);
+        output.flush();
+        input.close();
+        output.close();
+	}
+	
+	
+	/**
+	 *
+	 */
+	@RequestMapping(mapping = { "/build_tree_to_draw", "/m/build_tree_to_draw" },text="流程图在线配置")
+	public List<SimpleNode> buildTreeToDraw() throws IOException {
+		List<SimpleNode> list = new ArrayList<>();
+		
+		CategoryQuery query = new CategoryQuery();
+		query.setDataType(Category.DATA_TYPE_FLOW);
+		List<Category> data = categroyService.queryForList(query);
+		if(ArrayUtil.isNotBlank(data)) {
+			for(Category e: data) {
+				SimpleNode node = new SimpleNode();
+				node.id = e.getId()+"";
+				node.pid = e.getPid()+"";
+				node.name = e.getName();
+				node.code = e.getCode();
+				node.dataType = "1";
+				list.add(node);
+			}
+		}
+		
+		
+		List<Definition> defList = db.queryForList("getAll", Definition.class);
+		if (ArrayUtil.isNotBlank(defList)) {
+			List<SimpleNode> defNodeList = new ArrayList<>();
+			
+			for (SimpleNode e : list) {
+				for(Definition def: defList) {
+					if(e.code.equals(def.getCategory())) {
+						SimpleNode subNode = new SimpleNode();
+						subNode.code = def.getId();
+						subNode.id = def.getId();
+						subNode.pid = e.id;
+						subNode.dataType = "2";
+						
+						// 改用时间擢作版本用于前端显示
+						subNode.name = "版本（"+ new SimpleDateFormat("yyyyMMddHHmmss").format(def.getDeployTime())+"） - "+def.getName()+"（"+def.getId()+"）";
+						subNode.shortName = def.getShortName();
+						subNode.version = def.getVersion();
+						subNode.deployTime = def.getDeployTime();
+						defNodeList.add(subNode);
+					}
+				}
+			}
+			Collections.sort(defNodeList, (o1, o2) -> {
+				return o2.deployTime.compareTo(o1.deployTime);
+			});
+			list.addAll( defNodeList);
+		}
+		
+		return list;
+	}
+	
+	public static class SimpleNode {
+		public String id;
+		public String pid;
+		public String code;
+		public String name;
+		public String shortName;
+		public String dataType; // 1=流程分类节点Category 2=流程定义结点
+		public int version ; //流程定义版本
+		public Date deployTime; //流程发布时间
 	}
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	void test2() {
+		HttpServletRequest request = ContextUtil.getRequest();
+		HttpServletResponse response = ContextUtil.getResponse();
+		RepositoryService repositoryService = ActUtil.getRepositoryService();
+
+		String id = request.getParameter("modelId");
+		BufferedOutputStream bos = null;
+		try {
+
+			try {
+				Model modelData = repositoryService.getModel(id);
+
+				byte[] bpmnBytes = repositoryService.getModelEditorSource(modelData.getId());
+
+				// 封装输出流
+				bos = new BufferedOutputStream(response.getOutputStream());
+				bos.write(bpmnBytes);// 写入流
+
+				String filename = modelData.getId() + ".bpmn";
+				response.setContentType("application/x-msdownload;");
+				response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+				response.flushBuffer();
+
+			} finally {
+				bos.flush();
+				bos.close();
+			}
+
+		} catch (Exception e) {
+			log.error("导出流程文件失败");
+			e.printStackTrace();
+		}
+	}
 	
 	
 	void test(String procDefId,String proInstId) {

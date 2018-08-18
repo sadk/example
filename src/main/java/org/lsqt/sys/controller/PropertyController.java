@@ -15,6 +15,8 @@ import org.lsqt.sys.model.Property;
 import org.lsqt.sys.model.PropertyQuery;
 import org.lsqt.sys.service.PropertyService;
 
+import com.alibaba.fastjson.JSON;
+
 @Controller(mapping={"/property"})
 public class PropertyController {
 	
@@ -45,6 +47,13 @@ public class PropertyController {
 		return propertyService.deleteById(list.toArray(new Long[list.size()]));
 	}
 	
-	
-	  
+	@RequestMapping(mapping = { "/save_or_update_short", "/m/save_or_update_short" }, view = View.JSON)
+	public void saveOrUpdateShort(String data) {
+		 if(StringUtil.isNotBlank(data)) {
+			List<Property> list =  JSON.parseArray(data, Property.class);
+			for(Property d: list) {
+				db.saveOrUpdate(d, "name","value","sn","remark");
+			}
+		 }
+	}
 }

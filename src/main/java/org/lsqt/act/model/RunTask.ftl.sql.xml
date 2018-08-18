@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.act.model.RunTask" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ext_run_task">
+			<column id="id" type="auto" property="id" text="主键" />
+	 	
+	 		<column name="instance_id" property="instanceId" text="流程实例ID"/>
+	 	
+	 		<column name="task_id" property="taskId" text="任务ID"/>
+	 		
+	 		<column name="task_user_id" property="taskUserId" text="待办用户ID"/>
+	 		<column name="task_user_name" property="taskUserName" text="待办用户名"/>
+	 		<column name="task_user_login_no" property="taskUserLoginNo" text="待办用户账号"/>
+	 	
+	 		<column name="task_key" property="taskKey" text="任务节点key"/>
+	 	
+	 		<column name="process_definition_id" property="processDefinitionId" text="流程定义ID"/>
+	 	
+	 		<column name="process_definition_key" property="processDefinitionKey" text="流程定义key"/>
+	 	
+	 		<column name="process_definition_name" property="processDefinitionName" text="流程定义名称"/>
+	 	
+	 		<column name="task_link" property="taskLink" text="点击待办时打开的页面或详情链接"/>
+	 		
+			<column name="ext_data" property="extData" text="扩展数据"/>
+	 	
+	 		<column name="title" property="title" text="流程标题"/>
+	 	
+	 		<column name="create_dept_id" property="createDeptId" text="填制人部门：一般从表单取值，如果没有取发起用户的主部门，主部门没有再取用户的普通部门第一个"/>
+	 	
+	 		<column name="create_dept_text" property="createDeptText" text="填制人部门或填制人部门节点路径"/>
+	 	
+	 		<column name="start_user_id" property="startUserId" text="流程发起人ID"/>
+	 	
+	 		<column name="start_user_name" property="startUserName" text="流程发起人名称"/>
+	 	
+	 		<column name="start_login_no" property="startLoginNo" text=""/>
+	 	
+	 		<column name="start_user_org_text" property="startUserOrgText" text="流程发起人(主)组织"/>
+	 	
+	 		<column name="start_user_position_text" property="startUserPositionText" text="流程发起人(主)岗位"/>
+	 	
+	 		<column name="business_key" property="businessKey" text="业务数据主键ID"/>
+	 	
+	 		<column name="business_flow_no" property="businessFlowNo" text=""/>
+	 	
+	 		<column name="business_status" property="businessStatus" text="业务自定义的状态"/>
+	 	
+	 		<column name="business_status_desc" property="businessStatusDesc" text="业务状态中文表示"/>
+	 	
+	 		<column name="business_category" property="businessCategory" text="业务数据自定义的分类"/>
+	 	
+	 		<column name="company_name_print" property="companyNamePrint" text="用印公司名称"/>
+	 	
+	 		<column name="company_id_print" property="companyIdPrint" text=""/>
+	 	
+	 		<column name="app_code" property="appCode" text="租户编码"/>
+	 	
+	 		<column name="sn" property="sn" text="排序"/>
+	 	
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 	
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ext_run_task where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							task_key = '${key}'  or 
+							process_definition_id = '${key}'  or 
+							process_definition_key = '${key}'  or 
+							
+							process_definition_name like '%${key}%'  or 
+
+							title like '%${key}%'  or 
+
+							start_user_id = '${key}'  or 
+							start_user_name like '%${key}%'  or 
+							start_login_no like '%${key}%'  or 
+							start_user_org_text like '%${key}%'  or 
+							
+							business_key = '${key}'  or 
+							business_flow_no = '${key}'  or 
+							 
+							company_name_print like '%${key}%'  or 
+							
+							company_id_print like '%${key}%'  or 
+							
+							remark like '%${key}%' 
+														
+					)
+				</#if>
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+						
+	  						<#if query.instanceId??> and instance_id = ${query.instanceId} </#if>
+						
+	  						<#if query.taskId??> and task_id = ${query.taskId} </#if>
+					
+							<#if query.taskUserId??> and task_user_id = '${StringUtil.escapeSql(query.taskUserId)}' </#if>
+							
+							<#if query.taskUserName??> and task_user_name = '${StringUtil.escapeSql(query.taskUserName)}' </#if>
+							
+							<#if query.taskUserLoginNo??> and task_user_login_no = '${StringUtil.escapeSql(query.taskUserLoginNo)}' </#if>
+							
+	  						<#if query.taskKey??> and task_key = '${StringUtil.escapeSql(query.taskKey)}' </#if>
+						
+	  						<#if query.processDefinitionId??> and process_definition_id = '${StringUtil.escapeSql(query.processDefinitionId)}' </#if>
+						
+	  						<#if query.processDefinitionKey??> and process_definition_key = '${StringUtil.escapeSql(query.processDefinitionKey)}' </#if>
+						
+	  						<#if query.processDefinitionName??> and process_definition_name = '${StringUtil.escapeSql(query.processDefinitionName)}' </#if>
+					
+	  						<#if query.taskLink??> and task_link = '${StringUtil.escapeSql(query.taskLink)}' </#if>
+						
+	  						<#if query.title??> and title = '${StringUtil.escapeSql(query.title)}' </#if>
+						
+	  						<#if query.createDeptId??> and create_dept_id = '${StringUtil.escapeSql(query.createDeptId)}' </#if>
+						
+	  						<#if query.createDeptText??> and create_dept_text = '${StringUtil.escapeSql(query.createDeptText)}' </#if>
+						
+	  						<#if query.startUserId??> and start_user_id = '${StringUtil.escapeSql(query.startUserId)}' </#if>
+						
+	  						<#if query.startUserName??> and start_user_name = '${StringUtil.escapeSql(query.startUserName)}' </#if>
+						
+	  						<#if query.startLoginNo??> and start_login_no = '${StringUtil.escapeSql(query.startLoginNo)}' </#if>
+						
+	  						<#if query.startUserOrgText??> and start_user_org_text = '${StringUtil.escapeSql(query.startUserOrgText)}' </#if>
+						
+	  						<#if query.startUserPositionText??> and start_user_position_text = '${StringUtil.escapeSql(query.startUserPositionText)}' </#if>
+						
+	  						<#if query.businessKey??> and business_key = '${StringUtil.escapeSql(query.businessKey)}' </#if>
+					
+	  						<#if query.businessFlowNo??> and business_flow_no = '${StringUtil.escapeSql(query.businessFlowNo)}' </#if>
+						
+	  						<#if query.businessStatus??> and business_status = '${StringUtil.escapeSql(query.businessStatus)}' </#if>
+						
+	  						<#if query.businessStatusDesc??> and business_status_desc = '${StringUtil.escapeSql(query.businessStatusDesc)}' </#if>
+					
+	  						<#if query.businessCategory??> and business_category = '${StringUtil.escapeSql(query.businessCategory)}' </#if>
+						
+	  						<#if query.companyNamePrint??> and company_name_print = '${StringUtil.escapeSql(query.companyNamePrint)}' </#if>
+						
+	  						<#if query.companyIdPrint??> and company_id_print = '${StringUtil.escapeSql(query.companyIdPrint)}' </#if>
+						
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+					
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ext_run_task ]]>
+	</statement>
+	
+</statements>

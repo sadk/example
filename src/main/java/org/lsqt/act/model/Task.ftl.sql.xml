@@ -30,6 +30,7 @@
 	 		<column name="business_flow_no" property="businessFlowNo" isVirtual="true" text="业务流水号（全局唯一）" />
 	 		<column name="business_status" property="businessStatus" isVirtual="true" text="业务状态:各业务自己定义" />
 	 		<column name="business_status_desc" property="businessStatusDesc" isVirtual="true" text="业务状态描述" />
+	 		<column name="company_name_print" property="companyNamePrint" isVirtual="true" text="用印公司名字" />
 	 		
 	 		<column name="process_definition_name" property="processDefinitionName" isVirtual="true" text="流程定义名称" />
 	 		<column name="process_definition_key" property="processDefinitionKey" isVirtual="true" text="流程定义key"/>
@@ -39,13 +40,17 @@
 	 		<column name="start_user_org_text" property="startUserOrgText" isVirtual="true" text="发起人(主)组织信息"/>
 	 		<column name="start_user_position_text" property="startUserPositionText" isVirtual="true" text="发起人(主)岗位"/>
 	 		
+	 		<column name="candidate_user_ids" property="candidateUserIds" isVirtual="true" text="当前任务审批人"/>
+	 		<column name="candidate_user_names" property="candidateUserNames" isVirtual="true" text="当前任务审批人"/>
+	 		
 	 		<!-- 加签、转发、抄送显示的字段 -->
 	 		<column name="assign_forward_cc_action" property="assignForwardCcAction" isVirtual="true" text="加签、转发、抄送的动作编码"/>
 	 		<column name="assign_forward_cc_user_ids" property="assignForwardCcUserIds" isVirtual="true" text="加签、转发、抄送给哪些用户"/>
 	 		<column name="assign_forward_cc_operater_user_id" property="assignForwardCcOpertaterUserId" isVirtual="true" text="是谁做的加签、转发、抄送动作"/>
 	 		
 	 		<column name="instance_create_time" property="instanceCreateTime" isVirtual="true" text="流程实例的创建时间"/>
-	 		
+	 		<column name="gid" property="gid" isVirtual="true" text=""/>
+	 		<column name="readed" property="readed" isVirtual="true" text="0或null=未读  1=已读 "/>
 	</table>
 	
 	<statement id="queryForPageDetail" parameterName="query">
@@ -229,37 +234,50 @@
 	<statement id="getTaskIdsIncludeAssignForward" parameterName="query">
 		<![CDATA[ 
 			<#-- 我的待办辅助查询, （优化SQL做成分断查询） 含加签、转发 用户的待办  -->
-			select task_id from ext_run_task_assign_forward_cc where 1=1 and approve_action in ( 'add_assign','forword_read') 
+			select task_id from ext_run_task_assign_forward_cc where 1=1 
+				and approve_action in ( 'add_assign','forword_read') 
+				and task_complete_type=0
+				
 			<#if query.userId??> 
-				and assign_forward_cc_user_ids like '%,${StringUtil.escapeSql(query.userId)},%'  
+				and assign_forward_cc_user_ids = '${StringUtil.escapeSql(query.userId)}'  
 			</#if>
 			
 			<#if query.userIds??> 
 				<#assign uids = StringUtil.split(query.userIds,",") />
 				and (
 					<#list uids as uid> 
-						assign_forward_cc_user_ids like '%,${uid},%'    <#if uid_has_next> or </#if> 
+						assign_forward_cc_user_ids in('${uid}'<#if uid_has_next>,</#if>)
 					</#list> 
 				)
 			</#if>
+			
 		]]>
 	</statement>
 	
 	<statement id="getTaskIdsEscapeAssignForward" parameterName="query">
 		<![CDATA[ 
 			<#-- 我的待办辅助查询,（优化SQL做成分断查询）去除加签\转发的"主人"待办 -->
-			select task_id from ext_run_task_assign_forward_cc  where 1=1 and task_complete_type=0 and approve_action in ('add_assign','forword_read') 
+			select distinct task_id from ext_run_task_assign_forward_cc  where 1=1 and task_complete_type=0 and approve_action in ('add_assign','forword_read') 
 			<#if query.userId??> 
 				and approve_user_id=${StringUtil.escapeSql(query.userId)} 
 			</#if>
 			
 			<#if query.userIds??> 
-				and approve_user_id=${StringUtil.escapeSql(query.userIds)} 
+				and approve_user_id in (${StringUtil.escapeSql(query.userIds)})
 			</#if>
 		]]>
 	</statement>
 	
-	
+	<statement id="getTaskIdsEscapeAssignOwner" parameterName="query">
+		<![CDATA[ 
+			<#-- 我的待办辅助查询,（优化SQL做成分断查询）去除加签的主人"待办 -->
+			select distinct task_id from ext_run_task_assign_forward_cc  where 1=1 and task_complete_type=0 and approve_action in ('add_assign')   
+
+			<#if query.userId??> 
+				and approve_candiate_user_ids like '%,${StringUtil.escapeSql(query.userId)},%'
+			</#if>
+		]]>
+	</statement>
 	
 	<statement id="getTaskIdsIncludeAssignForwardBatchQuery" parameterName="query">
 		<![CDATA[ 
@@ -296,9 +314,12 @@
 	
 	<statement id="queryTask" parameterName="query">
 		<![CDATA[ 
-			SELECT A.approve_task_id ID_, A.process_instance_id PROC_INST_ID_ , A.definition_id PROC_DEF_ID_ , A.approve_task_name NAME_ ,approve_task_key TASK_DEF_KEY_,A.create_time CREATE_TIME_  , 
-					B.title,B.business_key, B.business_flow_no, B.business_status, B.business_status_desc, B.process_definition_name,B.process_definition_key, B.start_user_id,B.start_user_name,B.start_user_org_text,B.start_user_position_text ,B.create_time instance_create_time
-			FROM ext_approve_opinion A  
+			SELECT 	A.approve_task_id ID_, A.process_instance_id PROC_INST_ID_ , 
+					A.definition_id PROC_DEF_ID_ , A.approve_task_name NAME_ ,approve_task_key TASK_DEF_KEY_,A.create_time CREATE_TIME_  , 
+					A.approve_user_name candidate_user_names ,A.approve_user_id candidate_user_ids ,
+					B.company_name_print, B.title,B.business_key, B.business_flow_no, B.business_status, B.business_status_desc, B.process_definition_name,B.process_definition_key, B.start_user_id,B.start_user_name,B.start_user_org_text,B.start_user_position_text ,B.create_time instance_create_time 
+			FROM 
+					ext_approve_opinion A  
 			left join ext_run_instance B on A.process_instance_id = B.instance_id  where 1=1 
 			
 			<#if query??>
@@ -326,11 +347,21 @@
   						
   						
   						<#if query.title??> and B.title like '%${StringUtil.escapeSql(query.title)}%' </#if>
-  						
+						<#if query.businessFlowNo??>
+							 and B.business_flow_no = '${StringUtil.escapeSql(query.businessFlowNo)}'
+						</#if>
+						<#if query.startUserName??>
+							 and B.start_user_name like '%${StringUtil.escapeSql(query.startUserName)}%'
+						</#if>
+						<#if query.businessStatus??>
+							 and B.business_status = '${StringUtil.escapeSql(query.businessStatus)}'
+						</#if>
   						
 						<#-- 获取我的已办 -->
 						<#if query.userId??> 
 							and A.approve_user_id = ${StringUtil.escapeSql(query.userId)} and A.approve_action!='start'
+							
+							<#-- 待删除!!!
 							union 
 							SELECT null ID_,instance_id PROC_INST_ID_ ,  process_definition_id PROC_DEF_ID_,
 							 -- CONCAT(process_definition_name,'- (',start_user_name,')') 
@@ -350,6 +381,9 @@
 							<#if query.createTimeBegin?? && query.createTimeEnd??>
 	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 	  						</#if>
+	  						-->
+	  						
+	  						<#-- group by  A.process_instance_id -->
 						</#if>
 
 						
@@ -357,6 +391,8 @@
 						<#-- 获取多个用户的我的已办 -->
 						<#if query.userIds??> 
 							and A.approve_user_id in( ${StringUtil.escapeSql(query.userIds)}) and A.approve_action!='start'
+							
+							<#-- 待删除!!!
 							union 
 							SELECT null ID_,instance_id PROC_INST_ID_ ,  process_definition_id PROC_DEF_ID_,
 							 -- CONCAT(process_definition_name,'- (',start_user_name,')') 
@@ -376,6 +412,9 @@
 							<#if query.createTimeBegin?? && query.createTimeEnd??>
 	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 	  						</#if>
+	  						-->
+	  						
+	  						<#-- group by  A.process_instance_id -->
 						</#if>
 
 						
@@ -403,8 +442,11 @@
 						<#if query.instanceCreateTimeBegin?? && query.instanceCreateTimeEnd??>
   							and date_format(B.create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.instanceCreateTimeEnd)}' and '${StringUtil.escapeSql(query.instanceCreateTimeEnd)}'
   						</#if>
-	  						
-	  						
+	  					
+	  					<#-- 审批日期 -->
+	  					<#if query.createTimeBegin?? && query.createTimeEnd??>
+  							and date_format(A.create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+  						</#if>	
 
 	  						
 	  					<#if query.businessKey??> and B.business_key = '${StringUtil.escapeSql(query.businessKey)}' </#if>
@@ -429,8 +471,10 @@
 	<statement id="queryMyCopySend" parameterName="query">
 		<![CDATA[  
 			<#-- 获取"抄送我的"任务 -->
+SELECT * FROM (
 			SELECT 
 			    task_id ID_,
+			    A.task_key TASK_DEF_KEY_ ,
 			    process_instance_id PROC_INST_ID_,
 			    definition_id PROC_DEF_ID_,
 			    definition_name process_definition_name,
@@ -448,11 +492,17 @@
 			    B.title,
 			    approve_action assign_forward_cc_action,
 			    assign_forward_cc_user_ids,
-			    approve_user_id assign_forward_cc_operater_user_id
+			    approve_user_id assign_forward_cc_operater_user_id,
+			    A.gid,
+                (case 	when C.readed is null then 0
+						when C.readed =1 then 1 
+                        when C.readed =0 then 0 end) as readed
 			FROM
 			    ext_run_task_assign_forward_cc A
 			        LEFT JOIN
 			    ext_run_instance B ON A.process_instance_id = B.instance_id
+					left join 
+				ext_task_readed C on A.gid = C.source_gid
 			WHERE 1=1
 			    and approve_action = 'copy_send'
 			    
@@ -469,21 +519,117 @@
  				<#if query.processDefinitionKey??> and process_definition_key = '${StringUtil.escapeSql(query.processDefinitionKey)}' </#if>
  				
  				
+ 				<#if query.title??>
+					 and B.title like '%${StringUtil.escapeSql(query.title)}%'
+				</#if>
+				
+				<#if query.businessFlowNo??>
+					 and B.business_flow_no = '${StringUtil.escapeSql(query.businessFlowNo)}'
+				</#if>
+				
+				<#if query.startUserName??>
+					 and B.start_user_name like '%${StringUtil.escapeSql(query.startUserName)}%'
+				</#if>
+				
+				<#if query.businessStatus??>
+					 and B.business_status = '${StringUtil.escapeSql(query.businessStatus)}'
+				</#if>
+				
+				<#-- 其实是转发的时间   -->
+				<#if query.createTimeBegin?? && query.createTimeEnd??>
+					and date_format(A.create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+				</#if>
+				
+			
 			    <#-- 获取抄送我的 (多个用户)  -->
 			    <#if query.userIdList?? &&(query.userIdList?size > 0)>
 			   		and (
-			   			<#list query.userIdList as ccUserId>
-			   				assign_forward_cc_user_ids LIKE '%,${ccUserId},%'  <#if ccUserId_has_next>or</#if>
-			   			</#list>
+				   			assign_forward_cc_user_ids in (
+					   			<#list query.userIdList as ccUserId>
+					   				 '${ccUserId}'<#if ccUserId_has_next>,</#if>
+					   			</#list>
+				   			)
 			   			)
 		    	</#if>
+		    	
+		    	
 		    	
 		    	<#-- 移动端启用 -->
 				<#if query.enableMobile??>
 					and A.definition_id in (select ID_ from act_re_procdef where enable_mobile=${StringUtil.escapeSql(query.enableMobile)})
 				</#if>
-			
 
+
+UNION 
+SELECT A.id ID_,null TASK_DEF_KEY_,process_instance_id PROC_INST_ID_ , definition_id PROC_DEF_ID_,
+			    definition_name process_definition_name,
+			    definition_key process_definition_key,null NAME_ , 
+                create_time CREATE_TIME_ ,
+                business_key,
+			    business_flow_no,
+			    business_status,
+			    business_status_desc,
+			    start_user_id,
+			    start_user_name,
+			    start_user_org_text,
+			    start_user_position_text,
+			    title,
+				'copy_send' assign_forward_cc_action,
+                forward_cc_user_ids assign_forward_cc_user_ids,
+                update_user_id assign_forward_cc_operater_user_id,
+                A.gid,
+                (case 	when C.readed is null then 0
+						when C.readed =1 then 1 
+                        when C.readed =0 then 0 end) as readed
+FROM `ext_hi_inst_forward_cc` A
+					left join 
+				ext_task_readed C on A.gid = C.source_gid
+where 1=1 
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							start_user_name like '%${key}%' or
+							title like '%${key}%' or 
+							business_flow_no like '%${key}%'
+					)
+				</#if>
+				
+ 				<#if query.title??>
+					 and title like '%${StringUtil.escapeSql(query.title)}%'
+				</#if>
+				
+				<#if query.businessFlowNo??>
+					 and business_flow_no = '${StringUtil.escapeSql(query.businessFlowNo)}'
+				</#if>
+				
+				<#if query.startUserName??>
+					 and start_user_name = '${StringUtil.escapeSql(query.startUserName)}'
+				</#if>
+				
+				<#if query.businessStatus??>
+					 and business_status = '${StringUtil.escapeSql(query.businessStatus)}'
+				</#if>
+				
+				<#-- 其实是转发的时间 (用了instanceCreateTime字段)  -->
+				<#if query.createTimeBegin?? && query.createTimeEnd??>
+					and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+				</#if>
+				
+			    <#if query.userIdList?? && (query.userIdList?size > 0)>
+			   		and (
+			   			<#list query.userIdList as ccUserId>
+			   				forward_cc_user_ids LIKE '%,${ccUserId},%'  <#if ccUserId_has_next>or</#if>
+			   			</#list>
+			   			)
+		    	</#if>
+) T_RUN_AOUNT where 1=1 
+						<#if query.readed?? && query.readed??> 
+							and T_RUN_AOUNT.readed = ${query.readed}
+						</#if>
+						
+						<#if query.sortOrder?? && query.sortField??> 
+							order by ${StringUtil.escapeSql(query.sortField)} ${StringUtil.escapeSql(query.sortOrder)} 
+						</#if>
 		]]>
 	</statement>
 	
@@ -515,13 +661,73 @@
 					</#if>
 			</#if>
  
-				  			
+ 			<#-- 流程发起时间 -->
+			<#if query.instanceCreateTimeBegin?? && query.instanceCreateTimeEnd??>
+				and date_format(RUN.create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.instanceCreateTimeEnd)}' and '${StringUtil.escapeSql(query.instanceCreateTimeEnd)}'
+			</#if>
+			
+ 			<#-- 任务创建时间 -->
+			<#if query.createTimeBegin?? && query.createTimeEnd??>
+				and date_format(RES.CREATE_TIME_,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+			</#if>
+			
+			<#if query.title??>
+				 and RUN.title like '%${StringUtil.escapeSql(query.title)}%'
+			</#if>
+			
+			<#if query.businessFlowNo??>
+				 and RUN.business_flow_no = '${StringUtil.escapeSql(query.businessFlowNo)}'
+			</#if>
+			
+			<#if query.startUserName??>
+				 and RUN.start_user_name like '%${StringUtil.escapeSql(query.startUserName)}%'
+			</#if>
+			
+			<#if query.businessStatus??>
+				 and RUN.business_status = '${StringUtil.escapeSql(query.businessStatus)}'
+			</#if>
+			
+			
+			
+			
+			<#-- 单据类型 -->
+			<#if query.processDefinitionKey??>
+				  and RUN.process_definition_key = '${StringUtil.escapeSql(query.processDefinitionKey)}'
+			</#if>
+				  		
+			
+			<#-- 填制人部门 -->
+			<#if query.businessDeptName??>
+				  and RUN.create_dept_text like '%${StringUtil.escapeSql(query.businessDeptName)}%'
+			</#if>
+			
+			
  			<#-- 移动端启用 -->
 			<#if query.enableMobile??>
 				and RES.PROC_DEF_ID_ in (select ID_ from act_re_procdef where enable_mobile=${StringUtil.escapeSql(query.enableMobile)})
 			</#if>
 			
 			
+		    <#if query.taskIdListIn?? && (query.taskIdListIn?size > 0)>
+		   		and (
+		   			RES.ID_  in (
+			   			<#list query.taskIdListIn as tid>
+			   				 ${tid} <#if tid_has_next>,</#if>
+			   			</#list>
+		   			)
+		   		)
+	    	</#if>
+	    	
+		    <#if query.taskIdListNotIn?? && (query.taskIdListNotIn?size > 0)>
+		   		and (
+		   			RES.ID_  not in (
+			   			<#list query.taskIdListNotIn as tid>
+			   				 ${tid} <#if tid_has_next>,</#if>
+			   			</#list>
+		   			)
+		   		)
+	    	</#if>
+	    	
   			<#if query.sortOrder?? && query.sortField??> 
 				order by ${StringUtil.escapeSql(query.sortField)} ${StringUtil.escapeSql(query.sortOrder)} 
 			</#if>
@@ -566,5 +772,28 @@
 			</#if>
 		]]>
 	</statement>
+	
+	
+
+
+
+
+	<statement id="getHistoryTask" parameterName="query">
+		<![CDATA[  	
+			<#-- 查询历史表的任务  -->
+			SELECT ID_, EXECUTION_ID_ , PROC_DEF_ID_,PROC_DEF_ID_,NAME_,PARENT_TASK_ID_ ,TASK_DEF_KEY_  ,OWNER_ ,ASSIGNEE_,FORM_KEY_, TENANT_ID_ FROM act_hi_taskinst WHERE 1=1
+			
+			<#if query.taskIdListIn?? && (query.taskIdListIn?size > 0)>
+		   		and (
+		   			ID_  in (
+			   			<#list query.taskIdListIn as tid>
+			   				 ${tid} <#if tid_has_next>,</#if>
+			   			</#list>
+		   			)
+		   		)
+	    	</#if>
+		]]>
+	</statement>
+		
 	
 </statements>

@@ -16,6 +16,7 @@
 	 		<column name="approve_task_id" property="approveTaskId" text="记录审批时的节点ID"/>
 	 		<column name="approve_task_key" property="approveTaskKey" text="记录审批时的节点Key"/>
 	 		<column name="approve_task_name" property="approveTaskName" text="记录审批时的节点名称"/>
+	 		<column name="approve_task_name_alias" property="approveTaskNameAlias" text="记录审批时的节点别名"/>
 	 		
 	 		<column name="approve_task_candidate_user_ids" property="approveTaskCandidateUserIds" text="记录审批任务时，候选的审批用户（例如，驳回时，需要使用此字段)"/>
 	 		<column name="reject_to_choose_node_task_key" property="rejectToChooseNodeTaskKey" text="当用户驳回到选择节点时，该属性值就是用户选择的节点key"/>
@@ -33,6 +34,8 @@
 	 		<column name="approve_user_org_text" property="approveUserOrgText" text="审批用户组织信息"/>
 	 		
 	 		<column name="variables_json" property="variablesJson" text="记录审批任务的流程变量Map 的JSON表示"/>
+	 		
+	 		<column name="delete_msg_flag" property="deleteMsgFlag" text="待办(手机)消息是否已删除，可用于消息是否已阅、已处理等业务"/>
 	 		
 	 		<column name="remark" property="remark" text="备注"/>
 	 	
@@ -145,5 +148,21 @@
 	
 	<statement id="fixBusinessStatusQuery" parameterName="processInstanceId">
 	 <![CDATA[ select  * from ext_approve_opinion   where process_instance_id = '${StringUtil.escapeSql(processInstanceId)}' order by id desc limit 1	 ]]>
+	 </statement>
+	 
+	 <statement id="doData" parameterName="query">
+	 	<![CDATA[ 	
+			select  * from ext_approve_opinion  where 1=1 
+			<#if query.processInstanceIds??> 
+				<#assign list = StringUtil.split(query.processInstanceIds,",") />
+				and process_instance_id in 
+				(
+					<#list list as instance>
+						 '${StringUtil.escapeSql(instance)}'  <#if instance_has_next> , </#if> 
+					</#list> 
+				 )
+			</#if>
+			 order by  process_instance_id ,id ;
+	 	]]>
 	 </statement>
 </statements>

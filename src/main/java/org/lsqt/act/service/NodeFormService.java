@@ -1,16 +1,17 @@
 package org.lsqt.act.service;
 
 import java.util.Collection;
+import java.util.List;
 
-import org.lsqt.components.db.Page;
-import org.lsqt.act.model.Node;
 import org.lsqt.act.model.NodeForm;
 import org.lsqt.act.model.NodeFormQuery;
-import org.lsqt.act.model.NodeQuery;
+import org.lsqt.components.db.Page;
 
 public interface NodeFormService {
 	
 	Page<NodeForm> queryForPage(NodeFormQuery query);
+	
+	List<NodeForm> queryForList(NodeFormQuery query);
 
 	NodeForm saveOrUpdate(NodeForm model);
 

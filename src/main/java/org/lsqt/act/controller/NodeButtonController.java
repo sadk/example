@@ -23,6 +23,7 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.ExceptionUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.sys.model.Application;
 import org.lsqt.sys.model.Dictionary;
@@ -88,7 +89,10 @@ public class NodeButtonController {
 		if(StringUtil.isBlank(form.getAfterScriptType())){
 			form.setAfterScriptType(NodeButton.SCRIPT_TYPE_URL);
 		}
-		return db.update(form, "beforeScript","afterScript","afterScriptType","updateTime","btnName","remark","btnCode");
+		if(StringUtil.isBlank(form.getBeforeScriptType())) {
+			form.setBeforeScriptType(NodeButton.SCRIPT_TYPE_URL);
+		}
+		return db.update(form, "beforeScript","beforeScriptType","afterScript","afterScriptType","updateTime","btnName","remark","btnCode");
 	}
 	
 	@RequestMapping(mapping = { "/delete", "/m/delete" })
@@ -302,5 +306,35 @@ public class NodeButtonController {
 		public String id;
 		public String pid;
 		public String name;
+	}
+	
+	
+	@RequestMapping(mapping = { "/batch_set_script", "/m/batch_set_script" },text="批量设置按钮脚本")
+	public void batchSetScript(String ids,String beforeScript,String afterScript) {
+		if (StringUtil.isNotBlank(ids,beforeScript,afterScript)) {
+			List<String> idList = new ArrayList<>();
+			
+			List<String> btnIdList = StringUtil.split(ids, ",");
+			for (String e: btnIdList) {
+				idList.add(e.replace("btn_", ""));
+			}
+			
+			NodeButtonQuery query = new NodeButtonQuery();
+			query.setIds(StringUtil.join(idList));
+			List<NodeButton> data = nodeButtonService.queryForList(query);
+			for(NodeButton m: data) {
+				m.setBeforeScript(beforeScript);
+				m.setAfterScript(afterScript);
+				
+				if(StringUtil.isBlank(m.getBeforeScriptType())) {
+					m.setBeforeScriptType(NodeButton.SCRIPT_TYPE_URL);
+				}
+				
+				if(StringUtil.isBlank(m.getAfterScriptType())) {
+					m.setAfterScriptType(NodeButton.SCRIPT_TYPE_URL);
+				}
+				db.update(m, "beforeScript","afterScript","beforeScriptType","afterScriptType");
+			}
+		}
 	}
 }

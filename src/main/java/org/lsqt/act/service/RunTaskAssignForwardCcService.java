@@ -15,4 +15,12 @@ public interface RunTaskAssignForwardCcService {
 	int deleteById(Long... ids);
 	
 	Collection<RunTaskAssignForwardCc> getAll();
+	
+	/**
+	 * 流程批量转发
+	 * @param loginUserId 登陆用户
+	 * @param processInstanceIds 转发的流程实例
+	 * @param userIds  转发给哪些用户
+	 */
+	void forward(String loginUserId,String processInstanceIds, String userIds) ;
 }

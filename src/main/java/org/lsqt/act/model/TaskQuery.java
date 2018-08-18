@@ -73,8 +73,8 @@ public class TaskQuery {
 
 	
 	// ----------------------------- 查询 ----------------
-	private String createTimeBegin;
-	private String createTimeEnd;
+	private String createTimeBegin; //任务(或审批日期)创建时间-开始
+	private String createTimeEnd; //任务(或审批日期)创建时间-结束
 	
 	//时间戳
 	private Long createTimeBeginMillis;
@@ -105,11 +105,17 @@ public class TaskQuery {
 	
 	private String title; // 流程标题
 	
+	 
+	private List<String> taskIdListNotIn; // 排除不要的任务ID
+	private List<String> taskIdListIn; //
+	
 	//private String ccUserId; //任务抄送的用户ID
 	
 	private String businessKey;
-	
 	private String businessFlowNo ;
+	private String businessDeptName; // 填制人部门名称
+	private String businessStatus; // 业务状态
+	
 	
 	/**
 	我的待办="1";
@@ -125,6 +131,11 @@ public class TaskQuery {
 	// ----------------- 优化查询 -----------------
 	private String taskIdsIncludeAssignForward; // 包含 含加签、转发 用户的待办
 	private String taskIdsEscapeAssignForward; // 去除加签\转发的"主人"待办
+	
+	private String gid;
+	
+	private Integer readed;// 1=已阅  0或null=未阅
+	
 	// getter、setter
 	public void setRev(Integer rev) {
 		this.rev = rev;
@@ -509,6 +520,54 @@ public class TaskQuery {
 
 	public void setTaskIdsEscapeAssignForward(String taskIdsEscapeAssignForward) {
 		this.taskIdsEscapeAssignForward = taskIdsEscapeAssignForward;
+	}
+
+	public String getBusinessDeptName() {
+		return businessDeptName;
+	}
+
+	public void setBusinessDeptName(String businessDeptName) {
+		this.businessDeptName = businessDeptName;
+	}
+
+	public List<String> getTaskIdListNotIn() {
+		return taskIdListNotIn;
+	}
+
+	public void setTaskIdListNotIn(List<String> taskIdListNotIn) {
+		this.taskIdListNotIn = taskIdListNotIn;
+	}
+
+	public List<String> getTaskIdListIn() {
+		return taskIdListIn;
+	}
+
+	public void setTaskIdListIn(List<String> taskIdListIn) {
+		this.taskIdListIn = taskIdListIn;
+	}
+
+	public String getBusinessStatus() {
+		return businessStatus;
+	}
+
+	public void setBusinessStatus(String businessStatus) {
+		this.businessStatus = businessStatus;
+	}
+
+	public String getGid() {
+		return gid;
+	}
+
+	public void setGid(String gid) {
+		this.gid = gid;
+	}
+
+	public Integer getReaded() {
+		return readed;
+	}
+
+	public void setReaded(Integer readed) {
+		this.readed = readed;
 	}
 
 }

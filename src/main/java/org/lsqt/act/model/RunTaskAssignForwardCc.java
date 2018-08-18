@@ -52,6 +52,9 @@ public class RunTaskAssignForwardCc {
 	/** 加签、转发、抄送的用户（多个以逗号隔开） */
 	private String assignForwardCcUserIds;
 
+	/** 加签操作时的那个节点，可审批的用户**/
+	private String approveCandiateUserIds;
+	
 	/** 备注 */
 	private String remark;
 
@@ -217,6 +220,14 @@ public class RunTaskAssignForwardCc {
 
 	public java.util.Date getUpdateTime() {
 		return this.updateTime;
+	}
+
+	public String getApproveCandiateUserIds() {
+		return approveCandiateUserIds;
+	}
+
+	public void setApproveCandiateUserIds(String approveCandiateUserIds) {
+		this.approveCandiateUserIds = approveCandiateUserIds;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.ExceptionUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.sys.model.DataSource;
 import org.lsqt.sys.model.DataSourceQuery;
@@ -54,8 +56,18 @@ public class DataSourceController {
 	}
 	  
 	@RequestMapping(mapping = { "/test/connection/id", "/m/test/connection/id" })
-	public void testConnectionById(Long id) throws Exception {
-		dataSourceService.testConnectionById(id);
+	public Map<String,Object> testConnectionById(Long id) throws Exception {
+		Map<String,Object> rs = new HashMap<>();
+		try{
+			dataSourceService.testConnectionById(id);
+			rs.put("isOk", true);
+			return rs;
+		}catch(Exception ex) {
+			rs.put("isOk", false);
+			rs.put("message", ExceptionUtil.getStackTrace(ex));
+			ex.printStackTrace();
+			return rs;
+		}
 	}
 	
 	@RequestMapping(mapping = { "/get_database_list", "/m/get_database_list" })
