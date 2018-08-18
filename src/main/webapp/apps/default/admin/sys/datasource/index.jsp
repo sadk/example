@@ -93,11 +93,12 @@
 											<a class="mini-button" iconCls="icon-edit" onclick="edit()">编辑</a>
 											<a class="mini-button" iconCls="icon-node" onclick="edit('view')">查看</a>
 											<a class="mini-button" iconCls="icon-split" onclick="testConnection()">测试连接</a>
+											<!-- 
 											<span class="separator"></span>  
 											<a class="mini-button" iconCls="icon-download" onclick="exportData()">导出</a>
 											<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:60px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"excel"},{id:"1",text:"word"},{id:"2",text:"pdf"},{id:"3",text:"txt"}]' />
 											<input id="exportDataType" name="exportDataType" class="mini-combobox" style="width:64px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"当前页"},{id:"1",text:"选中行"},{id:"2",text:"全部数据"}]' />
-											
+											 -->
 										</td>
 										<td style="white-space:nowrap;">
 					                        <input id="key2" name="key2" class="mini-textbox" emptyText="请输入关键字" style="width:150px;" onenter="search"/>   
@@ -124,7 +125,10 @@
 										
 										<div field="address" width="150" headerAlign="center" allowSort="true"  align="right">数据库域名或地址</div>
 										<div field="port" width="100" headerAlign="center" allowSort="true" align="center">数据库端口</div>
-										<div field="status" width="80" align="center" headerAlign="center" allowSort="true">状态</div>
+										<div type="comboboxcolumn" field="status" width="80" headerAlign="center" align="left" allowSort="true">状态
+											<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=datasource" />
+										</div>
+										
 										<div field="sn" width="80" align="center" headerAlign="center" allowSort="true">序号</div>
 										
 										<div field="remark" width="100" headerAlign="center" allowSort="true">备注</div>											
@@ -142,10 +146,10 @@
 									<table style="width:100%;">
 										<tr>
 											<td style="width:100%;">
-												<a class="mini-button" iconCls="icon-add" onclick="editProp()">添加</a>
+												<a class="mini-button" iconCls="icon-add" onclick="editProp('add')">添加</a>
 												<a class="mini-button" iconCls="icon-remove" onclick="removeProp()">删除</a>
-												<a class="mini-button" iconCls="icon-edit" onclick="editProp()">编辑</a>
-												<a class="mini-button" iconCls="icon-save" onclick="editSave()">保存</a>
+												<a class="mini-button" iconCls="icon-edit" onclick="editProp('edit')">编辑</a>
+												<a class="mini-button" iconCls="icon-save" onclick="saveShortProp()">保存</a>
 												<span class="separator"></span>
 												<input id="dataSourceCode" name="dataSourceCode" value="localhost" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/datasource/all" />
 												<a class="mini-button" iconCls="icon-edit" onclick="copyProp()">复制</a>
@@ -168,14 +172,14 @@
 											<div field="parentCode" width="80" headerAlign="center" allowSort="true">数据源编码</div>											
 											
 											<div field="name" width="170"  align="left" headerAlign="center" allowSort="true">属性名
-												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
+												<input property="editor" class="mini-textbox" style="width:100%;"   />
 											</div>
 											<div field="value"width="60" headerAlign="center" allowSort="true">属性值
-												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
+												<input property="editor" class="mini-textbox" style="width:100%;"   />
 											</div>
 																		
 											<div field="remark" align="left" width="350" headerAlign="center" allowSort="true">备注
-												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
+												<input property="editor" class="mini-textbox" style="width:100%;"   />
 											</div>
 											
 											<div field="appCode"  headerAlign="center" align="right" width="60" allowSort="true">应用编码</div>	
@@ -301,7 +305,9 @@
 						var data = {
 							action : "add",
 							pid : row.id
+							
 						};
+						console.log(data)
 						iframe.contentWindow.SetData(data);
 					},
 					ondestroy : function(action) {
@@ -349,7 +355,20 @@
 						cache : false,
 						data: form.getData(),
 						success : function(text) {
-							mini.alert("连接成功!");
+							if(text) {
+								if(text.isOk) {
+									mini.alert("连接成功!");
+								}else {
+									var options ={
+									    content: text.message,    
+									    state: "danger",      //default|success|info|warning|danger
+									    x: "center",          //left|center|right
+									    y: "center",          //top|center|bottom
+									    timeout: 4000     //自动消失间隔时间。默认2000（2秒）。
+									}
+									mini.showTips(options)
+								}
+							}
 						},
 						error : function(data) {
 					  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
@@ -361,34 +380,95 @@
 				}
 			}
 			
-			function editProp(){
+			
+// ------------------------------------------------ 属性操作 --------------------------------------------
+			function removeProp() {
+				var rows = propertyGrid.getSelecteds();
+				if(rows.length == 0) {
+					mini.alert("请至少选择一个属性");
+					return ;
+				}
+				var data = {};
+				var array = new Array();
+				for(var i=0;i<rows.length;i++) {
+					array.push(rows[i].id)
+				}
+				data.ids = array.join(",")
+				$.ajax({
+					url : "${pageContext.request.contextPath}/property/delete",
+					type : 'post', cache : false,
+					data: data,
+					success : function(text) {
+						mini.alert("删除成功!");
+						propertyGrid.reload();
+					},
+					error : function(data) {
+				  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
+				  		mini.alert("连接失败!"+data.statusText);
+					}
+				});
+			}
+			
+			
+			function editProp(action){
 				var row = grid.getSelected();
+				if(action == 'add') {
+					if(!row) {
+						mini.alert("请选择一个数据源");
+						return ;
+					}
+				}
+				var propRow = propertyGrid.getSelected();
 				
 				if (row) {
 					mini.open({
 						url : "${pageContext.request.contextPath}/apps/default/admin/sys/datasource/edit_prop.jsp",
-						title : "编辑连接属性",
+						title : "编辑边接属性",
 						width : 500,
 						height : 260,
 						onload : function() {
 							var iframe = this.getIFrameEl();
 							var data = {
-								action : action,
-								id : row.id
+								action : action
 							};
+							if('add' == action) {
+								data.parentCode = row.code
+								data.appCode = row.appCode
+							}						
+							if('edit' == action) {
+								data.id = propRow.id
+								data.parentCode = propRow.parentCode
+								data.appCode = propRow.appCode
+							}
+							data.type ="datasource";
 							iframe.contentWindow.SetData(data);
 						},
 						ondestroy : function(action) {
-							grid.reload();
+							propertyGrid.reload();
 						}
 					});
 				} else {
 					mini.alert("请选中一条记录");
 				}
 			}
-			
-			function copyProp(){
-				
+
+			function saveShortProp() {
+			    var data = propertyGrid.getChanges();
+	            var json = mini.encode(data);
+	           // alert(json);
+	            propertyGrid.loading("保存中，请稍后......");
+	           // if(true) return ;
+	            $.ajax({
+	                url: "${pageContext.request.contextPath}/property/save_or_update_short",
+	                data: { data: json },
+	                type: "post",
+	                success: function (text) {
+	                	propertyGrid.reload();
+	                },
+	                error: function (jqXHR, textStatus, errorThrown) {
+	                    alert(jqXHR.responseText);
+	                }
+	            });
 			}
 		</script>
 	</body>

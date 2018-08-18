@@ -33,7 +33,7 @@
 								</td>
 								<td style="width:100px;">编码：</td>
 								<td style="width:150px;">
-									<input name="code" id="code" class="mini-textbox" />
+									<input name="code" id="code" class="mini-textbox"/>
 								</td>
 							</tr>
 							<tr>
@@ -57,9 +57,15 @@
 								</td>
 							</tr>
 							<tr>
+								<!-- 
 								<td>登陆默认库：</td>
 								<td>
 								 	<input name="loginDefaultDb" id="loginDefaultDb" class="mini-textbox"/>
+								</td>
+								 -->
+								 <td>所属系统：</td>
+								<td>
+								 	<input id="appCode" name="appCode" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/application/all" />
 								</td>
 								<td>状态：</td>
 								<td>

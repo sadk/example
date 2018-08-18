@@ -20,33 +20,25 @@
 	</head>
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
-			<input name="id" class="mini-hidden" />
-			<input name="type" class="mini-hidden" value=""/>
+		
+			<input name="id" id="id" class="mini-hidden" />
+			<input name="type" id="type" class="mini-hidden"/>
+			<input name="parentCode" id="parentCode" class="mini-hidden"/>
+			<input name="appCode" id="appCode" class="mini-hidden"/>
+			
 			<div style="padding:4px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
 		            <legend>连接信息</legend>
 		            <div style="padding:5px;">
-				        <table>
-							<tr>
-								<td style="width:120px;">数据源名称：</td>
-								<td style="width:150px;">
-								 	<input name="name" id="name" class="mini-textbox"  />
-								</td>
-								
-								<td style="width:120px;">数据源编码：</td>
-								<td style="width:150px;">
-									<input name="code" id="code" class="mini-textbox" />
-								</td>
-							</tr>
-							
+				        <table>							
 							<tr>
 								<td  style="width:120px;">属性名：</td>
 								<td  style="width:150px;">
-								 	<input name="url" id="url" class="mini-textbox"  />
+								 	<input name="name" id="name" class="mini-textbox"  />
 								</td>
 								<td style="width:110px;">属性值：</td>
 								<td style="width:150px;">
-									<input name="driverClassName" id="driverClassName" class="mini-textbox" />
+									<input name="value" id="value" class="mini-textbox" />
 								</td>
 							</tr>
 							<tr>
@@ -73,6 +65,11 @@
 
 			var form = new mini.Form("edit-form1");
 			
+			var name = mini.get("name");
+			var parentCode = mini.get("parentCode");
+			var appCode = mini.get("appCode");
+			var type = mini.get("type");
+			
 			var btnTest = mini.get("btnTest");
 			var btnOk =  mini.get("btnOk");
 			var btnCancel =  mini.get("btnCancel");
@@ -98,7 +95,12 @@
 			//标准方法接口定义
 			function SetData(data) {
 				data = mini.clone(data); //跨页面传递的数据对象，克隆后才可以安全使用
-				
+				console.log(data)
+				if(data.action == 'add') {
+					parentCode.setValue(data.parentCode);
+					appCode.setValue(data.appCode);
+					type.setValue(data.type);
+				}
 				 if(data.action == "edit" || data.action=='view') {
 					$.ajax({
 						url : "${pageContext.request.contextPath}/property/page?id=" + data.id,

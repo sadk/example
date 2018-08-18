@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>数据源管理</title>
+		<title>机器管理</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
@@ -61,9 +61,9 @@
 								<td>
 								 	<input name="url" id="url" class="mini-textbox"  />
 								</td>
-								<td>状态：</td>
+								<td>类型：</td>
 								<td>
-								 	<input id="status" name="status" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=datasource" value="2"/>
+								 	<input id="type" name="type" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=machine_type" />
 								</td>
 							</tr>
 
@@ -72,10 +72,15 @@
 								<td>
 								 	<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
 								</td>
-								<td>备注：</td>
+								
+								<td>所属系统：</td>
 								<td>
-								 	<input id="remark" name="remark" class="mini-textbox"/>
+									<input id="appCode" name="appCode" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/application/all" />
 								</td>
+							</tr>
+							<tr>
+								<td>备注：</td>
+								<td colspan="3"><input id="remark" name="remark" class="mini-textbox"/></td>
 							</tr>
 				        </table>
 				    </div>

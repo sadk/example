@@ -54,11 +54,16 @@
 	{id: "wiki1", text: "cccc", pid: "wiki", url:"/apps/default/admin/sys/project/index.jsp" },
 	{id: "wiki2", text: "dddd", pid: "wiki", url:"" },
 	
+	{id: "yd_system", pid: "cms", text: "约单系统"},
+	{id: "yd_tech_manage", text: "技能管理", pid: "yd_system", url:"/apps/default/admin/yue/tech/index.jsp" },	
+	{id: "yd_tech_def",  text: "技能定义", pid: "yd_tech_manage", url:"/apps/default/admin/yue/tech/index.jsp" },	
+	{id: "yd_tech_info", text: "技能信息", pid: "yd_tech_manage", url:"/apps/default/admin/yue/tech_info/index.jsp" },
 	
+	{id: "yd_user_info", text: "用户信息", pid: "yd_system", url:"/apps/default/admin/yue/index.jsp" },
+
 	
 	{id: "uum", text: "用户系统"},
 	{id: "uum0",pid:"uum", text: "本地用户系统"},
-	{id: "uum1", text: "基础数据" , pid: "uum0"},
 	{id: "uum2", text: "用户管理" , pid: "uum0", url: "/apps/default/admin/uum/user/index.jsp"} ,
 	{id: "uum3", text: "角色管理" , pid: "uum0", url: "/apps/default/admin/uum/role/index.jsp"} ,
 	{id: "uum4", text: "组织机构" , pid: "uum0", url: "/apps/default/admin/uum/org/index.jsp"} ,

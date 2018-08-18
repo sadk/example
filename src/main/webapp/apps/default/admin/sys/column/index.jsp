@@ -28,7 +28,7 @@
 						        	<tr>
 						            	<td style="width:120px;">数据源：</td>
 						                <td style="width:150px;">    
-						                    <input id="dataSourceCode" name="dataSourceCode" value="localhost" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/datasource/all" />
+						                    <input id="dataSourceCode" name="dataSourceCode" value="localhost" onvaluechanged="onDataSourceCodeValuechanged" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/datasource/all" />
 						                </td>
 						            </tr>
 						        	<tr>
@@ -210,7 +210,7 @@
 			var form = new mini.Form("#form1");
 			var grid = mini.get("tableGrid");
 			var columnGrid = mini.get("columnGrid");
-			
+			var dbName = mini.get("dbName");
 			
 			
 			var tabs = mini.get("tabs1");
@@ -234,6 +234,35 @@
 				tabs.reloadTab(currentTab);
 			}
 			
+			function onDataSourceCodeValuechanged(e) {
+				var data = {};
+				data.dataSourceCode = e.source.value;
+	            $.ajax({
+	                url: "${pageContext.request.contextPath}/datasource/get_database_list",
+	                data: data,
+	                type: "post",
+	                success: function (text) {
+	                	//mini.alert(text);
+	                	dbName.setData(text);
+	                	
+	                	var isTestExists = false;
+	                	for(var i=0;i<text.length;i++) {
+	                		if(text[i].name == 'test') {
+	                			isTestExists = true;
+	                		}
+	                	}
+	                	if (isTestExists) {
+	                		dbName.setValue('test');
+	                	}else {
+	                		dbName.select(0);
+	                	}
+	                	
+	                },
+	                error: function (jqXHR, textStatus, errorThrown) {
+	                    alert(jqXHR.responseText);
+	                }
+	            });
+			}
 			
 			grid.on("rowclick", function(e){
 				var record = e.record;
