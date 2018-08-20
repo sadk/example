@@ -54,13 +54,13 @@
 	{id: "wiki1", text: "cccc", pid: "wiki", url:"/apps/default/admin/sys/project/index.jsp" },
 	{id: "wiki2", text: "dddd", pid: "wiki", url:"" },
 	
-	/*
 	{id: "yd_system", pid: "cms", text: "约单系统"},
 	{id: "yd_tech_manage", text: "技能管理", pid: "yd_system", url:"/apps/default/admin/yue/tech/index.jsp" },	
 	{id: "yd_tech_def",  text: "技能定义", pid: "yd_tech_manage", url:"/apps/default/admin/yue/tech/index.jsp" },	
 	{id: "yd_tech_info", text: "技能信息", pid: "yd_tech_manage", url:"/apps/default/admin/yue/tech_info/index.jsp" },
+	
 	{id: "yd_user_info", text: "用户信息", pid: "yd_system", url:"/apps/default/admin/yue/index.jsp" },
-	*/
+
 	
 	{id: "uum", text: "用户系统"},
 	{id: "uum0",pid:"uum", text: "本地用户系统"},
@@ -111,12 +111,9 @@
 	
 	{id: "flow", text: "办公系统"},
 	{id: "flow-1", text: "个人办公", pid: "flow", url:"" },
-	/*
 	{id: "flow-101", text: "我的待办（简版1）", pid: "flow-1", url:"/apps/default/admin/act/task/index1.jsp" },
 	{id: "flow-102", text: "我的待办（简版2）", pid: "flow-1", url:"/apps/default/admin/act/task/index2.jsp" },
-	{id: "flow-103", text: "我的待办（原始）", pid: "flow-1", url:"/apps/default/admin/act/task/index.jsp" },*/
-	
-	{id: "flow-103", text: "我的待办", pid: "flow-1", url:"/apps/default/admin/act/task/index3.jsp" },
+	{id: "flow-103", text: "我的待办", pid: "flow-1", url:"/apps/default/admin/act/task/index.jsp" },
 	{id: "flow-104", text: "我的已办", pid: "flow-1", url:"/apps/default/admin/act/task/index_my_done.jsp" },
 	{id: "flow-105", text: "我的发起", pid: "flow-1", url:"/apps/default/admin/act/task/index_my_start.jsp" },
 	{id: "flow-106", text: "抄送我的", pid: "flow-1", url:"/apps/default/admin/act/task/index_cc_my.jsp" },
@@ -137,12 +134,11 @@
 	{id: "flow-7", text: "流程设置", pid: "flow-5", url:"/apps/default/admin/act/definition/index.jsp" },
 	{id: "flow-8", text: "实例管理", pid: "flow-5", url:"/apps/default/admin/act/instance/index.jsp" },
 	
-	{id: "flow-9", text: "流程表单定义", pid: "flow-5", url:"" },
-	{id: "flow-21", text: "数据源定义", pid: "flow-9", url:"/apps/default/admin/sys/datasource/index.jsp" },
-	{id: "flow-22", text: "表定义", pid: "flow-9", url:"/apps/default/admin/sys/table/index.jsp" },
-	{id: "flow-23", text: "字段定义", pid: "flow-9", url:"/apps/default/admin/sys/column/index.jsp" },
+	{id: "flow-9", text: "表单定义", pid: "flow-5", url:"" },
+	{id: "flow-10", text: "数据库表定义", pid: "flow-9", url:"" },
+	{id: "flow-11", text: "流程表单", pid: "flow-9", url:"" },
 
-	/*{id: "flow-12", text: "用户适配", pid: "flow-5", url:"/apps/default/admin/act/user_data/index.jsp" },*/
+	{id: "flow-12", text: "用户适配", pid: "flow-5", url:"/apps/default/admin/act/user_data/index.jsp" },
 	
 
 
@@ -172,7 +168,7 @@
 	{id: "dataManager3", text: "作业抽取",pid: "dataManager"},
 	
 	
-	/*
+	
 	{id: "shop_1", text: "电商系统"},
 	{id: "shop_2", text: "订单子系统",pid: "shop_2"},
 	{id: "shop_4", text: "网店系统",pid: "shop_2"},
@@ -180,7 +176,7 @@
 	{id: "tv_1", text: "视频系统"},
 	{id: "tv_2", text: "aaaaaa",pid: "tv_1"},
 	{id: "tv_3", text: "bbbbbb",pid: "tv_1"}
-	*/
+	
 ]
 
 

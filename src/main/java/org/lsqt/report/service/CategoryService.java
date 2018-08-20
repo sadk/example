@@ -1,10 +1,10 @@
-package org.lsqt.act.service;
+package org.lsqt.report.service;
 
 import java.util.Collection;
 import java.util.List;
 
-import org.lsqt.act.model.Category;
-import org.lsqt.act.model.CategoryQuery;
+import org.lsqt.report.model.Category;
+import org.lsqt.report.model.CategoryQuery;
 import org.lsqt.components.db.Page;
 
 public interface CategoryService {
