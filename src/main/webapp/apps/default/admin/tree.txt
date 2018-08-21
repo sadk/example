@@ -146,6 +146,9 @@
 	
 
 
+	{id: "report", text: "报表系统"},
+	{id: "report1", text: "报表分类" , pid: "report", url: "/apps/default/admin/report/category/index.jsp"} ,
+	{id: "report2", text: "报表定义" , pid: "report", url: "/apps/default/admin/report/definition/index.jsp"} ,
 
 
 	{id: "buss", text: "填报系统"},

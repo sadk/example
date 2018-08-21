@@ -36,6 +36,9 @@ public class DefinitionQuery {
 	/** 报表内容类型： 1=SQL 2=Table 3=View 4=http_json 5=存储过程 */
 	private String type;
 
+	/** 启用状态: 0=禁用 1=启用   **/
+	private String status ;
+	
 	/** 报表url */
 	private String url;
 
@@ -46,7 +49,6 @@ public class DefinitionQuery {
 	private String appCode;
 
 	/** 排序 */
-
 	private Integer sn;
 
 	/** 备注 */
@@ -196,6 +198,14 @@ public class DefinitionQuery {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }

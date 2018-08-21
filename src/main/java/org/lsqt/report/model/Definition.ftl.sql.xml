@@ -20,6 +20,8 @@
 	 	
 	 		<column name="db_type" property="dbType" text="报表数据库类型： 1=MySQL 2=oracle 3=sqlserver 4=PostgreSQL"/>
 	 	
+	 		<column name="status" property="status" text="报表状态： 0=禁用 1=启用  "/>
+	 		
 	 		<column name="app_code" property="appCode" text="租户编码"/>
 	 	
 	 		<column name="sn" property="sn" text="排序"/>
@@ -28,41 +30,8 @@
 	 	
 	 	
 	 	
-	 	
-		
-		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
 	 		<column gid="gid" property="gid" text="全局唯一编号"/>
-	 		
-	 		
-	 		
 	 		<column createTime="create_time" property="createTime" text="创建时间"/>
-	 		
-	 		
-	 		
 	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
 	</table>
 	
@@ -74,87 +43,44 @@
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
-							 							 							 							 							 							 							 							 												
-							 
 							definition_name like '%${key}%'  or 
-							
-							 
 							definition_short_name like '%${key}%'  or 
-							
-							 
-							code like '%${key}%'  or 
-							
-							 
-							type like '%${key}%'  or 
-							
-							 
-							url like '%${key}%'  or 
-							
-							 
-							db_type like '%${key}%'  or 
-							
-							 
-							app_code like '%${key}%'  or 
-							
-							 
 							remark like '%${key}%' 
 							
-														
 					)
 				</#if>
-				<#-- -------------------关键字查询结束 --------------- -->
-	
-				<#-- -------------------综合查询开始 --------------- -->
-				
-				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
-	  					<#if query.id??> and id = ${query.id} </#if>
+	  						<#if query.id??> and id = ${query.id} </#if>
 					
-						
-	  					<#if query.categoryId??> and category_id = ${query.categoryId} </#if>
+	  						<#if query.categoryId??> and category_id = ${query.categoryId} </#if>
 					
-						
-	  					<#if query.datasourceId??> and datasource_id = ${query.datasourceId} </#if>
+	  						<#if query.datasourceId??> and datasource_id = ${query.datasourceId} </#if>
 					
 	  						<#if query.definitionName??> and definition_name = '${StringUtil.escapeSql(query.definitionName)}' </#if>
 						
-					
 	  						<#if query.definitionShortName??> and definition_short_name = '${StringUtil.escapeSql(query.definitionShortName)}' </#if>
-						
 					
 	  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
 						
-					
 	  						<#if query.type??> and type = '${StringUtil.escapeSql(query.type)}' </#if>
 						
-					
 	  						<#if query.url??> and url = '${StringUtil.escapeSql(query.url)}' </#if>
 						
-					
 	  						<#if query.dbType??> and db_type = '${StringUtil.escapeSql(query.dbType)}' </#if>
 						
-					
+							<#if query.status??> and status = ${query.status} </#if>
+							
 	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
 						
-					
-						
-	  					<#if query.sn??> and sn = ${query.sn} </#if>
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
 					
 	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
-						
-					
-						
-					
-						
-					
 						
 							<#if query.createTimeBegin?? && query.createTimeEnd??>
 	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 	  						</#if>
 	  						
-						
-					
-				<#-- -------------------综合查询结束 --------------- -->
         	</#if>
         	
 		]]>

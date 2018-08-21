@@ -33,8 +33,6 @@ public class CategoryQuery {
 	private Date createTime;
 	private String remark;
 	
-	private String dataType; // (业务）数据类型 :1=流程分类  2=用户规则分类
-	
 	public Integer getPageIndex() {
 		return pageIndex;
 	}
@@ -125,10 +123,4 @@ public class CategoryQuery {
 	public void setParentCode(String parentCode) {
 		this.parentCode = parentCode;
 	}
-	public String getDataType() {
-		return dataType;
-	}
-	public void setDataType(String dataType) {
-		this.dataType = dataType;
-	} 
 }

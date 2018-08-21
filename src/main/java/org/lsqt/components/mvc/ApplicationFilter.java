@@ -97,7 +97,6 @@ public class ApplicationFilter implements Filter{
 	private AnnotationUrlMappingRoute router ;
 	private org.lsqt.components.db.Db db;
 	
-	private PlatformDb platformDb;
 	
 	private void initContainer(){
 		//容器
@@ -118,7 +117,6 @@ public class ApplicationFilter implements Filter{
 		
 		//DB 暂时配置在spring里
 		db=factory.getBean(Db.class);
-		platformDb = factory.getBean(PlatformDb.class);
 	}
 	
 	
@@ -448,11 +446,7 @@ public class ApplicationFilter implements Filter{
 		} catch (Exception ex) {
 			throw ex;
 		} finally{
-			try {
-				db.close();
-			} finally {
-				platformDb.close();
-			}
+			db.close();
 		}
 	
 		// 3.展现视图

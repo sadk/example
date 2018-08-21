@@ -20,7 +20,7 @@ import org.lsqt.sys.model.Application;
  * @author mmyuan
  *
  */
-@Controller(mapping={"/report/category"},name="rptCategoryController")
+@Controller(mapping={"/report/category"})
 public class CategoryController {
 	@Inject private CategoryService categroyService; 
 	@Inject private org.lsqt.sys.service.CategoryService categoryService;

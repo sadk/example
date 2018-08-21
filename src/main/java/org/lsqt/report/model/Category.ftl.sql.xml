@@ -11,7 +11,6 @@
 		<column name="remark" property="remark" />
 		<column name="category_code" property="categoryCode" text="分类编码,引用sys_category.code"/>
 		<column name="value" property="value" />
-		<column name="data_type" property="dataType" text="业务类型 1=流程分类  2=用户规则分类 "/>
 		
 		
 		<column gid="gid" property="gid" />
@@ -45,9 +44,7 @@
 			<#if query.code??>
 				and A.code = '${query.code}' 
 			</#if>
-			<#if query.dataType??>
-				and A.data_type = '${StringUtil.escapeSql(query.dataType)}' 
-			</#if>
+
 			<#if query.codes??>
 				and A.code in (
 					<#list StringUtil.split(query.codes,',') as code>

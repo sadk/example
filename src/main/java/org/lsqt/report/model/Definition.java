@@ -31,6 +31,9 @@ public class Definition {
 
 	/** 报表数据库类型： 1=MySQL 2=oracle 3=sqlserver 4=PostgreSQL */
 	private String dbType;
+	
+	/** 启用状态: 0=禁用 1=启用   **/
+	private String status ;
 
 	/** 租户编码 */
 	private String appCode;
@@ -169,6 +172,14 @@ public class Definition {
 
 	public java.util.Date getUpdateTime() {
 		return this.updateTime;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }
