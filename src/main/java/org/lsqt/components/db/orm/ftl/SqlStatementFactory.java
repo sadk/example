@@ -21,7 +21,8 @@ import org.lsqt.components.db.Page;
 import org.lsqt.components.db.orm.ORMappingDb;
 import org.lsqt.components.db.orm.SqlStatement;
 import org.lsqt.components.db.orm.SqlStatementBuilder;
-import org.lsqt.components.db.orm.Table;
+import org.lsqt.components.db.Table;
+import org.lsqt.components.db.Column;
 import org.lsqt.components.util.file.FileUtil;
 import org.lsqt.components.util.file.IOUtil;
 import org.lsqt.components.util.file.PathUtil;
@@ -153,7 +154,7 @@ public class SqlStatementFactory implements SqlStatementBuilder {
 				for (int n = 0; n < columnNodes.getLength(); n++) {
 					Element ele = (Element) columnNodes.item(n);
 
-					Table.Column col = new Table.Column();
+					Column col = new Column();
 					String id = ele.getAttribute("id");
 					col.setId(id);
 					

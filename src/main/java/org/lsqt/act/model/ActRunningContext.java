@@ -6,8 +6,7 @@ import java.util.Map;
 
 import org.activiti.engine.repository.ProcessDefinition;
 import org.lsqt.components.db.Db;
-import org.lsqt.syswin.PlatformDb;
-import org.lsqt.syswin.uum.model.User;
+import org.lsqt.uum.model.User;
 
 /**
  * 流程在流转的时候，各种使用中的对象上下文
@@ -61,18 +60,9 @@ public class ActRunningContext {
 	
 	
 	private Db db;
-	private PlatformDb db2;
-	
-	public PlatformDb getPlatformDb(){
-		return this.db2;
-	}
+ 
 	public ActRunningContext (Db db) {
 		this.db = db;
-	}
-	
-	public ActRunningContext (Db db,PlatformDb db2) {
-		this.db = db;
-		this.db2 = db2;
 	}
 	
 	/**
@@ -217,14 +207,6 @@ public class ActRunningContext {
 
 	public void setForm(RunningForm form) {
 		this.form = form;
-	}
-
-	public User getLoginUser() {
-		return loginUser;
-	}
-
-	public void setLoginUser(User loginUser) {
-		this.loginUser = loginUser;
 	}
 
 	public org.activiti.bpmn.model.Task getInputActTask() {

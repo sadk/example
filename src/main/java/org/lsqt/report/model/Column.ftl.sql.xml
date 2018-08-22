@@ -12,6 +12,9 @@
 	 		<column name="comment" property="comment" text="列注释"/>
 	 	
 	 		<column name="db_type" property="dbType" text="DB字段类型"/>
+	 		
+	 		<column name="report_name" property="reportName" text="DB字段类型"/>
+	 	
 	 	
 	 		<column name="java_type" property="javaType" text="JAVA类型"/>
 	 	

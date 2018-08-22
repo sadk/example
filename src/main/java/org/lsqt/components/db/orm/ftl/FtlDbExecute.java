@@ -30,8 +30,8 @@ import org.lsqt.components.db.orm.ORMappingIdGenerator;
 import org.lsqt.components.db.orm.SqlStatement;
 import org.lsqt.components.db.orm.SqlStatementArgs;
 import org.lsqt.components.db.orm.SqlStatementBuilder;
-import org.lsqt.components.db.orm.Table;
-import org.lsqt.components.db.orm.Table.Column;
+import org.lsqt.components.db.Table;
+import org.lsqt.components.db.Column;
 import org.lsqt.components.db.orm.util.ModelUtil;
 import org.lsqt.components.util.bean.BeanUtil;
 import org.lsqt.components.util.lang.StringUtil;
@@ -111,6 +111,11 @@ public class FtlDbExecute implements ORMappingDb{
 	public Connection getCurrentConnection() {
 		return exe.getCurrentConnection();
 	}
+	
+	public List<Column> getMetaDataColumn(String sql, Object... args) {
+		return exe.getMetaDataColumn(sql, args);
+	}
+
 	
 	public String getFullTable(Class<?> requiredType) {
 		/* bug fix :如果没有映射sql语名，只有列映射信息,将获取不到完整DB表名
@@ -267,7 +272,7 @@ public class FtlDbExecute implements ORMappingDb{
 
 		boolean isFullColumn = (prop == null || prop.length == 0);
 		 
-		for (Table.Column col : table.getColumnList()) {
+		for (Column col : table.getColumnList()) {
 			if (isFullColumn) {
 				
 				if(StringUtil.isNotBlank(col.getId())) { // id
@@ -1090,7 +1095,7 @@ public class FtlDbExecute implements ORMappingDb{
 				log.info(" --- >>>>>>>>>>>> Transaction Commited !!! (Thead-id:"+Thread.currentThread().getId()+")");
 			}
 			
-		}catch(Exception ex){
+		} catch(Exception ex){
 			if(con!=null) {
 				try {
 					if(isTransaction) {
@@ -1101,9 +1106,8 @@ public class FtlDbExecute implements ORMappingDb{
 				} catch (SQLException e) {
 					if(isTransaction) {
 						String info = String.format(formatStr, "rollback error~!", e.getMessage());
-						log.info(info);
+						log.error(info);
 					}
-					throw new DbException(e);
 				}
 			}
 			throw new DbException(ex);
@@ -1212,7 +1216,5 @@ public class FtlDbExecute implements ORMappingDb{
 		
 
 	}
-
-
 
 }

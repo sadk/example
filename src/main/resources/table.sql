@@ -391,7 +391,7 @@ insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node
 
 -- 思源软件
 insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (123,-1, '企业名片','enterprise_card_node','enterprise_card_node', 'dictionary','1000',0,'123','企业名片',   'enterprise_card_node',now(),now()) ;
-insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (124,123, '香颂地产','1427598448086793','enterprise_card_node_1427598448086793', 'dictionary','1000',0,'123,124','香颂地产',   'enterprise_card_node_1427598448086793',now(),now()) ;
+insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (124,123, '宏发地产','1427598448086793','enterprise_card_node_1427598448086793', 'dictionary','1000',0,'123,124','香颂地产',   'enterprise_card_node_1427598448086793',now(),now()) ;
 insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (125,123, '中粮地产','3976','enterprise_card_node_1467662161427772', 'dictionary','1000',0,'123,125','中粮地产',   'enterprise_card_node_1467662161427772',now(),now()) ;
 
 
@@ -498,6 +498,26 @@ INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (189,-1,'技能定义数据类型','tech_definition_data_type','tech_definition_data_type','dictionary',NULL,'1','1000',0,'189',NULL,'tech_definition_data_type','2018-03-19 09:49:35','2018-03-19 09:49:35');
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (190,189,'技能分类','0','tech_category','dictionary',NULL,'1','1000',0,'189,190',NULL,'tech_category','2018-04-23 10:54:35','2018-04-23 10:54:35');
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (191,189,'具体技能','1','tech_def','dictionary',NULL,'1','1000',0,'189,191',NULL,'tech_def','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+
+-- 在线报表生成类型
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (192,-1,'报表生成类型','rpt_general_type','rpt_general_type','dictionary',NULL,'1','1000',0,'192',NULL,'rpt_general_type','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (193,192,'SQL语句','1','rpt_general_type_sql','dictionary',NULL,'1','1000',0,'192,193',NULL,'rpt_general_type_sql','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (194,192,'数据表','2','rpt_general_type_table','dictionary',NULL,'1','1000',0,'192,194',NULL,'rpt_general_type_table','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (195,192,'DB视图','3','rpt_general_type_view','dictionary',NULL,'1','1000',0,'192,195',NULL,'rpt_general_type_view','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (196,192,'Http_Json','4','rpt_general_type_http_json','dictionary',NULL,'1','1000',0,'192,196',NULL,'rpt_general_type_http_json','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (197,192,'存储过程','5','rpt_general_type_db_procedure','dictionary',NULL,'1','1000',0,'192,197',NULL,'rpt_general_type_db_procedure','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+-- 报表数据库类型
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (198,-1,'报表数据库类型','rpt_db_type','rpt_db_type','dictionary',NULL,'1','1000',0,'198',NULL,'rpt_db_type','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (199,198,'MySQL','1','rpt_db_type_mysql','dictionary',NULL,'1','1000',0,'198,199',NULL,'rpt_db_type_mysql','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (200,198,'Oracle','2','rpt_db_type_oracle','dictionary',NULL,'1','1000',0,'198,200',NULL,'rpt_db_type_oracle','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (201,198,'SqlServer','3','rpt_db_type_sqlserver','dictionary',NULL,'1','1000',0,'198,201',NULL,'rpt_db_type_sqlserver','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (202,198,'PostgreSQL','4','rpt_db_type_postgresql','dictionary',NULL,'1','1000',0,'198,201',NULL,'rpt_db_type_postgresql','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+
+
+
 
 drop table  if exists sys_machine;
 CREATE TABLE `sys_machine` (
@@ -1973,18 +1993,26 @@ CREATE TABLE `rpt_category` (
 DROP TABLE IF EXISTS `rpt_definition`;
 CREATE TABLE `rpt_definition` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `category_id` bigint(20) NOT NULL comment '报表分类ID',  
-  `datasource_id` bigint(20) NOT NULL comment '报表所属的数据源',
+  `category_id` bigint(20) NOT NULL comment '报表分类ID', 
+  `category_name` varchar(40) NOT NULL comment '报表分类名',
   
-  `definition_name` varchar(255) NOT NULL COMMENT '定义全称',
-  `definition_short_name` varchar(255) DEFAULT NULL COMMENT '定义简称',
+  `datasource_id` bigint(20) NOT NULL comment '报表所属的数据源',
+  `datasource_name` varchar(40) NOT NULL comment '数据源名称',
+  
+  `name` varchar(255) NOT NULL COMMENT '定义全称',
+  `short_name` varchar(255) DEFAULT NULL COMMENT '定义简称',
   `code` varchar(255) NOT NULL COMMENT '定义编码',
 
   `type` varchar(4) NOT NULL COMMENT '报表内容类型： 1=SQL 2=Table 3=View 4=http_json 5=存储过程',
-  `url` varchar(2000) NULL COMMENT '报表url',
-
+  `url` varchar(500) NULL COMMENT '报表url',
+  
+  `column_sql` varchar(2000) NULL COMMENT '数据SQL用于导入字段用，可以直接执行',
+  `report_sql` varchar(2000) NULL COMMENT '报表SQL，带参数的真实报表SQL',
+  
   `db_type` varchar(2) NOT NULL COMMENT '报表数据库类型： 1=MySQL 2=oracle 3=sqlserver 4=PostgreSQL',
 
+  `version` varchar(30) NULL COMMENT '报表版本号',
+    
   `status` varchar(2) NOT NULL COMMENT '报表状态： 0=禁用   1=启用',
 
   `app_code` varchar(20) DEFAULT NULL COMMENT '租户编码',
@@ -2002,19 +2030,21 @@ DROP TABLE IF EXISTS `rpt_column`;
 CREATE TABLE `rpt_column` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `definition_id` bigint(20) NOT NULL COMMENT '当前列所属的报表',
-  `code` varchar(255) NOT NULL COMMENT '列字段sql编码',
-  `name` varchar(255) NOT NULL COMMENT '列名中文',
-  `comment` varchar(500) DEFAULT NULL COMMENT '列注释',
-  `db_type` varchar(255) NOT NULL COMMENT 'DB字段类型',
-  `java_type` int(4) NOT NULL COMMENT 'JAVA类型',
-  `property_name` varchar(255) NOT NULL COMMENT 'JAVA属性名',
-  `primary_key` int(4) NOT NULL COMMENT '是否是主键：1=是，0=否',
+  `code` varchar(50) NOT NULL COMMENT '列字段sql编码',
+  `name` varchar(100) NOT NULL COMMENT '列名中文',
+  `report_name` varchar(100) NOT NULL COMMENT '列名中文',
+  
+  `comment` varchar(200) DEFAULT NULL COMMENT '列注释',
+  `db_type` varchar(50) NOT NULL COMMENT 'DB字段类型',
+  `java_type` int(4)  NULL COMMENT 'JAVA类型',
+  `property_name` varchar(100) NOT NULL COMMENT 'JAVA属性名',
+  `primary_key` int(4)  NULL COMMENT '是否是主键：1=是，0=否',
   `oro_column_type` int(4) DEFAULT NULL COMMENT 'ORMapping映射的字段类型：gid(全局唯一码)=1 updateTime(更新时间)=2 createTime(创建时间)=3',
   `search_type` int(2) NOT NULL DEFAULT '0' COMMENT '当前列是否作为查询条件: 0=否，1=是',
-  `column_codegen_type` varchar(255) NOT NULL COMMENT '字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键    4=文本框 5=整型框  6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)',
-  `column_codegen_format` varchar(255) DEFAULT NULL COMMENT '默认：double型的为两个小数点， date 为 [yyyy-MM-dd HH:mm:ss] ',
-  `column_codegen_group_code` varchar(100) DEFAULT NULL COMMENT '字段组:用于生成html的fieldset框',
-  `selector_multil_select` varchar(100) DEFAULT NULL COMMENT '选择器，是单选还是多选',
+  `column_codegen_type` varchar(4)  NULL COMMENT '字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键    4=文本框 5=整型框  6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)',
+  `column_codegen_format` varchar(50) DEFAULT NULL COMMENT '默认：double型的为两个小数点， date 为 [yyyy-MM-dd HH:mm:ss] ',
+  `column_codegen_group_code` varchar(20) DEFAULT NULL COMMENT '字段组:用于生成html的fieldset框',
+  `selector_multil_select` varchar(4) DEFAULT NULL COMMENT '选择器，是单选还是多选',
   `selector_text_cols` varchar(100) DEFAULT NULL COMMENT '选择器选择后显示的文本字段(多选以逗号分割)',
   `selector_value_cols` varchar(100) DEFAULT NULL COMMENT '选择器选择后显示的值字段(多选以逗号分割)',
   `selector_data_from_type` varchar(4) DEFAULT NULL COMMENT '选择器数据来源:0=URL(页面)  1=URL(返回JSON) 2=URL(返回XML) 3=代码片断(JavaScript)数组  4=SQL',

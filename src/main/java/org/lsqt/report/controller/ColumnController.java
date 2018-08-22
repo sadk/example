@@ -9,10 +9,13 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.report.model.Column;
 import org.lsqt.report.model.ColumnQuery;
 import org.lsqt.report.service.ColumnService;
+
+import com.alibaba.fastjson.JSON;
 
 
 
@@ -34,6 +37,16 @@ public class ColumnController {
 		return columnService.getAll();
 	}
 	
+	@RequestMapping(mapping = { "/get_by_id", "/m/get_by_id" })
+	public Column getById(Long id) {
+		return columnService.getById(id);
+	}
+	
+	@RequestMapping(mapping = { "/list", "/m/list" })
+	public Collection<Column> queryForList(ColumnQuery query) {
+		return columnService.queryForList(query);
+	}
+	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public Column saveOrUpdate(Column form) {
 		return columnService.saveOrUpdate(form);
@@ -45,68 +58,16 @@ public class ColumnController {
 		return columnService.deleteById(list.toArray(new Long[list.size()]));
 	}
 	
-	
-	/** 暂时注释，未能提供通用实现！！！
-	@RequestMapping(mapping = { "/export", "/m/export" })
-	public void export(ColumnQuery query, String exportFileType, String exportDataType) {
-		Page<Column> page = db.getEmptyPage();
-		
-		// 1.导出excel
-		if (Dictionary.EXPORT_FILE_TYPE_EXCEL.equals(exportFileType)) {
-			
-			if (Dictionary.EXPORT_DATA_TYPE_全部数据.equals(exportDataType)) {
-				
-				page.setData(columnService.getAll());
-				ContextUtil.file.put("/template/应用列表数据.xls", "page", page);
-				return ;
-			} 
-			
-			page = columnService.queryForPage(query);
-			ContextUtil.file.put("/template/应用列表数据.xls", "page", page);
-			
-			return;
-		}
-
-		// 2.导出文本文件
-		if (Dictionary.EXPORT_FILE_TYPE_TXT.equals(exportFileType)) {
-			if (Dictionary.EXPORT_DATA_TYPE_全部数据.equals(exportDataType)) {
-				page.setData(columnService.getAll());
-				ContextUtil.file.put("/template/应用列表数据.txt", "page", page);
-				return;
+	@SuppressWarnings("unchecked")
+	@RequestMapping(mapping = { "/save_or_update_json", "/m/save_or_update_json" })
+	public List<Column> saveOrUpdateJson(String data) {
+		if(StringUtil.isNotBlank(data)) {
+			List<Column> list = JSON.parseArray(data, Column.class);
+			for(Column e: list) {
+				db.update(e);
 			}
-
-			page = columnService.queryForPage(query);
-			ContextUtil.file.put("/template/应用列表数据.txt", "page", page);
-			return;
 		}
-		
-		// 3.导出doc文件
-		if (Dictionary.EXPORT_FILE_TYPE_DOC.equals(exportFileType)) {
-			if (Dictionary.EXPORT_DATA_TYPE_全部数据.equals(exportDataType)) {
-				page.setData(columnService.getAll());
-				ContextUtil.file.put("/template/应用列表数据.doc", "page", page);
-				return ;
-			}
-			
-			page = columnService.queryForPage(query);
-			ContextUtil.file.put("/template/应用列表数据.doc", "page", page);
-			return;
-		}
-
-		// 4.导出pdf文件
-		if (Dictionary.EXPORT_FILE_TYPE_PDF.equals(exportFileType)) {
-			if (Dictionary.EXPORT_DATA_TYPE_全部数据.equals(exportDataType)) {
-				page.setData(columnService.getAll());
-				ContextUtil.file.put("/template/应用列表数据.pdf", "page", page);
-				return ;
-			}
-			
-			page = columnService.queryForPage(query);
-			ContextUtil.file.put("/template/应用列表数据.pdf", "page", page);
-			return;
-		}
-		
+		return ArrayUtil.EMPTY_LIST;
 	}
-	**/
 	
 }

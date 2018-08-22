@@ -17,6 +17,8 @@ public class Column {
 
 	/** 列名中文 */
 	private String name;
+	
+	private String reportName;
 
 	/** 列注释 */
 	private String comment;
@@ -430,6 +432,14 @@ public class Column {
 
 	public java.util.Date getUpdateTime() {
 		return this.updateTime;
+	}
+
+	public String getReportName() {
+		return reportName;
+	}
+
+	public void setReportName(String reportName) {
+		this.reportName = reportName;
 	}
 
 }

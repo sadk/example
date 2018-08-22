@@ -1,5 +1,7 @@
 package org.lsqt.components.db.orm;
 
+import org.lsqt.components.db.Table;
+
 /**
  * 映射的SQL语句对象
  * 

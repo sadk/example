@@ -11,6 +11,13 @@ public interface Db extends Closeable{
 
 	void setConfigDataSource (DataSource ds) ;
 	
+	/**
+	 * 获取执行的SQL列名
+	 * @param sql 查询误句
+	 * @param args 对应的SQL参数
+	 * @return
+	 */
+	List<Column> getMetaDataColumn(String sql,Object ...args);
 	
 	/**
 	 * 运行时动态设置数据连接

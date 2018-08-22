@@ -18,6 +18,8 @@ import javax.sql.DataSource;
 import org.lsqt.components.cache.Cache;
 import org.lsqt.components.cache.SimpleCache;
 import org.lsqt.components.db.Db.DbDialect;
+import org.lsqt.components.db.support.ColumnUtil;
+import org.lsqt.components.db.support.MySQLTypeMapping;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.Md5Util;
 import org.lsqt.components.util.lang.StringUtil;
@@ -180,7 +182,43 @@ public class JDBCExecutor {
 		//return jdbcCache.get(sqlContent);
 	}
 	
-	@SuppressWarnings("unchecked")
+	public List<Column> getMetaDataColumn(String sql,Object ... paramValues) throws DbException {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			con = prepareConnection();
+			stmt = prepareStatement(con, sql, paramValues);
+			rs = stmt.executeQuery();
+
+			List<Column> list = new ArrayList<>();
+			int cnt = rs.getMetaData().getColumnCount();
+			
+			for(int i=1;i<=cnt; i++) {
+				Column column = new Column();
+				String dbType = rs.getMetaData().getColumnTypeName(i) ;
+				if(StringUtil.isNotBlank(dbType)) {
+					dbType = dbType.toLowerCase();
+				}
+				column.setJavaType(MySQLTypeMapping.guessJavaType(dbType));
+				column.setName(rs.getMetaData().getColumnName(i));
+				column.setText(rs.getMetaData().getColumnLabel(i));
+				column.setDbType(dbType);
+				column.setPropertyName(ColumnUtil.toPropertyName(column.getName()));
+				
+				list.add(column);
+			}
+			
+			return list;
+		} catch (Exception ex) {
+			log.error(" --- executeQuery fail , " + ex.getMessage());
+			throw new DbException(ex.getMessage(), ex);
+		} finally {
+			close(stmt, rs,null); // 没有关闭连接对象,当前线程结束的时候关闭!!!
+		}
+	}
+	
 	public List<Map<String, Object>> executeQuery(String sql,Object ... paramValues) throws DbException  {
 		Connection con = null;
 		PreparedStatement stmt = null;

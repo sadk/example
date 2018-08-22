@@ -21,20 +21,22 @@
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
 			<input id="id" name="id" class="mini-hidden" />
+			<input id="definitionId" name="definitionId" class="mini-hidden" />
+			<input id="reportName" name="reportName" class="mini-hidden" />
 			<div style="padding:4px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
 		            <legend>DB字段</legend>
 		            <div style="padding:5px;">
 				        <table>
 							<tr>
-								<td style="width:120px;">表名：</td>
+								<td style="width:120px;">中文字段名：</td>
 								<td style="width:150px;">
-								 	<input name="tableName" id="tableName" class="mini-textbox"  />
+								 	<input id="name" name="name" class="mini-textbox"/>
 								</td>
 								
-								<td style="width:120px;">字段：</td>
+								<td style="width:120px;">DB字段类型：</td>
 								<td style="width:150px;">
-								 	<input id="name" name="name" class="mini-textbox" onvaluechanged="onNameValueChanged"/>
+								 	<input id="dbType" name="dbType"  class="mini-textbox" enabled="false" />
 								</td>
 							</tr>
 							<tr>
@@ -47,16 +49,6 @@
 								 	<input name="comment" id="comment" class="mini-textbox" />
 								</td>
 							</tr> 
-							<tr>
-								<td>字段类型：</td>
-								<td>
-								 	<input id="dbType" name="dbType"  class="mini-textbox"  />
-								</td>
-								<td>版本号：</td>
-								<td>
-								 	<input id="version" name="version"  class="mini-textbox"  />
-								</td>
-							</tr> 
 				        </table>
 				    </div>
 				</fieldset>
@@ -66,20 +58,20 @@
 		            <div style="padding:5px;">
 				        <table>
 							<tr>
-								<td style="width:120px;">列名：</td>
+								<td style="width:120px;">DB字段：</td>
 								<td style="width:150px;">
-								 	<input name="name2" id="name2" class="mini-textbox" readonly="readonly" />
+								 	<input name="code" id="code" class="mini-textbox" enabled="false" />
 								</td>
 								
 								<td style="width:120px;">实体属性名：</td>
 								<td style="width:150px;">
-								 	<input id="propertyName" name="propertyName" class="mini-textbox"/>
+								 	<input id="propertyName" name="propertyName" onvaluechanged="onPropertyNameValueChanged" class="mini-textbox"/>
 								</td>
 							</tr>
 							<tr>
 								<td>是否主键：</td>
 								<td>
-								 	<input id="primaryKey2" name="primaryKey2"  onvaluechanged="onPrimaryKey2Changed" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+								 	<input id="primaryKey2" name="primaryKey2"  onvaluechanged="onPrimaryKey2Changed" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" enabled="false"/>
 								</td>
 								<td>映射类型：</td>
 								<td>
@@ -100,7 +92,7 @@
 							<tr>
 								<td style="width:120px;">JAVA字段名：</td>
 								<td style="width:150px;">
-								 	<input name="propertyName2" id="propertyName2" class="mini-textbox"  />
+								 	<input name="propertyName2" id="propertyName2" class="mini-textbox" enabled="false" />
 								</td>
 								
 								<td style="width:120px;">数据类型：</td>
@@ -164,12 +156,19 @@
 								<td style="width:150px;"><span class="selectorMultilSelect"><input id="selectorMultilSelect" name="selectorMultilSelect" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" /></span></td>
 								
 							</tr>
+							
+							<tr id="selectorDataFromLableTR">
+								<td valign="top"><span id="selectorDataFromLable">数据来源：</span></td>
+								<td colspan="3"><input id="selectorDataFrom" name="selectorDataFrom" onclick="onClickSelectorDataFrom" class="mini-textarea" style="width:100%"/></td>
+							</tr>
+							
 							<tr id="dbTR">
 								<td>数据源:</td>
-								<td><input id="dataSourceCode" name="dataSourceCode" value="localhost" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/datasource/all" /></td>
+								<td><input id="selectorDataSourceCode" name="selectorDataSourceCode" onvaluechanged="onDataSourceCodeValuechanged"  class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/datasource/all" /></td>
 								<td>数据库:</td>
-								<td><input id="dbName" name="dbName" value="test" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="name" url="${pageContext.request.contextPath}/datasource/get_database_list" /></td>
+								<td><input id="selectorDbName" name="selectorDbName"  class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="name" url="${pageContext.request.contextPath}/datasource/get_database_list" /></td>
 							</tr>
+							
 							<tr id="displayColumnTR">
 								<td>显示文本列:</td>
 								<td>
@@ -181,12 +180,6 @@
 								</td>
 								
 							</tr>
-							
-							<tr id="selectorDataFromLableTR">
-								<td valign="top"><span id="selectorDataFromLable">数据来源：</span></td>
-								<td colspan="3"><input id="selectorDataFrom" name="selectorDataFrom" class="mini-textarea" style="width:100%"/></td>
-							</tr>
-							
 				        </table>
 				    </div>
 				</fieldset>
@@ -214,26 +207,58 @@
 			var selectorDataFromType = mini.get("selectorDataFromType");//数据来源类型
 			var selectorMultilSelect = mini.get("selectorMultilSelect");//是否可多选
 			
-			var dataSourceCode = mini.get("dataSourceCode"); //数据源
-			var dbName = mini.get("dbName"); // 数据库
+			var selectorDataSourceCode = mini.get("selectorDataSourceCode"); //数据源
+			var selectorDbName = mini.get("selectorDbName"); // 数据库
 			
 			var selectorTextCols = mini.get("selectorTextCols");//显示文本列
 			var selectorValueCols = mini.get("selectorValueCols"); // 显示的值列
 			var selectorDataFrom = mini.get("selectorDataFrom"); //数据来源
 			
-			function onNameValueChanged(e) {
-				mini.get("name2").setValue(mini.get("name").getValue());
+			function onPropertyNameValueChanged(e) {
+				var sender = e.sender;
+				mini.get("propertyName2").setValue(sender.value);
+			}
+			
+			function onDataSourceCodeValuechanged(e) {
+				var data = {};
+				data.dataSourceCode = e.source.value;
+	            $.ajax({
+	                url: "${pageContext.request.contextPath}/datasource/get_database_list",
+	                data: data,
+	                type: "post",
+	                success: function (text) {
+	                	//mini.alert(text);
+	                	selectorDbName.setData(text);
+	                	
+	                	var isTestExists = false;
+	                	for(var i=0;i<text.length;i++) {
+	                		if(text[i].name == 'test') {
+	                			isTestExists = true;
+	                		}
+	                	}
+	                	if (isTestExists) {
+	                		selectorDbName.setValue('test');
+	                	}else {
+	                		selectorDbName.select(0);
+	                	}
+	                	
+	                },
+	                error: function (jqXHR, textStatus, errorThrown) {
+	                    alert(jqXHR.responseText);
+	                }
+	            });
 			}
 			
 			// 修正数据，并做交互检查,检查不通过返回null  !!!
 			function prepareData(data) {
+				
 				var columnCodegenTypeValue = data.columnCodegenType;
 				
 				var selectorDataFromTypeValue = data.selectorDataFromType; // 数据来源类型
 				var selectorMultilSelectValue = data.selectorMultilSelect; // 是否可多选
 				
-				var dataSourceCodeValue = data.dataSourceCode;
-				var dbNameValue = data.dbName;
+				var selectorDataSourceCodeValue = data.selectorDataSourceCode;
+				var selectorDbNameValue = data.selectorDbName;
 				
 				var selectorTextColsValue = data.selectorTextCols;
 				var selectorValueColsValue = data.selectorValueCols;
@@ -253,6 +278,10 @@
 								mini.alert("【字典编码】不能为空");
 								return null;
 							}
+							
+							data.selectorDataSourceCode = null;
+							data.selectorDbName = null;
+							data.selectorDataFromType = null;
 						 return data;
 					 }
 					
@@ -291,17 +320,16 @@
 								}
 							}
 							
-							data.dataSourceCode=null;
-							data.dbName = null;
+							data.selectorDataSourceCode=null;
+							data.selectorDbName = null;
 						}
 						else if(selectorDataFromTypeValue == '0') {
 							if(isInvalid(selectorDataFromValue)) {
 								mini.alert("【Url页面地址】不能为空");
 								return null;
 							}
-							data.selectorMultilSelect = null;
-							data.dataSourceCode  = null;
-							data.dbName  = null;
+							data.selectorDataSourceCode  = null;
+							data.selectorDbName  = null;
 							data.selectorTextCols  = null;
 							data.selectorValueCols  = null;
 						}
@@ -310,12 +338,16 @@
 								mini.alert("【是否可多选】不能为空");
 								return null;
 							}
-							if(isInvalid(dataSourceCodeValue)){
+							if(isInvalid(selectorDataSourceCodeValue)){
 								mini.alert("【数据源】不能为空");
 								return null;
 							}
-							if(isInvalid(dbNameValue)){
+							if(isInvalid(selectorDbNameValue)){
 								mini.alert("【数据库】不能为空");
+								return null;
+							}
+							if(isInvalid(selectorDataFromValue)){
+								mini.alert("【SQL语句】不能为空");
 								return null;
 							}
 							if(isInvalid(selectorTextColsValue)){
@@ -326,16 +358,86 @@
 								mini.alert("【显示的值列】不能为空");
 								return null;
 							}
-							if(isInvalid(selectorDataFromValue)){
-								mini.alert("【SQL语句】不能为空");
-								return null;
-							}
+							
 						}
 					 	
 					 }
 				}
 				// alert(mini.encode(data));
 				return data;
+			}
+			
+			function onSelectorValueColsButtonEdit(e) { //显示的值列
+				var btnEdit = this;
+				var value = columnCodegenType.getValue();
+				if("2" == value) {
+		            mini.open({
+		                url: "${pageContext.request.contextPath}/apps/default/admin/sys/dictionary/seletor_dictionary.jsp",
+		                title: "选择选择字典",
+		                width: 750,
+		                height: 580,
+		                ondestroy: function (action) {
+		                    //if (action == "close") return false;
+		                    if (action == "ok") {
+		                        var iframe = this.getIFrameEl();
+		                        var data = iframe.contentWindow.GetColumn();
+		                        data = mini.clone(data);    //必须
+		                        if (data) {
+		                        	btnEdit.setValue(data.code);
+		                        	btnEdit.setText(data.name);
+		                        }
+		                    }
+		                }
+		            });
+				}
+			}
+			
+			function onSelectorTextColsButtonEdit(e) { //显示文本列
+				var btnEdit = this;
+				var value = columnCodegenType.getValue();
+				if("2" == value) {
+		            mini.open({
+		                url: "${pageContext.request.contextPath}/apps/default/admin/sys/dictionary/seletor_dictionary.jsp",
+		                title: "选择选择字典",
+		                width: 750,
+		                height: 580,
+		                ondestroy: function (action) {
+		                    //if (action == "close") return false;
+		                    if (action == "ok") {
+		                        var iframe = this.getIFrameEl();
+		                        var data = iframe.contentWindow.GetColumn();
+		                        data = mini.clone(data);    //必须
+		                        if (data) {
+		                        	btnEdit.setValue(data.code);
+		                        	btnEdit.setText(data.name);
+		                        }
+		                    }
+		                }
+		            });
+				}
+			}
+			
+			function onClickSelectorDataFrom(e) {
+				var value = columnCodegenType.getValue();
+				if("2" == value) {
+		            mini.open({
+		                url: "${pageContext.request.contextPath}/apps/default/admin/sys/dictionary/seletor_dictionary.jsp",
+		                title: "选择选择字典",
+		                width: 750,
+		                height: 580,
+		                ondestroy: function (action) {
+		                    //if (action == "close") return false;
+		                    if (action == "ok") {
+		                        var iframe = this.getIFrameEl();
+		                        var data = iframe.contentWindow.GetData();
+		                        data = mini.clone(data);    //必须
+		                        if (data) {
+		                        	selectorDataFrom.setValue(data.code);
+		                        }
+		                    }
+		                }
+		            });
+				}
 			}
 			
 			function onColumnCodegenTypeChanged(e) {
@@ -354,7 +456,6 @@
 					$("#selectorDataFromLableTR").hide();
 					
 					$("#controlConfig").show();
-					
 					
 				}
 				else if("2" == value){
@@ -380,11 +481,23 @@
 					$("#controlConfig").hide();
 				}
 				
+				// 切换表单控件，配置清空
+				selectorTextCols.setValue("")
+				selectorTextCols.setText("");
+				
+				selectorValueCols.setValue("");
+				selectorValueCols.setText("");
+				
+				selectorDataFrom.setValue("");
+				
+				selectorDataSourceCode.setValue("");
+				selectorDbName.setValue("");
 			}
 			
-			function onSelectorDataFromTypeChanged(e) {	//数据来源类型:0=URL(页面) 1=URL(返回JSON) 2=URL(返回XML) 3=代码片断(JavaScript)数组  4=SQL
+			function onSelectorDataFromTypeChanged(e) {	//数据来源类型联动 :0=URL(页面) 1=URL(返回JSON) 2=URL(返回XML) 3=代码片断(JavaScript)数组  4=SQL
 				//var obj = e.sender;
-				var v = selectorDataFromType.getValue();;
+				var v = selectorDataFromType.getValue();
+				
 				if(v == '0'){
 					$("#selectorDataFromLable").html("Url页面地址");
 					
@@ -396,7 +509,7 @@
 					selectorDataFrom.focus();
 				}
 				else if (v == '1') {
-					$("#selectorDataFromLable").html("URL(返回JSON)地址");
+					$("#selectorDataFromLable").html("URL地址(返回JSON)");
 					
 					
 					$(".selectorMultilSelect").show();
@@ -407,7 +520,7 @@
 					selectorDataFrom.focus();
 				}
 				else if (v == '2') {
-					$("#selectorDataFromLable").html("URL(返回XML)地址");
+					$("#selectorDataFromLable").html("URL地址(返回XML)");
 					
 					$(".selectorMultilSelect").show();
 					$("#displayColumnTR").show();
@@ -436,8 +549,13 @@
 					$("#selectorDataFromLableTR").show();
 					
 					selectorDataFrom.focus();
+					
+					selectorDataSourceCode.setValue("");
+					selectorDbName.setValue("");
+					
 				}
 				
+				selectorDataFrom.setValue("");
 			}
 			
 			
@@ -447,13 +565,13 @@
 				if(form.isValid() == false) return;
 				
 				o = prepareData(o);
-				//if(true)return ;
+				if(o == null) {
+					return ;
+				}
 				
 				$.ajax({
-					url : "${pageContext.request.contextPath}/column/save_or_update",
-					dataType: 'json',
-					type : 'post',
-					cache : false,
+					url : "${pageContext.request.contextPath}/report/column/save_or_update",
+					dataType: 'json', type : 'post',
 					data: o,
 					success : function(text) {
 						CloseWindow("save");
@@ -468,7 +586,7 @@
 				
 				 if(data.action == "edit" || data.action=='view') {
 					$.ajax({
-						url : "${pageContext.request.contextPath}/column/page?id=" + data.id,
+						url : "${pageContext.request.contextPath}/report/column/get_by_id?id=" + data.id,
 						dataType: 'json',
 						cache : false,
 						success : function(text) {
@@ -483,7 +601,6 @@
 								form.setEnabled(false);
 							}
 							
-							mini.get("name2").setValue(o.name);
 							mini.get("propertyName2").setValue(o.propertyName);
 							
 							setComboBoxText("primaryKey",o.primaryKey);
@@ -493,9 +610,49 @@
 							setComboBoxText("columnCodegenType",o.columnCodegenType);
 							setComboBoxText("javaType",o.javaType);
 							
+							// ----------- 这几段代码不要调整顺序
 							onColumnCodegenTypeChanged();
+							selectorDataFromType.setValue(o.selectorDataFromType); // 显示数据源类型
 							onSelectorDataFromTypeChanged();
 							
+							if(o.selectorDataFromType == "4") {
+								selectorDataSourceCode.setValue(o.selectorDataSourceCode);
+								selectorDbName.setValue(o.selectorDbName);
+							}
+							
+							selectorDataFrom.setValue(o.selectorDataFrom);
+							selectorTextCols.setValue(o.selectorTextCols);
+							selectorTextCols.setText(o.selectorTextCols);
+							selectorValueCols.setValue(o.selectorValueCols);
+							selectorValueCols.setText(o.selectorValueCols);
+							
+							// -----------
+							
+							if (o.columnCodegenType == "2") {
+								var value = o.selectorTextCols ;
+								if(value == 'name') {
+									selectorTextCols.setText("字典名称");
+								}
+								if(value == 'value') {
+									selectorTextCols.setText("字典值");
+								}
+								if(value == 'code') {
+									selectorTextCols.setText("字典编码");
+								}
+								selectorTextCols.setValue(value);
+								
+								var value2 = o.selectorValueCols;
+								selectorValueCols.setValue(value2);
+								if(value2 == 'name') {
+									selectorValueCols.setText("字典名称");
+								}
+								if(value2 == 'value') {
+									selectorValueCols.setText("字典值");
+								}
+								if(value2 == 'code') {
+									selectorValueCols.setText("字典编码");
+								}
+							}
 						}
 					});
 				}
@@ -547,7 +704,7 @@
 			function CloseWindow(action) {
 				if(action == "close" && form.isChanged()) {
 					if(confirm("数据被修改了，是否先保存？")) {
-						return false;
+						return true; // false页面不会关闭
 					}
 				}
 				if(window.CloseOwnerWindow)

@@ -28,6 +28,10 @@ public class DataSourceServiceImpl implements DataSourceService{
 		  return db.queryForList("queryForPage", DataSource.class);
 	}
 	
+	public List<DataSource>  queryForList(DataSourceQuery query) {
+		return db.queryForList("queryForPage", DataSource.class, query);
+	}
+	
 	public DataSource saveOrUpdate(DataSource model) {
 		return db.saveOrUpdate(model);
 	}

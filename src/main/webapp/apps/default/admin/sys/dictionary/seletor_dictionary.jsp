@@ -18,20 +18,35 @@
     <div class="mini-fit">
 		<div id="datagrid1" class="mini-treegrid"" style="width:100%;height:100%;"
 		showTreeIcon="true" allowResize="true" expandOnLoad="true"
- 				treeColumn="name" idField="id" parentField="pid" resultAsTree="false"  checkRecursive="true"  showCheckBox="false" 
+ 		treeColumn="name" idField="id" parentField="pid" resultAsTree="false"  checkRecursive="true"  showCheckBox="false" 
 		url="${pageContext.request.contextPath}/dictionary/all" > 
 		    <div property="columns">
 		        <div type="indexcolumn"></div>
-		        <div name="name" field="name" width="160" >名称</div>
-		        <div field="code" width="80">编码</div>
-		        <div field="categoryName" width="80">类别</div>
-		        <div field="sn" width="30" align="right">序号</div>
-		        <div field="appCode" width="60" align="right">所属应用</div>
-		         <div field="nodePath" width="60" align="left">结点路径</div>
-		        <div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center">开始日期</div>
-		        <div field="updateTime" width="80" dateFormat="yyyy-MM-dd" align="center">完成日期</div>     
-		        <div name="id" field="id" width="30" >ID</div>
-		        <div name="pid" field="pid" width="30" >父ID</div>              
+		        <div name="name" field="name" width="160" headerAlign="center">
+					 <input id="name" name="dicHead" type="radio" value="name"/> <label for="name">字典名称</label>
+				</div>
+				
+		        <div field="code" width="80" headerAlign="center">
+					 <input id="code" name="dicHead" type="radio" value="code"/> <label for="code">字典编码</label>
+				</div>
+				
+		        <div field="value" width="80" headerAlign="center">
+					 <input id="value" name="dicHead" type="radio" value="value"/> <label for="value">字典值</label>
+				</div>
+		        
+		        <!-- 
+		        <div field="categoryName" width="80">类别</div> -->
+		        <div field="sn" width="30" align="center" headerAlign="center">序号</div>
+		        <div field="appCode" width="60" align="center" headerAlign="center" >所属应用</div>
+		        <div field="nodePath" width="60" align="left" headerAlign="center">结点路径</div>
+		        
+		        <!--  
+		        <div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center">创建日期</div>
+		        <div field="updateTime" width="80" dateFormat="yyyy-MM-dd" align="center">更新日期</div>
+		         -->
+		         
+		        <div name="id" field="id" width="30" headerAlign="center" align="right" >ID</div>
+		        <div name="pid" field="pid" width="30" headerAlign="center" align="right" >父ID</div>              
 		    </div>
 		</div>
     </div>                
@@ -46,10 +61,34 @@
 	    
 	    var grid = mini.get("datagrid1");
 	
+ 
+	    
 	    function GetData() {
 	        var row = grid.getSelected();
 	        return row;
 	    }
+	    
+	    function GetColumn() {
+	    	var val = $("input[name='dicHead']:checked").val();
+	     	
+	     	var data = {};
+	     	if(val == "name") {
+	     		data.name = "字典名称";
+	     		data.code = "name";
+	     	}
+	     	if(val == "value") {
+	     		data.name = "字典值";
+	     		data.code = "value";
+	     	}
+	     	if(val == "code") {
+	     		data.name = "字典编码";
+	     		data.code = "code";
+	     	}
+	     	console.log(data);
+	     	
+	     	return data;
+	    }
+	    
 	    function search() {
 	        var key = mini.get("key").getValue();
 	        grid.load({ key: key });

@@ -34,8 +34,8 @@ public class DataSourceController {
 	}
 	
 	@RequestMapping(mapping = { "/all", "/m/all" })
-	public Collection<DataSource> getAll() {
-		return dataSourceService.getAll();
+	public Collection<DataSource> getAll(DataSourceQuery query) {
+		return dataSourceService.queryForList(query);
 	}
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })

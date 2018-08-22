@@ -25,10 +25,11 @@ public class DefinitionQuery {
 	private Long datasourceId;
 
 	/** 定义全称 */
-	private String definitionName;
+	private String name;
 
 	/** 定义简称 */
-	private String definitionShortName;
+	private String shortName;
+
 
 	/** 定义编码 */
 	private String code;
@@ -70,22 +71,6 @@ public class DefinitionQuery {
 
 	public Long getDatasourceId() {
 		return this.datasourceId;
-	}
-
-	public void setDefinitionName(String definitionName) {
-		this.definitionName = definitionName;
-	}
-
-	public String getDefinitionName() {
-		return this.definitionName;
-	}
-
-	public void setDefinitionShortName(String definitionShortName) {
-		this.definitionShortName = definitionShortName;
-	}
-
-	public String getDefinitionShortName() {
-		return this.definitionShortName;
 	}
 
 	public void setCode(String code) {
@@ -206,6 +191,22 @@ public class DefinitionQuery {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getShortName() {
+		return shortName;
+	}
+
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
 	}
 
 }

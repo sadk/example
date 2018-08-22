@@ -7,6 +7,7 @@ import org.lsqt.report.model.Definition;
 import org.lsqt.report.model.DefinitionQuery;
 
 public interface DefinitionService {
+	Definition getById(Long id);
 	
 	Page<Definition> queryForPage(DefinitionQuery query);
 
@@ -15,4 +16,9 @@ public interface DefinitionService {
 	int deleteById(Long... ids);
 	
 	Collection<Definition> getAll();
+	
+	/**
+	 * 导入报表字段
+	 */
+	void importColumn(Long id);
 }

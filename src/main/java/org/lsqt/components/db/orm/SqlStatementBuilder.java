@@ -1,7 +1,7 @@
 package org.lsqt.components.db.orm;
 
 import java.util.List;
-
+import org.lsqt.components.db.Table;
 /**
  * 
  * @author yuanmm

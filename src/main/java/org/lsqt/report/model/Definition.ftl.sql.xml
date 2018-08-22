@@ -5,18 +5,26 @@
 		
 	 	
 	 		<column name="category_id" property="categoryId" text="报表分类ID"/>
+	 		<column name="category_name" property="categoryName" text="报表分类名"/>
 	 	
 	 		<column name="datasource_id" property="datasourceId" text="报表所属的数据源"/>
+	 		<column name="datasource_name" property="datasourceName" text="数据源名称"/>
 	 	
-	 		<column name="definition_name" property="definitionName" text="定义全称"/>
+	 		<column name="name" property="name" text="定义全称"/>
 	 	
-	 		<column name="definition_short_name" property="definitionShortName" text="定义简称"/>
+	 		<column name="short_name" property="shortName" text="定义简称"/>
 	 	
 	 		<column name="code" property="code" text="定义编码"/>
 	 	
 	 		<column name="type" property="type" text="报表内容类型： 1=SQL 2=Table 3=View 4=http_json 5=存储过程"/>
 	 	
 	 		<column name="url" property="url" text="报表url"/>
+	 		
+	 		<column name="column_sql" property="columnSql" text="据SQL用于导入字段用，可以直接执行"/>
+	 		
+	 		<column name="report_sql" property="reportSql" text="报表SQL，带参数的真实报表SQL"/>
+	 		
+	 		<column name="version" property="version" text="版本号"/>
 	 	
 	 		<column name="db_type" property="dbType" text="报表数据库类型： 1=MySQL 2=oracle 3=sqlserver 4=PostgreSQL"/>
 	 	
@@ -45,6 +53,11 @@
 					and (
 							definition_name like '%${key}%'  or 
 							definition_short_name like '%${key}%'  or 
+							
+							datasource_name like '%${key}%' or 
+							
+							category_name like '%${key}%' or 
+							
 							remark like '%${key}%' 
 							
 					)
@@ -57,9 +70,13 @@
 					
 	  						<#if query.datasourceId??> and datasource_id = ${query.datasourceId} </#if>
 					
-	  						<#if query.definitionName??> and definition_name = '${StringUtil.escapeSql(query.definitionName)}' </#if>
+	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+	  						
+	  						<#if query.categoryName??> and category_name = '${StringUtil.escapeSql(query.categoryName)}' </#if>
+	  						
+	  						<#if query.datasourceName??> and datasource_name = '${StringUtil.escapeSql(query.datasourceName)}' </#if>
 						
-	  						<#if query.definitionShortName??> and definition_short_name = '${StringUtil.escapeSql(query.definitionShortName)}' </#if>
+	  						<#if query.shortName??> and short_name = '${StringUtil.escapeSql(query.shortName)}' </#if>
 					
 	  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
 						

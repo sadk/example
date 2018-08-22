@@ -31,4 +31,12 @@ public class ColumnServiceImpl implements ColumnService{
 	public int deleteById(Long ... ids) {
 		return db.deleteById(Column.class, Arrays.asList(ids).toArray());
 	}
+
+	public List<Column> queryForList(ColumnQuery query) {
+		return db.queryForList("queryForPage",Column.class,query);
+	}
+
+	public Column getById(Long id) {
+		return db.getById(Column.class , id);
+	}
 }

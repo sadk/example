@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="UTF-8" />
-	<title>字典选择器</title>
+	<title>报表分类选择器</title>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
 	<style type="text/css">
     	body{ margin:0;padding:0;border:0;width:100%;height:100%;overflow:hidden;}
@@ -19,14 +19,13 @@
 		<div id="datagrid1" class="mini-treegrid"" style="width:100%;height:100%;"
 		showTreeIcon="true" allowResize="true" expandOnLoad="false"
  				treeColumn="name" idField="id" parentField="pid" resultAsTree="false"  checkRecursive="true"  showCheckBox="false" 
-		url="${pageContext.request.contextPath}/report/category/all?dataType=${param.dataType}" > 
+		url="${pageContext.request.contextPath}/report/category/all" > 
 		    <div property="columns">
 		        <div type="indexcolumn"></div>
 		        <div name="name" field="name" width="160" >名称</div>
 		        <div field="code" width="80">编码</div>
 		        <!-- <div field="categoryName" width="80">类别</div> -->
 		        <!-- <div field="sn" width="30" align="right">序号</div> -->
-		         <div field="dataTypeDesc" width="80" align="center" headerAlign="center">数据分类</div>
 		        <div field="appCode" width="60" align="right">所属应用</div>
 		         <div field="nodePath" width="60" align="left">结点路径</div>
 		        <div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center">开始日期</div>

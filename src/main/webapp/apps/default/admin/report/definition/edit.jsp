@@ -42,146 +42,101 @@
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
 			<input id="id" name="id" class="mini-hidden" />
+			<input id="version" name="version" class="mini-hidden" />
+			
 			<div style="padding-left:11px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
-		            <legend>用户信息</legend>
+		            <legend>报表定义</legend>
 		            <div style="padding:5px;">
 				        <table>
 				        
 									<tr>
-										<td>姓名：</td>
+										<td>报表名称：</td>
 										<td>
-											<input id="name" name="name"  class="mini-textbox"  emptyText="请输入姓名"  onenter="search"/>
+											<input id="name" name="name"  class="mini-textbox"  emptyText="请输入名称" required="true" />
 										</td>
-										<td>性别：</td>
-										<td>
-											<input id="sex" name="sex" value="1" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sex" />
+										<td>简称：</td>
+										<td>	
+											<input id="shortName" name="shortName"  class="mini-textbox"  emptyText="请输入简称"  />
 										</td>
 									</tr>
-									
 									
 									
 									<tr>
-										<td>帐号：</td>
+										<td>编码：</td>
 										<td>
-											<input id="loginName" name="loginName"  class="mini-textbox"  emptyText="请输入帐号"  onenter="search"/>
+											<input id="code" name="code"  class="mini-textbox"  emptyText="请输入编码" required="true" />
 										</td>
-										<td>密码：</td>
+										<td>分类：</td>
 										<td>
-											<input id="loginPwd" name="loginPwd"  class="mini-textbox"  emptyText="请输入密码"  onenter="search"/>
+											<input id="categoryId" name="categoryId" class="mini-buttonedit" onbuttonclick="onCategoryButtonEdit" emptyText="请选择报表分类" required="true"/>   
+											<input id="categoryName" name="categoryName" class="mini-hidden" />   
 										</td>
 									</tr>
-									
 									
 									
 									 <tr>
-										<td>生日：</td>
+										<td>数据源：</td>
 										<td>
-											<input id="birthday" name="birthday" format="yyyy-MM-dd" class="mini-datepicker" emptyText="请输入生日" />
+											<input id="datasourceId" name="datasourceId" class="mini-buttonedit" onbuttonclick="onDatasourceButtonEdit" emptyText="数据源" required="true"/>   
+											<input id="datasourceName" name="datasourceName" class="mini-hidden" />   
 										</td>
-										<td>电话：</td>
+										<td>报表生成类型：</td>
 										<td>
-											<input id="tel" name="tel"  class="mini-textbox"  emptyText="请输入电话"  onenter="search"/>
-										</td>
-									</tr>
-									
-									
-									<tr>
-										<td>手机：</td>
-										<td>
-											<input id="mobile" name="mobile"  class="mini-textbox"  emptyText="请输入手机"  onenter="search"/>
-										</td>
-										<td>邮箱：</td>
-										<td>
-											<input id="email" name="email"  class="mini-textbox"  emptyText="请输入邮箱"  onenter="search"/>
-										</td>
-									</tr>
-									
-									
-									
-								
-									
-									
-									
-									
-									
-									
-									
-									<tr>
-										<td>QQ：</td>
-										<td>
-											<input id="numQq" name="numQq"  class="mini-textbox"  emptyText="请输入QQ"  onenter="search"/>
-										</td>
-										<td>微信：</td>
-										<td>
-											<input id="numWx" name="numWx"  class="mini-textbox"  emptyText="请输入微信"  onenter="search"/>
-										</td>
-									</tr>
-									
-									
-									
-								 
-									
-									
-									
-									
-							 
-									
-									
-									<tr>
-										<td>家庭地址：</td>
-										<td>
-											<input id="addressHome" name="addressHome"  class="mini-textbox"  emptyText="请输入家庭地址（多个地址用分号分割）"  onenter="search"/>
-										</td>
-										<td>办公地点：</td>
-										<td>
-											<input id="addressOffice" name="addressOffice"  class="mini-textbox"  emptyText="请输入办公地点（多个地址用分号分割）"  onenter="search"/>
-										</td>
-									</tr>
-									
-									
-								 
-									
-									
-									
-									
-									
-									
-									<tr>
-										<td>状态 ：</td>
-										<td>
-											<input id="status" name="status" value="1" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=user_status" />
-										</td>
-										<td>序号：</td>
-										<td>
-											<input name="sn" id="sn" class="mini-spinner" class="mini-datepicker" minValue="0" maxValue="999999999"  />
+											<input id="type" name="type"  class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rpt_general_type" required="true"/>
 										</td>
 									</tr>
 									
 									
 									<tr>
+										<td>报表地址：</td>
+										<td>
+											<input id="url" name="url"  class="mini-textbox"  emptyText="请输入链接"  />
+										</td>
+										<td>数据库类型：</td>
+										<td>
+											<input id="dbType" name="dbType" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rpt_db_type" required="true"/>
+										</td>
+									</tr>
+									
+ 
+									<tr>
+										<td>启用状态 ：</td>
+										<td>
+											<input id="status" name="status" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" required="true"/>
+										</td>
 										<td>序号:</td>
 										<td>
 											<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
 										</td>
-										<td>备注：</td>
-										<td>
-											<input id="remark" name="remark"  class="mini-textbox"  emptyText="请输入备注"  onenter="search"/>
-										</td>
 									</tr>
 									
-									
-									
-								 
-									
-									
-									
-									
-									 
+									<tr>
+										
+										<td>备注：</td>
+										<td>
+											<input id="remark" name="remark"  class="mini-textbox"  emptyText="请输入备注"  />
+										</td>
+									</tr>
 						
 				        </table>
 				    </div>
 				</fieldset>
+				
+				<fieldset style="border:solid 1px #aaa;padding:2px; margin-bottom:2px;height: 130px">
+		            <legend>报表列SQL<font color="red">(用于导入字段使用，可以直接执行)</font></legend>
+		            <div style="padding:5px;">
+		            	<input id="columnSql" name="columnSql" class="mini-textarea" style="height: 100px;width:100%" required="true"/>
+		            </div>
+		        </fieldset>
+		        
+				<fieldset style="border:solid 1px #aaa;padding:2px; margin-bottom:2px;height: 130px">
+		            <legend>报表真实SQL</legend>
+		            <div style="padding:5px;">
+		            	<input id="reportSql" name="reportSql" class="mini-textarea" style="height: 100px;width:100%" required="true"/>
+		            </div>
+		        </fieldset>
+		        
 			</div>
 			<div id="subbtn" style="text-align:center;padding:10px;">
 				<a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>
@@ -192,18 +147,68 @@
 			mini.parse();
 
 			var form = new mini.Form("edit-form1");
-		
+			var categoryId = mini.get("categoryId");
+			var datasourceId = mini.get("datasourceId");
+			
+			var categoryName = mini.get("categoryName");
+			var datasourceName = mini.get("datasourceName");
+			
+			function onCategoryButtonEdit(e) {
+				var btnEdit = this;
+				 
+	            mini.open({
+	                url: "${pageContext.request.contextPath}/apps/default/admin/report/category/seletor_category.jsp",
+	                title: "选择列表",
+	                width: 650,
+	                height: 380,
+	                ondestroy: function (action) {
+	                    //if (action == "close") return false;
+	                    if (action == "ok") {
+	                        var iframe = this.getIFrameEl();
+	                        var data = iframe.contentWindow.GetData();
+	                        data = mini.clone(data);    //必须
+	                        if (data) {
+	                            btnEdit.setValue(data.id);
+	                            btnEdit.setText(data.name);
+	                            
+	                            categoryName.setValue(data.name);
+	                        }
+	                    }
+	                }
+	            });
+			}
+			
+			function onDatasourceButtonEdit(e) {
+				var btnEdit = this;
+	            mini.open({
+	                url: "${pageContext.request.contextPath}/apps/default/admin/sys/datasource/seletor_datasource.jsp",
+	                title: "选择列表",
+	                width: 650,
+	                height: 380,
+	                ondestroy: function (action) {
+	                    //if (action == "close") return false;
+	                    if (action == "ok") {
+	                        var iframe = this.getIFrameEl();
+	                        var data = iframe.contentWindow.GetData();
+	                        data = mini.clone(data);    //必须
+	                        if (data) {
+	                            btnEdit.setValue(data.id);
+	                            btnEdit.setText(data.name);
+	                            
+	                            datasourceName.setValue(data.name);
+	                        }
+	                    }
+	                }
+	            });
+			}
+			
 			function SaveData() {
 				var o = form.getData();
 				form.validate();
 				if(form.isValid() == false) return;
-				
-				o.birthday = mini.get("birthday").text;
-				
-				//alert(o.birthday);
-				//alert(o.loginPwd);
+
 				$.ajax({
-					url : "${pageContext.request.contextPath}/user/save_or_update",
+					url : "${pageContext.request.contextPath}/report/definition/save_or_update",
 					dataType: 'json',
 					type : 'post',
 					cache : false,
@@ -221,17 +226,20 @@
 				
 				 if(data.action == "edit" || data.action=='view') {
 					$.ajax({
-						url : "${pageContext.request.contextPath}/user/page?id=" + data.id,
+						url : "${pageContext.request.contextPath}/report/definition/get_by_id?id=" + data.id,
 						dataType: 'json',
 						cache : false,
 						success : function(text) {
 							var o = mini.decode(text);
 							if(o!=null && o.data!=null && o.data.length>0) {
-								o = o.data[0];
+								o = o.data;
 							}
 							form.setData(o);
 							form.setChanged(false);
-							//alert(o.birthday);
+							
+							datasourceId.setText(o.datasourceName);
+							categoryId.setText(o.categoryName);
+							
 							if (data.action == 'view') {
 								//form.setEnabled(false);
 							}

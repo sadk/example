@@ -19,7 +19,7 @@
 		<div id="datagrid1" class="mini-treegrid"" style="width:100%;height:100%;"
 		showTreeIcon="true" allowResize="true" expandOnLoad="true"
  		treeColumn="name" idField="id" parentField="pid" resultAsTree="false"  checkRecursive="true"  showCheckBox="false" 
-		url="${pageContext.request.contextPath}/category/all" > 
+		url="${pageContext.request.contextPath}/datasource/all" > 
 		    <div property="columns">
 		        <div type="indexcolumn"></div>
 		        <div name="name" field="name" width="160" >数据源名称</div>

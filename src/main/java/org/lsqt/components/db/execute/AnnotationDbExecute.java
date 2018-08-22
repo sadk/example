@@ -25,7 +25,7 @@ import org.lsqt.components.db.annotation.Gid;
 import org.lsqt.components.db.annotation.Id;
 import org.lsqt.components.db.execute.util.CacheReflectUtil;
 import org.lsqt.components.db.orm.SqlStatementArgs;
-import org.lsqt.components.db.orm.Table;
+import org.lsqt.components.db.Table;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -410,7 +410,6 @@ public class AnnotationDbExecute implements Db{
 
 
 	public int batchUpdate(List<String> sqls) {
-		 
 		return 0;
 	}
 
@@ -418,7 +417,7 @@ public class AnnotationDbExecute implements Db{
 	@Override
 	public <T> T queryForObject(String nameSpace, String sqlID_or_SQL, Class<T> requiredType, Object... args)
 			throws DbException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -426,7 +425,14 @@ public class AnnotationDbExecute implements Db{
 	@Override
 	public <T> List<T> queryForList(String nameSpace, String sqlID, Class<T> requiredType, Object... args)
 			throws DbException {
-		// TODO Auto-generated method stub
+		
+		return null;
+	}
+
+
+	@Override
+	public List<org.lsqt.components.db.Column> getMetaDataColumn(String sql, Object... args) {
+		
 		return null;
 	}
 }

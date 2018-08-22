@@ -19,6 +19,8 @@ public interface DataSourceService {
 	
 	Collection<DataSource> getAll();
 	
+	Collection<DataSource> queryForList(DataSourceQuery query);
+	
 	void testConnection(DataSource model) throws Exception;
 	
 	void testConnectionById(Long id) throws Exception;
