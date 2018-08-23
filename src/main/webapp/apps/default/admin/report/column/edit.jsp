@@ -370,6 +370,14 @@
 			function onSelectorValueColsButtonEdit(e) { //显示的值列
 				var btnEdit = this;
 				var value = columnCodegenType.getValue();
+				if ("1" == value) {
+					var selectorDataFromTypeValue = selectorDataFromType.getValue();
+					if ("4" == selectorDataFromTypeValue) {
+						openCommonDisplayColumnPage("selectorValueCols");
+					}
+					return ;
+				}
+				
 				if("2" == value) {
 		            mini.open({
 		                url: "${pageContext.request.contextPath}/apps/default/admin/sys/dictionary/seletor_dictionary.jsp",
@@ -392,9 +400,48 @@
 				}
 			}
 			
+			function openCommonDisplayColumnPage(id) { // 打开通用列页面 
+				var btnEdit = mini.get(id);
+	            mini.open({
+	                url: "${pageContext.request.contextPath}/apps/default/admin/report/definition/selector_definition_display_column.jsp",
+	                title: "请选择列头",
+	                width: 750,
+	                height: 580,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {
+								selectorDataFromType : selectorDataFromType.getValue(),
+								selectorDataSourceCode: selectorDataSourceCode.getValue(),
+								selectorDataFrom : selectorDataFrom.getValue()
+						};
+						//console.log(data)
+						iframe.contentWindow.SetData(data);
+					},
+	                ondestroy: function (action) {
+	                    //if (action == "close") return false;
+	                    if (action == "ok") {
+	                        var iframe = this.getIFrameEl();
+	                        var data = iframe.contentWindow.GetColumn();
+	                        data = mini.clone(data);    //必须
+	                        if (data) {
+	                        	btnEdit.setValue(data.code);
+	                        	btnEdit.setText(data.code);
+	                        }
+	                    }
+	                }
+	            });
+			}
 			function onSelectorTextColsButtonEdit(e) { //显示文本列
 				var btnEdit = this;
 				var value = columnCodegenType.getValue();
+				if ("1" == value) {
+					var selectorDataFromTypeValue = selectorDataFromType.getValue();
+					if ("4" == selectorDataFromTypeValue) {
+						openCommonDisplayColumnPage("selectorTextCols");
+					}
+					return ;
+				}
+				
 				if("2" == value) {
 		            mini.open({
 		                url: "${pageContext.request.contextPath}/apps/default/admin/sys/dictionary/seletor_dictionary.jsp",
