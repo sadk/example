@@ -27,27 +27,41 @@ public class Column {
 	private String dbType;
 
 	/** JAVA类型 */
-
 	private Integer javaType;
 
 	/** JAVA属性名 */
 	private String propertyName;
 
 	/** 是否是主键：1=是，0=否 */
-
 	private Integer primaryKey;
 
 	/** ORMapping映射的字段类型：gid(全局唯一码)=1 updateTime(更新时间)=2 createTime(创建时间)=3 */
 	private Integer oroColumnType;
 
 	/** 当前列是否作为查询条件: 0=否，1=是 */
-
 	private Integer searchType;
+	
+	/** 查询是否必填**/
+	private Integer searchRequired;
 
+	/**是否模糊查询**/
+	private Integer likeSearchIs;
+	
+	/**是否是模糊查询: 1=匹配开头 ，2=匹配中间 3=匹配结尾**/
+	private Integer likeSearchType; 
+	public static final int LIKE_SEARCH_TYPE_LEFT = 1; //like '张%'
+	public static final int LIKE_SEARCH_TYPE_MID = 2; //like '%张%'
+	public static final int LIKE_SEARCH_TYPE_RIGHT = 3;//like '%张'
+	
+	
+	private Integer allowSort;
+	
+	private Integer frozen;
+	
 	/**
-	 * 字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键 4=文本框 5=整型框 6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)
+	 * 字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键  4=文本框 5=整型框 6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)
 	 */
-	private String columnCodegenType;
+	private Integer columnCodegenType;
 
 	/** 默认：double型的为两个小数点， date 为 [yyyy-MM-dd HH:mm:ss] */
 	private String columnCodegenFormat;
@@ -94,16 +108,16 @@ public class Column {
 	private String fileCustomContent;
 
 	/** 列对齐方式: */
-	private String alignType;
+	private Integer alignType;
 
 	/** 列宽: */
-	private String width;
+	private Integer width;
 
 	/** 列高 */
 	private String height;
 
 	/** 是否显示: 0=隐藏 1=显示 */
-	private String hidde;
+	private Integer hidde;
 
 	/***/
 	private Integer sn;
@@ -178,52 +192,13 @@ public class Column {
 		return this.dbType;
 	}
 
-	public void setJavaType(Integer javaType) {
-		this.javaType = javaType;
-	}
-
-	public Integer getJavaType() {
-		return this.javaType;
-	}
-
+ 
 	public void setPropertyName(String propertyName) {
 		this.propertyName = propertyName;
 	}
 
 	public String getPropertyName() {
 		return this.propertyName;
-	}
-
-	public void setPrimaryKey(Integer primaryKey) {
-		this.primaryKey = primaryKey;
-	}
-
-	public Integer getPrimaryKey() {
-		return this.primaryKey;
-	}
-
-	public void setOroColumnType(Integer oroColumnType) {
-		this.oroColumnType = oroColumnType;
-	}
-
-	public Integer getOroColumnType() {
-		return this.oroColumnType;
-	}
-
-	public void setSearchType(Integer searchType) {
-		this.searchType = searchType;
-	}
-
-	public Integer getSearchType() {
-		return this.searchType;
-	}
-
-	public void setColumnCodegenType(String columnCodegenType) {
-		this.columnCodegenType = columnCodegenType;
-	}
-
-	public String getColumnCodegenType() {
-		return this.columnCodegenType;
 	}
 
 	public void setColumnCodegenFormat(String columnCodegenFormat) {
@@ -338,36 +313,12 @@ public class Column {
 		return this.fileCustomContent;
 	}
 
-	public void setAlignType(String alignType) {
-		this.alignType = alignType;
-	}
-
-	public String getAlignType() {
-		return this.alignType;
-	}
-
-	public void setWidth(String width) {
-		this.width = width;
-	}
-
-	public String getWidth() {
-		return this.width;
-	}
-
 	public void setHeight(String height) {
 		this.height = height;
 	}
 
 	public String getHeight() {
 		return this.height;
-	}
-
-	public void setHidde(String hidde) {
-		this.hidde = hidde;
-	}
-
-	public String getHidde() {
-		return this.hidde;
 	}
 
 	public void setSn(Integer sn) {
@@ -442,4 +393,107 @@ public class Column {
 		this.reportName = reportName;
 	}
 
+	public Integer getWidth() {
+		return width;
+	}
+
+	public void setWidth(Integer width) {
+		this.width = width;
+	}
+
+	public Integer getColumnCodegenType() {
+		return columnCodegenType;
+	}
+
+	public void setColumnCodegenType(Integer columnCodegenType) {
+		this.columnCodegenType = columnCodegenType;
+	}
+
+	public Integer getAllowSort() {
+		return allowSort;
+	}
+
+	public void setAllowSort(Integer allowSort) {
+		this.allowSort = allowSort;
+	}
+
+	public Integer getFrozen() {
+		return frozen;
+	}
+
+	public void setFrozen(Integer frozen) {
+		this.frozen = frozen;
+	}
+
+	public Integer getPrimaryKey() {
+		return primaryKey;
+	}
+
+	public void setPrimaryKey(Integer primaryKey) {
+		this.primaryKey = primaryKey;
+	}
+
+	public Integer getOroColumnType() {
+		return oroColumnType;
+	}
+
+	public void setOroColumnType(Integer oroColumnType) {
+		this.oroColumnType = oroColumnType;
+	}
+
+	public Integer getJavaType() {
+		return javaType;
+	}
+
+	public void setJavaType(Integer javaType) {
+		this.javaType = javaType;
+	}
+
+	public Integer getSearchType() {
+		return searchType;
+	}
+
+	public void setSearchType(Integer searchType) {
+		this.searchType = searchType;
+	}
+
+	public Integer getLikeSearchIs() {
+		return likeSearchIs;
+	}
+
+	public void setLikeSearchIs(Integer likeSearchIs) {
+		this.likeSearchIs = likeSearchIs;
+	}
+
+	public Integer getLikeSearchType() {
+		return likeSearchType;
+	}
+
+	public void setLikeSearchType(Integer likeSearchType) {
+		this.likeSearchType = likeSearchType;
+	}
+
+	public Integer getAlignType() {
+		return alignType;
+	}
+
+	public void setAlignType(Integer alignType) {
+		this.alignType = alignType;
+	}
+
+	public Integer getHidde() {
+		return hidde;
+	}
+
+	public void setHidde(Integer hidde) {
+		this.hidde = hidde;
+	}
+
+	public Integer getSearchRequired() {
+		return searchRequired;
+	}
+
+	public void setSearchRequired(Integer searchRequired) {
+		this.searchRequired = searchRequired;
+	}
 }

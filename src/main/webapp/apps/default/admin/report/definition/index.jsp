@@ -58,6 +58,7 @@
 												
 												<span class="separator"></span>
 												<a class="mini-button" iconCls="icon-goto" onclick="copyDefinition()">报表复制</a>
+												<a class="mini-button" iconCls="icon-goto" onclick="generateReport()">报表生成</a>
 												<!-- 
 												<a class="mini-button" iconCls="icon-upload"   onclick="importDefinition()">导入</a>
 												<a class="mini-button" iconCls="icon-download" onclick="exportDefinition()">导出</a>
@@ -87,14 +88,14 @@
 												<input property="editor" class="mini-textbox" style="width:100%;" />
 											</div>
 											
-											<div type="comboboxcolumn" field="status" width="80" headerAlign="center" align="center" allowSort="true">移端启用
+											<div type="comboboxcolumn" field="status" width="80" headerAlign="center" align="center" allowSort="true">是否启用
 												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
 											</div>
 											
 											<div field="code" width="160" headerAlign="center" allowSort="true" align="left">编码</div>
 											
-											<div field="url" width="250" headerAlign="center" allowSort="true" align="left">地址
-												<input property="editor" class="mini-textbox" style="width:100%;" />
+											<div field="url" width="250" headerAlign="center" allowSort="true" align="left">报表地址
+												<input property="editor" class="mini-textbox" style="width:100%;" readonly="readonly"/>
 											</div>
 											
 											<div type="comboboxcolumn" field="type" width="80" headerAlign="center" align="center" allowSort="true">生成类型
@@ -125,7 +126,7 @@
 					<div showCollapseButton="true">
 						<div id="tabs2" contextMenu="#refreshTabMenu" class="mini-tabs" activeIndex="0" style="width:100%;height:100%;" bodyStyle="padding:0;border:0;">
 
-							<div title="字段设置" refreshOnClick="true" name="tabUserReses">
+							<div title="报表字段设置" refreshOnClick="true" name="tabUserReses">
 								 
 								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
 									<table style="width:100%;">
@@ -151,7 +152,9 @@
 										<div property="columns">
 											<div type="checkcolumn" ></div>
 											<div field="reportName" width="150" headerAlign="center" allowSort="true">报表名称</div>
-											
+											<div field="name" width="100" headerAlign="center" allowSort="true">字段中文
+												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
+											</div>
 											<div field="code" width="100" headerAlign="center" allowSort="true">DB字段
 												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
 											</div>
@@ -163,9 +166,7 @@
 											<div type="comboboxcolumn" field="javaType" width="130" headerAlign="center" allowSort="true">JAVA字段类型
 												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=java_type" />
 											</div>
-											<div field="name" width="100" headerAlign="center" allowSort="true">字段中文
-												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
-											</div>
+											
 											<div type="comboboxcolumn" field="primaryKey" width="60" headerAlign="center" align="center" allowSort="true">主键
 												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
 											</div>
@@ -177,7 +178,9 @@
 											<div type="comboboxcolumn" field="searchType" width="120" headerAlign="center" align="center" allowSort="true">是否作为查询条件
 												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
 											</div>
-											
+											<div type="comboboxcolumn" field="searchRequired" width="120" headerAlign="center" align="center" allowSort="true">是否查询必填
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+											</div>
 											
 											<div type="comboboxcolumn" field="columnCodegenType" width="140" headerAlign="center" align="left" allowSort="true">字段控件
 												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=column_codegen_type" />
@@ -240,12 +243,31 @@
 				 
 			});			
  
+			function generateReport() { // 生成报表
+				var row = grid.getSelected();
+				if (!row) {
+					mini.alert("请选择一个报表记录");
+					return ;
+				}
+				$.ajax({
+					'url': "${pageContext.request.contextPath}/report/definition/generate_report_file?id="+row.id,
+					type: 'post', dataType:'JSON',
+					success: function (json) {
+						mini.alert("生成成功");
+					},
+					error : function(data) {
+				  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
+				  		mini.alert(data.responseText);
+					}
+				});
+			}
+			
 			function add() {
 				var node = tree.getSelectedNode();
 				mini.open({
 					url : "${pageContext.request.contextPath}/apps/default/admin/report/definition/edit.jsp",
 					title : "报表信息",
-					width : 550,
+					width : 560,
 					height : 600,
 					onload : function() {
 						var iframe = this.getIFrameEl();
@@ -400,7 +422,7 @@
 						iframe.contentWindow.SetData(data);
 					},
 					ondestroy : function(action) {
-						grid.reload();
+						columnGrid.reload();
 					}
 				});
 			}

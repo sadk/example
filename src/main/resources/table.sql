@@ -501,7 +501,7 @@ INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`
 
 
 -- 在线报表生成类型
-INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (192,-1,'报表生成类型','rpt_general_type','rpt_general_type','dictionary',NULL,'1','1000',0,'192',NULL,'rpt_general_type','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (192,-1,'报表数据生成类型','rpt_general_type','rpt_general_type','dictionary',NULL,'1','1000',0,'192',NULL,'rpt_general_type','2018-03-19 09:49:35','2018-03-19 09:49:35');
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (193,192,'SQL语句','1','rpt_general_type_sql','dictionary',NULL,'1','1000',0,'192,193',NULL,'rpt_general_type_sql','2018-04-23 10:54:35','2018-04-23 10:54:35');
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (194,192,'数据表','2','rpt_general_type_table','dictionary',NULL,'1','1000',0,'192,194',NULL,'rpt_general_type_table','2018-04-23 10:57:24','2018-04-23 10:57:24');
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (195,192,'DB视图','3','rpt_general_type_view','dictionary',NULL,'1','1000',0,'192,195',NULL,'rpt_general_type_view','2018-04-23 10:57:24','2018-04-23 10:57:24');
@@ -516,6 +516,35 @@ INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (202,198,'PostgreSQL','4','rpt_db_type_postgresql','dictionary',NULL,'1','1000',0,'198,201',NULL,'rpt_db_type_postgresql','2018-04-23 10:57:24','2018-04-23 10:57:24');
 
 
+-- 是和否用字符true和false表示
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (203,-1,'是和否(true和false字符表示)','string_true_or_false','string_true_or_false','dictionary',NULL,'1','1000',0,'203',NULL,'string_true_or_false','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (204,203,'是','1','true','dictionary',NULL,'1','1000',0,'203,204',NULL,'true','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (205,203,'否','0','false','dictionary',NULL,'1','1000',0,'203,205',NULL,'false','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+-- 页面布局
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (206,-1,'报表页面布局','report_file_layout','report_file_layout','dictionary',NULL,'1','1000',0,'206',NULL,'report_file_layout','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (207,206,'左右布局','1','left_right_layout','dictionary',NULL,'1','1000',0,'206,207',NULL,'true','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (208,206,'上下布局','2','up_down_layout','dictionary',NULL,'1','1000',0,'206,208',NULL,'false','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (209,206,'左上下（用于子报表，左是高级查询区）','3','left_up_down_layout','dictionary',NULL,'1','1000',0,'206,209',NULL,'false','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (210,206,'上中下（用于子报表，上是高级查询区）','4','up_mid_down_layout','dictionary',NULL,'1','1000',0,'206,210',NULL,'false','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (211,206,'左中右（用于子报表，左是高级查询区）','5','left_mid_right_layout','dictionary',NULL,'1','1000',0,'206,211',NULL,'false','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+-- 报表排序模式
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (212,-1,'报表排序模式','report_sort_mode','report_sort_mode','dictionary',NULL,'1','1000',0,'212',NULL,'report_sort_mode','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (213,212,'客户端排序','1','report_sort_mode_client','dictionary',NULL,'1','1000',0,'212,213',NULL,'true','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (214,212,'服务器端排序','2','report_sort_mode_server','dictionary',NULL,'1','1000',0,'212,214',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+-- 报表列对齐方式
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (215,-1,'报表列对齐方式','report_column_align_type','report_column_align_type','dictionary',NULL,'1','1000',0,'215',NULL,'report_sort_mode','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (216,215,'左对齐','1','report_column_align_type_left','dictionary',NULL,'1','1000',0,'215,216',NULL,'true','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (217,215,'居中对齐','2','report_column_align_type_mid','dictionary',NULL,'1','1000',0,'215,217',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (218,215,'右对齐','3','report_column_align_type_right','dictionary',NULL,'1','1000',0,'215,218',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+-- 报表列模糊查询匹配方式
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (219,-1,'报表列对齐方式','report_column_like_search_type','report_column_like_search_type','dictionary',NULL,'1','1000',0,'219',NULL,'report_sort_mode','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (220,219,'匹配开头(like \'张%\')','1','report_column_like_search_type_left','dictionary',NULL,'1','1000',0,'219,220',NULL,'true','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (221,219,'匹配中间(like \'%张%\')','2','report_column_like_search_type_mid','dictionary',NULL,'1','1000',0,'219,221',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (222,219,'匹配结尾(like \'%张\')','3','report_column_like_search_type_right','dictionary',NULL,'1','1000',0,'219,222',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
 
 
 
@@ -2008,13 +2037,26 @@ CREATE TABLE `rpt_definition` (
   
   `column_sql` varchar(2000) NULL COMMENT '数据SQL用于导入字段用，可以直接执行',
   `report_sql` varchar(2000) NULL COMMENT '报表SQL，带参数的真实报表SQL',
+  `prevent_sql_injection` varchar(2) NULL COMMENT '报表查询防SQL注入是否开启',
   
   `db_type` varchar(2) NOT NULL COMMENT '报表数据库类型： 1=MySQL 2=oracle 3=sqlserver 4=PostgreSQL',
 
   `version` varchar(30) NULL COMMENT '报表版本号',
     
   `status` varchar(2) NOT NULL COMMENT '报表状态： 0=禁用   1=启用',
+  
+  `sort_mode` int(2)  COMMENT '表格排序模式: 1=客户端 2=服务器端',
+  `show_pager` int(2)  COMMENT '报表数据是否分页:1=分页  0=不分页',
+  `page_size` int(4)  COMMENT '分页大小',
+  `page_size_list` varchar(20)  COMMENT '分页大小候选项',
+  `can_export` int(2) default 0 COMMENT '是否可以导出数据 :1=可以 0=不可以',
+  `search_area_width` int(2) NULL COMMENT '查询区域宽度',
+  `search_area_control_num_per_row` int(2)  COMMENT '高级查询区每行显示几个查询控件',
+  
+  `layout` varchar(2)  COMMENT '报表页面布局:1=左右布局 2=上下布局 3=左上下（用于子报表，左是高级查询区） 4=上中下（用于子报表，上是高级查询区）5=左中右（用于子报表，左是高级查询区）',
 
+  
+  
   `app_code` varchar(20) DEFAULT NULL COMMENT '租户编码',
   `sn` int(11) DEFAULT '0' COMMENT '排序',
   `remark` varchar(256) DEFAULT NULL COMMENT '备注',
@@ -2024,6 +2066,33 @@ CREATE TABLE `rpt_definition` (
   PRIMARY KEY (`id`),
   KEY `idx_code` (`code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='报表定义';
+
+ 
+DROP TABLE IF EXISTS `rpt_resource`;
+CREATE TABLE `rpt_resource` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `definition_id` bigint(20) NOT NULL COMMENT '所属的报表',
+  `name` varchar(40) NOT NULL COMMENT '元素中文名',
+  `code` varchar(255) NOT NULL COMMENT '定义编码',
+  `type` varchar(4) NOT NULL COMMENT '元素类型: 1=按钮 2=下拉框（单选）3=下拉框（多选）4=文本框 5=TextArae 6=File 7=日历 8=数字框 ',
+  
+  `event_name` varchar(200) DEFAULT NULL COMMENT '元素事件名称,如：onclick',
+  `event_function_name` varchar(200) DEFAULT NULL COMMENT '事件响应函数名称,如：onclick=事件响应函数名称',
+  `before_script` text DEFAULT NULL COMMENT '按钮点击前事件触发的js函数体',
+  `after_script` text DEFAULT NULL COMMENT '按钮点击后事件触发js函数体',
+
+  `app_code` varchar(20) DEFAULT NULL COMMENT '租户编码',
+  `sn` int(11) DEFAULT '0' COMMENT '排序',
+  `remark` varchar(256) DEFAULT NULL COMMENT '备注',
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+ 
+  PRIMARY KEY (`id`),
+  KEY `idx_code` (`code`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='报表页面元素定义（如：头部按钮）';
+
+
 
 
 DROP TABLE IF EXISTS `rpt_column`;
@@ -2040,8 +2109,14 @@ CREATE TABLE `rpt_column` (
   `property_name` varchar(100) NOT NULL COMMENT 'JAVA属性名',
   `primary_key` int(4)  NULL COMMENT '是否是主键：1=是，0=否',
   `oro_column_type` int(4) DEFAULT NULL COMMENT 'ORMapping映射的字段类型：gid(全局唯一码)=1 updateTime(更新时间)=2 createTime(创建时间)=3',
+
   `search_type` int(2) NOT NULL DEFAULT '0' COMMENT '当前列是否作为查询条件: 0=否，1=是',
-  `column_codegen_type` varchar(4)  NULL COMMENT '字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键    4=文本框 5=整型框  6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)',
+  `search_required` int(2) NOT NULL DEFAULT '0' COMMENT '是否查询必填: 0=否，1=是',
+  
+  `like_search_is` int(2)  NULL DEFAULT 0 COMMENT '是否是模糊查询: 0=否，1=是',
+  `like_search_type` int(2)  NULL DEFAULT 2 COMMENT '是否是模糊查询: 1=匹配开头 ，2=匹配中间 3=匹配结尾',
+
+  `column_codegen_type` int(2)  NULL COMMENT '字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键    4=文本框 5=整型框  6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)',
   `column_codegen_format` varchar(50) DEFAULT NULL COMMENT '默认：double型的为两个小数点， date 为 [yyyy-MM-dd HH:mm:ss] ',
   `column_codegen_group_code` varchar(20) DEFAULT NULL COMMENT '字段组:用于生成html的fieldset框',
   `selector_multil_select` varchar(4) DEFAULT NULL COMMENT '选择器，是单选还是多选',
@@ -2057,10 +2132,13 @@ CREATE TABLE `rpt_column` (
   `file_multil` varchar(4) DEFAULT NULL COMMENT '是否可多选批量上传',
   `file_custom_content` text COMMENT '自定义的文件上传控件(代码片断)',
   
+  
+  `width` int(2) DEFAULT NULL COMMENT '列宽: ',
   `align_type` varchar(2) DEFAULT NULL COMMENT '列对齐方式: ',
-  `width` varchar(2) DEFAULT NULL COMMENT '列宽: ',
-  `height` varchar(2) DEFAULT NULL COMMENT '列高 ',
+  `height` int(2) DEFAULT NULL COMMENT '列高 ',
   `hidde` varchar(2) DEFAULT NULL COMMENT '是否显示: 0=隐藏 1=显示',
+  `frozen` int(2) DEFAULT NULL COMMENT '是否冻结列: 0=不冻结 1=冻结',
+  `allow_sort` int(2) DEFAULT NULL COMMENT '当前列是否可排序',  
   
   `sn` int(4) DEFAULT '0',
   `version` varchar(100) DEFAULT NULL COMMENT '表字段的版本号',

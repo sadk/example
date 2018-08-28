@@ -10,19 +10,21 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.lsqt.components.context.annotation.model.Pattern;
 import org.lsqt.components.context.impl.util.CacheReflect;
+import org.lsqt.components.db.orm.ftl.FtlDbExecute;
 import org.lsqt.components.util.bean.BeanUtil;
 import org.lsqt.components.util.lang.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
 
 @SuppressWarnings("unused")
 public final class ActionFormUtil {
-	private static final Logger log = Logger.getLogger(ActionFormUtil.class.getName()); 
+	static final Logger log = LoggerFactory.getLogger(ActionFormUtil.class);
 	/**
 	 * 填充表单数据到javaBean
 	 * @param bean 表单对象
@@ -45,25 +47,30 @@ public final class ActionFormUtil {
 		
 		List<Field> list = CacheReflect.getBeanField(bean.getClass());
 		for(Field e : list) {
-			if(isCanBeBaseType(e.getType())){
-				Object paramValue = formMap.get(e.getName());
-				paramValue = "".equals(paramValue) ? null : paramValue ;
-				Object value = prepareBaseValue(e.getType(), paramValue);
-				
-				if(value!=null) {
-					BeanUtil.forceSetProperty(e, bean, value);
+			try{
+				if(isCanBeBaseType(e.getType())){
+					Object paramValue = formMap.get(e.getName());
+					paramValue = "".equals(paramValue) ? null : paramValue ;
+					 
+					Object value = prepareBaseValue(e.getType(), paramValue);
+					
+					if(value!=null) {
+						BeanUtil.forceSetProperty(e, bean, value);
+					}
+					
+				} else if(isCanBeDate(e)){
+					Object value = prepareDateValue(e, formMap.get(e.getName()));
+					if (value != null) {
+						BeanUtil.forceSetProperty(e, bean, value);
+					}
+					
+				} else if(isCanBeBeanType(e.getType())){
+					fillField(e,bean,maxLevel,formMap,e.getName());
 				}
-				
-			} else if(isCanBeDate(e)){
-				Object value = prepareDateValue(e, formMap.get(e.getName()));
-				if (value != null) {
-					BeanUtil.forceSetProperty(e, bean, value);
-				}
-				
-			} else if(isCanBeBeanType(e.getType())){
-				fillField(e,bean,maxLevel,formMap,e.getName());
+			}catch(Exception ex) {
+				System.out.println(" --- fill filed error:"+e+", value is :"+formMap.get(e.getName()));
+				throw ex; 
 			}
-			
 		}
 		
 		// log.info(JSON.toJSONString(bean));

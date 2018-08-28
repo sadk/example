@@ -197,6 +197,58 @@ public class AnnotationDbExecute implements Db{
 		return queryForObject(sql, requiredType, args);
 	}
 	
+	public Page<Map<String, Object>> executeQueryForPage(String sql,Integer pageIndex,Integer pageSize, Object... args) {
+		
+		if (pageIndex == null || pageIndex < 0) {
+			pageIndex = 0;
+		}
+		if (pageSize == null || pageSize < 0) {
+			pageSize = 20;
+		}
+		
+		
+		long total = 0;
+		String totalSqlFmt = "select count(1) from (%s) _t0_amount";
+		String totalSql = String.format(totalSqlFmt,sql);
+		
+		List<Map<String, Object>> totalMapList = exe.executeQuery(totalSql);
+		if (totalMapList != null && totalMapList.size() > 0) {
+			Object cnt = totalMapList.get(0).values().iterator().next();
+			if (cnt != null) {
+				total = Long.valueOf(cnt.toString());
+			}
+		}
+		
+		final long pageCount = Double.valueOf(Math.ceil(total * 1.000 / pageSize)).longValue();
+		
+		//封装分页对象
+		Page<Map<String, Object>> page = new Page.PageModel<>();
+		page.setTotal(total);
+		page.setPageCount(pageCount);
+		page.setPageIndex(pageIndex);
+		page.setPageSize(pageSize);
+		page.setHasNext(pageIndex + 1 < pageCount);
+		page.setHasPrevious(pageIndex > 0 && pageIndex < pageCount - 1);
+		
+		
+		String pageSql = sql.concat(" limit ?,? ");
+		List<Object> params = new ArrayList<>();
+		params.add(pageIndex * pageSize);
+		params.add(pageSize);
+		List<Map<String,Object>> list = exe.executeQuery(pageSql, params.toArray());
+		
+		List<Map<String,Object>> data = new ArrayList<>();
+		if (list!=null && list.size()>0) {
+			for (Map<String,Object> row: list) {
+				data.add(row);
+			}
+		}
+		
+		page.setData(data);
+		return page;
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	public <T> T queryForObject(String sql, Class<T> requiredType, Object... args) throws DbException {
 		

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <statements namespace="org.lsqt.report.model.Definition" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
 	<table name="rpt_definition">
-				<column id="id" type="auto" property="id" text="主键" />
-		
+			<column id="id" type="auto" property="id" text="主键" />
 	 	
 	 		<column name="category_id" property="categoryId" text="报表分类ID"/>
 	 		<column name="category_name" property="categoryName" text="报表分类名"/>
@@ -24,11 +23,26 @@
 	 		
 	 		<column name="report_sql" property="reportSql" text="报表SQL，带参数的真实报表SQL"/>
 	 		
+	 		<column name="prevent_sql_injection" property="preventSqlInjection" text="是否启用防SQL注入"/>
+	 		
 	 		<column name="version" property="version" text="版本号"/>
 	 	
 	 		<column name="db_type" property="dbType" text="报表数据库类型： 1=MySQL 2=oracle 3=sqlserver 4=PostgreSQL"/>
 	 	
 	 		<column name="status" property="status" text="报表状态： 0=禁用 1=启用  "/>
+	 		
+	 		
+	 		<column name="layout" property="layout" text="报表页面布局:1=左右布局 2=上下布局 3=左上下（用于子报表，左是高级查询区） 4=上上下（用于子报表，上是高级查询区）"/>
+	 		<column name="search_area_width" property="searchAreaWidth" text="查询区域宽度"/>
+	 		<column name="search_area_control_num_per_row" property="searchAreaControlNumPerRow" text="高级查询区每行显示几个查询控件"/>
+	 		<column name="show_pager" property="showPager" text="报表数据是否分页:1=分页  0=不分页 "/>
+	 		<column name="page_size" property="pageSize" text="分页大小"/>
+	 		<column name="page_size_list" property="pageSizeList" text="分页大小候选"/>
+	 		<column name="sort_mode" property="sortMode" text="排序模式 1=客户浏览器端排  2=服务器端排序"/>
+	 		<column name="can_export" property="canExport" text="是否可以导出数据"/>
+	 		
+	 		
+	 		
 	 		
 	 		<column name="app_code" property="appCode" text="租户编码"/>
 	 	

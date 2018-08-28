@@ -43,11 +43,10 @@
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
 			<input id="id" name="id" class="mini-hidden" />
 			<input id="version" name="version" class="mini-hidden" />
-			
-			<div style="padding-left:11px;padding-bottom:5px;">
-				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
-		            <legend>报表定义</legend>
-		            <div style="padding:5px;">
+			<div style="padding-left:4px;padding-bottom:2px;">
+				<fieldset style="border:solid 1px #aaa;padding:2px; margin-bottom:2px;">
+		            <legend>报表基本定义</legend>
+		            <div style="padding:2px;">
 				        <table>
 				        
 									<tr>
@@ -81,7 +80,7 @@
 											<input id="datasourceId" name="datasourceId" class="mini-buttonedit" onbuttonclick="onDatasourceButtonEdit" emptyText="数据源" required="true"/>   
 											<input id="datasourceName" name="datasourceName" class="mini-hidden" />   
 										</td>
-										<td>报表生成类型：</td>
+										<td>数据生成类型：</td>
 										<td>
 											<input id="type" name="type"  class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rpt_general_type" required="true"/>
 										</td>
@@ -91,7 +90,7 @@
 									<tr>
 										<td>报表地址：</td>
 										<td>
-											<input id="url" name="url"  class="mini-textbox"  emptyText="请输入链接"  />
+											<input id="url" name="url" enabled="false" class="mini-textbox"  emptyText="请输入链接"  />
 										</td>
 										<td>数据库类型：</td>
 										<td>
@@ -101,21 +100,25 @@
 									
  
 									<tr>
-										<td>启用状态 ：</td>
+										<td>报表启用 ：</td>
 										<td>
 											<input id="status" name="status" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" required="true"/>
 										</td>
+										<td>防SQL注入启用 ：</td>
+										<td>
+											<input id="preventSqlInjection" name="preventSqlInjection" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" required="true"/>
+										</td>
+										
+									</tr>
+									
+									<tr>
 										<td>序号:</td>
 										<td>
 											<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
 										</td>
-									</tr>
-									
-									<tr>
-										
 										<td>备注：</td>
 										<td>
-											<input id="remark" name="remark"  class="mini-textbox"  emptyText="请输入备注"  />
+											<input id="remark" name="remark"  class="mini-textbox" emptyText="请输入备注"  />
 										</td>
 									</tr>
 						
@@ -123,6 +126,63 @@
 				    </div>
 				</fieldset>
 				
+				<fieldset style="border:solid 1px #aaa;padding:2px; margin-bottom:2px;">
+		            <legend>报表外观定义</legend>
+		            <div style="padding:2px;">
+				        <table>
+							<tr>
+								<td>报表布局：</td>
+								<td>
+									<input id="layout" name="layout" value="1" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_file_layout" required="true"/>
+								</td>
+								<td>是否可以导出 ：</td>
+								<td>
+									<input id="canExport" name="canExport" value="0" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" required="true"/>
+								</td>
+							</tr>
+							<tr>
+								<td>查询区宽度：</td>
+								<td>
+									<input id="searchAreaWidth" name="searchAreaWidth" class="mini-spinner"  minValue="250" maxValue="6" />
+								</td>
+								<td>查询区行控件数 ：</td>
+								<td>
+									 <input id="controlNumPerRow" name="controlNumPerRow" class="mini-spinner"  minValue="1" maxValue="6" />
+								</td>
+							</tr>
+							<tr>
+								<td>是否分页 ：</td>
+								<td>
+									<input id="showPager" name="showPager" value="1" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" required="true"/>
+								</td>
+								<td>分页大小：</td>
+								<td>
+									<input id="pageSize" name="pageSize" class="mini-spinner" value="20" minValue="0" allowNull="true" value="null" />
+								</td>
+							</tr>
+							<tr>
+								
+								<td>分页大小项：</td>
+								<td>
+									<input id="pageSizeList" name="pageSizeList" class="mini-textbox" value="20,50,100,500" emptyText="逗号分割,如:20,50,100"  />
+								</td>
+								<td>报表排序模式：</td>
+								<td>
+									<input id="sortMode" name="sortMode" class="mini-combobox" value="1" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_sort_mode" required="true"/>
+								</td>
+							</tr>
+							<tr>
+								
+								<td>头部按钮定义：</td>
+								<td>
+									<input id="layout" name="layout" value="1" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_file_layout" required="true"/>
+								</td>
+								
+							</tr>
+				        </table>
+		            </div>
+		        </fieldset>
+		            
 				<fieldset style="border:solid 1px #aaa;padding:2px; margin-bottom:2px;height: 130px">
 		            <legend>报表列SQL<font color="red">(用于导入字段使用，可以直接执行)</font></legend>
 		            <div style="padding:5px;">

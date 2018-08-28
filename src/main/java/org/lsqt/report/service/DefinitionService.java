@@ -1,12 +1,14 @@
 package org.lsqt.report.service;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.lsqt.components.db.Page;
 import org.lsqt.report.model.Definition;
 import org.lsqt.report.model.DefinitionQuery;
 
 public interface DefinitionService {
+	
 	Definition getById(Long id);
 	
 	Page<Definition> queryForPage(DefinitionQuery query);
@@ -21,4 +23,20 @@ public interface DefinitionService {
 	 * 导入报表字段
 	 */
 	void importColumn(Long id);
+	
+	/**
+	 * 生成报表文件（一般为jsp文件）
+	 * @param id 报表ID
+	 * @return 返回带上下文件的报表文件http请求路径,如:${contextPath}/apps/default/admin/report/files/report_1.jsp
+	 */
+	String generateReportFile(Long id) throws Exception;
+	
+	/**
+	 * 报表数据查询
+	 * @param id 报表ID
+	 * @param formMap 表单查询条件
+	 * @return 返回数据集
+	 */
+	Page<Map<String, Object>> search(Long id,Map<String,Object> formMap) throws Exception ;
+	
 }

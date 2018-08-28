@@ -2,6 +2,8 @@ package org.lsqt.components.db.orm.util;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 
@@ -48,15 +50,15 @@ public class ModelUtil {
 		} else if (baseType == byte.class) {
 			return value == null ? (byte) 0 : Byte.valueOf(value.toString());
 		}
-		/*
+		
 		else if(BigInteger.class.isAssignableFrom(baseType)) {
 			return value == null ? null:BigInteger.valueOf(Long.valueOf(value.toString()));
 		}
 		
 		else if(BigDecimal.class.isAssignableFrom(baseType)) {
-			return value == null ? null:BigDecimal.valueOf(Long.valueOf(value.toString()));
+			return value == null ? null:BigDecimal.valueOf(Double.valueOf(value.toString()));
 		}
-		*/
+		
 		
 		
 		else if (Boolean.class.isAssignableFrom(baseType)) { // 布尔型

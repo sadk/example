@@ -1,5 +1,8 @@
 package org.lsqt.report.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 报表定义
  */
@@ -40,9 +43,35 @@ public class Definition {
 	/** 报表SQL，带参数的真实报表SQL **/
 	private String columnSql;
 	
+	/**是否开启防SQL注入**/
+	private String preventSqlInjection ;
+	
 	/** 启用状态: 0=禁用 1=启用   **/
 	private String status ;
+	
+	
+	/**报表页面布局:1=左右布局 2=上下布局 3=左上下（用于子报表，左是高级查询区） 4=上中下（用于子报表，上是高级查询区） 5=左中右（用于子报表，左是高级查询区）*/
+	private String layout ;
+	private String showPager; //报表数据是否分页:true=分页 false=不分页
+	private Integer searchAreaWidth; //查询区域宽度
+	private Integer pageSize; //表格分页大小
+	private String pageSizeList; //逗号分割
+	private Integer canExport;  //是否可以导出excel、PDF等
+	private Integer sortMode ; //排序模式 1=客户浏览器端排  2=服务器端排序
+	private Integer searchAreaControlNumPerRow; //高级查询区每行显示几个查询控件
+	
+	private String pageIndexParam ; //分页的参数名,默认是:pageIndex
+	private String pageSizeParam; //分页的大小参数名，默认是 :pageSize
 
+	
+	public static final String LAYOUT_LEFT_RIGHT="1";
+	public static final String LAYOUT_UP_DOWN="2";
+	public static final String LAYOUT_LEFT_UP_DOWN_SUB_REPORT="3";
+	public static final String LAYOUT_UP_MID_DOWN_SUB_REPORT="4";
+	public static final String LAYOUT_LEFT_MID_RIGHT="5";
+
+
+	
 	private String version;
 	
 	/** 租户编码 */
@@ -64,7 +93,8 @@ public class Definition {
 	private java.util.Date updateTime;
 	
 
-
+	//-----------------------------
+	private List<Column> columnList = new ArrayList<>();
 	// getter、setter
 	public void setId(Long id) {
 		this.id = id;
@@ -232,6 +262,102 @@ public class Definition {
 
 	public void setColumnSql(String columnSql) {
 		this.columnSql = columnSql;
+	}
+
+	public String getShowPager() {
+		return showPager;
+	}
+
+	public void setShowPager(String showPager) {
+		this.showPager = showPager;
+	}
+
+	public String getLayout() {
+		return layout;
+	}
+
+	public void setLayout(String layout) {
+		this.layout = layout;
+	}
+
+	public Integer getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public Integer getCanExport() {
+		return canExport;
+	}
+
+	public void setCanExport(Integer canExport) {
+		this.canExport = canExport;
+	}
+
+	public String getPageSizeList() {
+		return pageSizeList;
+	}
+
+	public void setPageSizeList(String pageSizeList) {
+		this.pageSizeList = pageSizeList;
+	}
+
+	public Integer getSortMode() {
+		return sortMode;
+	}
+
+	public void setSortMode(Integer sortMode) {
+		this.sortMode = sortMode;
+	}
+
+	public Integer getSearchAreaWidth() {
+		return searchAreaWidth;
+	}
+
+	public void setSearchAreaWidth(Integer searchAreaWidth) {
+		this.searchAreaWidth = searchAreaWidth;
+	}
+
+	public Integer getSearchAreaControlNumPerRow() {
+		return searchAreaControlNumPerRow;
+	}
+
+	public void setSearchAreaControlNumPerRow(Integer searchAreaControlNumPerRow) {
+		this.searchAreaControlNumPerRow = searchAreaControlNumPerRow;
+	}
+
+	public String getPageIndexParam() {
+		return pageIndexParam;
+	}
+
+	public void setPageIndexParam(String pageIndexParam) {
+		this.pageIndexParam = pageIndexParam;
+	}
+
+	public String getPageSizeParam() {
+		return pageSizeParam;
+	}
+
+	public void setPageSizeParam(String pageSizeParam) {
+		this.pageSizeParam = pageSizeParam;
+	}
+
+	public String getPreventSqlInjection() {
+		return preventSqlInjection;
+	}
+
+	public void setPreventSqlInjection(String preventSqlInjection) {
+		this.preventSqlInjection = preventSqlInjection;
+	}
+
+	public List<Column> getColumnList() {
+		return columnList;
+	}
+
+	public void setColumnList(List<Column> columnList) {
+		this.columnList = columnList;
 	}
 
 }

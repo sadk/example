@@ -5,6 +5,11 @@ import java.util.regex.Pattern;
 
 import org.lsqt.components.util.lang.StringUtil;
 
+/**
+ * MySql字段转java驼峰
+ * @author mingmin.yuan
+ *
+ */
 public class ColumnUtil {
 	private static final Pattern pattern = Pattern.compile("_[a-z]{1}");
 	private static final Pattern dePattern = Pattern.compile("[a-z]{1}[A-Z]{1}");

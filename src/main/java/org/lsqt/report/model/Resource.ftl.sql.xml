@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.report.model.Resource" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="rpt_resource">
+				<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="definition_id" property="definitionId" text="报表分类ID"/>
+	 	
+	 		<column name="name" property="name" text="报表分类名"/>
+	 	
+	 		<column name="code" property="code" text="定义编码"/>
+	 	
+	 		<column name="type" property="type" text="报表页面元素类型: 1=按钮 2=下拉框（单选）3=下拉框（多选）4=文本框 5=TextArae 6=File 7=日历 8=数字框 "/>
+	 	
+	 		<column name="btn_before_script" property="btnBeforeScript" text="按钮点击前事件触发的js函数"/>
+	 	
+	 		<column name="btn_after_script" property="btnAfterScript" text="按钮点击后事件触发js函数"/>
+	 	
+	 		<column name="app_code" property="appCode" text="租户编码"/>
+	 	
+	 		<column name="sn" property="sn" text="排序"/>
+	 	
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 	
+	 	
+	 	
+		
+		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		
+	 		
+	 		
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		
+	 		
+	 		
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from rpt_resource where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 							 							 							 							 							 												
+							 
+							name like '%${key}%'  or 
+							
+							 
+							code like '%${key}%'  or 
+							
+							 
+							type like '%${key}%'  or 
+							
+							 
+							btn_before_script like '%${key}%'  or 
+							
+							 
+							btn_after_script like '%${key}%'  or 
+							
+							 
+							app_code like '%${key}%'  or 
+							
+							 
+							remark like '%${key}%' 
+							
+														
+					)
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+	
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  					<#if query.id??> and id = ${query.id} </#if>
+					
+						
+	  					<#if query.definitionId??> and definition_id = ${query.definitionId} </#if>
+					
+	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+						
+					
+	  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+					
+	  						<#if query.type??> and type = '${StringUtil.escapeSql(query.type)}' </#if>
+						
+					
+	  						<#if query.btnBeforeScript??> and btn_before_script = '${StringUtil.escapeSql(query.btnBeforeScript)}' </#if>
+						
+					
+	  						<#if query.btnAfterScript??> and btn_after_script = '${StringUtil.escapeSql(query.btnAfterScript)}' </#if>
+						
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+					
+						
+	  					<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+					
+						
+					
+						
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+						
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from rpt_resource ]]>
+	</statement>
+	
+</statements>

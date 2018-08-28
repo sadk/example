@@ -128,6 +128,17 @@ public interface Db extends Closeable{
 	List<Map<String,Object>> executeQuery(String sql, Object ... args) throws DbException ;
 	
 	/**
+	 * 
+	 * @param sql 需要执行的SQL
+	 * @param pageSize 分页大小
+	 * @param pageIndex 分页索引
+	 * @param args SQL语句参数
+	 * @return 
+	 * @throws DbException
+	 */
+	Page<Map<String,Object>> executeQueryForPage(String sql,Integer pageSize,Integer pageIndex, Object ... args) throws DbException ;
+	
+	/**
 	 * 执行给定的SQL查询语句,返回单值Object
 	 * @param sql SQL语句
 	 * @param args

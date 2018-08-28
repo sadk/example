@@ -23,6 +23,7 @@
 			<input id="id" name="id" class="mini-hidden" />
 			<input id="definitionId" name="definitionId" class="mini-hidden" />
 			<input id="reportName" name="reportName" class="mini-hidden" />
+			<input id="optLog" name="optLog" class="mini-hidden" />
 			<div style="padding:4px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
 		            <legend>DB字段</legend>
@@ -42,7 +43,7 @@
 							<tr>
 								<td>是否是键：</td>
 								<td>
-								 	<input id="primaryKey" name="primaryKey"   onvaluechanged="onPrimaryKeyChanged" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+								 	<input id="primaryKey" name="primaryKey"   onvaluechanged="onPrimaryKeyChanged" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
 								</td>
 								<td>字段注释：</td>
 								<td>
@@ -75,7 +76,7 @@
 								</td>
 								<td>映射类型：</td>
 								<td>
-								 	<input name="oroColumnType" id="oroColumnType" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/dictionary/option?code=oro_column_type"/>
+								 	<input name="oroColumnType" id="oroColumnType" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=oro_column_type"/>
 								</td>
 							</tr> 
 							
@@ -86,7 +87,7 @@
 				
 				
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
-		            <legend>代码生成</legend>
+		            <legend>查询区控件生成</legend>
 		            <div style="padding:5px;">
 				        <table>
 							<tr>
@@ -97,14 +98,14 @@
 								
 								<td style="width:120px;">数据类型：</td>
 								<td style="width:150px;">
-								 	<input name="javaType" id="javaType"   class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/dictionary/option?code=java_type" />
+								 	<input name="javaType" id="javaType"   class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=java_type" />
 								</td>
 							</tr>
 							
 							<tr>
 								<td>是否查询条件：</td>
 								<td>
-								 	<input id="searchType" name="searchType" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+								 	<input id="searchType" name="searchType" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
 								</td>
 								
 								<td>表单控件：</td>
@@ -122,16 +123,25 @@
 								<td>
 								 	<input id="columnCodegenFormat" name="columnCodegenFormat" class="mini-textbox" />
 								</td>
-								<td>表单分组：</td>
+								<td>分组名：</td>
 								<td>
 								 	<input id="columnCodegenGroupCode" name="columnCodegenGroupCode"  class="mini-textbox" />
 								</td>
 							</tr> 
+							
+							<tr>
+								<td>是否模糊查询:</td>
+								<td><input id="likeSearchIs" name="likeSearchIs" onvaluechanged="onColumnCodegenTypeChanged" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" /></td>
+								<td>模糊匹配方式：</td>
+								<td >
+								 	<input id="likeSearchType" name="likeSearchType" onvaluechanged="onColumnCodegenTypeChanged" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_column_like_search_type" />
+								</td>
+							</tr>
 							<tr>
 								<td>序号:</td>
 								<td><input name="sn" id="sn" class="mini-spinner" /></td>
 								<td>备注：</td>
-								<td colspan="3">
+								<td >
 								 	<input name="remark" id="remark" class="mini-textbox" />
 								</td>
 							</tr>
@@ -145,7 +155,7 @@
 				
 				
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;" id="controlConfig">
-		            <legend>控件配置</legend>
+		            <legend>查询区控件配置</legend>
 		            <div style="padding:5px;">
 				        <table>
 				        	<tr id="dsTR">
@@ -184,7 +194,38 @@
 				    </div>
 				</fieldset>
 				
-				
+				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;" id="controlConfig">
+		            <legend>数据区表格显示</legend>
+		            <div style="padding:5px;">
+				        <table>
+				        	<tr>
+				        		<td>列宽</td>
+				        		<td><input id="width" name="width" class="mini-spinner"  minValue="120" /></td>
+				        		<td>列对齐方式：</td>
+				        		<td>
+				        			<input name="alignType" id="alignType" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=	report_column_align_type" />
+				        		</td>
+				        	</tr>
+				        	<tr>
+				        		<td>是否隐藏列：</td>
+				        		<td>
+				        			<input name="hidde" id="hidde" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+				        		</td>
+				        		<td>是否冻结列：</td>
+				        		<td>
+				        			<input name="frozen" id="frozen" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+				        		</td>
+				        	</tr>
+				        	<tr>
+				        		<td>是否排序：</td>
+				        		<td>
+				        			<input name="allowSort" id="allowSort" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+				        		</td>
+				        		 
+				        	</tr>
+				        </table>
+				    </div>
+				</fieldset>
 			</div>
 			<div id="subbtn" style="text-align:center;padding:10px;">
 				<a class="mini-button" onclick="onCheckSQL"   iconCls="icon-split">检测SQL</a>
@@ -378,6 +419,18 @@
 					return ;
 				}
 				
+				if ("9" == value) {
+					var text = selectorDataFrom.getValue();
+					try{
+						mini.decode(text)
+					}catch(e) {
+						mini.alert("【常量json】值不是有效的json格式，请检查! 详情：<a href='#' onclick='mini.alert(\""+e.message+"\")'>点击这里</a>");
+						return ;
+					}
+					openCommonDisplayColumnPage("selectorValueCols");
+					return ;
+				}
+				
 				if("2" == value) {
 		            mini.open({
 		                url: "${pageContext.request.contextPath}/apps/default/admin/sys/dictionary/seletor_dictionary.jsp",
@@ -400,6 +453,9 @@
 				}
 			}
 			
+			/**
+			 * id 控件ID
+			 */
 			function openCommonDisplayColumnPage(id) { // 打开通用列页面 
 				var btnEdit = mini.get(id);
 	            mini.open({
@@ -410,11 +466,15 @@
 					onload : function() {
 						var iframe = this.getIFrameEl();
 						var data = {
+								columnCodegenType: columnCodegenType.getValue(),
 								selectorDataFromType : selectorDataFromType.getValue(),
 								selectorDataSourceCode: selectorDataSourceCode.getValue(),
 								selectorDataFrom : selectorDataFrom.getValue()
 						};
-						//console.log(data)
+						
+						if("9" == data.columnCodegenType) { //下拉框（json常量)
+							data.selectorDataFrom = selectorDataFrom.getValue();
+						}
 						iframe.contentWindow.SetData(data);
 					},
 	                ondestroy: function (action) {
@@ -442,6 +502,18 @@
 					return ;
 				}
 				
+				if ("9" == value) {
+					var text = selectorDataFrom.getValue();
+					try{
+						mini.decode(text)
+					}catch(e) {
+						mini.alert("【常量json】值不是有效的json格式，请检查! 详情：<a href='#' onclick='mini.alert(\""+e.message+"\")'>点击这里</a>");
+						return ;
+					}
+					openCommonDisplayColumnPage("selectorTextCols");
+					return ;
+				}
+				
 				if("2" == value) {
 		            mini.open({
 		                url: "${pageContext.request.contextPath}/apps/default/admin/sys/dictionary/seletor_dictionary.jsp",
@@ -461,6 +533,7 @@
 		                    }
 		                }
 		            });
+		            return ;
 				}
 			}
 			

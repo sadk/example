@@ -78,6 +78,13 @@
 		function SetData(data) {
 			data = mini.clone(data); //跨页面传递的数据对象，克隆后才可以安全使用
 			
+			if("9" == data.columnCodegenType) {
+				var o = mini.decode(data.selectorDataFrom);
+				console.log(o)
+				fillGridData(o);
+				return ;
+			}
+			
 			$.ajax({
 				url : "${pageContext.request.contextPath}/report/definition/display_column",
 				dataType: 'json', type : 'post', data: data,
@@ -86,35 +93,36 @@
 						var header = [];
 						if(text && text.data.length>0) {
 							var o = mini.decode(text).data;
-							header = Object.keys(o[0]);
+							fillGridData(o);
 						}
-				       var  columns = [
-				  	           	// { type: "indexcolumn",width: 50 }
-				  	        ]
-				       for(var i=0;i<header.length;i++) {
-				    	   var hd='<input id="'+(""+header[i]+i)+'" name="head" type="radio" value="'+header[i]+'"/> <label for="'+(""+header[i]+i)+'">'+header[i]+'</label>';
-				    	   columns.push({ field: header[i], header: hd,width: 120, headerAlign: "center", allowSort: true })
-				       }
-				       
-				       grid.set({columns: columns,allowSortColumn:false  });
-					   grid.setData(o);
-					   
-				       grid.on("drawcell", function (e) {
-				            var record = e.record,
-						        column = e.column,
-						        field = e.field,
-						        value = e.value;
-				           
-				              if (mini.isDate(value)) {
-				            	 // e.cellStyle = "width:280px;align:center"; 样式没有效...
-				            	  e.cellHtml = mini.formatDate(value, "yyyy-MM-dd HH:mm:ss");
-				              }
-				        })
-
 					}
 				}
 			});
-		 
+		}
+	
+		function fillGridData(data) {
+			if(data && data.length>0) {
+				var header = Object.keys(data[0]);
+			    var  columns = [];
+			    for(var i=0;i<header.length;i++) {
+			    	   var hd='<input id="'+(""+header[i]+i)+'" name="head" type="radio" value="'+header[i]+'"/> <label for="'+(""+header[i]+i)+'">'+header[i]+'</label>';
+			    	   columns.push({ field: header[i], header: hd,width: 120, headerAlign: "center", allowSort: true })
+			    }
+			    
+				grid.set({columns: columns,allowSortColumn:false});
+				grid.setData(data);
+				
+				grid.on("drawcell", function (e) { //如果有日期类型，转换为人工可讯形式
+				   var record = e.record,
+				   column = e.column,
+				   field = e.field,
+				   value = e.value;
+				   
+			       if (mini.isDate(value)) {
+			     	  e.cellHtml = mini.formatDate(value, "yyyy-MM-dd HH:mm:ss");
+			       }
+				})
+			}
 		}
 
 	    function onKeyEnter(e) {

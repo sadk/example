@@ -167,6 +167,7 @@ class FreemarkCodeGenUtil {
 	static {
 		cfg = new Configuration() ;
 		cfg.setDefaultEncoding("UTF-8");
+		cfg.setClassicCompatible(true);
 	}
 	
 	private static void prepareFileIfNotExists(String fullOutFile) throws IOException {

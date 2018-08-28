@@ -16,8 +16,6 @@ public class Column {
 	/**主键生成类型:AUTO(自增长)、 UUID64、 UUID58、 NANOTIME(绝对时间戳精确到纳秒)**/
 	private String type;
 	
-	
-	
 	/** 全局编号列 : 数据导入、导出用、对比等**/
 	private String gid;
 	
@@ -120,20 +118,20 @@ public class Column {
 		this.dbType = dbType;
 	}
 
-	public Integer getJavaType() {
-		return javaType;
-	}
-
-	public void setJavaType(Integer javaType) {
-		this.javaType = javaType;
-	}
-
 	public String getPropertyName() {
 		return propertyName;
 	}
 
 	public void setPropertyName(String propertyName) {
 		this.propertyName = propertyName;
+	}
+
+	public Integer getJavaType() {
+		return javaType;
+	}
+
+	public void setJavaType(Integer javaType) {
+		this.javaType = javaType;
 	}
 	 
 }

@@ -52,8 +52,6 @@ public class SqlStatementFactory implements SqlStatementBuilder {
 	static final List<Table>  SQL_MAPPINGS_TABLES = new ArrayList<>();
 	static final List<SqlStatement> SQL_MAPPINGS_STATMENTS = new ArrayList<SqlStatement>();
 
-	static Configuration FTL_CONFIG = new Configuration();
-	static StringTemplateLoader FTL_STRINGLOADER = new StringTemplateLoader();
 	static boolean isBuilded ;
 	private List<String> locations ;
 
