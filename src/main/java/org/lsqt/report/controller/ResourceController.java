@@ -1,13 +1,11 @@
 package org.lsqt.report.controller;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
-import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.report.model.Resource;
@@ -22,16 +20,19 @@ public class ResourceController {
 	
 	@Inject private ResourceService resourceService; 
 	
-	@Inject private Db db;
-	
 	@RequestMapping(mapping = { "/page", "/m/page" })
-	public Page<Resource> queryForPage(ResourceQuery query) throws IOException {
+	public Page<Resource> queryForPage(ResourceQuery query)  {
 		return resourceService.queryForPage(query); //  
 	}
 	
 	@RequestMapping(mapping = { "/all", "/m/all" })
 	public Collection<Resource> getAll() {
 		return resourceService.getAll();
+	}
+	
+	@RequestMapping(mapping = { "/list", "/m/list" })
+	public Collection<Resource> queryForList(ResourceQuery query) {
+		return resourceService.queryForList(query);
 	}
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
@@ -44,69 +45,5 @@ public class ResourceController {
 		List<Long> list = StringUtil.split(Long.class, ids, ",");
 		return resourceService.deleteById(list.toArray(new Long[list.size()]));
 	}
-	
-	
-	/** 暂时注释，未能提供通用实现！！！
-	@RequestMapping(mapping = { "/export", "/m/export" })
-	public void export(ResourceQuery query, String exportFileType, String exportDataType) {
-		Page<Resource> page = db.getEmptyPage();
-		
-		// 1.导出excel
-		if (Dictionary.EXPORT_FILE_TYPE_EXCEL.equals(exportFileType)) {
-			
-			if (Dictionary.EXPORT_DATA_TYPE_全部数据.equals(exportDataType)) {
-				
-				page.setData(resourceService.getAll());
-				ContextUtil.file.put("/template/应用列表数据.xls", "page", page);
-				return ;
-			} 
-			
-			page = resourceService.queryForPage(query);
-			ContextUtil.file.put("/template/应用列表数据.xls", "page", page);
-			
-			return;
-		}
-
-		// 2.导出文本文件
-		if (Dictionary.EXPORT_FILE_TYPE_TXT.equals(exportFileType)) {
-			if (Dictionary.EXPORT_DATA_TYPE_全部数据.equals(exportDataType)) {
-				page.setData(resourceService.getAll());
-				ContextUtil.file.put("/template/应用列表数据.txt", "page", page);
-				return;
-			}
-
-			page = resourceService.queryForPage(query);
-			ContextUtil.file.put("/template/应用列表数据.txt", "page", page);
-			return;
-		}
-		
-		// 3.导出doc文件
-		if (Dictionary.EXPORT_FILE_TYPE_DOC.equals(exportFileType)) {
-			if (Dictionary.EXPORT_DATA_TYPE_全部数据.equals(exportDataType)) {
-				page.setData(resourceService.getAll());
-				ContextUtil.file.put("/template/应用列表数据.doc", "page", page);
-				return ;
-			}
-			
-			page = resourceService.queryForPage(query);
-			ContextUtil.file.put("/template/应用列表数据.doc", "page", page);
-			return;
-		}
-
-		// 4.导出pdf文件
-		if (Dictionary.EXPORT_FILE_TYPE_PDF.equals(exportFileType)) {
-			if (Dictionary.EXPORT_DATA_TYPE_全部数据.equals(exportDataType)) {
-				page.setData(resourceService.getAll());
-				ContextUtil.file.put("/template/应用列表数据.pdf", "page", page);
-				return ;
-			}
-			
-			page = resourceService.queryForPage(query);
-			ContextUtil.file.put("/template/应用列表数据.pdf", "page", page);
-			return;
-		}
-		
-	}
-	**/
 	
 }

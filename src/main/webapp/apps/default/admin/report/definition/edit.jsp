@@ -104,21 +104,22 @@
 										<td>
 											<input id="status" name="status" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" required="true"/>
 										</td>
+										<td>备注：</td>
+										<td>
+											<input id="remark" name="remark"  class="mini-textbox" emptyText="请输入备注"  />
+										</td>
+										<!-- 
 										<td>防SQL注入启用 ：</td>
 										<td>
 											<input id="preventSqlInjection" name="preventSqlInjection" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" required="true"/>
 										</td>
-										
+										 -->
 									</tr>
 									
 									<tr>
 										<td>序号:</td>
 										<td>
 											<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
-										</td>
-										<td>备注：</td>
-										<td>
-											<input id="remark" name="remark"  class="mini-textbox" emptyText="请输入备注"  />
 										</td>
 									</tr>
 						
@@ -171,11 +172,11 @@
 									<input id="sortMode" name="sortMode" class="mini-combobox" value="1" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_sort_mode" required="true"/>
 								</td>
 							</tr>
-							<tr>
+							<tr id="reportButtonTR">
 								
-								<td>头部按钮定义：</td>
+								<td>报表按钮：</td>
 								<td>
-									<input id="layout" name="layout" value="1" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_file_layout" required="true"/>
+									<input id="resourceIds" name="resourceIds" class="mini-buttonedit" onbuttonclick="onResourceButtonEdit" emptyText="添加报表按钮" />  
 								</td>
 								
 							</tr>
@@ -207,11 +208,42 @@
 			mini.parse();
 
 			var form = new mini.Form("edit-form1");
+			var id = mini.get("id");
 			var categoryId = mini.get("categoryId");
 			var datasourceId = mini.get("datasourceId");
 			
 			var categoryName = mini.get("categoryName");
 			var datasourceName = mini.get("datasourceName");
+			
+			function onResourceButtonEdit(e) {
+				
+	            mini.open({
+	                url: "${pageContext.request.contextPath}/apps/default/admin/report/resource/index.jsp",
+	                title: "【"+mini.get("name").value+"】报表按钮配置",
+	                width: 800,
+	                height: 600,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {
+							action : "edit",
+							definitionId : id.value
+						};
+						iframe.contentWindow.SetData(data);
+					},
+	                ondestroy: function (action) {
+	                    //if (action == "close") return false;
+	                    if (action == "ok") {
+	                        var iframe = this.getIFrameEl();
+	                        var data = iframe.contentWindow.GetData();
+	                        data = mini.clone(data);    //必须
+	                        if (data) {
+	                          //  btnEdit.setValue(data.id);
+	                          //  btnEdit.setText(data.name);
+	                        }
+	                    }
+	                }
+	            });
+			}
 			
 			function onCategoryButtonEdit(e) {
 				var btnEdit = this;
@@ -283,6 +315,10 @@
 			//标准方法接口定义
 			function SetData(data) {
 				data = mini.clone(data); //跨页面传递的数据对象，克隆后才可以安全使用
+				if(data.action == 'add') {
+					$("#reportButtonTR").hide();
+					return ;
+				}
 				
 				 if(data.action == "edit" || data.action=='view') {
 					$.ajax({

@@ -51,14 +51,19 @@
 												<a class="mini-button" iconCls="icon-edit" onclick="edit()">编辑</a>
 												<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
 												<a class="mini-button" iconCls="icon-save" onclick="save()">保存</a>
-												
+												<!-- 
 												<input class="mini-combobox" style="width: 80px;" onvaluechanged="onVersionValueChanged" id="versionCmb" showNullItem="false" nullItemText="请选择..." emptyText="显示版本" textField="name" valueField="value" data="[{name:'最新版本',value:1},{name:'所有版本',value:2}]" />
-												
+												 -->
 												
 												
 												<span class="separator"></span>
-												<a class="mini-button" iconCls="icon-goto" onclick="copyDefinition()">报表复制</a>
-												<a class="mini-button" iconCls="icon-goto" onclick="generateReport()">报表生成</a>
+												<!-- 
+												<a class="mini-button" iconCls="icon-add" onclick="copyDefinition()">报表复制</a>
+												 -->
+												<a class="mini-button" iconCls="icon-edit" onclick="buttonConfig()">报表按钮</a>
+												
+												<a class="mini-button" iconCls="icon-ok" onclick="generateReport()">报表生成</a>
+												<a class="mini-button" iconCls="icon-upload" onclick="templateConfig()">上传导入导出模板</a>
 												<!-- 
 												<a class="mini-button" iconCls="icon-upload"   onclick="importDefinition()">导入</a>
 												<a class="mini-button" iconCls="icon-download" onclick="exportDefinition()">导出</a>
@@ -66,8 +71,6 @@
 												-->
 											</td>
 											<td style="white-space:nowrap;">
-						                        <input id="key2" name="key2" class="mini-textbox" emptyText="请输入关键字" style="width:100px;" onenter="search"/>   
-						                        <a class="mini-button" onclick="search()">查询</a>
 						                    </td>
 										</tr>
 									</table>
@@ -81,9 +84,10 @@
 						              	 url="${pageContext.request.contextPath}/report/definition/page" >
 						                <div property="columns">
 											<div type="checkcolumn" ></div>
-											<div field="id" width="60" headerAlign="center" allowSort="true" align="center">ID</div>
-											<div field="name" width="300" headerAlign="center" allowSort="true" align="left">报表全称</div>
-											
+											<div field="id" width="50" headerAlign="center" allowSort="true" align="center">ID</div>
+											<div field="name" width="300" headerAlign="center" allowSort="true" align="left">报表全称
+												<input property="editor" class="mini-textbox" style="width:100%;" />
+											</div>
 											<div field="shortName" width="100" headerAlign="center" allowSort="true" align="left">报表简称
 												<input property="editor" class="mini-textbox" style="width:100%;" />
 											</div>
@@ -108,8 +112,10 @@
 											
 											<div field="version" width="150" headerAlign="center" allowSort="true" align="center">版本号</div>
 											
-											<div field="remark" width="160" headerAlign="center" allowSort="true" align="left">备注</div>
- 
+ 											<div field="remark" width="250" headerAlign="center" allowSort="true" align="left">备注
+												<input property="editor" class="mini-textbox" style="width:100%;" readonly="readonly"/>
+											</div>
+											
 					 						<div field="createTime"  dateFormat="yyyy-MM-dd HH:mm:ss" width="150" headerAlign="center" allowSort="true" align="center">创建时间</div> 
 											
 											<div field="updateTime"  dateFormat="yyyy-MM-dd HH:mm:ss" width="150" headerAlign="center" allowSort="true" align="center">更新时间</div> 
@@ -243,6 +249,31 @@
 				 
 			});			
  
+			
+			function buttonConfig() { //报表业务按钮配置
+				var row = grid.getSelected();
+				if(!row) {
+					mini.alert("选选择一个报表");return ;
+				}
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/report/resource/index.jsp",
+					title : "【"+row.name+"】按钮配置",
+					width : 800,
+					height : 600,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {
+							action : "edit",
+							definitionId: row.id
+						};
+						iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						grid.reload();
+					}
+				});
+			}
+			
 			function generateReport() { // 生成报表
 				var row = grid.getSelected();
 				if (!row) {
@@ -273,7 +304,6 @@
 						var iframe = this.getIFrameEl();
 						var data = {
 							action : "add"
-							
 						};
 						iframe.contentWindow.SetData(data);
 					},
@@ -448,12 +478,7 @@
 			
 			function search() {
 				var data = {};
-		 
-				var key2 = mini.get("key2").value;
-				if( (data.key==null || data.key=="") && (key2!=null && key2!="")){
-					data.keyWord = key2;
-				}
-				
+		 		
 				grid.load(data);
 			}
 		 

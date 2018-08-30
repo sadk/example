@@ -52,7 +52,7 @@ public class Column {
 	public static final int LIKE_SEARCH_TYPE_LEFT = 1; //like '张%'
 	public static final int LIKE_SEARCH_TYPE_MID = 2; //like '%张%'
 	public static final int LIKE_SEARCH_TYPE_RIGHT = 3;//like '%张'
-	
+	public static final int LIKE_SEARCH_TYPE_NO_WRAP=4; // 不做包装处理
 	
 	private Integer allowSort;
 	

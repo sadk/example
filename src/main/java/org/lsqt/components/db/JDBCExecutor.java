@@ -253,7 +253,7 @@ public class JDBCExecutor {
 			return list;
 		} catch (Exception ex) {
 			log.error(" --- executeQuery fail , " + ex.getMessage());
-			throw new DbException(ex.getMessage(), ex);
+			throw new DbException(sql+" ,args="+Arrays.asList(paramValues)+"; \n\r"+ex.getMessage(), ex.getCause());
 		} finally {
 			close(stmt, rs,null); // 没有关闭连接对象,当前线程结束的时候关闭!!!
 		}

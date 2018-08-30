@@ -545,6 +545,18 @@ INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (220,219,'匹配开头(like \'张%\')','1','report_column_like_search_type_left','dictionary',NULL,'1','1000',0,'219,220',NULL,'true','2018-04-23 10:54:35','2018-04-23 10:54:35');
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (221,219,'匹配中间(like \'%张%\')','2','report_column_like_search_type_mid','dictionary',NULL,'1','1000',0,'219,221',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (222,219,'匹配结尾(like \'%张\')','3','report_column_like_search_type_right','dictionary',NULL,'1','1000',0,'219,222',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (223,219,'不做包装处理','4','report_column_like_search_type_no_wrap','dictionary',NULL,'1','1000',0,'219,223',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+-- 报表业务（按钮）控件类型
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (224,-1,'报表业务控件类型','report_biz_controll_type','report_biz_controll_type','dictionary',NULL,'1','1000',0,'224',NULL,'report_biz_controll_type','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (225,224,'按钮','1','report_biz_controll_type_button','dictionary',NULL,'1','1000',0,'224,225',NULL,'true','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (226,224,'下拉框（单选）','2','report_biz_controll_type_select_sign','dictionary',NULL,'1','1000',0,'224,226',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (227,224,'下拉框（多选）','3','report_biz_controll_type_select_mutil','dictionary',NULL,'1','1000',0,'224,227',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (228,224,'文本框','4','report_biz_controll_type_text','dictionary',NULL,'1','1000',0,'224,228',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (229,224,'文本域','5','report_biz_controll_type_text_area','dictionary',NULL,'1','1000',0,'224,229',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (230,224,'文件','6','report_biz_controll_type_file','dictionary',NULL,'1','1000',0,'224,230',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (231,224,'日历','7','report_biz_controll_type_date_pick','dictionary',NULL,'1','1000',0,'224,231',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (232,224,'数值框','8','report_biz_controll_type_number','dictionary',NULL,'1','1000',0,'224,232',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
 
 
 
@@ -2078,8 +2090,9 @@ CREATE TABLE `rpt_resource` (
   
   `event_name` varchar(200) DEFAULT NULL COMMENT '元素事件名称,如：onclick',
   `event_function_name` varchar(200) DEFAULT NULL COMMENT '事件响应函数名称,如：onclick=事件响应函数名称',
-  `before_script` text DEFAULT NULL COMMENT '按钮点击前事件触发的js函数体',
-  `after_script` text DEFAULT NULL COMMENT '按钮点击后事件触发js函数体',
+  `btn_before_script` text DEFAULT NULL COMMENT '按钮点击前事件触发的js函数体',
+  `btn_after_script` text DEFAULT NULL COMMENT '按钮点击后事件触发js函数体',
+  `btn_script` text DEFAULT NULL COMMENT '按钮点击事件触发js函数体',
 
   `app_code` varchar(20) DEFAULT NULL COMMENT '租户编码',
   `sn` int(11) DEFAULT '0' COMMENT '排序',
@@ -2114,7 +2127,7 @@ CREATE TABLE `rpt_column` (
   `search_required` int(2) NOT NULL DEFAULT '0' COMMENT '是否查询必填: 0=否，1=是',
   
   `like_search_is` int(2)  NULL DEFAULT 0 COMMENT '是否是模糊查询: 0=否，1=是',
-  `like_search_type` int(2)  NULL DEFAULT 2 COMMENT '是否是模糊查询: 1=匹配开头 ，2=匹配中间 3=匹配结尾',
+  `like_search_type` int(2)  NULL DEFAULT 2 COMMENT '是否是模糊查询: 1=匹配开头 ，2=匹配中间 3=匹配结尾 4=不做包装处理',
 
   `column_codegen_type` int(2)  NULL COMMENT '字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键    4=文本框 5=整型框  6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)',
   `column_codegen_format` varchar(50) DEFAULT NULL COMMENT '默认：double型的为两个小数点， date 为 [yyyy-MM-dd HH:mm:ss] ',

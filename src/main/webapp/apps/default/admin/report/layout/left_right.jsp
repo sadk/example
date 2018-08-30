@@ -119,25 +119,13 @@
 					</table>
 		        </div>
 		        <div class="mini-fit" >
-					<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" 
-						url="<#noparse>${pageContext.request.contextPath}</#noparse>/application/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
+					<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" <#if (definition.showPager?? && definition.showPager==1)>showPager="true"  <#if definition.pageSizeList?? >sizeList="[${definition.pageSizeList}]" <#else>sizeList="[20,50,100,200,500]"</#if> <#if definition.pageSize??>pageSize="${definition.pageSize}"<#else>pageSize="20"</#if> <#else>showPager="false"</#if>
+						url="<#noparse>${pageContext.request.contextPath}</#noparse>/report/definition/search?reportDefinitionId=${definition.id}"  idField="id" >
 						<div property="columns">
 							<div type="checkcolumn" ></div>
 							<#list columnList as column>
 								<div field="${column.propertyName}" width="${column.width!}" headerAlign="center" <#if (column.allowSort?? && column.allowSort == 1)>allowSort="true"</#if>  align="<#if (column.alignType?? && column.alignType == 1)>left</#if><#if (column.alignType?? && column.alignType == 2)>center</#if><#if (column.alignType?? &&column.alignType == 3)>right</#if>" >${column.name}</div>
 							</#list>
-							<!-- 
-							<div field="tenantName" width="80" headerAlign="center" allowSort="true" align="left" >租户</div>
-							<div field="name" width="160" headerAlign="center" allowSort="true" align="left" >系统名称</div>
-							<div field="code" width="80" headerAlign="center" allowSort="true" align="left">系统编码</div>
-							<div field="sn" width="60" headerAlign="center" allowSort="true" align="right">排序号</div>
-							<div field="remark" width="160" headerAlign="center" allowSort="true" align="left">备注</div>
-							<div field="enableDesc" width="60" headerAlign="center" allowSort="true" align="center">是否启用</div>
-							
-							<div field="gid" width="160" headerAlign="center" allowSort="true" align="left">全局编码</div>
-							<div field="createTimeDesc" width="100" headerAlign="center" allowSort="true" align="center" >创建时间</div>
-							<div field="updateTimeDesc" width="100" headerAlign="center" allowSort="true" align="center">更新时间</div>
-							 -->
 						</div>
 					</div>
 		        </div>
@@ -207,6 +195,11 @@
 		
     	<#list columnList as column>
 	    	<#if column.columnCodegenType??>
+	    		<#if column.columnCodegenType == 5 || column.columnCodegenType == 6>
+		    		if(data.${column.propertyName} == null) {
+						data.${column.propertyName} = "";
+					}
+	    		</#if>
 	    		<#if column.columnCodegenType == 7>
 	    			data.${column.propertyName}Begin =  mini.get('${column.propertyName}Begin').text;
 	    			data.${column.propertyName}End =  mini.get('${column.propertyName}End').text;
@@ -214,18 +207,29 @@
 	    	</#if>
     	</#list>
     	
-        $.ajax({
+    	grid.load(data)
+    	/*
+        $.ajax({ 
             url: "${pageContext.request.contextPath}/report/definition/search",
             data: data,
             type: "post",
             success: function (text) {
-            	 
+            	
+            	<#if (definition.showPager?? && definition.showPager == 1) >
+					if(text) {
+						grid.setData(text.data)
+	            	}
+            	</#if>
             	
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert(jqXHR.responseText);
+                mini.showTips({
+                    content: jqXHR.responseText,
+                    state: 'danger',  x: "right",  y: "bottom",
+                    timeout: 10000
+                });
             }
-        });
+        });*/
     }
     
     function clear() {

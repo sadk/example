@@ -1135,7 +1135,7 @@ public class FtlDbExecute implements ORMappingDb{
 		
 		
 		long total = 0;
-		String totalSqlFmt = "select count(1) from (%s) _t0_amount";
+		String totalSqlFmt = "select count(0) from (%s) _t0_amount";
 		String totalSql = String.format(totalSqlFmt,sql);
 		
 		List<Map<String, Object>> totalMapList = exe.executeQuery(totalSql);

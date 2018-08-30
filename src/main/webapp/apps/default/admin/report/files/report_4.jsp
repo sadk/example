@@ -72,7 +72,7 @@
 									<tr>
 										<td>编码：</td>
 										<td>
-											<input id="code" name="code"  style="width:140px" class="mini-textbox"  emptyText="请输入编码"  onenter="search" required="true" />
+											<input id="code" name="code"  style="width:140px" class="mini-textbox"  emptyText="请输入编码"  onenter="search"  />
 										</td>
 									</tr>
 								
@@ -173,8 +173,8 @@
 					</table>
 		        </div>
 		        <div class="mini-fit" >
-					<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" 
-						url="${pageContext.request.contextPath}/application/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
+					<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" showPager="true"  sizeList="[20,30,500]"  pageSize="20" 
+						url="${pageContext.request.contextPath}/report/definition/search?reportDefinitionId=4"  idField="id" >
 						<div property="columns">
 							<div type="checkcolumn" ></div>
 								<div field="appCode" width="" headerAlign="center"   align="" >租户码</div>
@@ -190,18 +190,6 @@
 								<div field="salary" width="" headerAlign="center"   align="" >薪水</div>
 								<div field="remark" width="" headerAlign="center"   align="" >备注</div>
 								<div field="birthday" width="120" headerAlign="center" allowSort="true"  align="center" >生日</div>
-							<!-- 
-							<div field="tenantName" width="80" headerAlign="center" allowSort="true" align="left" >租户</div>
-							<div field="name" width="160" headerAlign="center" allowSort="true" align="left" >系统名称</div>
-							<div field="code" width="80" headerAlign="center" allowSort="true" align="left">系统编码</div>
-							<div field="sn" width="60" headerAlign="center" allowSort="true" align="right">排序号</div>
-							<div field="remark" width="160" headerAlign="center" allowSort="true" align="left">备注</div>
-							<div field="enableDesc" width="60" headerAlign="center" allowSort="true" align="center">是否启用</div>
-							
-							<div field="gid" width="160" headerAlign="center" allowSort="true" align="left">全局编码</div>
-							<div field="createTimeDesc" width="100" headerAlign="center" allowSort="true" align="center" >创建时间</div>
-							<div field="updateTimeDesc" width="100" headerAlign="center" allowSort="true" align="center">更新时间</div>
-							 -->
 						</div>
 					</div>
 		        </div>
@@ -263,21 +251,33 @@
     	form.validate();
 		if(form.isValid() == false) return;
 		
+		    		if(data.salary == null) {
+						data.salary = "";
+					}
 	    			data.birthdayBegin =  mini.get('birthdayBegin').text;
 	    			data.birthdayEnd =  mini.get('birthdayEnd').text;
     	
-        $.ajax({
+    	grid.load(data)
+    	/*
+        $.ajax({ 
             url: "/report/definition/search",
             data: data,
             type: "post",
             success: function (text) {
-            	 
+            	
+					if(text) {
+						grid.setData(text.data)
+	            	}
             	
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert(jqXHR.responseText);
+                mini.showTips({
+                    content: jqXHR.responseText,
+                    state: 'danger',  x: "right",  y: "bottom",
+                    timeout: 10000
+                });
             }
-        });
+        });*/
     }
     
     function clear() {

@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +28,7 @@ import org.lsqt.components.db.orm.SqlStatementArgs;
 import org.lsqt.components.db.orm.ftl.FtlDbExecute;
 import org.lsqt.components.db.orm.util.ModelUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
+import org.lsqt.components.util.collection.MapUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.report.model.Column;
 import org.lsqt.report.model.ColumnQuery;
@@ -186,6 +188,9 @@ public class DefinitionServiceImpl implements DefinitionService{
 		
 		// 准备报表定义和列定义数据，因为queryData方法需要使用（因切换数据源，db。xxx方法将不在系统数据源下执行）
 		Definition model = db.getById(Definition.class, id);
+		if(model == null) {
+			return new Page.PageModel<>();
+		}
 		
 		ColumnQuery query = new ColumnQuery();
 		query.setDefinitionId(id);
@@ -206,13 +211,13 @@ public class DefinitionServiceImpl implements DefinitionService{
 			db.setCurrentConnection(switchConn); //切换到报表数据源!!!!
 			db.executePlan(() -> {
 				try {
-					rs.data =  queryData(model,formMap); //queryData方法体中所有方法已切换到报表数据源，如果中间方法有调用db.xxx方法的将不是当前系统数据库
+					rs.data = queryData(db,model,formMap); //queryData方法体中所有方法已切换到报表数据源，如果中间方法有调用db.xxx方法的将不是当前系统数据库
 				} catch (Exception e) {
 					throw new DbException(e);
 				}
 			});
 		}catch(Exception ex) {
-			ex.printStackTrace();
+			throw new DbException(ex);
 		}finally {
 			db.setCurrentConnection(con);
 		}
@@ -228,12 +233,12 @@ public class DefinitionServiceImpl implements DefinitionService{
 	 * @return 报表数据
 	 * @throws Exception
 	 */
-	private Page<Map<String, Object>> queryData(Definition def,Map<String,Object> formMap) throws Exception {
+	private Page<Map<String, Object>> queryData(Db reportDb,Definition def,Map<String,Object> formMap) throws Exception {
 		 
 		if (def != null && !formMap.isEmpty()) {
 			 
 			if (def != null) {
-				wrapFormMap(def, formMap);
+				formMap = wrapFormMap(def, formMap);
 				
 				if (String.valueOf(org.lsqt.sys.model.Column.YES).equals(def.getShowPager())) {
 					String pageIndexParam = "pageIndex";
@@ -267,23 +272,23 @@ public class DefinitionServiceImpl implements DefinitionService{
 						pageSize = 20;
 					}
 					
-					if(String.valueOf(org.lsqt.sys.model.Column.YES).equals(def.getPreventSqlInjection())) {
+					if(String.valueOf(org.lsqt.sys.model.Column.YES).equals(def.getPreventSqlInjection())) { //防SQL注入启用
 						SqlStatementArgs sqlStmt = renderSQLPrvInjectSQL(formMap,def.getReportSql());
-						return db.executeQueryForPage(sqlStmt.getSql(), pageSize, pageIndex, sqlStmt.getArgs().toArray());
+						return reportDb.executeQueryForPage(sqlStmt.getSql(),pageIndex,  pageSize, sqlStmt.getArgs().toArray());
 						
 					} else {
-						String sql = renderSQL(formMap, def.getReportSql());
-						return db.executeQueryForPage(sql, pageSize, pageIndex);
+						String sql = renderSQL(formMap, def.getReportSql()); 
+						return reportDb.executeQueryForPage(sql, pageIndex,pageSize);
 					}
 				} else {
 					List<Map<String,Object>> list = new ArrayList<>();
 					
-					if(String.valueOf(org.lsqt.sys.model.Column.YES).equals(def.getPreventSqlInjection())) {
+					if(String.valueOf(org.lsqt.sys.model.Column.YES).equals(def.getPreventSqlInjection())) { //防SQL注入启用
 						SqlStatementArgs sqlStmt = renderSQLPrvInjectSQL(formMap,def.getReportSql());
-						list = db.executeQuery(sqlStmt.getSql(), sqlStmt.getArgs().toArray());
+						list = reportDb.executeQuery(sqlStmt.getSql(), sqlStmt.getArgs().toArray());
 					} else {
 						String sql = renderSQL(formMap, def.getReportSql());
-						list = db.executeQuery(sql);
+						list = reportDb.executeQuery(sql);
 					}
 					
 					Page<Map<String,Object>> page = new Page.PageModel<>();
@@ -302,8 +307,9 @@ public class DefinitionServiceImpl implements DefinitionService{
 	 * @param formMap 表单参数（包装后的基本类型）
 	 * @param reportSQL 报表原始SQL串
 	 * @return 返回可DB执行的SQL和参数
+	 * @throws Exception 
 	 */
-	private SqlStatementArgs renderSQLPrvInjectSQL(Map<String, Object> formMap, String reportSQL) {
+	private SqlStatementArgs renderSQLPrvInjectSQL(Map<String, Object> formMap, String reportSQL) throws Exception {
 		List<String> paramNameList = new ArrayList<>();
 		List<String> expressList = new ArrayList<>(); 
 		
@@ -324,16 +330,21 @@ public class DefinitionServiceImpl implements DefinitionService{
 		List<Object> args = new ArrayList<>();
 		for (int i=0;i<expressList.size();i++) {
 			reportSQL = reportSQL.replace(expressList.get(i), "?");
-			args.add(formMap.get(expressList.get(i)));
+			
+			Object arg = formMap.get(expressList.get(i));
+			if(arg!=null) { // 去掉空的参数,
+				args.add(arg);
+			}
 		}
 		
 		SqlStatementArgs sqlStmt = new SqlStatementArgs();
-		sqlStmt.setSql(reportSQL);
+		sqlStmt.setSql(renderSQL(formMap, reportSQL));
 		sqlStmt.setArgs(args);
 		return sqlStmt;
 	}
 	
 	public static void main(String[] args) {
+		
 		List<String> paramNameList = new ArrayList<>();
 		List<String> expressList = new ArrayList<>();
 		
@@ -361,7 +372,9 @@ public class DefinitionServiceImpl implements DefinitionService{
 	 * @param definition 报表定义(需包含报表列定义)
 	 * @param formMap 原始的表单查询参数
 	 */
-	private void wrapFormMap(Definition definition,Map<String,Object> formMap) {
+	private Map<String,Object> wrapFormMap(Definition definition,Map<String,Object> formMap) {
+		Map<String,Object> wrapMap = new HashMap<>();
+		wrapMap.putAll(formMap);
 		
 		for (org.lsqt.report.model.Column e : definition.getColumnList()) {
 			Object baseValue = null;
@@ -370,9 +383,9 @@ public class DefinitionServiceImpl implements DefinitionService{
 				// 字符
 				if (org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_STRING == e.getJavaType()
 						|| org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_CHARACTER == e.getJavaType()) {
-					baseValue = ModelUtil.prepareBaseValue(String.class, formMap.get(e.getPropertyName()));
+					baseValue = ModelUtil.prepareBaseValue(String.class, blankText2Null(formMap,e.getPropertyName()));
 					
-					if(e.getLikeSearchIs()!=null) { //如果是模糊查询
+					if(baseValue!=null && e.getLikeSearchIs()!=null) { //如果是模糊查询
 						if(org.lsqt.sys.model.Column.YES == e.getLikeSearchIs()) {
 							if(e.getLikeSearchType()!=null && org.lsqt.report.model.Column.LIKE_SEARCH_TYPE_LEFT == e.getLikeSearchType()) {
 								baseValue = baseValue+"%";
@@ -383,6 +396,9 @@ public class DefinitionServiceImpl implements DefinitionService{
 							else if(e.getLikeSearchType()!=null && org.lsqt.report.model.Column.LIKE_SEARCH_TYPE_RIGHT == e.getLikeSearchType()) {
 								baseValue = "%"+baseValue;
 							}
+							else if(e.getLikeSearchType()!=null && org.lsqt.report.model.Column.LIKE_SEARCH_TYPE_NO_WRAP == e.getLikeSearchType()) {
+								//模糊查询不做包装处理
+							}
 							else {
 								throw new UnsupportedOperationException("不支持的模类查询匹配类型");
 							}
@@ -392,34 +408,54 @@ public class DefinitionServiceImpl implements DefinitionService{
 				
 				//数字
 				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_BYTE==e.getJavaType()) {
-					baseValue = ModelUtil.prepareBaseValue(Byte.class, formMap.get(e.getPropertyName()));
+					baseValue = ModelUtil.prepareBaseValue(Byte.class, blankText2Null(formMap,e.getPropertyName()));
 				}
 				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_SHORT==e.getJavaType()) {
-					baseValue = ModelUtil.prepareBaseValue(Short.class, formMap.get(e.getPropertyName()));
+					baseValue = ModelUtil.prepareBaseValue(Short.class, blankText2Null(formMap,e.getPropertyName()));
 				}
 				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_INTEGER==e.getJavaType()) {
-					baseValue = ModelUtil.prepareBaseValue(Integer.class, formMap.get(e.getPropertyName()));
+					baseValue = ModelUtil.prepareBaseValue(Integer.class, blankText2Null(formMap,e.getPropertyName()));
 				}
 				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_LONG==e.getJavaType()) {
-					baseValue = ModelUtil.prepareBaseValue(Long.class, formMap.get(e.getPropertyName()));
+					baseValue = ModelUtil.prepareBaseValue(Long.class, blankText2Null(formMap,e.getPropertyName()));
 				}
 				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_FLOAT==e.getJavaType()) {
-					baseValue = ModelUtil.prepareBaseValue(Float.class, formMap.get(e.getPropertyName()));
+					baseValue = ModelUtil.prepareBaseValue(Float.class, blankText2Null(formMap,e.getPropertyName()));
 				}
 				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_DOUBLE==e.getJavaType()) {
-					baseValue = ModelUtil.prepareBaseValue(Double.class, formMap.get(e.getPropertyName()));
+					baseValue = ModelUtil.prepareBaseValue(Double.class, blankText2Null(formMap,e.getPropertyName()));
 				}
 				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_MATH_BIGDECIMAL==e.getJavaType()) {
-					baseValue = ModelUtil.prepareBaseValue(BigDecimal.class, formMap.get(e.getPropertyName()));
+					baseValue = ModelUtil.prepareBaseValue(BigDecimal.class, blankText2Null(formMap,e.getPropertyName()));
 				}
 				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_MATH_BIGINTEGER==e.getJavaType()) {
-					baseValue = ModelUtil.prepareBaseValue(BigInteger.class, formMap.get(e.getPropertyName()));
+					baseValue = ModelUtil.prepareBaseValue(BigInteger.class, blankText2Null(formMap,e.getPropertyName()));
 				}
 				
 				//日期
 				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_UTIL_DATE==e.getJavaType()
 						|| org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_SQL_TIME==e.getJavaType()
 						|| org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_SQL_DATE==e.getJavaType()) {
+					
+					baseValue = ModelUtil.prepareBaseValue(BigInteger.class, blankText2Null(formMap,e.getPropertyName()));
+					
+					List<String> keyList = MapUtil.toKeyList(formMap);
+					for(String k: keyList) {
+						String dateBegin = e.getPropertyName().concat("Begin");
+						String dateEnd = e.getPropertyName().concat("End");
+						
+						if(k.equals(dateBegin)) {
+							baseValue = ModelUtil.prepareBaseValue(String.class, blankText2Null(formMap,e.getPropertyName().concat("Begin"))); //日期开始
+							wrapMap.put(dateBegin, baseValue);
+							break;
+						}
+						if(k.equals(dateEnd)) {
+							baseValue = ModelUtil.prepareBaseValue(String.class, blankText2Null(formMap,e.getPropertyName().concat("End"))); //日期结束
+							wrapMap.put(dateEnd, baseValue);
+							break;
+						}
+					}
+					/*
 					Object formDate = formMap.get(e.getPropertyName());
 					if (formDate != null && StringUtil.isNotBlank(formDate.toString())) {
 						try {
@@ -434,16 +470,19 @@ public class DefinitionServiceImpl implements DefinitionService{
 							ex.printStackTrace();
 						}
 					}
+					*/
 				}
 				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_SQL_TIMESTAMP==e.getJavaType()) {
-					Object formTimeStamp = formMap.get(e.getPropertyName());
-					baseValue = new java.sql.Timestamp(Long.valueOf(formTimeStamp.toString()));
+					Object formTimeStamp = blankText2Null(formMap,e.getPropertyName());
+					if(formTimeStamp!=null) {
+						baseValue = new java.sql.Timestamp(Long.valueOf(formTimeStamp.toString()));
+					}
 				}
 				
 				
 				//布尔型
 				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_BOOLEAN==e.getJavaType()) {
-					baseValue = ModelUtil.prepareBaseValue(Boolean.class, formMap.get(e.getPropertyName()));
+					baseValue = ModelUtil.prepareBaseValue(Boolean.class, blankText2Null(formMap,e.getPropertyName()));
 				}
 				
 				
@@ -456,9 +495,29 @@ public class DefinitionServiceImpl implements DefinitionService{
 					throw new UnsupportedOperationException("不支持的数据类型");
 				}
 				
-				formMap.put(e.getPropertyName(), baseValue);
+				wrapMap.put(e.getPropertyName(), baseValue);
 			}
 		}
+		
+		return wrapMap;
+	}
+	
+	/**
+	 * 表单里的空字符转null（基本类型转化时用）
+	 * @param formMap
+	 * @param propertyName
+	 * @return
+	 */
+	private Object blankText2Null(Map<String, Object> formMap, String propertyName) {
+		Object obj = formMap.get(propertyName);
+		if (obj instanceof String) {
+			String value = (String) obj;
+			value = StringUtil.escapeSql(value);
+			if (StringUtil.isBlank(value)) {
+				return null;
+			}
+		}
+		return obj;
 	}
 	
 	/**

@@ -31,4 +31,13 @@ public class ResourceServiceImpl implements ResourceService{
 	public int deleteById(Long ... ids) {
 		return db.deleteById(Resource.class, Arrays.asList(ids).toArray());
 	}
+
+	public Resource getById(Long id) {
+		 
+		return db.getById(Resource.class, id);
+	}
+
+	public List<Resource> queryForList(ResourceQuery query) {
+		return db.queryForList("queryForPage", Resource.class, query);
+	}
 }
