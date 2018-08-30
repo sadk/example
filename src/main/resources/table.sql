@@ -2089,9 +2089,9 @@ CREATE TABLE `rpt_resource` (
   `type` varchar(4) NOT NULL COMMENT '元素类型: 1=按钮 2=下拉框（单选）3=下拉框（多选）4=文本框 5=TextArae 6=File 7=日历 8=数字框 ',
   
   `event_name` varchar(200) DEFAULT NULL COMMENT '元素事件名称,如：onclick',
-  `event_function_name` varchar(200) DEFAULT NULL COMMENT '事件响应函数名称,如：onclick=事件响应函数名称',
-  `btn_before_script` text DEFAULT NULL COMMENT '按钮点击前事件触发的js函数体',
-  `btn_after_script` text DEFAULT NULL COMMENT '按钮点击后事件触发js函数体',
+  `event_function` varchar(200) DEFAULT NULL COMMENT '事件响应函数名称,如：onclick=事件响应函数名称',
+  `btn_before_script` varchar(2000) DEFAULT NULL COMMENT '按钮点击前事件触发的js函数体',
+  `btn_after_script` varchar(2000) DEFAULT NULL COMMENT '按钮点击后事件触发js函数体',
   `btn_script` text DEFAULT NULL COMMENT '按钮点击事件触发js函数体',
 
   `app_code` varchar(20) DEFAULT NULL COMMENT '租户编码',

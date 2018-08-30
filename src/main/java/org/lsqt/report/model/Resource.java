@@ -22,7 +22,11 @@ public class Resource {
 	/** 报表页面元素类型: 1=按钮 2=下拉框（单选）3=下拉框（多选）4=文本框 5=文本域  6=File 7=日历 8=数字框 */
 	private String type;
 
+	/**控件事件**/
 	private String eventName;
+	
+	/**控件事件响应函数**/
+	private String eventFunction;
 	
 	/** 按钮点击前事件触发的js函数 */
 	private String btnBeforeScript;
@@ -173,6 +177,14 @@ public class Resource {
 
 	public void setBtnScript(String btnScript) {
 		this.btnScript = btnScript;
+	}
+
+	public String getEventFunction() {
+		return eventFunction;
+	}
+
+	public void setEventFunction(String eventFunction) {
+		this.eventFunction = eventFunction;
 	}
 
 }

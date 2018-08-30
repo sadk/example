@@ -29,12 +29,12 @@
 		            <div style="padding:5px;">
 				        <table>
 							<tr id="taskInfo">
-								<td style="width:80px;" >控件名称：</td>
+								<td style="width:100px;" >控件名称：</td>
 								<td style="width:150px;">
 								 	<input name="name" id="name" class="mini-textbox" required="true"/>
 								</td>
 								
-								<td style="width:80;" align="right">编码：</td>
+								<td style="width:100;" align="right">编码：</td>
 								<td style="width:150px;">
 								 	<input id="code" name="code" class="mini-textbox" required="true"/>
 								</td>
@@ -46,10 +46,14 @@
 								</td>
 								<td>事件：</td>
 								<td>
-								 	<input name="btnScript" id="btnScript" class="mini-textbox" emptyText="如：onclick" />
+								 	<input name="eventName" id="eventName" class="mini-textbox" emptyText="如：onclick" />
 								</td>
 							</tr>
  							<tr>
+ 								<td>事件响应函数名：</td>
+								<td>
+								 	<input name="eventFunction" id="eventFunction" class="mini-textbox" emptyText="如：queryForList" />
+								</td>
  								<td>序号：</td>
 								<td>
 								 	<input name="sn" id="sn" class="mini-spinner" />
@@ -82,6 +86,10 @@
 								 	<input name="btnScript" id="btnScript" class="mini-textarea"  style="width: 100%;height: 150px;"/>
 								</td>
 							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><a href="javascript:importAjax()">导入Ajax片断</a></td>
+							</tr>
 				        </table>
 				    </div>
 				</fieldset>
@@ -97,23 +105,13 @@
 			var form = new mini.Form("edit-form1");
  
 			var definitionId = null;
- 
-			
-			function onButtonChanged(e) {
-			 	var cd = btnType.getValue();
-			 	for(var i=0;i<btnType.getData().length;i++){
-					if((cd+"") == (btnType.getData()[i].value+"")){
-						 btnCode.setValue(btnType.getData()[i].code);
-						 break;
-					}
-			 	}
-			}
+
 			
 			function SaveData() {
 				var o = form.getData();
 				form.validate();
 				if(form.isValid() == false) return;
-				console.log("defId:"+definitionId)
+				
 				console.log(o)
 				
 				o.definitionId = definitionId;
@@ -132,7 +130,7 @@
 			function SetData(data) {
 				data = mini.clone(data); //跨页面传递的数据对象，克隆后才可以安全使用
 				definitionId = data.definitionId;
-				//console.log(data);
+				console.log(data);
 				
 				
 				if(data.action == "edit") {

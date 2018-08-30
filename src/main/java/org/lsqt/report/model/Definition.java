@@ -53,8 +53,8 @@ public class Definition {
 	/**报表页面布局:1=左右布局 2=上下布局 3=左上下（用于子报表，左是高级查询区） 4=上中下（用于子报表，上是高级查询区） 5=左中右（用于子报表，左是高级查询区）*/
 	private String layout ;
 	private String showPager; //报表数据是否分页:true=分页 false=不分页
-	private Integer searchAreaWidth; //查询区域宽度
-	private Integer pageSize; //表格分页大小
+	private Integer searchAreaWidth=270; //查询区域宽度
+	private Integer pageSize=20; //表格分页大小
 	private String pageSizeList; //逗号分割
 	private Integer canExport;  //是否可以导出excel、PDF等
 	private Integer sortMode ; //排序模式 1=客户浏览器端排  2=服务器端排序

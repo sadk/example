@@ -18,6 +18,7 @@
 	          <a class="mini-button" iconCls="icon-add" plain="false" onclick="edit('add')">新增</a>
 	          <a class="mini-button" iconCls="icon-edit" plain="false" onclick="edit('edit')">编辑</a>
 	          <a class="mini-button" iconCls="icon-remove" plain="false" onclick="remove()">删除</a>
+	          <!--  -->
 	          <a class="mini-button" iconCls="icon-save" plain="false" onclick="save()">保存</a>
 	          
 	          <span class="separator"></span>
@@ -32,15 +33,19 @@
 			        <div field="name" width="100" align="left"  headerAlign="center">按钮名称
 			        	<input property="editor" class="mini-textbox" style="width:100%;"/>
 			        </div>
-			        <div field="code" width="70" align="left"  headerAlign="center">编码</div>
+			        <div field="code" width="100" align="left"  headerAlign="center">按钮编码
+			        	<input property="editor" class="mini-textbox" style="width:100%;"/>
+			        </div>
 			        <div type="comboboxcolumn" field="type" width="80" headerAlign="center" allowSort="true" align="left">控件类型
 						<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_biz_controll_type" />
 					</div>
-					<div field="eventName" width="70" align="left"  headerAlign="center">编码</div>
+					<div field="eventName" width="100" align="left"  headerAlign="center">按钮编码
+			        	<input property="editor" class="mini-textbox" style="width:100%;"/>
+			        </div>
 					<div field="btnScript" width="160" align="left"  headerAlign="center">响应脚本
 			        	<input property="editor" class="mini-textarea" style="width:100%;"/>
 			        </div>
-					<div field="remark" width="250" align="left"  headerAlign="center">备注
+					<div field="remark" width="100" align="left"  headerAlign="center">备注
 						<input property="editor" class="mini-textbox" style="width:100%;"/>
 					</div>
 			    </div>
@@ -78,8 +83,8 @@
 			mini.open({
 				url : "${pageContext.request.contextPath}/apps/default/admin/report/resource/edit.jsp",
 				title : "设置报表（按钮）控件",
-				width : 510,
-				height : 390,
+				width : 530,
+				height : 420,
 				onload : function() {
 					var iframe = this.getIFrameEl();
 					var data = {}		
@@ -87,6 +92,7 @@
 						data.id=row.id;
 					}
 					data.definitionId = definitionId; //报表ID
+					data.action = action;
 					iframe.contentWindow.SetData(data);
 				},
 				ondestroy : function(action) {
@@ -115,9 +121,8 @@
 		    var data = grid.getChanges();
             var json = mini.encode(data);
             $.ajax({
-                url: "${pageContext.request.contextPath}/act/node_button/save_or_update_json",
-                data: { data: json },
-                type: "post",
+                url: "${pageContext.request.contextPath}/report/resource/save_or_update_json",
+                data: { data: json },  type: "post",
                 success: function (text) {
                 	ajaxLoad();
                 },
@@ -142,26 +147,18 @@
 	        mini.confirm("确定删除？", "确定？",
 	                function (action) {
 	                    if (action == "ok") {
-	           	    	 $.ajax({
-	     	                url: "${pageContext.request.contextPath}/act/node_button/delete_by_ids?ids="+ids.join(",") ,
-	     	                type: "post",
-	     	                success: function () {
-	     	                	
-	     	                	var url = "${pageContext.request.contextPath}/act/node_button/list";
-	     	                	var data = {}
-	     	                	data.definitionId = definitionId;
-	     	        	    	data.taskKey = taskKey;
-	     	        	    	data.taskName = taskName;
-	     	        	    	grid.setUrl(url);
-	     	                	grid.load(data);
-	     	                	
-	     	                	mini.alert("删除成功");
-	     	                },
-	     	                error: function (jqXHR, textStatus, errorThrown) {
-	     	                    alert(jqXHR.responseText);
-	     	                }
-	     	        });
-	                    } 
+		           	    	 $.ajax({
+		     	                url: "${pageContext.request.contextPath}/report/resource/delete_by_ids?ids="+ids.join(",") ,
+		     	                type: "post",
+		     	                success: function () {
+		     	                	ajaxLoad();
+		     	                	mini.alert("删除成功");
+		     	                },
+		     	                error: function (jqXHR, textStatus, errorThrown) {
+		     	                    alert(jqXHR.responseText);
+		     	                }
+		     	        	});
+	                    }
 	                }
 	            );
 	        

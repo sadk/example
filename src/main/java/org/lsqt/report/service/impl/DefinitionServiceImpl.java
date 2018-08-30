@@ -34,6 +34,8 @@ import org.lsqt.report.model.Column;
 import org.lsqt.report.model.ColumnQuery;
 import org.lsqt.report.model.Definition;
 import org.lsqt.report.model.DefinitionQuery;
+import org.lsqt.report.model.Resource;
+import org.lsqt.report.model.ResourceQuery;
 import org.lsqt.report.service.DefinitionService;
 import org.lsqt.report.service.impl.support.FreemarkGenerateReportFile;
 import org.lsqt.sys.model.DataSource;
@@ -137,9 +139,14 @@ public class DefinitionServiceImpl implements DefinitionService{
 			query.setSortOrder("asc");
 			List<Column> list = db.queryForList("queryForPage", Column.class, query);
 			
+			ResourceQuery btnQuery = new ResourceQuery();
+			btnQuery.setDefinitionId(rpt.getId());
+			List<Resource> btnList = db.queryForList("queryForPage", Resource.class, btnQuery);
+			
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("definition", rpt);
 			map.put("columnList", list);
+			map.put("buttonList", btnList);
 			
 			
 			String layoutDir = rootDir + "/apps/default/admin/report/layout";

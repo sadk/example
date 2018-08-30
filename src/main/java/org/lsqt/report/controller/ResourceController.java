@@ -12,7 +12,7 @@ import org.lsqt.report.model.Resource;
 import org.lsqt.report.model.ResourceQuery;
 import org.lsqt.report.service.ResourceService;
 
-
+import com.alibaba.fastjson.JSON;
 
 
 @Controller(mapping={"/report/resource"})
@@ -20,9 +20,14 @@ public class ResourceController {
 	
 	@Inject private ResourceService resourceService; 
 	
+	@RequestMapping(mapping = { "/get_by_id", "/m/get_by_id" })
+	public Resource getById(Long id)  {
+		return resourceService.getById(id) ;
+	}
+	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<Resource> queryForPage(ResourceQuery query)  {
-		return resourceService.queryForPage(query); //  
+		return resourceService.queryForPage(query);
 	}
 	
 	@RequestMapping(mapping = { "/all", "/m/all" })
@@ -40,7 +45,16 @@ public class ResourceController {
 		return resourceService.saveOrUpdate(form);
 	}
 	
-	@RequestMapping(mapping = { "/delete", "/m/delete" })
+	@RequestMapping(mapping = { "/save_or_update_json", "/m/save_or_update_json" })
+	public Resource saveOrUpdate(String data) {
+		if (StringUtil.isNotBlank(data)) {
+			List<Resource> models = JSON.parseArray(data, Resource.class);
+			resourceService.saveOrUpdate(models);
+		}
+		return null;
+	}
+
+	@RequestMapping(mapping = { "/delete_by_ids", "/m/delete_by_ids" })
 	public int delete(String ids) {
 		List<Long> list = StringUtil.split(Long.class, ids, ",");
 		return resourceService.deleteById(list.toArray(new Long[list.size()]));

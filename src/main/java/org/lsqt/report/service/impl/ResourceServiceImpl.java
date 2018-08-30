@@ -7,6 +7,7 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.report.model.Resource;
 import org.lsqt.report.model.ResourceQuery;
 import org.lsqt.report.service.ResourceService;
@@ -28,6 +29,14 @@ public class ResourceServiceImpl implements ResourceService{
 		return db.saveOrUpdate(model);
 	}
 
+	public void saveOrUpdate(List<Resource> models) {
+		if(ArrayUtil.isNotBlank(models)) {
+			for(Resource m: models) {
+				db.saveOrUpdate(m);
+			}
+		}
+	}
+	
 	public int deleteById(Long ... ids) {
 		return db.deleteById(Resource.class, Arrays.asList(ids).toArray());
 	}

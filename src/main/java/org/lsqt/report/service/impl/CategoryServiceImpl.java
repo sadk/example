@@ -42,7 +42,7 @@ public class CategoryServiceImpl implements org.lsqt.report.service.CategoryServ
 			model.setPid(0L);
 		}
 		
-		db.saveOrUpdate(model);
+		db.saveOrUpdate(model);  
 		
 		// 循环向上，处理节点路径
 		List<Long> parentIds = new ArrayList<>();

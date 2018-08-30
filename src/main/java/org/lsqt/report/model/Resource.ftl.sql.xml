@@ -16,7 +16,12 @@
 	 		<column name="btn_after_script" property="btnAfterScript" text="按钮点击后事件触发js脚本"/>
 	 		
 	 		<column name="btn_script" property="btnScript" text="点击按钮时触发的事件js脚本"/>
-	 	
+	 		
+	 		<column name="event_name" property="eventName" text="事件"/>
+	 		
+	 		<column name="event_function" property="eventFunction" text="事件响应函数"/>
+	 		
+	 		
 	 		<column name="app_code" property="appCode" text="租户编码"/>
 	 	
 	 		<column name="sn" property="sn" text="排序"/>

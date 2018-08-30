@@ -17,7 +17,7 @@
    
     
 <div class="mini-splitter" style="width:100%;height:100%;">
-    <div size="240" showCollapseButton="true">
+    <div size="${definition.searchAreaWidth}" showCollapseButton="true">
 				<div id="form1"  style="padding:8px;">
 					<table>						
 						<tr>
@@ -103,6 +103,13 @@
 					<table style="width:100%;">
 						<tr>
 							<td style="width:100%;">
+								<#if btnList??>
+									<#list btnList as btn>
+										<#if btn.type?? && btn.type==1>
+											<a class="mini-button" iconCls="icon-node" <#if btn.eventName??>${btn.eventName}='<#if btn.eventFunction??>${btn.eventFunction}</#if>'</#if> >${btn.name}</a>
+										</#if>
+									</#list>
+								</#if>
 								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
 								<#if (column.canExport?? && column.canExport == 1)>
 								<span class="separator"></span>
@@ -111,15 +118,17 @@
 								<input id="exportDataType" name="exportDataType" class="mini-combobox" style="width:64px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"当前页"},{id:"1",text:"选中行"},{id:"2",text:"全部数据"}]' />
 								</#if>
 							</td>
+							<!-- 
 							<td style="white-space:nowrap;">
 		                        <input id="key2" name="key2" class="mini-textbox" emptyText="请输入关键字" style="width:150px;" onenter="search"/>   
 		                        <a class="mini-button" onclick="search()">查询</a>
 		                    </td>
+		                     -->
 						</tr>
 					</table>
 		        </div>
 		        <div class="mini-fit" >
-					<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" <#if (definition.showPager?? && definition.showPager==1)>showPager="true"  <#if definition.pageSizeList?? >sizeList="[${definition.pageSizeList}]" <#else>sizeList="[20,50,100,200,500]"</#if> <#if definition.pageSize??>pageSize="${definition.pageSize}"<#else>pageSize="20"</#if> <#else>showPager="false"</#if>
+					<div id="${definition.code}" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" <#if (definition.showPager?? && definition.showPager==1)>showPager="true"  <#if definition.pageSizeList?? >sizeList="[${definition.pageSizeList}]" <#else>sizeList="[20,50,100,200,500]"</#if> <#if definition.pageSize??>pageSize="${definition.pageSize}"<#else>pageSize="20"</#if> <#else>showPager="false"</#if>
 						url="<#noparse>${pageContext.request.contextPath}</#noparse>/report/definition/search?reportDefinitionId=${definition.id}"  idField="id" >
 						<div property="columns">
 							<div type="checkcolumn" ></div>
@@ -137,7 +146,7 @@
     
     <script type="text/javascript">
     mini.parse();
-	var grid = mini.get("datagrid1");
+	var grid = mini.get("${definition.code}");
 	var form = new mini.Form("form1");
 	
 <#list columnList as column>

@@ -14,6 +14,8 @@ public interface ResourceService {
 	
 	Page<Resource> queryForPage(ResourceQuery query);
 
+	void saveOrUpdate(List<Resource> models) ;
+	
 	Resource saveOrUpdate(Resource model);
 
 	int deleteById(Long... ids);
