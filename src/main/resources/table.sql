@@ -2165,6 +2165,23 @@ CREATE TABLE `rpt_column` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='报表字段管理';
 
 
-
+DROP TABLE IF EXISTS `rpt_export_tempalte`;
+CREATE TABLE `rpt_export_tempalte` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `definition_id` bigint(20) NOT NULL,
+  `name` varchar(500) NOT NULL COMMENT '文件名称',
+  `name_original` varchar(500) NULL COMMENT '原始文件名称',
+  `type` int(2) DEFAULT NULL COMMENT '100=导入模板 200=导出模板',
+  `path` varchar(1000) DEFAULT NULL COMMENT '(FastDFS文件)路径或自定义路径',
+ 
+  `sn` int(11) DEFAULT '0' COMMENT '排序',
+  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+  `app_code` varchar(50) DEFAULT NULL,
+  
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='报表导入导出数据模板';
 
 commit;

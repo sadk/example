@@ -17,7 +17,7 @@
    
     
 <div class="mini-splitter" style="width:100%;height:100%;">
-    <div size="240" showCollapseButton="true">
+    <div size="250" showCollapseButton="true">
 				<div id="form1"  style="padding:8px;">
 					<table>						
 						<tr>
@@ -61,7 +61,7 @@
 									<tr>
 										<td>性别：</td>
 										<td>
-											 <input id="sex" name="sex" class="mini-combobox" style="width:140px" valueField="id" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择..."    />
+											 <input id="sex" name="sex" class="mini-combobox" style="width:140px" valueField="id" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择..."  required="true"  />
 										</td>
 									</tr>
 								
@@ -83,41 +83,11 @@
 								
 								
 								
-									<tr>
-										<td>是否启用：</td>
-										<td>
-											<input id="eable" name="eable" class="mini-combobox" style="width:140px" valueField="value" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择..."  url="${pageContext.request.contextPath}/dictionary/option?code=enable_status"  />
-										</td>
-									</tr>
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
 								
 									<tr>
 										<td>薪水：</td>
 										<td>
-											 <input id="salary" name="salary" allowNull="true" value="null" style="width:140px" class="mini-spinner" minValue="-999999999999" format="n4"  />
-										</td>
-									</tr>
-								
-								
-								
-								
-								
-								
-								
-								
-									<tr>
-										<td>备注：</td>
-										<td>
-											<input id="remark" name="remark"  style="width:140px" class="mini-textbox"  emptyText="请输入备注"  onenter="search"  />
+											<input id="salary" name="salary"  style="width:140px" class="mini-textbox"  emptyText="请输入薪水"  onenter="search"  />
 										</td>
 									</tr>
 								
@@ -147,6 +117,36 @@
 								
 								
 								
+								
+								
+									<tr>
+										<td>是否启用：</td>
+										<td>
+											<input id="eable" name="eable" class="mini-combobox" style="width:140px" valueField="value" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择..."  url="${pageContext.request.contextPath}/dictionary/option?code=enable_status"  />
+										</td>
+									</tr>
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+									<tr>
+										<td>备注：</td>
+										<td>
+											<input id="remark" name="remark"  style="width:140px" class="mini-textbox"  emptyText="请输入备注"  onenter="search"  />
+										</td>
+									</tr>
+								
+								
+								
+								
+								
+								
 
 					</table>
 					<div style="text-align:center;padding:10px;">
@@ -165,31 +165,37 @@
 							<td style="width:100%;">
 								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
 							</td>
+							<!-- 
 							<td style="white-space:nowrap;">
 		                        <input id="key2" name="key2" class="mini-textbox" emptyText="请输入关键字" style="width:150px;" onenter="search"/>   
 		                        <a class="mini-button" onclick="search()">查询</a>
 		                    </td>
+		                     -->
 						</tr>
 					</table>
 		        </div>
 		        <div class="mini-fit" >
-					<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" showPager="true"  sizeList="[20,30,500]"  pageSize="20" 
-						url="${pageContext.request.contextPath}/report/definition/search?reportDefinitionId=4"  idField="id" >
+					<div id="hr_user_salary" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" showPager="true"  sizeList="[20,30,500]"  pageSize="20" 
+						url="${pageContext.request.contextPath}/report/definition/search"  idField="id" >
 						<div property="columns">
 							<div type="checkcolumn" ></div>
-								<div field="appCode" width="" headerAlign="center"   align="" >租户码</div>
-								<div field="gid" width="" headerAlign="center"   align="" >全局码</div>
-								<div field="createTime" width="" headerAlign="center"   align="" >创建时间</div>
-								<div field="updateTime" width="" headerAlign="center"   align="" >更新时间</div>
-								<div field="sn" width="" headerAlign="center"   align="" >排序号</div>
-								<div field="id" width="120" headerAlign="center"   align="center" >用户ID</div>
-								<div field="name" width="120" headerAlign="center"   align="left" >姓名</div>
-								<div field="sex" width="120" headerAlign="center" allowSort="true"  align="center" >性别</div>
-								<div field="code" width="" headerAlign="center"   align="" >编码</div>
-								<div field="eable" width="120" headerAlign="center" allowSort="true"  align="center" >是否启用</div>
-								<div field="salary" width="" headerAlign="center"   align="" >薪水</div>
-								<div field="remark" width="" headerAlign="center"   align="" >备注</div>
-								<div field="birthday" width="120" headerAlign="center" allowSort="true"  align="center" >生日</div>
+									<div field="id" width="120" headerAlign="center" visible="false"   align="center" >用户ID</div>
+									<div field="name" width="120" headerAlign="center" visible="true" allowSort="true"  align="center" >姓名</div>
+									<div type="comboboxcolumn" field="sex" width="120" headerAlign="center" visible="false" align="center" allowSort="true">性别
+											<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="id" data='[{id: 1,"name":"男"},{id: 0, "name":"女"}]' />
+									</div>
+									<div field="code" width="" headerAlign="center" visible="true"   align="" >编码</div>
+									<div field="salary" width="120" headerAlign="center" visible="true"   align="" >薪水</div>
+									<div field="birthday" width="120" headerAlign="center" visible="false" allowSort="true"  align="center" >生日</div>
+									<div type="comboboxcolumn" field="eable" width="120" headerAlign="center" visible="false" align="center" allowSort="true">是否启用
+											<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="/dictionary/option?code=enable_status" />
+									</div>
+									<div field="remark" width="" headerAlign="center" visible="true"   align="" >备注</div>
+									<div field="appCode" width="" headerAlign="center" visible="true"   align="" >租户码</div>
+									<div field="gid" width="" headerAlign="center" visible="true"   align="" >全局码</div>
+									<div field="createTime" width="" headerAlign="center" visible="true"   align="" >创建时间</div>
+									<div field="updateTime" width="" headerAlign="center" visible="true"   align="" >更新时间</div>
+									<div field="sn" width="" headerAlign="center" visible="true"   align="" >排序号</div>
 						</div>
 					</div>
 		        </div>
@@ -201,7 +207,7 @@
     
     <script type="text/javascript">
     mini.parse();
-	var grid = mini.get("datagrid1");
+	var grid = mini.get("hr_user_salary");
 	var form = new mini.Form("form1");
 	
 	var sex = mini.get("sex");
@@ -251,12 +257,10 @@
     	form.validate();
 		if(form.isValid() == false) return;
 		
-		    		if(data.salary == null) {
-						data.salary = "";
-					}
 	    			data.birthdayBegin =  mini.get('birthdayBegin').text;
 	    			data.birthdayEnd =  mini.get('birthdayEnd').text;
     	
+    	data.reportDefinitionId=4;
     	grid.load(data)
     	/*
         $.ajax({ 

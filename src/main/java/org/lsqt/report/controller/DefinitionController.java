@@ -107,6 +107,10 @@ public class DefinitionController {
 	
 	@RequestMapping(mapping = { "/search", "/m/search" }, text = "通用报表查询")
 	public Object search(Long reportDefinitionId) throws Exception {
+		if(reportDefinitionId == null) {
+			return new Page.PageModel<>();
+		}
+		
 		try{
 			Map<String, Object> formData = ContextUtil.getFormMap();
 			return definitionService.search(reportDefinitionId, formData);

@@ -8,7 +8,7 @@
   <url>http://maven.apache.org</url>
   	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring>3.2.0.RELEASE</spring>
+		<spring>5.0.8.RELEASE</spring>
 	</properties>
   <dependencies>
   
@@ -79,6 +79,7 @@
 	    <version>4.5.3</version>
 	</dependency>
 
+<!-- -->
 	<dependency>
 	    <groupId>org.csource</groupId>
 	    <artifactId>fastdfs-client-java</artifactId>
@@ -437,6 +438,14 @@
 		</dependency>
 
 		
+		<!-- 项目服务注册到eureka使用 begin: -->
+		<dependency>
+		    <groupId>com.netflix.eureka</groupId>
+		    <artifactId>eureka-client</artifactId>
+		    <version>1.9.3</version>
+		</dependency>
+		<!-- 项目服务注册到eureka使用 end!! -->
+
   </dependencies>
   
   <build>

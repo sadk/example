@@ -97,7 +97,8 @@ public class DefinitionServiceImpl implements DefinitionService{
 			Connection switchConn = ds.getConnection();
 			db.setCurrentConnection(switchConn);
 			db.executePlan(() -> {
-				List<org.lsqt.components.db.Column> list = db.getMetaDataColumn(model.getColumnSql());
+				String sqlWrap = "select * from ("+model.getColumnSql()+" ) t10000_amount limit 1"; //防止用户把所有数据load出来!!!
+				List<org.lsqt.components.db.Column> list = db.getMetaDataColumn(sqlWrap);
 				
 				if(ArrayUtil.isNotBlank(list)) {
 					List<org.lsqt.report.model.Column> reportColumnList = new ArrayList<>();

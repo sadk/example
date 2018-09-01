@@ -1,7 +1,7 @@
 package org.lsqt.cms.model;
 
 /**
- * 站点资源
+ * CMS的站点资源
  */
 public class Resource {
 

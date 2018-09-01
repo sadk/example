@@ -63,7 +63,7 @@
 												<a class="mini-button" iconCls="icon-edit" onclick="buttonConfig()">报表按钮</a>
 												
 												<a class="mini-button" iconCls="icon-ok" onclick="generateReport()">报表生成</a>
-												<a class="mini-button" iconCls="icon-upload" onclick="templateConfig()">上传导入导出模板</a>
+												<a class="mini-button" iconCls="icon-upload" onclick="templateConfig()">报表excel模板配置</a>
 												<!-- 
 												<a class="mini-button" iconCls="icon-upload"   onclick="importDefinition()">导入</a>
 												<a class="mini-button" iconCls="icon-download" onclick="exportDefinition()">导出</a>
@@ -161,6 +161,9 @@
 											<div field="name" width="100" headerAlign="center" allowSort="true">字段中文
 												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
 											</div>
+											<div field="sn" width="50" headerAlign="center" allowSort="true">排序号
+												<input property="editor" class="mini-spinner" style="width:100%;" minWidth="50" />
+											</div>
 											<div field="code" width="100" headerAlign="center" allowSort="true">DB字段
 												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
 											</div>
@@ -249,6 +252,29 @@
 				 
 			});			
  
+			function templateConfig() { 
+				var row = grid.getSelected();
+				if(!row) {
+					mini.alert("选选择一个报表");return ;
+				}
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/report/export_template/edit.jsp",
+					title : "【"+row.name+"】导入导出板模",
+					width : 500,
+					height : 400,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {
+							action : "edit",
+							definitionId: row.id
+						};
+						iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						grid.reload();
+					}
+				});
+			}
 			
 			function buttonConfig() { //报表业务按钮配置
 				var row = grid.getSelected();

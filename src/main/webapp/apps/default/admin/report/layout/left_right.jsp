@@ -129,11 +129,21 @@
 		        </div>
 		        <div class="mini-fit" >
 					<div id="${definition.code}" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" <#if (definition.showPager?? && definition.showPager==1)>showPager="true"  <#if definition.pageSizeList?? >sizeList="[${definition.pageSizeList}]" <#else>sizeList="[20,50,100,200,500]"</#if> <#if definition.pageSize??>pageSize="${definition.pageSize}"<#else>pageSize="20"</#if> <#else>showPager="false"</#if>
-						url="<#noparse>${pageContext.request.contextPath}</#noparse>/report/definition/search?reportDefinitionId=${definition.id}"  idField="id" >
+						url="<#noparse>${pageContext.request.contextPath}</#noparse>/report/definition/search"  idField="id" >
 						<div property="columns">
 							<div type="checkcolumn" ></div>
 							<#list columnList as column>
-								<div field="${column.propertyName}" width="${column.width!}" headerAlign="center" <#if (column.allowSort?? && column.allowSort == 1)>allowSort="true"</#if>  align="<#if (column.alignType?? && column.alignType == 1)>left</#if><#if (column.alignType?? && column.alignType == 2)>center</#if><#if (column.alignType?? &&column.alignType == 3)>right</#if>" >${column.name}</div>
+								<#if (column.columnCodegenType?? && column.columnCodegenType == 2)>
+									<div type="comboboxcolumn" field="${column.propertyName}" width="${column.width}" headerAlign="center" visible="<#if (column.hidde?? && column.hidde == 0)>false<#else>true</#if>" align="<#if (column.alignType?? && column.alignType == 1)>left</#if><#if (column.alignType?? && column.alignType == 2)>center</#if><#if (column.alignType?? &&column.alignType == 3)>right</#if>" <#if (column.allowSort?? && column.allowSort == 1)>allowSort="true"</#if>>${column.name}
+											<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="${column.selectorTextCols}" valueField="${column.selectorValueCols }" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
+									</div>
+								<#elseif (column.columnCodegenType?? && column.columnCodegenType == 9)>
+									<div type="comboboxcolumn" field="${column.propertyName}" width="${column.width}" headerAlign="center" visible="<#if (column.hidde?? && column.hidde == 0)>false<#else>true</#if>" align="<#if (column.alignType?? && column.alignType == 1)>left</#if><#if (column.alignType?? && column.alignType == 2)>center</#if><#if (column.alignType?? &&column.alignType == 3)>right</#if>" <#if (column.allowSort?? && column.allowSort == 1)>allowSort="true"</#if>>${column.name}
+											<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="${column.selectorTextCols}" valueField="${column.selectorValueCols }" data='${column.selectorDataFrom }' />
+									</div>
+								<#else>
+									<div field="${column.propertyName}" width="${column.width}" headerAlign="center" visible="<#if (column.hidde?? && column.hidde == 0)>false<#else>true</#if>" <#if (column.allowSort?? && column.allowSort == 1)>allowSort="true"</#if>  align="<#if (column.alignType?? && column.alignType == 1)>left</#if><#if (column.alignType?? && column.alignType == 2)>center</#if><#if (column.alignType?? &&column.alignType == 3)>right</#if>" >${column.name}</div>
+								</#if>
 							</#list>
 						</div>
 					</div>
@@ -216,6 +226,7 @@
 	    	</#if>
     	</#list>
     	
+    	data.reportDefinitionId=${definition.id};
     	grid.load(data)
     	/*
         $.ajax({ 

@@ -3,6 +3,9 @@ package org.lsqt.report.controller;
 import java.util.Collection;
 import java.util.List;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -60,4 +63,10 @@ public class ResourceController {
 		return resourceService.deleteById(list.toArray(new Long[list.size()]));
 	}
 	
+    public static void main(String[] args) throws Throwable{
+        ScriptEngineManager engineManager = new ScriptEngineManager();
+        ScriptEngine engine = engineManager.getEngineByName("nashorn");
+        engine.eval("function sum(a,b){var a= \"{'name':'张三','age':234}\" ; return a} ");
+        System.out.println(engine.eval("sum(1,2);"));
+    }
 }
