@@ -119,10 +119,10 @@ public class ModelUtil {
 				|| Double.class.isAssignableFrom(currType) 	|| double.class == currType
 				|| Byte.class.isAssignableFrom(currType) 	|| byte.class == currType
 				|| Short.class.isAssignableFrom(currType)	|| short.class == currType
-				/*
+				
 				|| BigInteger.class.isAssignableFrom(currType)
 				|| BigDecimal.class.isAssignableFrom(currType)
-				*/
+				
 				
 				//布尔型
 				|| Boolean.class.isAssignableFrom(currType) || boolean.class == currType
