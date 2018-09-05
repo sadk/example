@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.report.model.ExportTemplate" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="rpt_export_tempalte">
+			<column id="id" type="auto" property="id" text="主键" />
+	 	
+	 		<column name="definition_id" property="definitionId" text="报表定义ID"/>
+	 	
+	 		<column name="name" property="name" text="文件名称"/>
+	 	
+	 		<column name="name_original" property="nameOriginal" text="原始文件名称"/>
+	 	
+	 		<column name="type" property="type" text="100=导入模板 200=导出模板"/>
+	 	
+	 		<column name="path" property="path" text="(FastDFS文件)路径或自定义路径"/>
+	 	
+	 		<column name="sn" property="sn" text="排序"/>
+	 	
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 		<column name="app_code" property="appCode" text=""/>
+	 	
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from rpt_export_tempalte where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							name like '%${key}%'  or 
+							name_original like '%${key}%'  or 
+							remark like '%${key}%'  or 
+							app_code = '${key}' 
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.definitionId??> and definition_id = ${query.definitionId} </#if>
+					
+	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+	  						
+	  						<#if query.nameOriginal??> and name_original = '${StringUtil.escapeSql(query.nameOriginal)}' </#if>
+						
+	  						<#if query.type??> and type = ${query.type} </#if>
+					
+	  						<#if query.path??> and path = '${StringUtil.escapeSql(query.path)}' </#if>
+						
+		  					<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from rpt_export_tempalte ]]>
+	</statement>
+	
+</statements>
