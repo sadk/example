@@ -9,6 +9,11 @@ public class Column {
 	/***/
 	private Long id;
 
+	/**数据类型 1=报表展示列  2=数据导入列**/
+	private Integer dataType;
+	public static final int DATA_TYPE_REPORT_SHOW=1;
+	public static final int DATA_TYPE_IMPORT = 2;
+	
 	/** 当前列所属的报表 */
 	private Long definitionId;
 
@@ -26,6 +31,13 @@ public class Column {
 	/** DB字段类型 */
 	private String dbType;
 
+	/** DB字段长度 */
+	private Integer dbTypeLength;
+	
+	private Integer importRequired; // 1=必填 0=非必填
+
+	private String coordinate; // Excel表头单元格坐标
+	
 	/** JAVA类型 */
 	private Integer javaType;
 
@@ -495,5 +507,37 @@ public class Column {
 
 	public void setSearchRequired(Integer searchRequired) {
 		this.searchRequired = searchRequired;
+	}
+
+	public Integer getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(Integer dataType) {
+		this.dataType = dataType;
+	}
+
+	public Integer getDbTypeLength() {
+		return dbTypeLength;
+	}
+
+	public void setDbTypeLength(Integer dbTypeLength) {
+		this.dbTypeLength = dbTypeLength;
+	}
+
+	public Integer getImportRequired() {
+		return importRequired;
+	}
+
+	public void setImportRequired(Integer importRequired) {
+		this.importRequired = importRequired;
+	}
+
+	public String getCoordinate() {
+		return coordinate;
+	}
+
+	public void setCoordinate(String coordinate) {
+		this.coordinate = coordinate;
 	}
 }

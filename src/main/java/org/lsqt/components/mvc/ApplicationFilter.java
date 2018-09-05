@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -49,7 +50,9 @@ import org.lsqt.components.mvc.util.ParameterNameUtil;
 import org.lsqt.components.mvc.util.ViewResolveFtlUtil;
 import org.lsqt.components.mvc.util.ViewResolveJSONUtil;
 import org.lsqt.components.util.ExceptionUtil;
+import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
+import org.lsqt.uum.util.CodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -93,6 +96,7 @@ public class ApplicationFilter implements Filter{
 	private AnnotationUrlMappingRoute router ;
 	private org.lsqt.components.db.Db db;
 	
+	private static String LOGIN_ENABLED ;
 	
 	private void initContainer(){
 		//容器
@@ -113,6 +117,8 @@ public class ApplicationFilter implements Filter{
 		
 		//DB 暂时配置在spring里
 		db=factory.getBean(Db.class);
+		
+		
 	}
 	
 	
@@ -120,20 +126,41 @@ public class ApplicationFilter implements Filter{
 
 		String staticRes = filterConfig.getInitParameter("static");
 		if (StringUtil.isNotBlank(staticRes)) {
-			URI_STATIC.addAll(StringUtil.split(String.class, staticRes, ","));
+			URI_STATIC.addAll(StringUtil.split(String.class, staticRes, ",",true));
 		}
 		
 		String escape = filterConfig.getInitParameter("escape");
 		if (StringUtil.isNotBlank(staticRes)) {
-			URI_ESCAPE.addAll(StringUtil.split(String.class, escape, ","));
+			URI_ESCAPE.addAll(StringUtil.split(String.class, escape, ",",true));
 		}
 		
 		String anonymous = filterConfig.getInitParameter("anonymous");
 		if (StringUtil.isNotBlank(staticRes)) {
-			URI_ANONYMOUS.addAll(StringUtil.split(String.class, anonymous, ","));
+			URI_ANONYMOUS.addAll(StringUtil.split(String.class, anonymous, ",",true));
 		}
 		
-
+		LOGIN_ENABLED = filterConfig.getInitParameter("login");
+		
+		// 静态资源访问的URL
+		URI_STATIC.add(".*.ico");
+		URI_STATIC.add(".*.css");
+		URI_STATIC.add(".*.js");
+		URI_STATIC.add(".*.html");
+		URI_STATIC.add(".*.swf");
+		URI_STATIC.add(".*.png");
+		URI_STATIC.add(".*.gif");
+		URI_STATIC.add(".*.jpg");
+		URI_STATIC.add(".*.jpeg");
+		URI_STATIC.add(".*.woff2");
+		
+		URI_STATIC.add(".*.txt");
+		URI_STATIC.add(".*.xml");
+		URI_STATIC.add(".*.pdf");
+		URI_STATIC.add(".*.xls");
+		URI_STATIC.add(".*.xlsx");
+		URI_STATIC.add(".*.ppt");
+		URI_STATIC.add(".*.doc");
+		
 		executor.execute(() -> {
 			long begin = System.currentTimeMillis();
 			initContainer();
@@ -141,6 +168,7 @@ public class ApplicationFilter implements Filter{
 		});
 	}
 
+	 
 	
 	
 	
@@ -149,20 +177,16 @@ public class ApplicationFilter implements Filter{
 	 * @param request
 	 * @return
 	 */
-	protected  boolean isStatic(HttpServletRequest request){
-		final String uri = request.getRequestURL()+"";
-
-		if(uri.endsWith(".ico")) return true;
-		if(uri.endsWith(".css")) return true;
-		if(uri.endsWith(".js")) return true;
-		
-		if(uri.endsWith(".gif")) return true;
-		if(uri.endsWith(".png")) return true;
-		if(uri.endsWith(".jpg")) return true;
-		if(uri.endsWith(".swf")) return true;
-		if(uri.endsWith(request.getContextPath()+"/")) return true;
-		
-		
+	private boolean isStatic(HttpServletRequest request) {
+		if(ArrayUtil.isBlank(URI_STATIC)) {
+			return false;
+		}
+		for(String pattern: URI_STATIC) {
+			boolean isMatch = Pattern.matches(pattern, request.getRequestURI());
+			if(isMatch){
+				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -172,7 +196,16 @@ public class ApplicationFilter implements Filter{
 	 * @return
 	 */
 	protected static boolean isEscape(HttpServletRequest request){
-		//request.getRequestURI()
+		if (ArrayUtil.isBlank(URI_ESCAPE)) {
+			return false;
+		}
+
+		for (String pattern : URI_ESCAPE) {
+			boolean isMatch = Pattern.matches(pattern, request.getRequestURI());
+			if (isMatch) {
+				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -181,15 +214,67 @@ public class ApplicationFilter implements Filter{
 	 * @param request
 	 * @return
 	 */
-	protected static boolean isAnonymous(HttpServletRequest request){
-		
+	private boolean isAnonymous(HttpServletRequest request) {
+		if (ArrayUtil.isBlank(URI_ANONYMOUS)) {
+			return false;
+		}
+
+		for (String pattern : URI_ANONYMOUS) {
+			boolean isMatch = Pattern.matches(pattern, request.getRequestURI());
+			if (isMatch) {
+				return true;
+			}
+		}
 		return false;
 	}
 	
-	
-	protected boolean isLogin(HttpServletRequest request) {
+	protected boolean isLogined(HttpServletRequest request) {
+		List<String> uidList = null;
+
+		// 获取第一个cookie
+		Cookie[] cookies = request.getCookies();
+		if(cookies == null) {
+			return false;
+		}
 		
-		return true;
+		for (Cookie e : cookies) {
+			if (CodeUtil.UID.equals(e.getName())) {
+				String uidValue = CodeUtil.simpleDecode(e.getValue());
+				if (StringUtil.isNotBlank(uidValue)) {
+					uidList = StringUtil.split(uidValue, ",");
+				}
+				break;
+			}
+		}
+
+		// 获取第一个cookie
+		List<String> uid2List = null;
+		if (uidList != null) {
+			for (Cookie e : cookies) {
+				if (e.getName().equals(CodeUtil.simpleEncode(uidList.get(0) + "," + uidList.get(2)))) {
+					String value = CodeUtil.simpleDecode(e.getValue());
+					if (StringUtil.isNotBlank(value)) {
+						uid2List = StringUtil.split(value, ",");
+					}
+					break;
+
+				}
+			}
+		}
+
+		// 比较密码+时间戳相等
+		if ((uidList != null && uid2List != null) && (uidList.size() == 3 && uid2List.size() == 2)) {
+			String accPwd1 = uidList.get(1);
+			String accTime1 = uidList.get(2);
+
+			String accPwd2 = uid2List.get(0);
+			String accTime2 = uid2List.get(1);
+
+			if (accPwd1.equals(accPwd2) && accTime1.equals(accTime2)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	
@@ -239,38 +324,17 @@ public class ApplicationFilter implements Filter{
 			return ;
 		}
 		
-		if(isStatic(request)){ // 静态资源URI，直接返回到客户端
+		if(isStatic(request) || isEscape(request)){ // 静态资源URI，直接返回到客户端
 			filterChain.doFilter(request, response);
 			return ;
 		}
-		
-		if(isEscape(request)){ // 脱离MVC容器客理的URI，让后续Servlet或处理器处理
-			filterChain.doFilter(request, response);
-			return ;
+
+		if ("true".equalsIgnoreCase(LOGIN_ENABLED) || "on".equalsIgnoreCase(LOGIN_ENABLED)) { // 开启登陆验证
+			if (!isLogined(request) && !isAnonymous(request)) { // 没有登陆并且不是非匿名访问
+				response.sendRedirect(request.getContextPath() + "/login.jsp");
+				return;
+			}
 		}
-		
-		/*
-		if(isLogin(request) == false){
-			boolean isExe = false;
-			List<String> action = new ArrayList<>();
-			
-			//匿名用户访问
-			action.add("/user/login");
-			action.add("/user/save_or_update");
-			
-			for(String e: action){
-				if(request.getRequestURI().toString().endsWith(e)){
-					isExe = true;
-				}
-			}
-			
-			if(isExe == false) {
-				String path = request.getContextPath();//获得上下文的路径,得到web项目
-				String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-				response.sendRedirect(basePath+"index.html");
-				return ;
-			}
-		}*/
 		
 		//logger.info(" --- "+ request.getRequestURL());
 		setCharacterEncoding(request,response);
@@ -417,27 +481,21 @@ public class ApplicationFilter implements Filter{
 		}
 		final Result result = new Result();
 		try {
-			db.executePlan(()-> {
-				 
-					long start = System.currentTimeMillis();
-					
-					try {
-						result.invokedResult = urlMappingDef.getMethod().invoke(controller,methodInputParamValues.toArray());
-					} catch (IllegalAccessException e) {
-						
-						e.printStackTrace();
-					} catch (IllegalArgumentException e) {
-						
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						
-						e.printStackTrace();
-					}
-					
-					long end = System.currentTimeMillis();
-					logger.debug(" --- thread-id:"+Thread.currentThread().getId()+" Controller["+controller.getClass().getName()+"#"+urlMappingDef.getMethod().getName()+"("+methodInputParamValues+")] invoke cost:"+(end-start)+"(ms)");
-				
-				 
+			db.executePlan(() -> {
+
+				long start = System.currentTimeMillis();
+
+				try {
+					result.invokedResult = urlMappingDef.getMethod().invoke(controller,methodInputParamValues.toArray());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				long end = System.currentTimeMillis();
+				logger.debug(" --- thread-id:" + Thread.currentThread().getId() + " Controller["
+						+ controller.getClass().getName() + "#" + urlMappingDef.getMethod().getName() + "("
+						+ methodInputParamValues + ")] invoke cost:" + (end - start) + "(ms)");
+
 			});
 		} catch (Exception ex) {
 			throw ex;

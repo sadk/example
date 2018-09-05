@@ -272,10 +272,10 @@ insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node
 insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (58,-1, '字段的代码生成器类型','column_codegen_type','column_codegen_type', 'dictionary','1000',0,'58','字段的代码生成器类型',   'column_codegen_type',now(),now()) ;
 insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (59,58, '选择器','1','selector', 'dictionary','1000',0,'58,59','字段的代码生成器类型',   'selector',now(),now()) ;
 insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (60,58, '下拉框(字典)','2','dic', 'dictionary','1000',0,'58,60','下拉框(字典)',   'dic',now(),now()) ;
-insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (62,58, '文本框','4','text', 'dictionary','1000',0,'58,62','文本',   'text',now(),now()) ;
+insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (62,58, '文本框','4','textbox', 'dictionary','1000',0,'58,62','文本',   'text',now(),now()) ;
 insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (63,58, '整型框','5','long', 'dictionary','1000',0,'58,63','整型',   'long',now(),now()) ;
-insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (64,58, '精度型框','6','double', 'dictionary','1000',0,'58,64','精度型',   'double',now(),now()) ;
-insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (65,58, '日期框','7','date', 'dictionary','1000',0,'58,65','日期型',   'date',now(),now()) ;
+insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (64,58, '精度型框','6','doubleBox', 'dictionary','1000',0,'58,64','精度型',   'double',now(),now()) ;
+insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (65,58, '日期框','7','datePicker', 'dictionary','1000',0,'58,65','日期型',   'date',now(),now()) ;
 insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (66,58, '文件','8','file', 'dictionary','1000',0,'58,66','文件上传',   'file',now(),now()) ;
 
 
@@ -558,6 +558,54 @@ INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (231,224,'日历','7','report_biz_controll_type_date_pick','dictionary',NULL,'1','1000',0,'224,231',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (232,224,'数值框','8','report_biz_controll_type_number','dictionary',NULL,'1','1000',0,'224,232',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
 
+-- 报表业务（按钮）控件事件响应类型
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (233,-1,'报表控件事件响应类型','report_controll_event_type','report_controll_event_type','dictionary',NULL,'1','1000',0,'233',NULL,'report_controll_event_type','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (234,233,'请求URL','1','report_controll_event_type_url','dictionary',NULL,'1','1000',0,'233,234',NULL,'true','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (235,233,'发送消息(rabitMQ)','2','report_controll_event_type_msg_rabitmq','dictionary',NULL,'1','1000',0,'233,235',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+-- 报表数据导出文件类型
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (236,-1,'报表数据导出文件','report_export_file_type','report_export_file_type','dictionary',NULL,'1','1000',0,'236',NULL,'report_export_file_type','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (237,236,'excel','1','report_export_file_type_excel','dictionary',NULL,'1','1000',0,'236,237',NULL,'true','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (238,236,'word','2','report_export_file_type_word','dictionary',NULL,'0','1000',0,'236,238',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (239,236,'pdf','3','report_export_file_type_pdf','dictionary',NULL,'0','1000',0,'236,239',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (240,236,'txt','4','report_export_file_type_txt','dictionary',NULL,'0','1000',0,'236,240',NULL,'true','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+
+-- MySQL数据库类型
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (241,-1,'MySQL数据库字段类型','report_mysql_db_column_type','report_mysql_db_column_type','dictionary',NULL,'1','1000',0,'241',NULL,'report_mysql_db_column_type','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (242,241,'char','100','char','dictionary',NULL,'1','1000',1,'241,242',NULL,'char','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (243,241,'varchar','101','varchar','dictionary',NULL,'1','1000',1,'241,243',NULL,'varchar','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (244,241,'text','102','text','dictionary',NULL,'1','1000',1,'241,244',NULL,'text','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (245,241,'longtext','103','longtext','dictionary',NULL,'1','1000',1,'241,245',NULL,'longtext','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (246,241,'mediumtext','104','mediumtext','dictionary',NULL,'1','1000',1,'241,246',NULL,'mediumtext','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (247,241,'tinytext','105','tinytext','dictionary',NULL,'1','1000',1,'241,247',NULL,'tinytext','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (248,241,'int','200','int','dictionary',NULL,'1','1000',1,'241,248',NULL,'int','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (249,241,'smallint','201','smallint','dictionary',NULL,'1','1000',1,'241,249',NULL,'smallint','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (250,241,'tinyint','202','tinyint','dictionary',NULL,'1','1000',1,'241,250',NULL,'tinyint','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (251,241,'mediumint','203','mediumint','dictionary',NULL,'1','1000',1,'241,251',NULL,'mediumint','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (252,241,'bigint','204','bigint','dictionary',NULL,'1','1000',1,'241,252',NULL,'bigint','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (254,241,'float','205','float','dictionary',NULL,'1','1000',1,'241,253',NULL,'float','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (255,241,'decimal','206','decimal','dictionary',NULL,'1','1000',1,'241,254',NULL,'decimal','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (256,241,'double','207','double','dictionary',NULL,'1','1000',1,'241,256',NULL,'double','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (257,241,'numeric','208','numeric','dictionary',NULL,'1','1000',1,'241,257',NULL,'numeric','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (258,241,'date','300','date','dictionary',NULL,'1','1000',1,'241,258',NULL,'date','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (259,241,'datetime','301','datetime','dictionary',NULL,'1','1000',1,'241,259',NULL,'datetime','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (260,241,'time','302','time','dictionary',NULL,'1','1000',1,'241,260',NULL,'time','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (261,241,'timestamp','303','timestamp','dictionary',NULL,'1','1000',1,'241,261',NULL,'timestamp','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (262,241,'year','304','year','dictionary',NULL,'1','1000',1,'241,262',NULL,'year','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (263,241,'bit','400','bit','dictionary',NULL,'1','1000',1,'241,263',NULL,'bit','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (264,241,'bool','401','bool','dictionary',NULL,'1','1000',1,'241,264',NULL,'bool','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (265,241,'boolean','402','boolean','dictionary',NULL,'1','1000',1,'241,265',NULL,'boolean','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (266,241,'blob','400','blob','dictionary',NULL,'1','1000',1,'241,266',NULL,'blob','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (267,241,'longblob','401','longblob','dictionary',NULL,'1','1000',1,'241,267',NULL,'longblob','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (268,241,'mediumblob','402','mediumblob','dictionary',NULL,'1','1000',1,'241,268',NULL,'mediumblob','2018-04-23 10:57:24','2018-04-23 10:57:24');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (269,241,'tinyblob','402','tinyblob','dictionary',NULL,'1','1000',1,'241,269',NULL,'tinyblob','2018-04-23 10:57:24','2018-04-23 10:57:24');
 
 
 drop table  if exists sys_machine;
@@ -1267,6 +1315,7 @@ drop table  IF EXISTS  uum_user ;
 CREATE TABLE `uum_user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(256) DEFAULT NULL COMMENT '姓名',
+  `code` varchar(50) DEFAULT NULL COMMENT '编码',
   `login_name` varchar(50) NOT NULL COMMENT '帐号',
   `login_pwd` varchar(50) NOT NULL COMMENT '密码',
   `status` int(4) DEFAULT NULL COMMENT '状态\n 3=过期(长久没有登陆，僵尸用户) 2=锁定（可登陆不能操作） 1=激活（可登陆、可操作） 0=禁用（不可登陆） -1=已删除',
@@ -2112,12 +2161,17 @@ DROP TABLE IF EXISTS `rpt_column`;
 CREATE TABLE `rpt_column` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `definition_id` bigint(20) NOT NULL COMMENT '当前列所属的报表',
+  `data_type` int(2) NOT NULL COMMENT '1=报表展示列配 2=报表导入数据列',
   `code` varchar(50) NOT NULL COMMENT '列字段sql编码',
   `name` varchar(100) NOT NULL COMMENT '列名中文',
   `report_name` varchar(100) NOT NULL COMMENT '列名中文',
   
   `comment` varchar(200) DEFAULT NULL COMMENT '列注释',
   `db_type` varchar(50) NOT NULL COMMENT 'DB字段类型',
+  `db_type_length` int(4) NULL COMMENT 'DB字段长度',
+  `import_required` int(2) NULL COMMENT '是否导入必填1=必填  0=非必填',
+  `coordinate` varchar(10) NULL COMMENT 'Excel表头单元格坐标',
+
   `java_type` int(4)  NULL COMMENT 'JAVA类型',
   `property_name` varchar(100) NOT NULL COMMENT 'JAVA属性名',
   `primary_key` int(4)  NULL COMMENT '是否是主键：1=是，0=否',

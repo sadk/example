@@ -6,6 +6,8 @@ import org.lsqt.components.context.annotation.model.Pattern;
  * 用户表
  */
 public class User {
+	public static final String PWD_SALT = "bqjr@123"; // 暂拟用固定值做密码盐
+	
 	public static final int status_过期 = 3;
 	public static final int status_锁定 = 2;
 	public static final int status_激活 = 1;
@@ -22,6 +24,9 @@ public class User {
 
 	/** 姓名 */
 	private String name;
+	
+	/**用户编码**/
+	private String code;
 
 	/** 帐号 */
 	private String loginName;
@@ -278,6 +283,14 @@ public class User {
 			return "过期";
 		}
 		return "";
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 

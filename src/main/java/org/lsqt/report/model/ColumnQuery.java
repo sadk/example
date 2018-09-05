@@ -17,6 +17,9 @@ public class ColumnQuery {
 
 	private Long id;
 
+	/**数据类型 1=报表展示列  2=数据导入列**/
+	private Integer dataType;
+	
 	/** 当前列所属的报表 */
 	private Long definitionId;
 
@@ -452,6 +455,14 @@ public class ColumnQuery {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Integer getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(Integer dataType) {
+		this.dataType = dataType;
 	}
 
 }

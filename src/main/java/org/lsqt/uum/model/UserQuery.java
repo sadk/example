@@ -19,6 +19,8 @@ public class UserQuery {
 	/** 姓名 */
 	private String name;
 
+	private String code;
+	
 	/** 帐号 */
 	private String loginName;
 
@@ -312,6 +314,14 @@ public class UserQuery {
 
 	public void setTitleId(Long titleId) {
 		this.titleId = titleId;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }

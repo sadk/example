@@ -40,8 +40,6 @@
 					<div size="50%" showCollapseButton="true">
 						<div id="tabs1" contextMenu="#refreshTabMenu"  class="mini-tabs" activeIndex="0" style="width:100%;height:100%;" bodyStyle="padding:0;border:0;">
 						
-						
-						
 						    <div title="报表列表" refreshOnClick="true">
 						        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
 									<table style="width:100%;">
@@ -123,22 +121,21 @@
 						            </div>
 						        </div>
 						    </div>
-
-
-
 						</div>
-
 					</div>
+					
+					
+					
 					<div showCollapseButton="true">
 						<div id="tabs2" contextMenu="#refreshTabMenu" class="mini-tabs" activeIndex="0" style="width:100%;height:100%;" bodyStyle="padding:0;border:0;">
 
-							<div title="报表字段设置" refreshOnClick="true" name="tabUserReses">
+							<div title="报表展示字段配置" refreshOnClick="true" name="tabUserReses">
 								 
 								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
 									<table style="width:100%;">
 										<tr>
 											<td style="width:100%;">
-												<a class="mini-button" iconCls="icon-redo" onclick="importColumn()">导入字段</a>
+												<a class="mini-button" iconCls="icon-redo" onclick="importColumn(1)">导入字段</a>
 												<span class="separator"></span>
 												<a class="mini-button" iconCls="icon-edit" onclick="editColumn()">编辑</a>
 												<a class="mini-button" iconCls="icon-remove" onclick="removeColumn()">删除</a>
@@ -216,10 +213,99 @@
 											<div field="optLog" width="150" headerAlign="center" allowSort="true">操作日志</div>
 											<div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
 					        				<div field="updateTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>
-										</di
+										</div>
 									</div>
 								</div>
 							</div>
+							
+							<div title="报表导入字段配置" refreshOnClick="true" name="tabImportReses">
+								 
+								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+									<table style="width:100%;">
+										<tr>
+											<td style="width:100%;">
+												<input id="importType" name="importType" class="mini-combobox"  onvaluechanged="onImportTypeChanged" showNullItem="true" nullItemText="请选择导入方式..." emptyText="请选择导入方式" textField="name" valueField="value" data="[{name:'从报表展示字段复制导入',value:'1'},{name:'从报表列SQL定义解析导入',value:'2'}]" />
+												<span class="separator"></span>
+												<a class="mini-button" iconCls="icon-edit" onclick="addColumn(2)">新增</a>
+												<a class="mini-button" iconCls="icon-edit" onclick="editColumnImport(2)">编辑</a>
+												<a class="mini-button" iconCls="icon-remove" onclick="removeColumn(2)">删除</a>
+												<a class="mini-button" iconCls="icon-save" onclick="saveColumn(2)">保存</a>
+												<span class="separator"></span>
+												<a class="mini-button" iconCls="icon-reload" onclick="refreshColumn()">刷新</a>
+											</td>
+										</tr>
+									</table>
+								</div>
+								 
+								<div class="mini-fit">
+									<div id="columnGrid2" class="mini-datagrid" style="width:100%;height:100%;" idField="id" multiSelect="true" allowResize="false"
+										showEmptyText="true" emptyText="查无数据"  allowCellEdit="true" allowCellSelect="true" editNextOnEnterKey="true"  editNextRowCell="true"
+										sizeList="[5,10,20,50]" pageSize="20" allowAlternating="false" sortMode="client" showPager="true"
+										 url="${pageContext.request.contextPath}/report/column/page" >
+										<div property="columns">
+											<div type="checkcolumn" ></div>
+											<div field="reportName" width="150" headerAlign="center" allowSort="true">报表名称</div>
+											<div field="name" width="100" headerAlign="center" allowSort="true">字段中文
+												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
+											</div>
+											<div type="comboboxcolumn" field="primaryKey" width="60" headerAlign="center" align="center" allowSort="true">主键
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+											</div>
+											<div field="code" width="100" headerAlign="center" allowSort="true">DB字段
+												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
+											</div>
+											<div field="dbType" width="100" headerAlign="center" allowSort="true">DB字段类型</div>
+											<div field="dbTypeLength" width="100" headerAlign="center" allowSort="true">DB字段长度</div>
+											<div field="comment" width="100" headerAlign="center" allowSort="true">DB字段注释
+												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
+											</div>
+											<div field="propertyName" width="100" headerAlign="center" allowSort="true">实体属性名
+												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
+											</div>
+											<div type="comboboxcolumn" field="javaType" width="130" headerAlign="center" allowSort="true">JAVA字段类型
+												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=java_type" />
+											</div>
+											<div field="coordinate" width="100" headerAlign="center" allowSort="true">表头单元格坐标
+												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
+											</div>
+											
+											<div field="sn" width="50" headerAlign="center" allowSort="true">排序号
+												<input property="editor" class="mini-spinner" style="width:100%;" minWidth="50" />
+											</div>
+											
+											<!--  
+											<div type="comboboxcolumn" field="searchType" width="120" headerAlign="center" align="center" allowSort="true">是否作为查询条件
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+											</div>
+											<div type="comboboxcolumn" field="searchRequired" width="120" headerAlign="center" align="center" allowSort="true">是否查询必填
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+											</div>
+											
+											<div type="comboboxcolumn" field="columnCodegenType" width="140" headerAlign="center" align="left" allowSort="true">字段控件
+												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=column_codegen_type" />
+											</div>
+											<div field="columnCodegenFormat" width="90" headerAlign="center" align="left" allowSort="true">字段显示格式
+												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
+											</div>
+											
+											<div type="comboboxcolumn" field="oroColumnType" width="160" headerAlign="center" align="left" allowSort="true">ORO字段映射类型
+												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=oro_column_type" />
+											</div>
+											
+											<div field="columnCodegenGroupCode" width="100" headerAlign="center" align="left" allowSort="true">字段的分组编码
+												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
+											</div>
+											 
+											<div field="optLog" width="150" headerAlign="center" allowSort="true">操作日志</div>
+											<div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
+					        				<div field="updateTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>
+											-->
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							
 							
 						</div>
 					</div>
@@ -233,13 +319,15 @@
 			var tree = mini.get("tree1");
 			var grid = mini.get("definitionGrid"); 
 			var columnGrid = mini.get("columnGrid");
-			
+			var columnGrid2 = mini.get("columnGrid2");
 			
 			var versionCmb = mini.get("versionCmb");
+			var importType = mini.get("importType");
+			
 			grid.load();
 			
 	        tree.on("nodeselect", function (e) {
-	        	grid.load({ categoryId: e.node.id });
+	        	grid.load({ categoryId: e.node.id}); 
 	        });
 	        
 			grid.on("rowclick", function(e){
@@ -248,9 +336,53 @@
 				column = e.column
 		        field = e.field 
 		        */
-		        columnGrid.load({definitionId:record.id});
-				 
-			});			
+		        columnGrid.load({definitionId:record.id,dataType:1});//dataType=1 报表展示用的列，2=数据导入用的列
+		        columnGrid2.load({definitionId:record.id,dataType:2});
+			});
+			
+			function onImportTypeChanged(e) {
+				var value = importType.getValue();
+				
+				if (1 == value ) {
+					var row = grid.getSelected();
+					if(!row) {
+						mini.alert("请选择一个报表定义");
+						importType.select(0);
+						return ;
+					}
+			        mini.confirm("确认导入（注意：已有的列配置将会删除）？", "确定？",
+			                function (action) {
+			                    if (action == "ok") {
+			    					$.ajax({
+			    						'url': "${pageContext.request.contextPath}/report/column/copy_import?definitionId="+row.id,
+			    						type: 'post', dataType:'JSON',
+			    						success: function (json) {
+			    							mini.alert("导入成功");
+			    							importType.select(0);
+			    							
+			    							columnGrid2.load({definitionId: row.id,dataType: 2});
+			    						},
+			    						error : function(data) {
+			    					  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
+			    					  		mini.alert(data.responseText);
+			    						}
+			    					});
+			                    }  
+			                }
+			        );
+
+				}else if(2 == value) {
+					  mini.confirm("确认导入（注意：已有的列配置将会删除）？", "确定？",
+				                function (action) {
+				                    if (action == "ok") {
+										importColumn(2);
+				                    }
+					  			});
+					
+				} else {
+					mini.alert("请选择导入方式");
+				}
+			}
  
 			function templateConfig() { 
 				var row = grid.getSelected();
@@ -396,7 +528,7 @@
 			
 			
 			
-			function importColumn() {
+			function importColumn(dataType) {
 				var row = grid.getSelected();
 				if (!row) {
 					mini.alert("请选择一个报表");
@@ -404,11 +536,17 @@
 				}
 				
 				$.ajax({
-					'url': "${pageContext.request.contextPath}/report/definition/import_column?id="+row.id,
+					'url': "${pageContext.request.contextPath}/report/definition/import_column?id="+row.id+"&dataType="+dataType,
 					type: 'post', dataType:'JSON',
 					success: function (json) {
 						mini.alert("导入成功");
-						columnGrid.load({definitionId: row.id});
+						if(dataType == 1) {
+							columnGrid.load({definitionId: row.id,dataType: dataType});
+						}
+						if(dataType == 2) {
+							columnGrid2.load({definitionId: row.id,dataType: dataType});
+						}
+						importType.select(0);
 					},
 					error : function(data) {
 				  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
@@ -417,21 +555,38 @@
 				});
 			}
 			
-			function removeColumn() {
-				var row = columnGrid.getSelected();
-				if (!row) {
-					mini.alert("请选择一个节点设置");
+			function removeColumn(flag) {
+				var rows = [];
+				if(typeof(flag) == 'undefined' || flag == null) {
+					rows = columnGrid.getSelecteds();
+					flag = 1;
+				} else if(flag == 2) {
+					rows = columnGrid2.getSelecteds();
+				}
+				
+				if (rows.length==0) {
+					mini.alert("请至少选择一个字段");
 					return ;
 				}
-		        mini.confirm("确定删除字段【"+row.name+"】？", "确定？",
+				var idArray = new Array();
+				var nameArray = new Array();
+				for (var i=0;i<rows.length;i++) {
+					idArray.push(rows[i].id);
+					nameArray.push(rows[i].name);
+				}
+		        mini.confirm("确定删除字段【"+nameArray.join(", ")+"】？", "确定？",
 	                function (action) {
 	                    if (action == "ok") {
 	        	            $.ajax({
 	        	                url: "${pageContext.request.contextPath}/report/column/delete",
-	        	                data: { ids: row.id },
+	        	                data: { ids: idArray.join(",") },
 	        	                type: "post",
 	        	                success: function (text) {
-	        	                	columnGrid.reload();
+	        	                	if (flag ==1) {
+	        	                		columnGrid.reload();
+	        	                	}else if(flag == 2){
+	        	                		columnGrid2.reload();
+	        	                	}
 	        	                },
 	        	                error: function (jqXHR, textStatus, errorThrown) {
 	        	                    alert(jqXHR.responseText);
@@ -441,26 +596,123 @@
 	        		})
 			}
 			
-			function saveColumn () {
-				var data = columnGrid.getChanges();
+			function saveColumn (flag) {
+				var data = [];
+				if(typeof(flag) == 'undefined' || flag == null) {
+					data = columnGrid.getChanges();
+				}else if(flag == 2) {
+					data = columnGrid2.getChanges();
+				}
+				
+				if(data.length == 0) {
+					mini.alert("没有需要改变的数据");
+					return ;
+				}
+				
 	            var json = mini.encode(data);
-	            columnGrid.loading("保存中，请稍后......");
+	            
+	            if(flag == 1) {
+	            	columnGrid.loading("保存中，请稍后......");
+	            }else {
+	            	columnGrid2.loading("保存中，请稍后......");
+	            }
+	            
 	            $.ajax({
 	                url: "${pageContext.request.contextPath}/report/column/save_or_update_json",
 	                data: { data: json },
 	                type: "post",
 	                success: function (text) {
-	                	columnGrid.reload();
+	                	if(flag == 1) {
+	                		columnGrid.reload();
+	                	}else if(flag == 2) {
+	                		columnGrid2.reload();
+	                	}
 	                },
 	                error: function (jqXHR, textStatus, errorThrown) {
 	                    alert(jqXHR.responseText);
 	                }
 	            });
 			}
-			
-			function editColumn() {
-				var row = columnGrid.getSelected();
+
+			function addColumn(flag) {
+				if (typeof(flag) == 'undefined' || flag == null) {
+					flag = 1;
+					 
+				} else if (flag == 2) {
+					flag = 2;
+				}
+				var row = grid.getSelected();
 				if(!row) {
+					mini.alert("请选择一个报表");
+					return ;
+				}
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/report/column/edit_import.jsp",
+					title : "新增字段",
+					width : 540,
+					height : 320,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {
+							action : "add"
+						};
+						if(flag ==1 ) {
+							data.dataType = 1;
+						}else if(flag == 2){
+							data.dataType = 2;
+						}
+						data.definitionId = row.id;
+						data.reportName = row.name;
+						
+						iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						if(flag ==1) {
+							columnGrid.reload();
+						}else {
+							columnGrid2.reload();
+						}
+					}
+				});
+			}
+			
+			function editColumnImport() { //报表导入配置修改
+				var row = columnGrid2.getSelected();
+				if(!row) {
+					mini.alert("请选择要修改的列配置")
+					return ;
+				}
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/report/column/edit_import.jsp",
+					title : "编辑字段",
+					width : 540,
+					height : 320,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {
+							action : "editImport",
+							id : row.id
+						};
+						iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						columnGrid2.reload();
+					}
+				});
+			}
+			
+			
+			function editColumn(flag) {
+				var row = null;
+				if (typeof(flag) == 'undefined' || flag == null) {
+					flag = 1;
+					row = columnGrid.getSelected();
+				} else if (flag == 2) {
+					flag = 2;
+					row = columnGrid2.getSelected();
+				}
+				 
+				if(row == null) {
 					mini.alert("请选择一个字段");
 					return ;
 				}
@@ -478,28 +730,18 @@
 						iframe.contentWindow.SetData(data);
 					},
 					ondestroy : function(action) {
-						columnGrid.reload();
+						if(flag ==1) {
+							columnGrid.reload();
+						}else {
+							columnGrid2.reload();
+						}
 					}
 				});
 			}
-			/*
-			function onVersionValueChanged(e) {
-				var v = versionCmb.getValue();
-				var node = tree.getSelectedNode();
-				definitionKey ="";
-				if(typeof(node) !='undifiend') {
-					category = node.code;
-				}
-				console.log(node)
-				if(v==1) {
-					grid.load({isDisplayNewest : true,category:category });
-				} else {
-					grid.load({category : category });
-				}
-			}
-			*/
+
 			function refreshColumn(){
 				 columnGrid.reload();
+				 columnGrid2.reload();
 			}
 			
 			function search() {

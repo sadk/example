@@ -3,6 +3,7 @@
 	<table name="uum_user">
 			<column id="id" type="auto" property="id" text="主键" />
 	 		<column name="name" property="name" text="姓名"/>
+	 		<column name="code" property="code" text="用户编码"/>
 	 		<column name="login_name" property="loginName" text="帐号"/>
 	 		<column name="login_pwd" property="loginPwd" text="密码"/>
 	 		<column name="status" property="status" text="状态  3=过期(长久没有登陆，僵尸用户) 2=锁定（可登陆不能操作） 1=激活（可登陆、可操作） 0=禁用（不可登陆） -1=删除"/>
@@ -34,7 +35,6 @@
 					and (
 							name like '%${key}%'  or 
 							login_name like '%${key}%'  or 
-							login_pwd like '%${key}%'  or 
 							email like '%${key}%'  or 
 							mobile like '%${key}%'  or 
 							tel like '%${key}%'  or 
@@ -55,6 +55,7 @@
 				<#if query.id??> and id = ${query.id} </#if>
 				
 				<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+				<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
 				<#if query.loginName??> and login_name = '${StringUtil.escapeSql(query.loginName)}' </#if>
 				<#if query.loginPwd??> and login_pwd = '${StringUtil.escapeSql(query.loginPwd)}' </#if>
 				<#if query.status??> and status = ${query.status} </#if>

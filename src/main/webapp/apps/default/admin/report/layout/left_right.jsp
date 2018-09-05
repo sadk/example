@@ -111,11 +111,13 @@
 									</#list>
 								</#if>
 								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
-								<#if (column.canExport?? && column.canExport == 1)>
+								<#if (definition.canExport?? && definition.canExport == 1)>
 								<span class="separator"></span>
-								<a class="mini-button" iconCls="icon-download" onclick="exportData()">导出</a>
-								<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:60px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"excel"},{id:"1",text:"word"},{id:"2",text:"pdf"},{id:"3",text:"txt"}]' />
+								<a class="mini-button" iconCls="icon-download" onclick="exportData()" id="exportFile">导出</a>
+								<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:74px" value="1" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_export_file_type&enable=1" />
+								<!-- 
 								<input id="exportDataType" name="exportDataType" class="mini-combobox" style="width:64px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"当前页"},{id:"1",text:"选中行"},{id:"2",text:"全部数据"}]' />
+								 -->
 								</#if>
 							</td>
 							<!-- 
@@ -162,12 +164,40 @@
 <#list columnList as column>
 	<#if column.columnCodegenType??>
 		<#if column.columnCodegenType == 9>
+		
 	var ${column.propertyName} = mini.get("${column.propertyName}");
 	${column.propertyName}.setData(${column.selectorDataFrom});
 	
 		</#if>
 	</#if>
 </#list>
+	
+	function checkCanBeExportFile() { //检查是否有上传导出模板,如果有，则显示导出按钮
+		var data = {};
+		data.definitionId= '${definition.id}';
+		data.type = 200; //100=导入模板 200=导出模板
+        $.ajax({ 
+            url: "${pageContext.request.contextPath}/report/export_template/list",
+            data: data,
+            type: "post",
+            success: function (text) {
+             	 
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                mini.alert("请求错误："+jqXHR.responseText);
+            }
+        }); 
+	}
+	
+	function checkCanBeImportFile() { //检查是否有上传导入模板,如果有，则显示导入按钮
+		
+	}
+	
+	$(function(){
+		checkCanBeExportFile();
+		checkCanBeImportFile();
+	})
+
 	
 	function refresh() {
 		var messageid = mini.loading("Loading, Please wait ...", "Loading");
@@ -177,6 +207,91 @@
         grid.reload();
 	}
 	
+	function exportData() {
+    	var data = form.getData();
+    	form.validate();
+		if(form.isValid() == false) return;
+		
+    	<#list columnList as column>
+    	<#if column.columnCodegenType??>
+    		<#if column.columnCodegenType == 5 || column.columnCodegenType == 6>
+	    		if(data.${column.propertyName} == null) {
+					data.${column.propertyName} = "";
+				}
+    		</#if>
+    		<#if column.columnCodegenType == 7>
+    			data.${column.propertyName}Begin =  mini.get('${column.propertyName}Begin').text;
+    			data.${column.propertyName}End =  mini.get('${column.propertyName}End').text;
+    		</#if>
+    	</#if>
+		</#list>
+	
+		data.reportDefinitionId=${definition.id};
+		
+		download(data);
+		/*
+        $.ajax({ 
+            url: "${pageContext.request.contextPath}/report/definition/export",
+            data: data,
+            type: "post",
+           // dataType: "blob",
+            success: function (text) {
+            	console.log(text)
+            	 
+             	 
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                mini.showTips({
+                    content: jqXHR.responseText,
+                    state: 'danger',  x: "right",  y: "bottom",
+                    timeout: 10000
+                });
+            }
+        });*/
+	}
+	
+    function download(data) {
+ 	   loading();
+ 	   var url = '${pageContext.request.contextPath}/report/definition/export?1=1';
+   		
+ 	   var params = new Array();
+ 	    for (var i in data) {	// 获取对象属性
+ 	         if (data.hasOwnProperty(i) && typeof data[i] != "function") {
+ 	        	params.push("&"+i+"="+data[i])
+ 	          }
+ 	     }
+ 	   url = url + params.join("");
+ 	   var xhr = new XMLHttpRequest();
+ 	   xhr.open('POST', url, true);        // 也可以使用POST方式，根据接口
+ 	   xhr.responseType = "blob";    // 返回类型blob
+ 	   // 定义请求完成的处理函数，请求前也可以增加加载框/禁用下载按钮逻辑
+ 	   xhr.onload = function () {
+ 	       // 请求完成
+ 	       if (this.status === 200) {
+ 	    	   
+ 	    	   loadingClose()
+ 	    	   
+ 	           // 返回200
+ 	           var blob = this.response;
+ 	           var reader = new FileReader();
+ 	           reader.readAsDataURL(blob);    // 转换为base64，可以直接放入a表情href
+ 	           reader.onload = function (e) {
+ 	        	   
+ 	               // 转换完成，创建一个a标签用于下载
+ 	               var a = document.createElement('a');
+ 	               a.download = '${definition.name}.xlsx';
+ 	               a.href = e.target.result;
+ 	               $("body").append(a);    // 修复firefox中无法触发click
+ 	               a.click();
+ 	               $(a).remove();
+ 	           }
+ 	       }
+ 	   };
+ 	   // 发送ajax请求
+ 	   xhr.send()
+ 	}
+	
+	/*
     function onButtonEdit(e) {
         var btnEdit = this;
         mini.open({
@@ -206,7 +321,7 @@
             }
         });
     }
-     
+     */
     function search() {
     	var data = form.getData();
     	form.validate();
@@ -254,6 +369,31 @@
     
     function clear() {
     	form.clear();
+    }
+    
+    // ----------------------------
+    function loading(){
+        mini.mask({
+            el: document.body,
+            cls: 'mini-mask-loading',
+            html: '正在批量处理数据，请稍后 ...'
+        });
+	}
+	
+    function loadingAutoClose(timeout) {
+        mini.mask({
+            el: document.body,
+            cls: 'mini-mask-loading',
+            html: '正在批量处理数据，请稍后 ...'
+        });
+        
+        setTimeout(function () {
+            mini.unmask(document.body);
+        }, timeout);
+    }
+    
+    function loadingClose(){
+    	 mini.unmask(document.body);
     }
     </script>
 

@@ -3,18 +3,25 @@
 	<table name="rpt_column">
 			<column id="id" type="auto" property="id" text="主键" />
 	 	
+	 		<column name="data_type" property="dataType" text="数据类型：1=报表展示列 2=报表导入列配置"/>
+	 		
 	 		<column name="definition_id" property="definitionId" text="当前列所属的报表"/>
 	 	
 	 		<column name="code" property="code" text="列字段sql编码"/>
-	 	
+	 		
 	 		<column name="name" property="name" text="列名中文"/>
 	 	
 	 		<column name="comment" property="comment" text="列注释"/>
 	 	
 	 		<column name="db_type" property="dbType" text="DB字段类型"/>
 	 		
+	 		<column name="db_type_length" property="dbTypeLength" text="DB字段长度"/>
+	 		
+	 		<column name="import_required" property="importRequired" text="是否导入数据时必填"/>
+	 		
+	 		<column name="coordinate" property="coordinate" text="Excel表头单元格坐标"/>
+	 		
 	 		<column name="report_name" property="reportName" text="DB字段类型"/>
-	 	
 	 	
 	 		<column name="java_type" property="javaType" text="JAVA类型"/>
 	 	
@@ -107,6 +114,8 @@
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						<#if query.dataType??> and data_type = ${query.dataType} </#if>
 						
 	  						<#if query.definitionId??> and definition_id = ${query.definitionId} </#if>
 					

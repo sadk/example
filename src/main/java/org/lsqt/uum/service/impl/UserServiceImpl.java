@@ -44,6 +44,4 @@ public class UserServiceImpl implements UserService{
 		return db.deleteById(User.class, Arrays.asList(ids).toArray());
 	}
 	
-	public static void main(String args[]) {
-	}
 }

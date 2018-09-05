@@ -14,6 +14,7 @@ import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.report.model.Column;
 import org.lsqt.report.model.ColumnQuery;
 import org.lsqt.report.service.ColumnService;
+import org.lsqt.report.service.DefinitionService;
 
 import com.alibaba.fastjson.JSON;
 
@@ -24,6 +25,7 @@ import com.alibaba.fastjson.JSON;
 public class ColumnController {
 	
 	@Inject private ColumnService columnService; 
+	@Inject private DefinitionService definitionService;
 	
 	@Inject private Db db;
 	
@@ -70,4 +72,25 @@ public class ColumnController {
 		return ArrayUtil.EMPTY_LIST;
 	}
 	
+	@RequestMapping(mapping = { "/copy_import", "/m/copy_import" },text="从报表展示字段复制导入")
+	public void copyImport(Long definitionId) {
+		if (definitionId == null) {
+			return;
+		}
+
+		ColumnQuery query = new ColumnQuery();
+		query.setDefinitionId(definitionId);
+		query.setDataType(Column.DATA_TYPE_REPORT_SHOW);
+		List<Column> data = columnService.queryForList(query);
+		
+		if (ArrayUtil.isNotBlank(data)) {
+			for (Column e: data) {
+				e.setId(null);
+				e.setDataType(Column.DATA_TYPE_IMPORT);
+			}
+			String sql = String.format("delete from %s where definition_id=? and data_type=?", db.getFullTable(Column.class));
+			db.executeUpdate(sql, definitionId,Column.DATA_TYPE_IMPORT) ;
+			db.batchSave(data);
+		}
+	}
 }

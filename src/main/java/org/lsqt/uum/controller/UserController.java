@@ -2,10 +2,18 @@ package org.lsqt.uum.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.After;
@@ -27,6 +35,11 @@ import org.lsqt.uum.model.User;
 import org.lsqt.uum.model.UserQuery;
 import org.lsqt.uum.service.OrgService;
 import org.lsqt.uum.service.UserService;
+import org.lsqt.uum.util.CodeUtil;
+import org.lsqt.uum.util.HttpUtil;
+import org.lsqt.uum.util.ResourceUtil;
+
+import com.alibaba.fastjson.JSON;
 
 @SuppressWarnings("unchecked")
 class RequestAfterProcess {
@@ -52,7 +65,110 @@ public class UserController {
 	@Inject private UserService userService; 
 	@Inject private OrgService orgService;
 	@Inject private Db db;
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(mapping = { "/login", "/m/login"},text="cooke的key是(登陆账号明文-->对称加密-->16进制串表示)后的散列值，value是（密码明文+盐分 的16进制串表示）后的散列值")
+	public Result login(String username,String password) {
+		if (StringUtil.isBlank(username)) {
+			return Result.fail("登陆账号不能为空");
+		}
 
+		if (StringUtil.isBlank(password)) {
+			return Result.fail("密码不能为空");
+		}
+		
+	
+		
+		//没有开启单点登陆服务验证用户，验证本地用户
+		String ssoEnable = ResourceUtil.getValue("login.sso.enable");
+		if (!"true".equalsIgnoreCase(ssoEnable)) {
+			User user = db.executeQueryForObject("select * from uum_user where login_name=?", User.class, username);
+			if (user == null) {
+				return Result.fail(String.format("没有找到登陆账号为%s的用户", username));
+			}
+
+			String passwodEncrypted = CodeUtil.passwodEncrypt(password + User.PWD_SALT);
+
+			if (!user.getLoginPwd().equals(passwodEncrypted)) {
+				return Result.fail("密码错误");
+			}
+			
+			writeCookie(username,password);
+			return Result.ok(user);
+		}
+		
+		
+		String url = ResourceUtil.getValue("sso.login.url");
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("username", username);
+		paramMap.put("password", password);
+		String json = HttpUtil.getResponse(url, paramMap);
+
+		if (StringUtil.isBlank(json)) {
+			return Result.fail("请求链路异常");
+		}
+
+		Map<String, Object> userMap = JSON.parseObject(json, Map.class);
+		if (userMap.get("success") == null) {
+			return Result.fail("请求链路异常");
+		}
+		boolean success = Boolean.valueOf(userMap.get("success").toString());
+		if (!success) {
+			return Result.fail("登陆失败：" + userMap.get("msg"));
+		}
+		
+		
+		UserQuery query = new UserQuery();
+		query.setLoginName(username);;
+		User dbUser = db.queryForObject("queryForPage", User.class, query);
+		if (dbUser == null) {
+			// 解析对象存到本地数据库（用于菜单授权使用）
+			dbUser = new User();
+			dbUser.setLoginName(username);
+			Object name = userMap.get("userName");
+			Object code = userMap.get("userCode");
+			Object email = userMap.get("userEmail");
+			Object mobile = userMap.get("userPhone");
+			
+			dbUser.setCode(code == null ? null : code.toString());
+			dbUser.setName(name == null ? null : name.toString());
+			dbUser.setEmail(email == null ? null : email.toString());
+			dbUser.setMobile(mobile == null ? null : mobile.toString());
+			dbUser.setStatus(User.status_激活);
+			dbUser.setLoginPwd(CodeUtil.passwodEncrypt(password+User.PWD_SALT));
+			db.saveOrUpdate(dbUser);
+		}
+		
+		
+		writeCookie(username, password);
+		
+	 
+		return Result.ok("登陆成功",dbUser);
+	}
+
+
+
+	private void writeCookie(String username, String password) {
+		HttpServletResponse response = ContextUtil.getResponse();
+
+		String passwodEncrypted = CodeUtil.passwodEncrypt(password + User.PWD_SALT);
+		long currTime = System.currentTimeMillis();
+		// 第一个cookie存（uid）<==>（账号，密码，时间戳）
+		List<String> uidValue = Arrays.asList(username, passwodEncrypted, currTime + "");
+		Cookie uid = new Cookie("uid", CodeUtil.simpleEncode(StringUtil.join(uidValue)));
+		uid.setPath("/");
+		uid.setMaxAge(-1);
+		response.addCookie(uid);
+
+		// 第二个cookie存（账号，时间戳）<==> (密码，时间戳）
+		Cookie userCookie = new Cookie(CodeUtil.simpleEncode(uidValue.get(0) + "," + uidValue.get(2)),
+				CodeUtil.simpleEncode(uidValue.get(1) + "," + uidValue.get(2)));
+		userCookie.setPath("/");
+		userCookie.setMaxAge(-1);// 关闭即消失
+		response.addCookie(userCookie);
+	}
+
+	
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	@After(clazz =(RequestAfterProcess.class),method="convert",args={Object.class,Long.class,String.class})

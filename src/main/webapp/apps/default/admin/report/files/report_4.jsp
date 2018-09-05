@@ -29,118 +29,13 @@
 						</tr>
 								
 								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
 									<tr>
-										<td>姓名：</td>
+										<td>sex：</td>
 										<td>
-											<input id="name" name="name"  style="width:140px" class="mini-textbox"  emptyText="请输入姓名"  onenter="search"  />
+											<input id="sex" name="sex" class="mini-combobox" style="width:140px" valueField="value" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择..."  url="${pageContext.request.contextPath}/dictionary/option?code=sex"  />
 										</td>
 									</tr>
 								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-									<tr>
-										<td>性别：</td>
-										<td>
-											 <input id="sex" name="sex" class="mini-combobox" style="width:140px" valueField="id" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择..."  required="true"  />
-										</td>
-									</tr>
-								
-								
-								
-								
-								
-									<tr>
-										<td>编码：</td>
-										<td>
-											<input id="code" name="code"  style="width:140px" class="mini-textbox"  emptyText="请输入编码"  onenter="search"  />
-										</td>
-									</tr>
-								
-								
-								
-								
-								
-								
-								
-								
-								
-									<tr>
-										<td>薪水：</td>
-										<td>
-											<input id="salary" name="salary"  style="width:140px" class="mini-textbox"  emptyText="请输入薪水"  onenter="search"  />
-										</td>
-									</tr>
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-									<tr>
-										<td>生日(开始)：</td>
-										<td>
-											<input id="birthdayBegin" name="birthdayBegin" class="mini-datepicker" style="width:140px;" nullValue="null"  format="yyyy-MM-dd HH:mm:ss" timeFormat="HH:mm:ss"  showTime="true" showOkButton="true" showClearButton="false"  emptyText="请输入"  />
-										</td>
-									</tr>
-									<tr>
-										<td>生日(结束)：</td>
-										<td>
-											<input id="birthdayEnd" name="birthdayEnd" class="mini-datepicker" style="width:140px;" nullValue="null"  format="yyyy-MM-dd HH:mm:ss" timeFormat="HH:mm:ss"  showTime="true" showOkButton="true" showClearButton="false"  emptyText="请输入"  />
-										</td>
-									</tr>
-								
-								
-								
-								
-								
-								
-									<tr>
-										<td>是否启用：</td>
-										<td>
-											<input id="eable" name="eable" class="mini-combobox" style="width:140px" valueField="value" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择..."  url="${pageContext.request.contextPath}/dictionary/option?code=enable_status"  />
-										</td>
-									</tr>
-								
-								
-								
-								
-								
-								
-								
-								
-								
-								
-									<tr>
-										<td>备注：</td>
-										<td>
-											<input id="remark" name="remark"  style="width:140px" class="mini-textbox"  emptyText="请输入备注"  onenter="search"  />
-										</td>
-									</tr>
 								
 								
 								
@@ -164,6 +59,12 @@
 						<tr>
 							<td style="width:100%;">
 								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
+								<span class="separator"></span>
+								<a class="mini-button" iconCls="icon-download" onclick="exportData()" id="exportFile">导出</a>
+								<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:74px" value="1" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="/dictionary/option?code=report_export_file_type&enable=1" />
+								<!-- 
+								<input id="exportDataType" name="exportDataType" class="mini-combobox" style="width:64px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"当前页"},{id:"1",text:"选中行"},{id:"2",text:"全部数据"}]' />
+								 -->
 							</td>
 							<!-- 
 							<td style="white-space:nowrap;">
@@ -179,23 +80,22 @@
 						url="${pageContext.request.contextPath}/report/definition/search"  idField="id" >
 						<div property="columns">
 							<div type="checkcolumn" ></div>
-									<div field="id" width="120" headerAlign="center" visible="false"   align="center" >用户ID</div>
-									<div field="name" width="120" headerAlign="center" visible="true" allowSort="true"  align="center" >姓名</div>
-									<div type="comboboxcolumn" field="sex" width="120" headerAlign="center" visible="false" align="center" allowSort="true">性别
-											<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="id" data='[{id: 1,"name":"男"},{id: 0, "name":"女"}]' />
-									</div>
-									<div field="code" width="" headerAlign="center" visible="true"   align="" >编码</div>
-									<div field="salary" width="120" headerAlign="center" visible="true"   align="" >薪水</div>
-									<div field="birthday" width="120" headerAlign="center" visible="false" allowSort="true"  align="center" >生日</div>
-									<div type="comboboxcolumn" field="eable" width="120" headerAlign="center" visible="false" align="center" allowSort="true">是否启用
+									<div field="id" width="" headerAlign="center" visible="true"   align="" >id</div>
+									<div field="code" width="" headerAlign="center" visible="true"   align="" >code</div>
+									<div field="name" width="" headerAlign="center" visible="true"   align="" >name</div>
+									<div field="birthday" width="" headerAlign="center" visible="true"   align="" >birthday</div>
+									<div field="salary" width="" headerAlign="center" visible="true"   align="" >salary</div>
+									<div field="eable" width="" headerAlign="center" visible="true"   align="" >eable</div>
+									<div field="remark" width="" headerAlign="center" visible="true"   align="" >remark</div>
+									<div field="appCode" width="" headerAlign="center" visible="true"   align="" >app_code</div>
+									<div field="gid" width="" headerAlign="center" visible="true"   align="" >gid</div>
+									<div field="createTime" width="" headerAlign="center" visible="true"   align="" >create_time</div>
+									<div field="updateTime" width="" headerAlign="center" visible="true"   align="" >update_time</div>
+									<div field="sn" width="" headerAlign="center" visible="true"   align="" >sn</div>
+									<div type="comboboxcolumn" field="sex" width="120" headerAlign="center" visible="false" align="center" >sex
 											<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="/dictionary/option?code=enable_status" />
 									</div>
-									<div field="remark" width="" headerAlign="center" visible="true"   align="" >备注</div>
-									<div field="appCode" width="" headerAlign="center" visible="true"   align="" >租户码</div>
-									<div field="gid" width="" headerAlign="center" visible="true"   align="" >全局码</div>
-									<div field="createTime" width="" headerAlign="center" visible="true"   align="" >创建时间</div>
-									<div field="updateTime" width="" headerAlign="center" visible="true"   align="" >更新时间</div>
-									<div field="sn" width="" headerAlign="center" visible="true"   align="" >排序号</div>
+									<div field="222" width="120" headerAlign="center" visible="true"   align="" >111</div>
 						</div>
 					</div>
 		        </div>
@@ -210,9 +110,33 @@
 	var grid = mini.get("hr_user_salary");
 	var form = new mini.Form("form1");
 	
-	var sex = mini.get("sex");
-	sex.setData([{id: 1,"name":"男"},{id: 0, "name":"女"}]);
 	
+	function checkCanBeExportFile() { //检查是否有上传导出模板,如果有，则显示导出按钮
+		var data = {};
+		data.definitionId= '4';
+		data.type = 200; //100=导入模板 200=导出模板
+        $.ajax({ 
+            url: "/report/export_template/list",
+            data: data,
+            type: "post",
+            success: function (text) {
+             	 
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                mini.alert("请求错误："+jqXHR.responseText);
+            }
+        }); 
+	}
+	
+	function checkCanBeImportFile() { //检查是否有上传导入模板,如果有，则显示导入按钮
+		
+	}
+	
+	$(function(){
+		checkCanBeExportFile();
+		checkCanBeImportFile();
+	})
+
 	
 	function refresh() {
 		var messageid = mini.loading("Loading, Please wait ...", "Loading");
@@ -222,6 +146,78 @@
         grid.reload();
 	}
 	
+	function exportData() {
+    	var data = form.getData();
+    	form.validate();
+		if(form.isValid() == false) return;
+		
+	
+		data.reportDefinitionId=4;
+		
+		download(data);
+		/*
+        $.ajax({ 
+            url: "/report/definition/export",
+            data: data,
+            type: "post",
+           // dataType: "blob",
+            success: function (text) {
+            	console.log(text)
+            	 
+             	 
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                mini.showTips({
+                    content: jqXHR.responseText,
+                    state: 'danger',  x: "right",  y: "bottom",
+                    timeout: 10000
+                });
+            }
+        });*/
+	}
+	
+    function download(data) {
+ 	   loading();
+ 	   var url = '/report/definition/export?1=1';
+   		
+ 	   var params = new Array();
+ 	    for (var i in data) {	// 获取对象属性
+ 	         if (data.hasOwnProperty(i) && typeof data[i] != "function") {
+ 	        	params.push("&"+i+"="+data[i])
+ 	          }
+ 	     }
+ 	   url = url + params.join("");
+ 	   var xhr = new XMLHttpRequest();
+ 	   xhr.open('POST', url, true);        // 也可以使用POST方式，根据接口
+ 	   xhr.responseType = "blob";    // 返回类型blob
+ 	   // 定义请求完成的处理函数，请求前也可以增加加载框/禁用下载按钮逻辑
+ 	   xhr.onload = function () {
+ 	       // 请求完成
+ 	       if (this.status === 200) {
+ 	    	   
+ 	    	   loadingClose()
+ 	    	   
+ 	           // 返回200
+ 	           var blob = this.response;
+ 	           var reader = new FileReader();
+ 	           reader.readAsDataURL(blob);    // 转换为base64，可以直接放入a表情href
+ 	           reader.onload = function (e) {
+ 	        	   
+ 	               // 转换完成，创建一个a标签用于下载
+ 	               var a = document.createElement('a');
+ 	               a.download = '用户薪资表.xlsx';
+ 	               a.href = e.target.result;
+ 	               $("body").append(a);    // 修复firefox中无法触发click
+ 	               a.click();
+ 	               $(a).remove();
+ 	           }
+ 	       }
+ 	   };
+ 	   // 发送ajax请求
+ 	   xhr.send()
+ 	}
+	
+	/*
     function onButtonEdit(e) {
         var btnEdit = this;
         mini.open({
@@ -251,14 +247,12 @@
             }
         });
     }
-     
+     */
     function search() {
     	var data = form.getData();
     	form.validate();
 		if(form.isValid() == false) return;
 		
-	    			data.birthdayBegin =  mini.get('birthdayBegin').text;
-	    			data.birthdayEnd =  mini.get('birthdayEnd').text;
     	
     	data.reportDefinitionId=4;
     	grid.load(data)
@@ -286,6 +280,31 @@
     
     function clear() {
     	form.clear();
+    }
+    
+    // ----------------------------
+    function loading(){
+        mini.mask({
+            el: document.body,
+            cls: 'mini-mask-loading',
+            html: '正在批量处理数据，请稍后 ...'
+        });
+	}
+	
+    function loadingAutoClose(timeout) {
+        mini.mask({
+            el: document.body,
+            cls: 'mini-mask-loading',
+            html: '正在批量处理数据，请稍后 ...'
+        });
+        
+        setTimeout(function () {
+            mini.unmask(document.body);
+        }, timeout);
+    }
+    
+    function loadingClose(){
+    	 mini.unmask(document.body);
     }
     </script>
 

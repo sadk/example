@@ -6,7 +6,6 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.lsqt.components.context.annotation.model.Pattern;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -14,14 +13,15 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.context.impl.util.CacheReflect;
 import org.lsqt.components.mvc.spi.UrlMappingDefinition;
 import org.lsqt.components.util.lang.StringUtil;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.serializer.ValueFilter;
 
-
 public class ViewResolveJSONUtil {
-	private  static final Logger log = Logger.getLogger(ViewResolveJSONUtil.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(ViewResolveJSONUtil.class);
 	
 	private static final DateValueFilter DATE_VALUE_FILTER = new DateValueFilter() ;
 	
@@ -50,7 +50,12 @@ public class ViewResolveJSONUtil {
 				out.write(json.getBytes("UTF-8"));
 			}
 		} else {
-			out.write("".getBytes("UTF-8"));
+			try{
+				out.write("".getBytes("UTF-8"));
+			}catch(Exception ex){
+				// 如果有controller控制关闭
+				log.debug(out.getClass().getName()+"#write invoked; The output stream has been shut down in advance");
+			}
 		}
 	}
 	

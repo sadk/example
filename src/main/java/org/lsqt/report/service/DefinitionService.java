@@ -21,8 +21,10 @@ public interface DefinitionService {
 	
 	/**
 	 * 导入报表字段
+	 * @param id 报表定义Id
+	 * @param dataType 数据类型： 1=报表展示用， 2=报表导入用
 	 */
-	void importColumn(Long id);
+	void importColumn(Long id,Integer dataType);
 	
 	/**
 	 * 生成报表文件（一般为jsp文件）

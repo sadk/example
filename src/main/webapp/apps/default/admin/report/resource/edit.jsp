@@ -50,9 +50,9 @@
 								</td>
 							</tr>
  							<tr>
- 								<td>事件响应函数名：</td>
+ 								<td>事件响应类型：</td>
 								<td>
-								 	<input name="eventFunction" id="eventFunction" class="mini-textbox" emptyText="如：queryForList" />
+								 	<input id="type" name="type" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_controll_event_type" required="true"/>
 								</td>
  								<td>序号：</td>
 								<td>
@@ -85,10 +85,6 @@
 								<td colspan="3">
 								 	<input name="btnScript" id="btnScript" class="mini-textarea"  style="width: 100%;height: 150px;"/>
 								</td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td><a href="javascript:importAjax()">导入Ajax片断</a></td>
 							</tr>
 				        </table>
 				    </div>

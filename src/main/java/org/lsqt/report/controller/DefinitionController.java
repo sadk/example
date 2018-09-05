@@ -1,10 +1,13 @@
 package org.lsqt.report.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
@@ -15,7 +18,10 @@ import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.report.model.Definition;
 import org.lsqt.report.model.DefinitionQuery;
+import org.lsqt.report.model.ExportTemplate;
+import org.lsqt.report.model.ExportTemplateQuery;
 import org.lsqt.report.service.DefinitionService;
+import org.lsqt.report.service.ExportTemplateService;
 import org.lsqt.report.service.impl.support.SelectorData;
 import org.lsqt.report.service.impl.support.SelectorDataFromJSArray;
 import org.lsqt.report.service.impl.support.SelectorDataFromSQL;
@@ -25,6 +31,8 @@ import org.lsqt.report.service.impl.support.SelectorDataFromUrlXml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.jxls.transformer.XLSTransformer;
+
 
 
 
@@ -33,6 +41,7 @@ public class DefinitionController {
 	private static final Logger log = LoggerFactory.getLogger(DefinitionController.class);
 	
 	@Inject private DefinitionService definitionService; 
+	@Inject private ExportTemplateService exportTemplateService;
 	
 	@Inject private Db db;
 	
@@ -69,8 +78,8 @@ public class DefinitionController {
 	}
 	
 	@RequestMapping(mapping = { "/import_column", "/m/import_column" },text="导入报表的列")
-	public void importColumn(Long id) {
-		definitionService.importColumn(id);
+	public void importColumn(Long id,Integer dataType) {
+		definitionService.importColumn(id,dataType);
 	}
 	
 	
@@ -119,4 +128,39 @@ public class DefinitionController {
 			return e.getMessage();
 		}
 	}
+	
+	@RequestMapping(mapping = { "/export", "/m/export" },text="导出报表数据")
+	public void export(Long reportDefinitionId) throws Exception {
+		Definition def = definitionService.getById(reportDefinitionId);
+		if(def!=null) {
+			ExportTemplateQuery query = new ExportTemplateQuery();
+			query.setDefinitionId(reportDefinitionId);
+			query.setType(ExportTemplate.TYPE_EXPORT);
+			ExportTemplate model = exportTemplateService.queryForObject(query);
+			
+			if(model!=null) {
+				HttpServletRequest request = ContextUtil.getRequest();
+				String root = request.getServletContext().getRealPath("/");
+				String srcFilePath =  root + model.getPath();
+			 
+				Page<Map<String, Object>> data = definitionService.search(reportDefinitionId, ContextUtil.getFormMap());
+				Map<String,Object> ct = new HashMap<>();
+				ct.put("data",data.getData());
+				
+				XLSTransformer transformer = new XLSTransformer();  
+				
+				String webFilePath="/upload/rpt_"+reportDefinitionId+".xlsx";
+				String destFilePath= root + webFilePath;
+				transformer.transformXLS(srcFilePath,ct,destFilePath);
+				
+				Util4Download.download(webFilePath, def.getName());
+				
+				File destFile = new File(destFilePath);
+				if(destFile.exists()) {
+					destFile.delete();
+				}
+			}
+		}
+	}
+	
 }

@@ -46,10 +46,16 @@
     <filter-name>applicationFilter</filter-name>
     <filter-class>org.lsqt.components.mvc.ApplicationFilter</filter-class>
     
+     <!-- 指定是否需要登陆 -->
+    <init-param>
+      <param-name>login</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    
     <!-- 指定静态资源加速 -->
     <init-param>
       <param-name>static</param-name>
-      <param-value>/scripts/*</param-value>
+      <param-value>/scripts/.*</param-value>
     </init-param>
     
     <!-- 脱离MVC容器管理的URL,例如自定义的Servlet地址 -->
@@ -64,8 +70,9 @@
     <init-param>
       <param-name>anonymous</param-name>
       <param-value>
-	      /user/login,
-	      /user/save_or_update
+          /login.jsp.*,
+	      /user/login.*,
+	      /user/save_or_update.*
       </param-value>
     </init-param>
   </filter>

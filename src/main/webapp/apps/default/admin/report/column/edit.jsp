@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>报表字段管理</title>
+		<title>报表显示字段编辑</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
@@ -24,6 +24,7 @@
 			<input id="definitionId" name="definitionId" class="mini-hidden" />
 			<input id="reportName" name="reportName" class="mini-hidden" />
 			<input id="optLog" name="optLog" class="mini-hidden" />
+			<input id="dataType" name="dataType" class="mini-hidden" />
 			<div style="padding:4px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
 		            <legend>DB字段</legend>
@@ -32,12 +33,12 @@
 							<tr>
 								<td style="width:120px;">中文字段名：</td>
 								<td style="width:150px;">
-								 	<input id="name" name="name" class="mini-textbox"/>
+								 	<input id="name" name="name" class="mini-textbox" required="true"/>
 								</td>
 								
 								<td style="width:120px;">DB字段类型：</td>
 								<td style="width:150px;">
-								 	<input id="dbType" name="dbType"  class="mini-textbox" enabled="false" />
+								 	<input id="dbType" name="dbType" required="true" class="mini-combobox" enabled="false" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/dictionary/option?code=report_mysql_db_column_type" />
 								</td>
 							</tr>
 							<tr>
@@ -61,12 +62,12 @@
 							<tr>
 								<td style="width:120px;">DB字段：</td>
 								<td style="width:150px;">
-								 	<input name="code" id="code" class="mini-textbox" enabled="false" />
+								 	<input name="code" id="code" class="mini-textbox" enabled="false" required="true"/>
 								</td>
 								
 								<td style="width:120px;">实体属性名：</td>
 								<td style="width:150px;">
-								 	<input id="propertyName" name="propertyName" onvaluechanged="onPropertyNameValueChanged" class="mini-textbox"/>
+								 	<input id="propertyName" name="propertyName" onvaluechanged="onPropertyNameValueChanged" class="mini-textbox" required="true"/>
 								</td>
 							</tr>
 							<tr>
@@ -138,12 +139,18 @@
 								</td>
 							</tr>
 							<tr>
+								<td>是否查询必填：</td>
+								<td >
+								 	<input id="searchRequired" name="searchRequired" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+								</td>
 								<td>序号:</td>
 								<td><input name="sn" id="sn" class="mini-spinner" /></td>
+								<!-- 
 								<td>备注：</td>
 								<td >
 								 	<input name="remark" id="remark" class="mini-textbox" />
 								</td>
+								 -->
 							</tr>
 							
 				        </table>
@@ -703,7 +710,11 @@
 			//标准方法接口定义
 			function SetData(data) {
 				data = mini.clone(data); //跨页面传递的数据对象，克隆后才可以安全使用
-				
+				if (data.action == 'add') {
+					form.setData(data);
+					mini.get("code").enable();
+					mini.get("dbType").enable();
+				}
 				 if(data.action == "edit" || data.action=='view') {
 					$.ajax({
 						url : "${pageContext.request.contextPath}/report/column/get_by_id?id=" + data.id,

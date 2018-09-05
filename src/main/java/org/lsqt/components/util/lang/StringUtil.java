@@ -142,22 +142,22 @@ public class StringUtil {
 		
 	}
 	
-	/**
-	 * 字符串分割成数组
-	 * @param type
-	 * @param text
-	 * @param splitor 
-	 * @return
-	 * @throws RuntimeException
-	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> List<T> split(Class<T> type,String text,String splitor) throws RuntimeException{
+	public static <T> List<T> split(Class<T> type,String text,String splitor,boolean isTrim) throws RuntimeException{
 		if (text == null || "".equals(text)) return new ArrayList<>(0);
 		
 		String [] strArr = text.split(splitor);
 		
 		if (String.class.isAssignableFrom(type)) {
-			return new ArrayList(Arrays.asList(strArr));
+			if(isTrim) {
+				List rs = new ArrayList();
+				for(String e: strArr) {
+					rs.add(e.trim());
+				}
+				return rs;
+			}else {
+				return new ArrayList(Arrays.asList(strArr));
+			}
 		}  
 		
 		if (Byte.class.isAssignableFrom(type) || byte.class.isAssignableFrom(type)) {
@@ -225,6 +225,18 @@ public class StringUtil {
 		}
 		
 		throw new UnsupportedOperationException("unsupport type: "+type);
+	}
+	
+	/**
+	 * 字符串分割成数组
+	 * @param type
+	 * @param text
+	 * @param splitor 
+	 * @return
+	 * @throws RuntimeException
+	 */
+	public static <T> List<T> split(Class<T> type,String text,String splitor) throws RuntimeException{
+		return split(type, text, splitor, false);
 	}
 	
 	

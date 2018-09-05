@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,8 +83,11 @@ public class DefinitionServiceImpl implements DefinitionService{
 		return db.getById(Definition.class, id);
 	}
 
-	public void importColumn(Long id) {
-		db.executeUpdate(String.format("delete from %s where definition_id=?",db.getFullTable(Column.class)), id);
+	public void importColumn(Long id,Integer dataType) {
+		Objects.requireNonNull(id);
+		Objects.requireNonNull(dataType);
+		
+		db.executeUpdate(String.format("delete from %s where definition_id=? and data_type = ? ",db.getFullTable(Column.class)), id,dataType);
 		
 		Definition model = db.getById(Definition.class, id);
 		DataSource dsModel = db.getById(DataSource.class, model.getDatasourceId());
@@ -104,6 +108,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 					List<org.lsqt.report.model.Column> reportColumnList = new ArrayList<>();
 					for(org.lsqt.components.db.Column e: list) {
 						org.lsqt.report.model.Column rptColumn = new org.lsqt.report.model.Column();
+						rptColumn.setDataType(dataType);
 						rptColumn.setDbType(e.getDbType());
 						rptColumn.setDefinitionId(model.getId());
 						rptColumn.setJavaType(e.getJavaType());
