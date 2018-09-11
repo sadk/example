@@ -35,7 +35,7 @@ public class Column {
 	private String dbType;
 
 	/** DB字段长度 */
-	private Integer dbTypeLength;
+	private String dbTypeLength;
 	
 	private Integer importRequired; // 1=必填 0=非必填
 
@@ -535,14 +535,6 @@ public class Column {
 		this.dataType = dataType;
 	}
 
-	public Integer getDbTypeLength() {
-		return dbTypeLength;
-	}
-
-	public void setDbTypeLength(Integer dbTypeLength) {
-		this.dbTypeLength = dbTypeLength;
-	}
-
 	public Integer getImportRequired() {
 		return importRequired;
 	}
@@ -573,5 +565,13 @@ public class Column {
 
 	public void setAllowExport(Integer allowExport) {
 		this.allowExport = allowExport;
+	}
+
+	public String getDbTypeLength() {
+		return dbTypeLength;
+	}
+
+	public void setDbTypeLength(String dbTypeLength) {
+		this.dbTypeLength = dbTypeLength;
 	}
 }

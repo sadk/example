@@ -20,7 +20,7 @@
 									         	<tr>
 									                <td>导入记要:</td>
 									            	<td colspan="3"> 
-									            		<input name="remark" id="remark" class="mini-textbox" width="320px" emptyText="请输入导入记要" requried="true"/>
+									            		<input name="remark" id="remark" class="mini-textbox" width="320px" emptyText="请输入导入记要" required="true"/>
 									            	</td>
 									            	
 									            </tr>
@@ -121,6 +121,7 @@
 		
 		function clearFileImport() {
 			form.reset();
+			grid.clearRows();
 		}
 		
 	    function startUpload(id) {
@@ -162,6 +163,11 @@
 			var data = form.getData();
 			form.validate();
 			if(form.isValid() == false) return;
+			
+			if(grid.getData() == null || grid.getData().length == 0) {
+				mini.alert("请选预览数据,再执行导入");
+				return ;
+			}
 			
 			console.log(definitionId)
 			data.definitionId = definitionId;

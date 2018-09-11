@@ -15,7 +15,7 @@
 	 	
 	 		<column name="db_type" property="dbType" text="DB字段类型"/>
 	 		
-	 		<column name="db_type_length" property="dbTypeLength" text="DB字段长度"/>
+	 		<column name="db_type_length" property="dbTypeLength" text="DB字段长度:如decimal保留两位小数，填 10,2"/>
 	 		
 	 		<column name="import_required" property="importRequired" text="是否导入数据时必填"/>
 	 		

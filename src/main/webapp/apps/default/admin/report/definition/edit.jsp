@@ -203,7 +203,10 @@
 									<input id="importDatasourceId" name="importDatasourceId" class="mini-buttonedit" onbuttonclick="onImportDatasourceButtonEdit" emptyText="数据源"/>   
 									<input id="importDatasourceName" name="importDatasourceName" class="mini-hidden" />   
 								</td>
-								 
+								<td>副本存储模式：</td>
+								<td>
+									<input name="importDataStorePrecision" id="importDataStorePrecision" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rpt_imported_data_store_precision" />
+								</td>
 							</tr>
 				        </table>
 		            </div>

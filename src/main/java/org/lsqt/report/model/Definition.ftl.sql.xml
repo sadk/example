@@ -11,6 +11,7 @@
 
 	 		<column name="import_datasource_id" property="importDatasourceId" text="报表志入数据的数据源Id"/>
 	 		<column name="import_datasource_name" property="importDatasourceName" text="报表志入数据的数据源名称"/>
+	 		<column name="import_data_stroe_precision" property="importDataStorePrecision" text="报表数据导入数据副本存储精度模式 1=全字段按字符存储  2=按导入定义字段类型存储"/>
 
 	 		<column name="name" property="name" text="定义全称"/>
 	 	

@@ -50,13 +50,13 @@
 								</td>
 								<td >DB字段类型：</td>
 								<td >
-								 	<input id="dbType" name="dbType" required="true" class="mini-combobox" enabled="false" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/dictionary/option?code=report_mysql_db_column_type" />
+								 	<input id="dbType" name="dbType" required="true"  onvaluechanged="onDbTypeValueChanged" class="mini-combobox" enabled="false" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/dictionary/option?code=report_mysql_db_column_type&enable=1" />
 								</td>
 							</tr> 
 							<tr>
 								<td>DB字段长度：</td>
 								<td>
-								 	<input id="dbTypeLength" name="dbTypeLength" class="mini-spinner" allowNull="true" value="null" />
+								 	<input id="dbTypeLength" name="dbTypeLength" class="mini-textbox"   />
 								</td>
 								<td>DB字段注释：</td>
 								<td>
@@ -712,6 +712,53 @@
 				selectorDataFrom.setValue("");
 			}
 			
+			function onDbTypeValueChanged (e) {
+				var sender = e.sender;
+				var value = sender.value; //数据库字段类型
+				
+				var typeLength = mini.get("dbTypeLength"); // 数据库字段长度
+				typeLength.setValue(null); //默认不需要填长度 ,比如 text、datetime等
+
+				//db字段类型，需要输入长度的，要做校验,默认的长度: varchar(20),int(11),smallint(6),tinyint(4), mediumint(9), bigint(20),decimal(10,0), year(4),bit(1)
+				var needLengthColumn=["varchar","int","smallint","tinyint","mediumint","bigint","decimal","year","bit"];
+				for (var i=0;i<needLengthColumn.length;i++) {
+					var curr = needLengthColumn[i];
+					if (value == curr) {
+						//if (typeLength == null || typeLength == '' ||  (typeLength +'') == '0') {
+							if ('varchar' == curr) {
+								typeLength.setValue("20");
+							} 
+							else  if ("int" == curr) {
+								typeLength.setValue("11");
+							}
+							else  if ("smallint" == curr) {
+								typeLength.setValue("6");
+							}
+							
+							else  if ("tinyint" == curr) {
+								typeLength.setValue("4");
+							}
+							else  if ("mediumint" == curr) {
+								typeLength.setValue("9");
+							}
+							else  if ("bigint" == curr) {
+								typeLength.setValue("20");
+							}
+							else  if ("decimal" == curr) {
+								typeLength.setValue("10,2");
+							}
+							else  if ("year" == curr) {
+								typeLength.setValue("4");
+							}
+							else  if ("bit" == curr) {
+								typeLength.setValue("1");
+							}
+							 
+						//}
+						break;
+					}
+				}
+			}
 			
 			function SaveData() {
 				var o = form.getData();

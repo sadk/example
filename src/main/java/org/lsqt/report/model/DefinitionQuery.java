@@ -30,7 +30,9 @@ public class DefinitionQuery {
 	/** 定义简称 */
 	private String shortName;
 
-
+	/** 报表数据导入数据副本存储精度模式 1=全字段按字符存储  2=按导入定义字段类型存储 **/
+	private Integer importDataStorePrecision;
+	
 	/** 定义编码 */
 	private String code;
 
@@ -207,6 +209,14 @@ public class DefinitionQuery {
 
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
+	}
+
+	public Integer getImportDataStorePrecision() {
+		return importDataStorePrecision;
+	}
+
+	public void setImportDataStorePrecision(Integer importDataStorePrecision) {
+		this.importDataStorePrecision = importDataStorePrecision;
 	}
 
 }
