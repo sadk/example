@@ -108,6 +108,11 @@ public class DefinitionServiceImpl implements DefinitionService{
 					List<org.lsqt.report.model.Column> reportColumnList = new ArrayList<>();
 					for(org.lsqt.components.db.Column e: list) {
 						org.lsqt.report.model.Column rptColumn = new org.lsqt.report.model.Column();
+						if("id".equalsIgnoreCase(e.getPropertyName()) || "pk".equalsIgnoreCase(e.getPropertyName())) {
+							rptColumn.setPrimaryKey(org.lsqt.report.model.Column.YES);
+						} else {
+							rptColumn.setPrimaryKey(org.lsqt.report.model.Column.NO);
+						}
 						rptColumn.setDataType(dataType);
 						rptColumn.setDbType(e.getDbType());
 						rptColumn.setDefinitionId(model.getId());
@@ -116,9 +121,19 @@ public class DefinitionServiceImpl implements DefinitionService{
 						rptColumn.setCode(e.getName());
 						rptColumn.setOptLog("自动解析导入报表列");
 						rptColumn.setPropertyName(e.getPropertyName());
-						rptColumn.setSearchType(org.lsqt.sys.model.Column.NO);
+						rptColumn.setSearchType(org.lsqt.report.model.Column.NO);
 						rptColumn.setComment(e.getText()); // 取的是SQL字段的别名
 						rptColumn.setReportName(model.getName());
+						rptColumn.setAllowExport(org.lsqt.report.model.Column.YES); //默认允许导出
+						rptColumn.setAllowImport(org.lsqt.report.model.Column.NO); //不允许导入
+						rptColumn.setSn(0);
+						
+						
+						rptColumn.setWidth(120);
+						rptColumn.setAlignType(org.lsqt.report.model.Column.ALIGN_TYPE_MID);
+						rptColumn.setHidde(org.lsqt.report.model.Column.HIDE_NO);
+						rptColumn.setFrozen( org.lsqt.report.model.Column.FROZEN_NO);
+						rptColumn.setAllowSort(org.lsqt.report.model.Column.NO);
 						reportColumnList.add(rptColumn);
 					}
 					

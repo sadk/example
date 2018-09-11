@@ -228,7 +228,10 @@
 				        		<td>
 				        			<input name="allowSort" id="allowSort" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
 				        		</td>
-				        		 
+				        		<td>是否允许导出：</td>
+				        		<td>
+				        			<input name="allowExport" id="allowExport" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+				        		</td>
 				        	</tr>
 				        </table>
 				    </div>

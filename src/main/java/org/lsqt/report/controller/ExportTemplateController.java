@@ -90,7 +90,7 @@ public class ExportTemplateController {
 		
 		int fileSize = 100;//文件最大允许100M,注意，有时候Nginx需要同步配置!!!
 
-		MultipartRequest mulit = new MultipartRequest(request, filePath, fileSize * 1024 * 1024, "UTF-8",fileNamePolicy);
+		MultipartRequest mulit = new MultipartRequest(request, filePath, fileSize * 1024 * 1024, "UTF-8",new PolicyReportFileRename());
 
 		
 		String type = mulit.getParameter("type");  
@@ -113,30 +113,7 @@ public class ExportTemplateController {
 		return JSON.toJSONString(serverPath);
 	}
 	
-	static final String MULTIPART = "multipart/";
-	static final String METHOD_POST = "post";
-	
-	/** 文件上传改名策略 **/
-	FileRenamePolicy fileNamePolicy = new FileRenamePolicy() {
-		public File rename(File file) {
-			String body = "";
-			String ext = "";
-			int pot = file.getName().lastIndexOf(".");
 
-			if (pot != -1) {
-				ext = file.getName().substring(pot);
-			} else {
-				ext = "";
-			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-			Date date = new Date();
-			body = "rpt_"+sdf.format(date) + "";
-
-			String newName = body + ext;
-			file = new File(file.getParent(), newName);
-			return file;
-		}
-	};
 
 	@RequestMapping(mapping = { "/download", "/m/download" })
 	public void download(String path,String name) throws Exception {

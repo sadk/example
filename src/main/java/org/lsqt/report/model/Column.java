@@ -6,6 +6,9 @@ package org.lsqt.report.model;
  */
 public class Column {
 
+	public static final int YES=1;
+	public static final int NO=0;
+	
 	/***/
 	private Long id;
 
@@ -69,6 +72,16 @@ public class Column {
 	private Integer allowSort;
 	
 	private Integer frozen;
+	public static int FROZEN_YES = 1;
+	public static int FROZEN_NO = 0;
+	
+	
+	/**是否允许导入：1=允许  0=不允许*/
+	private Integer allowImport;
+	
+	/**是否允许导出：1=允许  0=不允许*/
+	private Integer allowExport;
+	
 	
 	/**
 	 * 字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键  4=文本框 5=整型框 6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)
@@ -119,17 +132,22 @@ public class Column {
 	/** 自定义的文件上传控件(代码片断) */
 	private String fileCustomContent;
 
-	/** 列对齐方式: */
+	/** 列对齐方式: 左=1 中=2 右=3*/
 	private Integer alignType;
+	public static final int ALIGN_TYPE_LEFT=1;
+	public static final int ALIGN_TYPE_MID=2;
+	public static final int ALIGN_TYPE_RIGHT=3;
 
-	/** 列宽: */
+	/** 列宽: 默认=120 */
 	private Integer width;
 
 	/** 列高 */
 	private String height;
 
-	/** 是否显示: 0=隐藏 1=显示 */
+	/** 是否隐藏: 1=隐藏 0=不隐藏*/
 	private Integer hidde;
+	public static int HIDE_YES=1;
+	public static int HIDE_NO = 0;
 
 	/***/
 	private Integer sn;
@@ -539,5 +557,21 @@ public class Column {
 
 	public void setCoordinate(String coordinate) {
 		this.coordinate = coordinate;
+	}
+
+	public Integer getAllowImport() {
+		return allowImport;
+	}
+
+	public void setAllowImport(Integer allowImport) {
+		this.allowImport = allowImport;
+	}
+
+	public Integer getAllowExport() {
+		return allowExport;
+	}
+
+	public void setAllowExport(Integer allowExport) {
+		this.allowExport = allowExport;
 	}
 }

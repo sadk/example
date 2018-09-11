@@ -29,15 +29,96 @@
 						</tr>
 								
 								
+								
 									<tr>
-										<td>sex：</td>
+										<td>编码：</td>
 										<td>
-											<input id="sex" name="sex" class="mini-combobox" style="width:140px" valueField="value" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择..."  url="${pageContext.request.contextPath}/dictionary/option?code=sex"  />
+											<input id="code" name="code"  style="width:140px" class="mini-textbox"  emptyText="请输入编码"  onenter="search"  />
 										</td>
 									</tr>
 								
 								
 								
+								
+								
+								
+								
+								
+								
+									<tr>
+										<td>姓名：</td>
+										<td>
+											<input id="name" name="name"  style="width:140px" class="mini-textbox"  emptyText="请输入姓名"  onenter="search" required="true" />
+										</td>
+									</tr>
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+									<tr>
+										<td>薪水：</td>
+										<td>
+											 <input id="salary" name="salary" allowNull="true" value="null" style="width:140px" class="mini-spinner" minValue="-999999999999" format="n4"  />
+										</td>
+									</tr>
+								
+								
+								
+								
+								
+								
+								
+									<tr>
+										<td>是否启用：</td>
+										<td>
+											<input id="eable" name="eable" class="mini-combobox" style="width:140px" valueField="value" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择..."  url="${pageContext.request.contextPath}/dictionary/option?code=sex"  />
+										</td>
+									</tr>
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+									<tr>
+										<td>备注：</td>
+										<td>
+											<input id="remark" name="remark"  style="width:140px" class="mini-textbox"  emptyText="请输入备注"  onenter="search"  />
+										</td>
+									</tr>
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+									<tr>
+										<td>生日(开始)：</td>
+										<td>
+											<input id="birthdayBegin" name="birthdayBegin" class="mini-datepicker" style="width:140px;" nullValue="null"  format="yyyy-MM-dd HH:mm:ss" timeFormat="HH:mm:ss"  showTime="true" showOkButton="true" showClearButton="false"  emptyText="请输入"  />
+										</td>
+									</tr>
+									<tr>
+										<td>生日(结束)：</td>
+										<td>
+											<input id="birthdayEnd" name="birthdayEnd" class="mini-datepicker" style="width:140px;" nullValue="null"  format="yyyy-MM-dd HH:mm:ss" timeFormat="HH:mm:ss"  showTime="true" showOkButton="true" showClearButton="false"  emptyText="请输入"  />
+										</td>
+									</tr>
 								
 								
 								
@@ -59,12 +140,11 @@
 						<tr>
 							<td style="width:100%;">
 								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
-								<span class="separator"></span>
-								<a class="mini-button" iconCls="icon-download" onclick="exportData()" id="exportFile">导出</a>
-								<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:74px" value="1" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="/dictionary/option?code=report_export_file_type&enable=1" />
-								<!-- 
-								<input id="exportDataType" name="exportDataType" class="mini-combobox" style="width:64px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"当前页"},{id:"1",text:"选中行"},{id:"2",text:"全部数据"}]' />
-								 -->
+									<span class="separator"></span>
+									<a id="importData" class="mini-button" iconCls="icon-upload" onclick="importData()">导入</a>
+									<a id="exportFile" class="mini-button" iconCls="icon-download" onclick="exportData()">导出</a>
+									<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:74px" value="1" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="/dictionary/option?code=report_export_file_type&enable=1" />
+									
 							</td>
 							<!-- 
 							<td style="white-space:nowrap;">
@@ -80,22 +160,34 @@
 						url="${pageContext.request.contextPath}/report/definition/search"  idField="id" >
 						<div property="columns">
 							<div type="checkcolumn" ></div>
-									<div field="id" width="" headerAlign="center" visible="true"   align="" >id</div>
-									<div field="code" width="" headerAlign="center" visible="true"   align="" >code</div>
-									<div field="name" width="" headerAlign="center" visible="true"   align="" >name</div>
-									<div field="birthday" width="" headerAlign="center" visible="true"   align="" >birthday</div>
-									<div field="salary" width="" headerAlign="center" visible="true"   align="" >salary</div>
-									<div field="eable" width="" headerAlign="center" visible="true"   align="" >eable</div>
-									<div field="remark" width="" headerAlign="center" visible="true"   align="" >remark</div>
-									<div field="appCode" width="" headerAlign="center" visible="true"   align="" >app_code</div>
-									<div field="gid" width="" headerAlign="center" visible="true"   align="" >gid</div>
-									<div field="createTime" width="" headerAlign="center" visible="true"   align="" >create_time</div>
-									<div field="updateTime" width="" headerAlign="center" visible="true"   align="" >update_time</div>
-									<div field="sn" width="" headerAlign="center" visible="true"   align="" >sn</div>
-									<div type="comboboxcolumn" field="sex" width="120" headerAlign="center" visible="false" align="center" >sex
+									<div field="id" width="120" headerAlign="center" visible="true"   align="center" >用户ID</div>
+									<div field="sex" width="120" headerAlign="center" visible="false"   align="center" >性别</div>
+									<div field="code" width="120" headerAlign="center" visible="true"   align="center" >编码</div>
+									<div field="name" width="120" headerAlign="center" visible="true" allowSort="true"  align="center" >姓名</div>
+									<div field="salary" width="120" headerAlign="center" visible="true"   align="center" >薪水</div>
+									<div type="comboboxcolumn" field="eable" width="120" headerAlign="center" visible="true" align="center" >是否启用
 											<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="/dictionary/option?code=enable_status" />
 									</div>
-									<div field="222" width="120" headerAlign="center" visible="true"   align="" >111</div>
+									<div field="remark" width="120" headerAlign="center" visible="true"   align="center" >备注</div>
+									<div field="appCode" width="120" headerAlign="center" visible="true"   align="center" >app_code</div>
+									<div field="gid" width="120" headerAlign="center" visible="true"   align="center" >gid</div>
+									<div field="createTime" width="120" headerAlign="center" visible="true"   align="center" >create_time</div>
+									<div field="updateTime" width="120" headerAlign="center" visible="true"   align="center" >update_time</div>
+									<div field="sn" width="120" headerAlign="center" visible="true"   align="center" >sn</div>
+									<div field="id" width="120" headerAlign="center" visible="true"   align="center" >id</div>
+									<div field="sex" width="120" headerAlign="center" visible="true"   align="center" >sex</div>
+									<div field="code" width="120" headerAlign="center" visible="true"   align="center" >code</div>
+									<div field="name" width="120" headerAlign="center" visible="true"   align="center" >name</div>
+									<div field="birthday" width="120" headerAlign="center" visible="true"   align="center" >birthday</div>
+									<div field="salary" width="120" headerAlign="center" visible="true"   align="center" >salary</div>
+									<div field="eable" width="120" headerAlign="center" visible="true"   align="center" >eable</div>
+									<div field="remark" width="120" headerAlign="center" visible="true"   align="center" >remark</div>
+									<div field="appCode" width="120" headerAlign="center" visible="true"   align="center" >app_code</div>
+									<div field="gid" width="120" headerAlign="center" visible="true"   align="center" >gid</div>
+									<div field="createTime" width="120" headerAlign="center" visible="true"   align="center" >create_time</div>
+									<div field="updateTime" width="120" headerAlign="center" visible="true"   align="center" >update_time</div>
+									<div field="sn" width="120" headerAlign="center" visible="true"   align="center" >sn</div>
+									<div field="birthday" width="120" headerAlign="center" visible="true"   align="center" >生日</div>
 						</div>
 					</div>
 		        </div>
@@ -110,17 +202,17 @@
 	var grid = mini.get("hr_user_salary");
 	var form = new mini.Form("form1");
 	
-	
-	function checkCanBeExportFile() { //检查是否有上传导出模板,如果有，则显示导出按钮
+
+	function ajaxGetTemplateExists(type,callback) {
 		var data = {};
 		data.definitionId= '4';
-		data.type = 200; //100=导入模板 200=导出模板
+		data.type = type; //100=导入模板 200=导出模板
         $.ajax({ 
-            url: "/report/export_template/list",
+            url: "${pageContext.request.contextPath}/report/export_template/list",
             data: data,
             type: "post",
             success: function (text) {
-             	 
+             	 callback(text);
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 mini.alert("请求错误："+jqXHR.responseText);
@@ -128,8 +220,60 @@
         }); 
 	}
 	
+	function importData() {
+        mini.open({
+            url: "${pageContext.request.contextPath}/apps/default/admin/report/definition/upload.jsp",
+            title: "选择数据文件",
+            width: 650,
+            height: 400,
+			onload : function() {
+				var iframe = this.getIFrameEl();
+				var data = {
+					action : "importData",
+					definitionId: '4'
+				};
+				iframe.contentWindow.SetData(data);
+			},
+            ondestroy: function (action) {
+                if (action == "ok") {
+                    var iframe = this.getIFrameEl();
+                    var data = iframe.contentWindow.GetData();
+                    data = mini.clone(data);
+                    if (data) {
+                        
+                    }  
+                }
+            }
+        });
+	}
+	
+	function checkCanBeExportFile() { //检查是否有上传导出模板,如果有，则显示导出按钮
+		var callback = function (text) {
+			if(typeof(text) == 'undefined' || text == null || text.length == 0) {
+        		 $("#exportFile").hide();
+        		 $("#exportFileType").hide();
+        	 } else if(text.length ==1 ){ 
+        		 $("#exportFile").show();
+        		 $("#exportFileType").show();
+        	 } else {
+        		 $("#exportFile").hide();
+        		 $("#exportFileType").hide();
+        	 }
+		}
+		ajaxGetTemplateExists(200,callback); //100=导入模板 200=导出模板
+	}
+	
 	function checkCanBeImportFile() { //检查是否有上传导入模板,如果有，则显示导入按钮
-		
+		var callback = function (text) {
+			if(typeof(text) == 'undefined' || text == null || text.length == 0) {
+        		 $("#importData").hide();
+        	 } else if(text.length ==1 ){ 
+        		 $("#importData").show();
+        	 } else {
+        		 $("#importData").hide();
+        	 }
+		}
+		ajaxGetTemplateExists(100,callback); //100=导入模板 200=导出模板
 	}
 	
 	$(function(){
@@ -151,6 +295,11 @@
     	form.validate();
 		if(form.isValid() == false) return;
 		
+	    		if(data.salary == null) {
+					data.salary = "";
+				}
+    			data.birthdayBegin =  mini.get('birthdayBegin').text;
+    			data.birthdayEnd =  mini.get('birthdayEnd').text;
 	
 		data.reportDefinitionId=4;
 		
@@ -253,6 +402,11 @@
     	form.validate();
 		if(form.isValid() == false) return;
 		
+		    		if(data.salary == null) {
+						data.salary = "";
+					}
+	    			data.birthdayBegin =  mini.get('birthdayBegin').text;
+	    			data.birthdayEnd =  mini.get('birthdayEnd').text;
     	
     	data.reportDefinitionId=4;
     	grid.load(data)

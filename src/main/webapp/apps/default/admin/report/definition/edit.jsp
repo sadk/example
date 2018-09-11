@@ -136,10 +136,7 @@
 								<td>
 									<input id="layout" name="layout" value="1" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_file_layout" required="true"/>
 								</td>
-								<td>是否可以导出 ：</td>
-								<td>
-									<input id="canExport" name="canExport" value="0" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" required="true"/>
-								</td>
+								
 							</tr>
 							<tr>
 								<td>查询区宽度：</td>
@@ -173,12 +170,40 @@
 								</td>
 							</tr>
 							<tr id="reportButtonTR">
-								
-								<td>报表按钮：</td>
-								<td>
-									<input id="resourceIds" name="resourceIds" class="mini-buttonedit" onbuttonclick="onResourceButtonEdit" emptyText="添加报表按钮" />  
+								<td>报表头按钮：</td>
+								<td colspan="3">
+									<input id="resourceIds" name="resourceIds" class="mini-buttonedit" onbuttonclick="onResourceButtonEdit" emptyText="添加报表按钮" style="width:100%"/>  
 								</td>
-								
+
+							</tr>
+							<tr>
+								<td>是否可以导出 ：</td>
+								<td>
+									<input id="canExport" name="canExport"   onvaluechanged="onCanExportChanged" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" required="true"/>
+								</td>
+								<td class="exportMode">数据导出模式：</td>
+				        		<td class="exportMode">
+				        			<input name="exportMode" id="exportMode" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_data_export_mode" />
+				        		</td>
+							</tr>
+							<tr>
+								<td>是否可以导入 ：</td>
+								<td>
+									<input id="canImport" name="canImport"   onvaluechanged="onCanImportChanged" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" required="true"/>
+								</td>
+								<td class="importMode">数据导入模式：</td>
+				        		<td class="importMode">
+				        			<input name="importMode" id="importMode" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_data_import_mode" />
+				        		</td>
+							</tr>
+							
+							 <tr class="canImport">
+								<td>导入数据源：</td>
+								<td>
+									<input id="importDatasourceId" name="importDatasourceId" class="mini-buttonedit" onbuttonclick="onImportDatasourceButtonEdit" emptyText="数据源"/>   
+									<input id="importDatasourceName" name="importDatasourceName" class="mini-hidden" />   
+								</td>
+								 
 							</tr>
 				        </table>
 		            </div>
@@ -214,6 +239,69 @@
 			
 			var categoryName = mini.get("categoryName");
 			var datasourceName = mini.get("datasourceName");
+			
+			var importDatasourceName = mini.get("importDatasourceName");
+			var importDatasourceId = mini.get("importDatasourceId");
+			
+			var exportMode = mini.get("exportMode");
+			var importMode = mini.get("importMode");
+			
+			function onCanImportChanged(e) {
+				var sender = e.sender;
+				var value = e.source.value;
+				if("1" == value) {
+					$(".importMode").show();
+					$(".canImport").show();
+					importMode.setValue("0")
+				} else {
+					$(".importMode").hide();
+					$(".canImport").hide();
+					importMode.setValue(null);
+					importDatasourceName.setValue(null);
+					importDatasourceId.setValue(null);
+					importDatasourceId.setText(null);
+				}
+			}
+			
+			function onCanExportChanged(e) {
+				var sender = e.sender;
+				var value = e.source.value;
+				if("1" == value) {
+					$(".exportMode").show();
+					exportMode.setValue("0")
+				} else {
+					$(".exportMode").hide();
+					exportMode.setValue(null);
+				}
+			}
+			
+		    function ajaxLoadButton(definitionId) { //报表头按钮显示
+				var data = {};
+		    	data.definitionId = definitionId;
+		    	if (id.value!='') {
+		            $.ajax({
+		                url: "${pageContext.request.contextPath}/report/resource/list",
+		                type: "post",
+		                data : data,
+		                success: function (data) {
+		                	if(data) {
+		                		data = mini.decode(data);
+			                	if(data.length>0) {
+			                		var resourceIds = mini.get("resourceIds");
+			                		var array = new Array();
+			                		for (var i=0;i<data.length;i++) {
+			                			array.push(data[i].name);
+			                		}
+			                		resourceIds.setText(array.join(","))
+			                	}
+		                	}
+		                },
+		                error: function (jqXHR, textStatus, errorThrown) {
+		                    alert(jqXHR.responseText);
+		                }
+		            }); 
+		    	}
+		    }
 			
 			function onResourceButtonEdit(e) {
 				
@@ -294,11 +382,42 @@
 	            });
 			}
 			
+			function onImportDatasourceButtonEdit(e) {
+				var btnEdit = this;
+	            mini.open({
+	                url: "${pageContext.request.contextPath}/apps/default/admin/sys/datasource/seletor_datasource.jsp",
+	                title: "选择列表",
+	                width: 650,
+	                height: 380,
+	                ondestroy: function (action) {
+	                    //if (action == "close") return false;
+	                    if (action == "ok") {
+	                        var iframe = this.getIFrameEl();
+	                        var data = iframe.contentWindow.GetData();
+	                        data = mini.clone(data);    //必须
+	                        if (data) {
+	                            btnEdit.setValue(data.id);
+	                            btnEdit.setText(data.name);
+	                            
+	                            importDatasourceName.setValue(data.name);
+	                        }
+	                    }
+	                }
+	            });
+			}
+			
 			function SaveData() {
 				var o = form.getData();
 				form.validate();
 				if(form.isValid() == false) return;
-
+							
+				if ('1' == (o.canImport+"")) { 
+					if(o.importDatasourceId == null || o.importDatasourceId == ''){
+						mini.alert("请选择导入数据源");
+						return ;
+					}
+				}
+				
 				$.ajax({
 					url : "${pageContext.request.contextPath}/report/definition/save_or_update",
 					dataType: 'json',
@@ -335,6 +454,27 @@
 							
 							datasourceId.setText(o.datasourceName);
 							categoryId.setText(o.categoryName);
+							importDatasourceId.setText(o.importDatasourceName);
+							
+							if ("1" == (o.canExport+"")) {
+								$(".exportMode").show();
+							} else {
+								$(".exportMode").hide();
+							}
+							
+							if("1" == (o.canImport+"")) {
+								$(".importMode").show();
+								$(".canImport").show();
+							} else {
+								$(".importMode").hide();
+								$(".canImport").hide();
+							}
+							 
+							 
+							
+							ajaxLoadButton(data.id);
+							
+							
 							
 							if (data.action == 'view') {
 								//form.setEnabled(false);

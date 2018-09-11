@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="UTF-8" />
-	<title>跳转调整</title>
+	<title>报表Excel数据模板文件上传</title>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
 	<script src="${pageContext.request.contextPath}/scripts/upload/swfupload.js" type="text/javascript"></script>
 	<style type="text/css">

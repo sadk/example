@@ -40,6 +40,10 @@ public interface Page<T> {
 	Collection<Integer> getPageSizeList();
 	void setPageSizeList(Collection<Integer> pageSizeList);
 	
+	/**数据钩子,用于附带其它上下文需要的数据**/
+	Object getHook();
+	void setHook(Object hookObject);
+	
 	class PageModel<T> implements Page<T> {
 		
 		private int pageSize = DEFAULT_PAGE_SIZE;
@@ -50,6 +54,7 @@ public interface Page<T> {
 		private boolean hasNext = false;
 		private boolean hasPrevious = false;
 		private Collection<T> data = new ArrayList<T>();
+		private Object hook ;
 		
 		private Collection<Integer> pageSizeList = Arrays.asList(10,20,50,100);
 		
@@ -100,6 +105,15 @@ public interface Page<T> {
 		}
 		public void setPageSizeList(Collection<Integer> pageSizeList) {
 			this.pageSizeList = pageSizeList;
+		}
+		public Object getHook() {
+			return hook;
+		}
+		public void setHook(Object hook) {
+			if(this == hook) {
+				throw new IllegalStateException("数据构子不能引用自己");
+			}
+			this.hook = hook;
 		}
 
 	}

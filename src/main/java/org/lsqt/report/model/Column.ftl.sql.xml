@@ -75,7 +75,10 @@
 	 		<column name="hidde" property="hidde" text="是否显示: 0=隐藏 1=显示"/>
 	 		<column name="frozen" property="frozen" text="是否冻结列 "/>
 			<column name="allow_sort" property="allowSort" text="是否排序"/>
-	 	
+	 		
+	 		<column name="allow_import" property="allowImport" text="是否允许导入:1=允许  0=不允许"/>
+	 		<column name="allow_export" property="allowExport" text="是否允许导出:1=允许  0=不允许"/>
+	 		
 	 		<column name="sn" property="sn" text=""/>
 	 	
 	 		<column name="version" property="version" text="表字段的版本号"/>
@@ -136,6 +139,10 @@
 	  						<#if query.oroColumnType??> and oro_column_type = ${query.oroColumnType} </#if>
 						
 	  						<#if query.searchType??> and search_type = ${query.searchType} </#if>
+	  						
+	  						<#if query.allowImport??> and allow_import = ${query.allowImport} </#if>
+	  						
+	  						<#if query.allowExport??> and allow_export = ${query.allowExport} </#if>
 					
 	  						<#if query.columnCodegenType??> and column_codegen_type = '${StringUtil.escapeSql(query.columnCodegenType)}' </#if>
 						

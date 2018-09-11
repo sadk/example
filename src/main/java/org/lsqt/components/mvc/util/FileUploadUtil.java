@@ -25,6 +25,8 @@ import org.apache.commons.io.IOUtils;
 public class FileUploadUtil {
 	private  static final Logger log = Logger.getLogger(FileUploadUtil.class.getName());
 	
+	public static final String UPLOAD_DIR = "/upload";
+	
 	public void upload(HttpServletRequest request) throws Exception{
 		/*
 		//servlet 3.0 api

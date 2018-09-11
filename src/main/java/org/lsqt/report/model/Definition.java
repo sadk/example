@@ -18,6 +18,10 @@ public class Definition {
 	/** 报表所属的数据源 */
 	private Long datasourceId;
 	private String datasourceName;
+	
+	/** 报表导入数据的数据源 */
+	private Long importDatasourceId;
+	private String importDatasourceName;
 
 	/** 定义全称 */
 	private String name;
@@ -56,7 +60,16 @@ public class Definition {
 	private Integer searchAreaWidth=270; //查询区域宽度
 	private Integer pageSize=20; //表格分页大小
 	private String pageSizeList; //逗号分割
+	
 	private Integer canExport;  //是否可以导出excel、PDF等
+	private Integer exportMode; //数据导出的模式, 1=默认全部字段数据导出 2=用户选择字段导出
+	public static final Integer EXPORT_OR_IMPORT_MODE_ALL_COLUMN=1;
+	public static final Integer EXPORT_OR_IMPORT_MODE_SELECTED_COLUMN=2;
+	
+	private Integer canImport;
+	private Integer importMode; // 1=默认全部字段数据导出 2=用户选择字段导出
+	
+	
 	private Integer sortMode ; //排序模式 1=客户浏览器端排  2=服务器端排序
 	private Integer searchAreaControlNumPerRow; //高级查询区每行显示几个查询控件
 	
@@ -358,6 +371,46 @@ public class Definition {
 
 	public void setColumnList(List<Column> columnList) {
 		this.columnList = columnList;
+	}
+
+	public Integer getExportMode() {
+		return exportMode;
+	}
+
+	public void setExportMode(Integer exportMode) {
+		this.exportMode = exportMode;
+	}
+
+	public Integer getCanImport() {
+		return canImport;
+	}
+
+	public void setCanImport(Integer canImport) {
+		this.canImport = canImport;
+	}
+
+	public Integer getImportMode() {
+		return importMode;
+	}
+
+	public void setImportMode(Integer importMode) {
+		this.importMode = importMode;
+	}
+
+	public Long getImportDatasourceId() {
+		return importDatasourceId;
+	}
+
+	public void setImportDatasourceId(Long importDatasourceId) {
+		this.importDatasourceId = importDatasourceId;
+	}
+
+	public String getImportDatasourceName() {
+		return importDatasourceName;
+	}
+
+	public void setImportDatasourceName(String importDatasourceName) {
+		this.importDatasourceName = importDatasourceName;
 	}
 
 }

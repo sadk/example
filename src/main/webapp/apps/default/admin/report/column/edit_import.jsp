@@ -84,7 +84,15 @@
 								 	<input id="importRequired" name="importRequired"  class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
 								</td>
 							</tr>
-							
+
+
+							<tr>
+								<td>是否允许导入：</td>
+								<td>
+								 	<input id="allowImport" name="allowImport" required="true" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+								</td>
+								 
+							</tr>
 				        </table>
 				    </div>
 				</fieldset>

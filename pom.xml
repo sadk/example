@@ -298,18 +298,25 @@
 			<version>1.0.3</version>
 		</dependency>
 		
-<!-- 		<dependency>
+ 		<dependency>
 		    <groupId>org.apache.poi</groupId>
 		    <artifactId>poi</artifactId>
-		    <version>3.15</version>
+		    <version>3.9</version>
 		</dependency>
 		 <dependency>
 		    <groupId>org.apache.poi</groupId>
 		    <artifactId>poi-ooxml</artifactId>
-		    <version>3.15</version>
-		</dependency> -->
+		    <version>3.9</version>
+		</dependency> 
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml-schemas</artifactId>
+		    <version>3.9</version>
+		</dependency>
 		
-		<!-- 导出pdf和word用: begin-->
+		<!-- -->
+		
+		<!-- 导出pdf和word用: begin 
 		<dependency>
 			<groupId>com.lowagie</groupId>
 			<artifactId>itext</artifactId>
@@ -325,7 +332,7 @@
 			<artifactId>itext-asian</artifactId>
 			<version>5.1.0</version>
 		</dependency>
-		<!-- 导出pdf和word用: end -->
+		 导出pdf和word用: end -->
 		
 		<!-- 这个暂时不要了，交易系统用的是这个，见TriBankContractServiceImpl.java
 		<dependency>

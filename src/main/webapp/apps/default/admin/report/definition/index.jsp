@@ -158,9 +158,7 @@
 											<div field="name" width="100" headerAlign="center" allowSort="true">字段中文
 												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
 											</div>
-											<div field="sn" width="50" headerAlign="center" allowSort="true">排序号
-												<input property="editor" class="mini-spinner" style="width:100%;" minWidth="50" />
-											</div>
+											
 											<div field="code" width="100" headerAlign="center" allowSort="true">DB字段
 												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
 											</div>
@@ -191,6 +189,31 @@
 											<div type="comboboxcolumn" field="columnCodegenType" width="140" headerAlign="center" align="left" allowSort="true">字段控件
 												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=column_codegen_type" />
 											</div>
+											
+											<div field="sn" width="50" headerAlign="center" allowSort="true"  align="center">排序号
+												<input property="editor" class="mini-spinner" style="width:100%;" minWidth="50" />
+											</div>
+											
+											<div type="comboboxcolumn" field="allowExport" width="120" headerAlign="center" align="center" allowSort="true">是否允许导出
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+											</div>
+											
+											<div field="width" width="50" headerAlign="center" allowSort="true" align="center">列宽度
+												<input property="editor" class="mini-spinner" style="width:100%;" minWidth="50" minValue="50"/>
+											</div>
+											
+										  	<div type="comboboxcolumn" field="alignType" width="80" headerAlign="center" align="left" allowSort="true">对齐方式
+												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_column_align_type" />
+											</div>
+											
+											<div type="comboboxcolumn" field="hidde" width="80" headerAlign="center" align="center" allowSort="true">是否隐藏列
+												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+											</div>
+											
+											<div type="comboboxcolumn" field="allowSort" width="80" headerAlign="center" align="center" allowSort="true">是否允许排序
+												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+											</div>
+											
 											<div field="columnCodegenFormat" width="90" headerAlign="center" align="left" allowSort="true">字段显示格式
 												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
 											</div>
@@ -255,12 +278,22 @@
 												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
 											</div>
 											<div field="dbType" width="100" headerAlign="center" allowSort="true">DB字段类型</div>
-											<div field="dbTypeLength" width="100" headerAlign="center" allowSort="true">DB字段长度</div>
+											
+											 
+											<div field="dbTypeLength" width="100" headerAlign="center" allowSort="true">DB字段长度
+												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
+											</div>
+											
+											<div type="comboboxcolumn" field="allowImport" width="100" headerAlign="center" align="center" allowSort="true">是否允许导入
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+											</div>
+											
+											
 											<div field="comment" width="100" headerAlign="center" allowSort="true">DB字段注释
-												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
+												<input property="editor" class="mini-textbox" style="width:100%;"  />
 											</div>
 											<div field="propertyName" width="100" headerAlign="center" allowSort="true">实体属性名
-												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
+												<input property="editor" class="mini-textbox" style="width:100%;"  />
 											</div>
 											<div type="comboboxcolumn" field="javaType" width="130" headerAlign="center" allowSort="true">JAVA字段类型
 												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=java_type" />
@@ -269,7 +302,7 @@
 												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
 											</div>
 											
-											<div field="sn" width="50" headerAlign="center" allowSort="true">排序号
+											<div field="sn" width="50" headerAlign="center" allowSort="true" align="center">排序号
 												<input property="editor" class="mini-spinner" style="width:100%;" minWidth="50" />
 											</div>
 											
@@ -600,8 +633,10 @@
 				var data = [];
 				if(typeof(flag) == 'undefined' || flag == null) {
 					data = columnGrid.getChanges();
+					flag = 1;
 				}else if(flag == 2) {
 					data = columnGrid2.getChanges();
+					flag = 2;
 				}
 				
 				if(data.length == 0) {

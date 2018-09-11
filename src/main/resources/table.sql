@@ -608,6 +608,17 @@ INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (269,241,'tinyblob','402','tinyblob','dictionary',NULL,'1','1000',1,'241,269',NULL,'tinyblob','2018-04-23 10:57:24','2018-04-23 10:57:24');
 
 
+-- 报表数据导出模式
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (270,-1,'报表数据导出模式','report_data_export_mode','report_data_export_mode','dictionary',NULL,'1','1000',0,'270',NULL,'report_data_export_mode','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (271,270,'(默认)全部字段导出','0','export_mode_all_column','dictionary',NULL,'1','1000',1,'270,271',NULL,'export_mode_all_column','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (272,270,'用户可选择字段导出','1','export_mode_selected_column','dictionary',NULL,'1','1000',1,'270,272',NULL,'export_mode_selected_column','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+-- 报表数据导入模式
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (273,-1,'报表数据导入模式','report_data_import_mode','report_data_import_mode','dictionary',NULL,'1','1000',0,'273',NULL,'report_data_import_mode','2018-03-19 09:49:35','2018-03-19 09:49:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (274,273,'(默认)全部字段导入','0','import_mode_all_column','dictionary',NULL,'1','1000',1,'273,274',NULL,'import_mode_all_column','2018-04-23 10:54:35','2018-04-23 10:54:35');
+INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (275,273,'用户可选择字段导入','1','import_mode_selected_column','dictionary',NULL,'1','1000',1,'273,275',NULL,'import_mode_selected_column','2018-04-23 10:57:24','2018-04-23 10:57:24');
+
+
 drop table  if exists sys_machine;
 CREATE TABLE `sys_machine` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -2089,6 +2100,9 @@ CREATE TABLE `rpt_definition` (
   `datasource_id` bigint(20) NOT NULL comment '报表所属的数据源',
   `datasource_name` varchar(40) NOT NULL comment '数据源名称',
   
+  `import_datasource_id` bigint(20) NOT NULL comment '报表数据导入的数据源',
+  `import_datasource_name` varchar(40) NOT NULL comment '报表数据导入的数据源名称',
+  
   `name` varchar(255) NOT NULL COMMENT '定义全称',
   `short_name` varchar(255) DEFAULT NULL COMMENT '定义简称',
   `code` varchar(255) NOT NULL COMMENT '定义编码',
@@ -2111,6 +2125,11 @@ CREATE TABLE `rpt_definition` (
   `page_size` int(4)  COMMENT '分页大小',
   `page_size_list` varchar(20)  COMMENT '分页大小候选项',
   `can_export` int(2) default 0 COMMENT '是否可以导出数据 :1=可以 0=不可以',
+  `export_mode` int(2) default 1 COMMENT '数据导出的模式, 1=默认全部字段数据导出 2=用户选择字段导出',
+
+  `can_import` int(2) default 0 COMMENT '是否可以导入数据 :1=可以 0=不可以',
+  `import_mode` int(2) default 1 COMMENT '数据导入的模式, 1=默认全部字段数据导入 2=用户选择字段导入',
+  
   `search_area_width` int(2) NULL COMMENT '查询区域宽度',
   `search_area_control_num_per_row` int(2)  COMMENT '高级查询区每行显示几个查询控件',
   
@@ -2203,9 +2222,12 @@ CREATE TABLE `rpt_column` (
   `width` int(2) DEFAULT NULL COMMENT '列宽: ',
   `align_type` varchar(2) DEFAULT NULL COMMENT '列对齐方式: ',
   `height` int(2) DEFAULT NULL COMMENT '列高 ',
-  `hidde` varchar(2) DEFAULT NULL COMMENT '是否显示: 0=隐藏 1=显示',
+  `hidde` varchar(2) DEFAULT NULL COMMENT '是否隐藏: 1=隐藏 0=不隐藏',
   `frozen` int(2) DEFAULT NULL COMMENT '是否冻结列: 0=不冻结 1=冻结',
   `allow_sort` int(2) DEFAULT NULL COMMENT '当前列是否可排序',  
+  `allow_export` int(2) DEFAULT 0 COMMENT '是否允许导出（到excel):0=不允许 1=允许',  
+  `allow_import` int(2) DEFAULT 1 COMMENT '是否允许导入(到excel):0=不允许 1=允许',
+  
   
   `sn` int(4) DEFAULT '0',
   `version` varchar(100) DEFAULT NULL COMMENT '表字段的版本号',

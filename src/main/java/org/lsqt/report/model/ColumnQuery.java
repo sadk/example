@@ -17,6 +17,7 @@ public class ColumnQuery {
 
 	private Long id;
 
+	
 	/**数据类型 1=报表展示列  2=数据导入列**/
 	private Integer dataType;
 	
@@ -50,6 +51,12 @@ public class ColumnQuery {
 	/** 当前列是否作为查询条件: 0=否，1=是 */
 	private Integer searchType;
 
+	/**是否允许导入：1=允许  0=不允许*/
+	private Integer allowImport;
+	
+	/**是否允许导出：1=允许  0=不允许*/
+	private Integer allowExport;
+	
 	/**
 	 * 字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键 4=文本框 5=整型框 6=精度型框 7=日期 8=文件
 	 * 9=下拉框(常量JSON)
@@ -463,6 +470,22 @@ public class ColumnQuery {
 
 	public void setDataType(Integer dataType) {
 		this.dataType = dataType;
+	}
+
+	public Integer getAllowImport() {
+		return allowImport;
+	}
+
+	public void setAllowImport(Integer allowImport) {
+		this.allowImport = allowImport;
+	}
+
+	public Integer getAllowExport() {
+		return allowExport;
+	}
+
+	public void setAllowExport(Integer allowExport) {
+		this.allowExport = allowExport;
 	}
 
 }

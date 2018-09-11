@@ -112,12 +112,11 @@
 								</#if>
 								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
 								<#if (definition.canExport?? && definition.canExport == 1)>
-								<span class="separator"></span>
-								<a class="mini-button" iconCls="icon-download" onclick="exportData()" id="exportFile">导出</a>
-								<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:74px" value="1" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_export_file_type&enable=1" />
-								<!-- 
-								<input id="exportDataType" name="exportDataType" class="mini-combobox" style="width:64px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"当前页"},{id:"1",text:"选中行"},{id:"2",text:"全部数据"}]' />
-								 -->
+									<span class="separator"></span>
+									<a id="importData" class="mini-button" iconCls="icon-upload" onclick="importData()">导入</a>
+									<a id="exportFile" class="mini-button" iconCls="icon-download" onclick="exportData()">导出</a>
+									<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:74px" value="1" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_export_file_type&enable=1" />
+									
 								</#if>
 							</td>
 							<!-- 
@@ -136,15 +135,15 @@
 							<div type="checkcolumn" ></div>
 							<#list columnList as column>
 								<#if (column.columnCodegenType?? && column.columnCodegenType == 2)>
-									<div type="comboboxcolumn" field="${column.propertyName}" width="${column.width}" headerAlign="center" visible="<#if (column.hidde?? && column.hidde == 0)>false<#else>true</#if>" align="<#if (column.alignType?? && column.alignType == 1)>left</#if><#if (column.alignType?? && column.alignType == 2)>center</#if><#if (column.alignType?? &&column.alignType == 3)>right</#if>" <#if (column.allowSort?? && column.allowSort == 1)>allowSort="true"</#if>>${column.name}
+									<div type="comboboxcolumn" field="${column.propertyName}" width="${column.width}" headerAlign="center" visible="<#if (column.hidde?? && column.hidde == 1)>false<#else>true</#if>" align="<#if (column.alignType?? && column.alignType == 1)>left</#if><#if (column.alignType?? && column.alignType == 2)>center</#if><#if (column.alignType?? &&column.alignType == 3)>right</#if>" <#if (column.allowSort?? && column.allowSort == 1)>allowSort="true"</#if>>${column.name}
 											<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="${column.selectorTextCols}" valueField="${column.selectorValueCols }" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
 									</div>
 								<#elseif (column.columnCodegenType?? && column.columnCodegenType == 9)>
-									<div type="comboboxcolumn" field="${column.propertyName}" width="${column.width}" headerAlign="center" visible="<#if (column.hidde?? && column.hidde == 0)>false<#else>true</#if>" align="<#if (column.alignType?? && column.alignType == 1)>left</#if><#if (column.alignType?? && column.alignType == 2)>center</#if><#if (column.alignType?? &&column.alignType == 3)>right</#if>" <#if (column.allowSort?? && column.allowSort == 1)>allowSort="true"</#if>>${column.name}
+									<div type="comboboxcolumn" field="${column.propertyName}" width="${column.width}" headerAlign="center" visible="<#if (column.hidde?? && column.hidde == 1)>false<#else>false</#if>" align="<#if (column.alignType?? && column.alignType == 1)>left</#if><#if (column.alignType?? && column.alignType == 2)>center</#if><#if (column.alignType?? &&column.alignType == 3)>right</#if>" <#if (column.allowSort?? && column.allowSort == 1)>allowSort="true"</#if>>${column.name}
 											<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="${column.selectorTextCols}" valueField="${column.selectorValueCols }" data='${column.selectorDataFrom }' />
 									</div>
 								<#else>
-									<div field="${column.propertyName}" width="${column.width}" headerAlign="center" visible="<#if (column.hidde?? && column.hidde == 0)>false<#else>true</#if>" <#if (column.allowSort?? && column.allowSort == 1)>allowSort="true"</#if>  align="<#if (column.alignType?? && column.alignType == 1)>left</#if><#if (column.alignType?? && column.alignType == 2)>center</#if><#if (column.alignType?? &&column.alignType == 3)>right</#if>" >${column.name}</div>
+									<div field="${column.propertyName}" width="${column.width}" headerAlign="center" visible="<#if (column.hidde?? && column.hidde == 1)>false<#else>true</#if>" <#if (column.allowSort?? && column.allowSort == 1)>allowSort="true"</#if>  align="<#if (column.alignType?? && column.alignType == 1)>left</#if><#if (column.alignType?? && column.alignType == 2)>center</#if><#if (column.alignType?? &&column.alignType == 3)>right</#if>" >${column.name}</div>
 								</#if>
 							</#list>
 						</div>
@@ -171,17 +170,17 @@
 		</#if>
 	</#if>
 </#list>
-	
-	function checkCanBeExportFile() { //检查是否有上传导出模板,如果有，则显示导出按钮
+
+	function ajaxGetTemplateExists(type,callback) {
 		var data = {};
 		data.definitionId= '${definition.id}';
-		data.type = 200; //100=导入模板 200=导出模板
+		data.type = type; //100=导入模板 200=导出模板
         $.ajax({ 
-            url: "${pageContext.request.contextPath}/report/export_template/list",
+            url: "<#noparse>${pageContext.request.contextPath}</#noparse>/report/export_template/list",
             data: data,
             type: "post",
             success: function (text) {
-             	 
+             	 callback(text);
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 mini.alert("请求错误："+jqXHR.responseText);
@@ -189,8 +188,60 @@
         }); 
 	}
 	
+	function importData() {
+        mini.open({
+            url: "<#noparse>${pageContext.request.contextPath}</#noparse>/apps/default/admin/report/definition/upload.jsp",
+            title: "选择数据文件",
+            width: 650,
+            height: 400,
+			onload : function() {
+				var iframe = this.getIFrameEl();
+				var data = {
+					action : "importData",
+					definitionId: '${definition.id}'
+				};
+				iframe.contentWindow.SetData(data);
+			},
+            ondestroy: function (action) {
+                if (action == "ok") {
+                    var iframe = this.getIFrameEl();
+                    var data = iframe.contentWindow.GetData();
+                    data = mini.clone(data);
+                    if (data) {
+                        
+                    }  
+                }
+            }
+        });
+	}
+	
+	function checkCanBeExportFile() { //检查是否有上传导出模板,如果有，则显示导出按钮
+		var callback = function (text) {
+			if(typeof(text) == 'undefined' || text == null || text.length == 0) {
+        		 $("#exportFile").hide();
+        		 $("#exportFileType").hide();
+        	 } else if(text.length ==1 ){ 
+        		 $("#exportFile").show();
+        		 $("#exportFileType").show();
+        	 } else {
+        		 $("#exportFile").hide();
+        		 $("#exportFileType").hide();
+        	 }
+		}
+		ajaxGetTemplateExists(200,callback); //100=导入模板 200=导出模板
+	}
+	
 	function checkCanBeImportFile() { //检查是否有上传导入模板,如果有，则显示导入按钮
-		
+		var callback = function (text) {
+			if(typeof(text) == 'undefined' || text == null || text.length == 0) {
+        		 $("#importData").hide();
+        	 } else if(text.length ==1 ){ 
+        		 $("#importData").show();
+        	 } else {
+        		 $("#importData").hide();
+        	 }
+		}
+		ajaxGetTemplateExists(100,callback); //100=导入模板 200=导出模板
 	}
 	
 	$(function(){

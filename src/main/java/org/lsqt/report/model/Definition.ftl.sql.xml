@@ -8,7 +8,10 @@
 	 	
 	 		<column name="datasource_id" property="datasourceId" text="报表所属的数据源"/>
 	 		<column name="datasource_name" property="datasourceName" text="数据源名称"/>
-	 	
+
+	 		<column name="import_datasource_id" property="importDatasourceId" text="报表志入数据的数据源Id"/>
+	 		<column name="import_datasource_name" property="importDatasourceName" text="报表志入数据的数据源名称"/>
+
 	 		<column name="name" property="name" text="定义全称"/>
 	 	
 	 		<column name="short_name" property="shortName" text="定义简称"/>
@@ -40,8 +43,10 @@
 	 		<column name="page_size_list" property="pageSizeList" text="分页大小候选"/>
 	 		<column name="sort_mode" property="sortMode" text="排序模式 1=客户浏览器端排  2=服务器端排序"/>
 	 		<column name="can_export" property="canExport" text="是否可以导出数据"/>
+	 		<column name="export_mode" property="exportMode" text="数据导出的模式, 1=默认全部字段数据导出 2=用户选择字段导出"/>
 	 		
-	 		
+	 		<column name="can_import" property="canImport" text="是否可以导入数据"/>
+	 		<column name="import_mode" property="importMode" text="数据导入的模式, 1=默认全部字段数据导入 2=用户选择字段导入"/>
 	 		
 	 		
 	 		<column name="app_code" property="appCode" text="租户编码"/>
@@ -85,6 +90,10 @@
 	  						<#if query.datasourceId??> and datasource_id = ${query.datasourceId} </#if>
 					
 	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+	  						
+	  						<#if query.exportMode??> and export_mode = ${query.exportMode} </#if>
+	  						
+	  						<#if query.importMode??> and import_mode = ${query.importMode} </#if>
 	  						
 	  						<#if query.categoryName??> and category_name = '${StringUtil.escapeSql(query.categoryName)}' </#if>
 	  						
