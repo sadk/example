@@ -23,10 +23,17 @@ public class Definition {
 	private Long importDatasourceId;
 	private String importDatasourceName;
 	
+	/**报表导入时的数据表**/
+	private String importTable;
+	
+	/** 数据副本用的数据源,导入数据时，本地会存量一分副本用于留证  **/
+	private Long dataReplicaDataSourceId;
+	private String dataReplicaDataSourceName;
+	
 	/** 报表数据导入数据副本存储精度模式 1=全字段按字符存储  2=按导入定义字段类型存储 **/
-	private Integer importDataStorePrecision;
-	public static final int IMPORT_DATA_STORE_PRECISION_ALL_STRING=1;
-	public static final int  IMPORT_DATA_STORE_PRECISION_BY_CONFIG=2;
+	private Integer dataReplicaStroePrecision;
+	public static final int DATA_REPLICA_STROE_PRECISION_ALL_STRING=1;
+	public static final int  DATA_REPLICA_STROE_PRECISION_BY_CONFIG=2;
 
 	/** 定义全称 */
 	private String name;
@@ -418,12 +425,36 @@ public class Definition {
 		this.importDatasourceName = importDatasourceName;
 	}
 
-	public Integer getImportDataStorePrecision() {
-		return importDataStorePrecision;
+	public Long getDataReplicaDataSourceId() {
+		return dataReplicaDataSourceId;
 	}
 
-	public void setImportDataStorePrecision(Integer importDataStorePrecision) {
-		this.importDataStorePrecision = importDataStorePrecision;
+	public void setDataReplicaDataSourceId(Long dataReplicaDataSourceId) {
+		this.dataReplicaDataSourceId = dataReplicaDataSourceId;
+	}
+
+	public String getDataReplicaDataSourceName() {
+		return dataReplicaDataSourceName;
+	}
+
+	public void setDataReplicaDataSourceName(String dataReplicaDataSourceName) {
+		this.dataReplicaDataSourceName = dataReplicaDataSourceName;
+	}
+
+	public String getImportTable() {
+		return importTable;
+	}
+
+	public void setImportTable(String importTable) {
+		this.importTable = importTable;
+	}
+
+	public Integer getDataReplicaStroePrecision() {
+		return dataReplicaStroePrecision;
+	}
+
+	public void setDataReplicaStroePrecision(Integer dataReplicaStroePrecision) {
+		this.dataReplicaStroePrecision = dataReplicaStroePrecision;
 	}
 
 }

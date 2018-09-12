@@ -38,7 +38,7 @@
 									       		<tr>
 									            	<td>文件路径:</td>
 									            	<td colspan="3">
-									            		<input class="mini-textbox" width="270px" readonly="readonly" name="path" id="path"/>
+									            		<input class="mini-textbox" width="270px" readonly="readonly" name="serverPath" id="serverPath"/>
 									            		<a class="mini-button" onclick="clearFileImport">清空</a>
 									            		
 									            	</td>
@@ -72,7 +72,7 @@
 		function viewData() {
 			var data = {};
 			data.definitionId = definitionId;
-			data.serverPath = mini.get("path").value;
+			data.serverPath = mini.get("serverPath").value;
 			if(data.serverPath == null || data.serverPath== '') {
 				mini.alert("请选上传Excel数据文件");
 				return ;
@@ -138,7 +138,7 @@
 	    	console.log(e.serverData);
 	    	//mini.alert(typeof e.serverData);
 	        mini.alert("上传成功!");
-	        mini.get("path").setValue(mini.decode(e.serverData));
+	        mini.get("serverPath").setValue(mini.decode(e.serverData));
 	    }
 	    
 	    function onUploadError(e) {
@@ -172,16 +172,10 @@
 			console.log(definitionId)
 			data.definitionId = definitionId;
 
-			var arr= new Array();
-			arr.push(data);
-
-			
-			var postData = {};
-			postData.data = mini.encode(arr);
 			$.ajax({
-				url : "${pageContext.request.contextPath} ",
+				url : "${pageContext.request.contextPath}/report/definition/execute_import",
 				dataType: 'json', type : 'post',
-				data: postData,
+				data: data,
 				success : function(text) {
 					CloseWindow("save");
 				},

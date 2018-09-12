@@ -92,6 +92,7 @@ public class TableServiceImpl implements TableService{
 		query.setDbName(dbName);
 		return db.queryForList("queryPageFromDb", Table.class, query);
 	}
+	
 
 	List<Table> getTableList(String dataSourceCode,String dbName, String tableName) {
 		List<Table> result = new ArrayList<>();

@@ -14,6 +14,7 @@ import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
+import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
@@ -30,6 +31,7 @@ import com.oreilly.servlet.multipart.FileRenamePolicy;
 public class ExportTemplateController {
 	
 	@Inject private ExportTemplateService exportTemplateService; 
+	@Inject private Db db;
 	
 	@RequestMapping(mapping = { "/get_by_id", "/m/get_by_id" })
 	public ExportTemplate getById(Long id)  {
@@ -128,7 +130,13 @@ public class ExportTemplateController {
 	public List<ExportTemplate> saveOrUpdate4ImportExport(String data) {
 		if (StringUtil.isNotBlank(data)) {
 			List<ExportTemplate> models = JSON.parseArray(data, ExportTemplate.class);
-			exportTemplateService.saveOrUpdate(models);
+			if(ArrayUtil.isNotBlank(models)) {
+				for(ExportTemplate m: models) {
+					db.executeUpdate("delete from "+db.getFullTable(ExportTemplate.class)+" where definition_id=?", m.getDefinitionId());
+					m.setId(null);
+				}
+				exportTemplateService.saveOrUpdate(models);
+			}
 			return models;
 		}
 		return ArrayUtil.EMPTY_LIST;

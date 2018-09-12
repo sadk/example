@@ -29,6 +29,21 @@
 						</tr>
 								
 								
+									<tr>
+										<td>性别xxx：</td>
+										<td>
+											<input id="sex" name="sex" class="mini-combobox" style="width:140px" valueField="value" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择..."  url="${pageContext.request.contextPath}/dictionary/option?code=sex"  />
+										</td>
+									</tr>
+								
+								
+								
+								
+								
+								
+								
+								
+								
 								
 									<tr>
 										<td>编码：</td>
@@ -161,7 +176,9 @@
 						<div property="columns">
 							<div type="checkcolumn" ></div>
 									<div field="id" width="120" headerAlign="center" visible="true"   align="center" >用户ID</div>
-									<div field="sex" width="120" headerAlign="center" visible="false"   align="center" >性别</div>
+									<div type="comboboxcolumn" field="sex" width="120" headerAlign="center" visible="false" align="center" >性别xxx
+											<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="/dictionary/option?code=enable_status" />
+									</div>
 									<div field="code" width="120" headerAlign="center" visible="true"   align="center" >编码</div>
 									<div field="name" width="120" headerAlign="center" visible="true" allowSort="true"  align="center" >姓名</div>
 									<div field="salary" width="120" headerAlign="center" visible="true"   align="center" >薪水</div>
@@ -174,14 +191,14 @@
 									<div field="createTime" width="120" headerAlign="center" visible="true"   align="center" >create_time</div>
 									<div field="updateTime" width="120" headerAlign="center" visible="true"   align="center" >update_time</div>
 									<div field="sn" width="120" headerAlign="center" visible="true"   align="center" >sn</div>
-									<div field="id" width="120" headerAlign="center" visible="true"   align="center" >id</div>
-									<div field="sex" width="120" headerAlign="center" visible="true"   align="center" >sex</div>
-									<div field="code" width="120" headerAlign="center" visible="true"   align="center" >code</div>
-									<div field="name" width="120" headerAlign="center" visible="true"   align="center" >name</div>
-									<div field="birthday" width="120" headerAlign="center" visible="true"   align="center" >birthday</div>
-									<div field="salary" width="120" headerAlign="center" visible="true"   align="center" >salary</div>
-									<div field="eable" width="120" headerAlign="center" visible="true"   align="center" >eable</div>
-									<div field="remark" width="120" headerAlign="center" visible="true"   align="center" >remark</div>
+									<div field="id" width="120" headerAlign="center" visible="true"   align="center" >用户ID</div>
+									<div field="sex" width="120" headerAlign="center" visible="true"   align="center" >性别</div>
+									<div field="code" width="120" headerAlign="center" visible="true"   align="center" >编码</div>
+									<div field="name" width="120" headerAlign="center" visible="true"   align="center" >姓名</div>
+									<div field="birthday" width="120" headerAlign="center" visible="true"   align="center" >生日</div>
+									<div field="salary" width="120" headerAlign="center" visible="true"   align="center" >薪水</div>
+									<div field="eable" width="120" headerAlign="center" visible="true"   align="center" >是否启用</div>
+									<div field="remark" width="120" headerAlign="center" visible="true"   align="center" >备注</div>
 									<div field="appCode" width="120" headerAlign="center" visible="true"   align="center" >app_code</div>
 									<div field="gid" width="120" headerAlign="center" visible="true"   align="center" >gid</div>
 									<div field="createTime" width="120" headerAlign="center" visible="true"   align="center" >create_time</div>

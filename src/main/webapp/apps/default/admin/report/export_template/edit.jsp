@@ -196,11 +196,11 @@
 				dataType: 'json', type : 'post',
 				data: postData,
 				success : function(text) {
-					CloseWindow("save");
+					CloseWindow(data.name+","+data2.name);
 				}
 			});
 		}
-
+		
 		////////////////////
 		//标准方法接口定义
 		function SetData(data) {

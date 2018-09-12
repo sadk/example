@@ -27,6 +27,11 @@ public class DataSourceController {
 	
 	@Inject private Db db;
 	
+	@RequestMapping(mapping = { "/get_by_id", "/m/get_by_id" })
+	public DataSource getById(Long id) throws IOException {
+		return dataSourceService.getById(id);
+	}
+	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<DataSource> queryForPage(DataSourceQuery query) throws IOException {
 		
@@ -51,8 +56,18 @@ public class DataSourceController {
 	}
 	
 	@RequestMapping(mapping = { "/test/connection", "/m/test/connection" })
-	public void testConnection(DataSource model) throws Exception {
-		dataSourceService.testConnection(model);
+	public Map<String,Object> testConnection(DataSource model) throws Exception {
+		Map<String,Object> rs = new HashMap<>();
+		try{
+			dataSourceService.testConnection(model);
+			rs.put("isOk", true);
+			return rs;
+		} catch(Exception ex) {
+			rs.put("isOk", false);
+			rs.put("message", ExceptionUtil.getStackTrace(ex));
+			ex.printStackTrace();
+			return rs;
+		}
 	}
 	  
 	@RequestMapping(mapping = { "/test/connection/id", "/m/test/connection/id" })

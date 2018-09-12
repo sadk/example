@@ -2,6 +2,7 @@ package org.lsqt.report.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -22,12 +23,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.cellwalk.CellWalk;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
+import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.mvc.util.FileUploadUtil;
@@ -49,6 +52,10 @@ import org.lsqt.report.service.impl.support.SelectorDataFromSQL;
 import org.lsqt.report.service.impl.support.SelectorDataFromUrlHtml;
 import org.lsqt.report.service.impl.support.SelectorDataFromUrlJson;
 import org.lsqt.report.service.impl.support.SelectorDataFromUrlXml;
+import org.lsqt.sys.model.DataSource;
+import org.lsqt.sys.service.DataSourceService;
+import org.lsqt.sys.service.TableService;
+import org.lsqt.sys.service.impl.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +72,7 @@ public class DefinitionController {
 	@Inject private DefinitionService definitionService; 
 	@Inject private ExportTemplateService exportTemplateService;
 	@Inject private ColumnService columnService;
+	@Inject private DataSourceService dataSourceService;
 	@Inject private Db db;
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
@@ -224,6 +232,158 @@ public class DefinitionController {
 		System.out.println("共上传" + cnt + "个文件！");
 		
 		return JSON.toJSONString(serverPath);
+	}
+	
+	@RequestMapping(mapping = { "/execute_import", "/m/execute_import" }, text = "执行导入报表数据，存储数据到本地库，作为副本")
+	public Object executeImport(Long definitionId, String serverPath) throws Exception {
+		if(definitionId==null || StringUtil.isBlank(serverPath)) {
+			return null;
+		}
+		
+		HttpServletRequest request = ContextUtil.getRequest();
+
+		String filePath = request.getServletContext().getRealPath("/") + serverPath ;
+        log.debug("预览数据文件全路径: "+filePath); 
+        File file = new File(filePath);  
+       
+		if (file.exists() &&  file.isFile()) {
+			final List<List<CellWrap>> data = new ArrayList<>();
+			try {
+				List<List<CellWrap>> fileData = resolveImportedFileData(definitionId, file.getAbsolutePath());
+				data.addAll(fileData);
+				
+				// 去除表头
+				if (ArrayUtil.isNotBlank(data)) {
+					data.remove(0);
+				} else {
+					return null;
+				}
+			} catch (Exception ex) {
+				throw ex;
+			}
+			
+			
+				
+			//1.导入到数据副本的数据源，如果没有表则新建表
+			Definition def = definitionService.getById(definitionId);
+			if (def!=null && def.getDataReplicaDataSourceId() != null) {
+				ColumnQuery query = new ColumnQuery();
+				query.setDataType(Column.DATA_TYPE_IMPORT);
+				query.setDefinitionId(definitionId);
+				final List<Column> columnList = columnService.queryForList(query);
+				
+				if (ArrayUtil.isBlank(columnList)) return null;
+				
+				DataSource model = dataSourceService.getById(def.getDataReplicaDataSourceId());
+
+				//切换数据源!!!
+				DataSourceFactory dbfactory = new DataSourceFactory();
+				dbfactory.setBaseDb(db);
+				javax.sql.DataSource ds = dbfactory.getDataSouce(model.getCode());
+
+				final String tableName = "rtp_data_"+definitionId;
+				
+				Connection con = db.getCurrentConnection();
+				try {
+					Connection switchConn = ds.getConnection();
+					db.setCurrentConnection(switchConn);
+					db.executePlan(() -> {
+						
+						String sql = "SELECT count(0) cnt FROM information_schema.TABLES WHERE TABLE_NAME =? and TABLE_SCHEMA=?" ;
+						Integer cnt = db.executeQueryForObject(sql, Integer.class, tableName,model.getLoginDefaultDb());
+						if (cnt ==null || cnt == 0) {
+							StringBuilder createTable = new StringBuilder();
+							createTable.append("CREATE TABLE " + tableName + " ( id_ bigint(20) NOT NULL AUTO_INCREMENT primary key,");
+							
+							for (int i=0;i<columnList.size();i++) {
+								Column e = columnList.get(i);
+								
+								createTable.append(e.getCode() + " " + e.getDbType());
+								
+								if (def.getDataReplicaStroePrecision()!=null 
+										&& Definition.DATA_REPLICA_STROE_PRECISION_ALL_STRING == def.getDataReplicaStroePrecision()) {
+									createTable.append(" varchar(200) ");
+								} else {
+									if (StringUtil.isNotBlank(e.getDbTypeLength())) {
+										createTable.append(" (" + e.getDbTypeLength() + ") ");
+									}
+								}
+								
+								//if (e.getImportRequired()!=null && Column.YES == e.getImportRequired()) {
+								//	createTable.append(" NOT NULL ");
+								//} else {
+									createTable.append(" DEFAULT NULL ");
+								//}
+								
+								createTable.append(" comment '"+e.getComment()+"' ");
+								if (i!=columnList.size()-1) {
+									createTable.append(" , ");
+								}
+							}
+							createTable.append(" ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='"+ def.getName() +"' ");
+							db.executeUpdate(sql);
+							
+							//导入数据到副本数据库
+							batchSave(db,tableName,data);
+						}
+					});
+				}catch(Exception e) {
+					throw e;
+				}finally{
+					db.setCurrentConnection(con);
+				}
+			}
+			
+			
+			//2.导入excel数据到业务数据源
+			
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * 保存数据到给定DB
+	 * 
+	 * @param db
+	 *            给定的DB实例
+	 * @param data
+	 *            Excel数据
+	 */
+	private void batchSave(Db db, String tableName, List<List<CellWrap>> data) {
+		if (ArrayUtil.isNotBlank(data)) {
+			List<CellWrap> row = data.get(0);
+
+			StringBuilder sql = new StringBuilder("insert into " + tableName);
+
+			StringBuilder columText = new StringBuilder();
+			StringBuilder valueText = new StringBuilder();
+
+			columText.append(" ( ");
+			valueText.append(" ( ");
+			for (int i = 0; i < row.size(); i++) {
+				columText.append(row.get(i).columnConfig.getCode());
+				valueText.append("?");
+				if (i != row.size() - 1) {
+					columText.append(",");
+					valueText.append(",");
+				}
+			}
+			columText.append(" ) ");
+			valueText.append(" ) ");
+
+			sql.append(columText).append(valueText);
+
+			log.debug(sql.toString());
+
+			List<Object> paramValueList = new ArrayList<>();
+			for (List<CellWrap> r : data) {
+				for (CellWrap e : r) {
+					paramValueList.add(e.cellValue);
+				}
+			}
+			db.batchUpdate(sql.toString(), paramValueList.toArray());
+		}
 	}
 	
 	@RequestMapping(mapping = { "/view_data", "/m/view_data" }, text = "报表数据预览")

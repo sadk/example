@@ -2099,49 +2099,49 @@ CREATE TABLE `rpt_category` (
 DROP TABLE IF EXISTS `rpt_definition`;
 CREATE TABLE `rpt_definition` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `category_id` bigint(20) NOT NULL comment '报表分类ID', 
-  `category_name` varchar(40) NOT NULL comment '报表分类名',
+  `category_id` bigint(20) NOT NULL COMMENT '报表分类ID',
+  `category_name` varchar(40) NOT NULL COMMENT '报表分类名',
   
-  `datasource_id` bigint(20) NOT NULL comment '报表所属的数据源',
-  `datasource_name` varchar(40) NOT NULL comment '数据源名称',
-  
-  `import_datasource_id` bigint(20) NOT NULL comment '报表数据导入的数据源',
-  `import_datasource_name` varchar(40) NOT NULL comment '报表数据导入的数据源名称',
+  `datasource_id` bigint(20) NOT NULL COMMENT '报表所属的数据源',
+  `datasource_name` varchar(40) NOT NULL COMMENT '数据源名称',
   
   `name` varchar(255) NOT NULL COMMENT '定义全称',
   `short_name` varchar(255) DEFAULT NULL COMMENT '定义简称',
+  
   `code` varchar(255) NOT NULL COMMENT '定义编码',
-
   `type` varchar(4) NOT NULL COMMENT '报表内容类型： 1=SQL 2=Table 3=View 4=http_json 5=存储过程',
-  `url` varchar(500) NULL COMMENT '报表url',
-  
-  `column_sql` varchar(2000) NULL COMMENT '数据SQL用于导入字段用，可以直接执行',
-  `report_sql` varchar(2000) NULL COMMENT '报表SQL，带参数的真实报表SQL',
-  `prevent_sql_injection` varchar(2) NULL COMMENT '报表查询防SQL注入是否开启',
-  
+  `url` varchar(500) DEFAULT NULL COMMENT '报表url',
+  `column_sql` varchar(2000) DEFAULT NULL COMMENT '数据SQL用于导入字段用，可以直接执行',
+  `report_sql` varchar(2000) DEFAULT NULL COMMENT '报表SQL，带参数的真实报表SQL',
+  `prevent_sql_injection` varchar(2) DEFAULT NULL COMMENT '是否启用防SQL注入',
   `db_type` varchar(2) NOT NULL COMMENT '报表数据库类型： 1=MySQL 2=oracle 3=sqlserver 4=PostgreSQL',
-
-  `version` varchar(30) NULL COMMENT '报表版本号',
-    
+  
+  `layout` int(2) DEFAULT NULL comment '报表页面布局:1=左右布局 2=上下布局 3=左上下（用于子报表，左是高级查询区） 4=上中下（用于子报表，上是高级查询区） 5=左中右（用于子报表，左是高级查询区）',
+  `search_area_control_num_per_row` int(2) DEFAULT NULL COMMENT '高级查询区每行显示几个查询控件',
+  `show_pager` int(2) DEFAULT NULL,
+  
+  `page_size` int(4) DEFAULT NULL,
+  `sort_mode` int(2) DEFAULT NULL COMMENT '表格排序模式: 1=客户端 2=服务器端',
+  `page_size_list` varchar(40) DEFAULT NULL,
+  `search_area_width` int(2) DEFAULT NULL COMMENT '查询区域宽度',
+  
+  `can_export` int(2) DEFAULT NULL,
+  `export_mode` int(2) DEFAULT NULL COMMENT '数据导出的模式, 1=默认全部字段数据导出 2=用户选择字段导出',
+  
+  `can_import` int(2) DEFAULT NULL COMMENT '是否可以导入数据',
+  `import_mode` int(2) DEFAULT NULL COMMENT '数据导入的模式, 1=默认全部字段数据导入 2=用户选择字段导入',
+  
+  `import_datasource_id` bigint(20) DEFAULT NULL COMMENT '导入数据的数据源Id',
+  `import_datasource_name` varchar(50) DEFAULT NULL,
+  `import_table` varchar(80) DEFAULT NULL COMMENT '志入的目标表',
+  
+  
+  `import_data_stroe_precision` int(2) DEFAULT NULL COMMENT '数据副本存储精度模式 1=全字段按字符存储  2=按导入定义字段类型存储',
+  `data_replica_datasource_id` bigint(20) DEFAULT NULL COMMENT '数据副本用的数据源,导入数据时，本地会存量一分副本用于留证',
+  `data_replica_datasource_name` varchar(50) DEFAULT NULL,
+  
   `status` varchar(2) NOT NULL COMMENT '报表状态： 0=禁用   1=启用',
-  
-  `sort_mode` int(2)  COMMENT '表格排序模式: 1=客户端 2=服务器端',
-  `show_pager` int(2)  COMMENT '报表数据是否分页:1=分页  0=不分页',
-  `page_size` int(4)  COMMENT '分页大小',
-  `page_size_list` varchar(20)  COMMENT '分页大小候选项',
-  `can_export` int(2) default 0 COMMENT '是否可以导出数据 :1=可以 0=不可以',
-  `export_mode` int(2) default 1 COMMENT '数据导出的模式, 1=默认全部字段数据导出 2=用户选择字段导出',
-
-  `can_import` int(2) default 0 COMMENT '是否可以导入数据 :1=可以 0=不可以',
-  `import_mode` int(2) default 1 COMMENT '数据导入的模式, 1=默认全部字段数据导入 2=用户选择字段导入',
-  
-  `search_area_width` int(2) NULL COMMENT '查询区域宽度',
-  `search_area_control_num_per_row` int(2)  COMMENT '高级查询区每行显示几个查询控件',
-  
-  `layout` varchar(2)  COMMENT '报表页面布局:1=左右布局 2=上下布局 3=左上下（用于子报表，左是高级查询区） 4=上中下（用于子报表，上是高级查询区）5=左中右（用于子报表，左是高级查询区）',
-
-  
-  
+  `version` varchar(30) DEFAULT NULL COMMENT '报表版本号',
   `app_code` varchar(20) DEFAULT NULL COMMENT '租户编码',
   `sn` int(11) DEFAULT '0' COMMENT '排序',
   `remark` varchar(256) DEFAULT NULL COMMENT '备注',
@@ -2151,6 +2151,7 @@ CREATE TABLE `rpt_definition` (
   PRIMARY KEY (`id`),
   KEY `idx_code` (`code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='报表定义';
+
 
  
 DROP TABLE IF EXISTS `rpt_resource`;

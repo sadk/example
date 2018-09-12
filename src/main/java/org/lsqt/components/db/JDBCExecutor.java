@@ -311,7 +311,7 @@ public class JDBCExecutor {
 	 * </pre>
 	 * 
 	 **/
-	private static int BATCH_INSERT_MAX=24;
+	private static int BATCH_INSERT_MAX=1000;
 	
 	
 	public int batchUpdate(List<String> sqls) {

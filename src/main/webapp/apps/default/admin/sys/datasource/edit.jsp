@@ -57,12 +57,6 @@
 								</td>
 							</tr>
 							<tr>
-								<!-- 
-								<td>登陆默认库：</td>
-								<td>
-								 	<input name="loginDefaultDb" id="loginDefaultDb" class="mini-textbox"/>
-								</td>
-								 -->
 								 <td>所属系统：</td>
 								<td>
 								 	<input id="appCode" name="appCode" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/application/all" />
@@ -83,10 +77,16 @@
 								</td>
 							</tr> 
 							<tr>
+								<td>数据库：</td>
+								<td>
+								 	<input name="loginDefaultDb" id="loginDefaultDb" class="mini-textbox"/>
+								</td>
 								<td>排序号：</td>
 								<td>
 								 	<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
 								</td>
+							</tr>
+							<tr>
 								<td>备注：</td>
 								<td>
 								 	<input id="remark" name="remark" class="mini-textbox"/>
@@ -138,7 +138,25 @@
 					cache : false,
 					data: form.getData(),
 					success : function(text) {
-						mini.alert("连接成功!");
+						//mini.alert("连接成功!");
+						
+						
+						if(text) {
+							if(text.isOk) {
+								mini.alert("连接成功!");
+								mini.get("status").setValue(1);
+							}else {
+								mini.get("status").setValue(2);
+								var options ={
+								    content: text.message,    
+								    state: "danger",      //default|success|info|warning|danger
+								    x: "center",          //left|center|right
+								    y: "center",          //top|center|bottom
+								    timeout: 4000     //自动消失间隔时间。默认2000（2秒）。
+								}
+								mini.showTips(options)
+							}
+						}
 					},
 					error : function(data) {
 				  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);

@@ -23,6 +23,11 @@ public class DefinitionQuery {
 
 	/** 报表所属的数据源 */
 	private Long datasourceId;
+	
+	/** 报表导入数据的数据源 */
+	private Long importDatasourceId;
+	private String importDatasourceName;
+	private String importTable;
 
 	/** 定义全称 */
 	private String name;
@@ -30,8 +35,8 @@ public class DefinitionQuery {
 	/** 定义简称 */
 	private String shortName;
 
-	/** 报表数据导入数据副本存储精度模式 1=全字段按字符存储  2=按导入定义字段类型存储 **/
-	private Integer importDataStorePrecision;
+	/** 数据副本存储精度模式 1=全字段按字符存储  2=按导入定义字段类型存储 **/
+	private Integer dataReplicaStroePrecision;
 	
 	/** 定义编码 */
 	private String code;
@@ -211,12 +216,36 @@ public class DefinitionQuery {
 		this.shortName = shortName;
 	}
 
-	public Integer getImportDataStorePrecision() {
-		return importDataStorePrecision;
+	public String getImportTable() {
+		return importTable;
 	}
 
-	public void setImportDataStorePrecision(Integer importDataStorePrecision) {
-		this.importDataStorePrecision = importDataStorePrecision;
+	public void setImportTable(String importTable) {
+		this.importTable = importTable;
+	}
+
+	public Long getImportDatasourceId() {
+		return importDatasourceId;
+	}
+
+	public void setImportDatasourceId(Long importDatasourceId) {
+		this.importDatasourceId = importDatasourceId;
+	}
+
+	public String getImportDatasourceName() {
+		return importDatasourceName;
+	}
+
+	public void setImportDatasourceName(String importDatasourceName) {
+		this.importDatasourceName = importDatasourceName;
+	}
+
+	public Integer getDataReplicaStroePrecision() {
+		return dataReplicaStroePrecision;
+	}
+
+	public void setDataReplicaStroePrecision(Integer dataReplicaStroePrecision) {
+		this.dataReplicaStroePrecision = dataReplicaStroePrecision;
 	}
 
 }

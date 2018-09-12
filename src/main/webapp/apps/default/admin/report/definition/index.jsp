@@ -417,29 +417,7 @@
 				}
 			}
  
-			function templateConfig() { 
-				var row = grid.getSelected();
-				if(!row) {
-					mini.alert("选选择一个报表");return ;
-				}
-				mini.open({
-					url : "${pageContext.request.contextPath}/apps/default/admin/report/export_template/edit.jsp",
-					title : "【"+row.name+"】导入导出板模",
-					width : 500,
-					height : 400,
-					onload : function() {
-						var iframe = this.getIFrameEl();
-						var data = {
-							action : "edit",
-							definitionId: row.id
-						};
-						iframe.contentWindow.SetData(data);
-					},
-					ondestroy : function(action) {
-						grid.reload();
-					}
-				});
-			}
+
 			
 			function buttonConfig() { //报表业务按钮配置
 				var row = grid.getSelected();

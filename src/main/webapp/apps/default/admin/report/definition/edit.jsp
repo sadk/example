@@ -75,7 +75,7 @@
 									
 									
 									 <tr>
-										<td>数据源：</td>
+										<td>报表数据源：</td>
 										<td>
 											<input id="datasourceId" name="datasourceId" class="mini-buttonedit" onbuttonclick="onDatasourceButtonEdit" emptyText="数据源" required="true"/>   
 											<input id="datasourceName" name="datasourceName" class="mini-hidden" />   
@@ -104,25 +104,21 @@
 										<td>
 											<input id="status" name="status" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" required="true"/>
 										</td>
-										<td>备注：</td>
+										<td>序号:</td>
 										<td>
-											<input id="remark" name="remark"  class="mini-textbox" emptyText="请输入备注"  />
+											<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
 										</td>
 										<!-- 
 										<td>防SQL注入启用 ：</td>
 										<td>
 											<input id="preventSqlInjection" name="preventSqlInjection" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" required="true"/>
 										</td>
+										<td>备注：</td>
+										<td>
+											<input id="remark" name="remark"  class="mini-textbox" emptyText="请输入备注"  />
+										</td>
 										 -->
 									</tr>
-									
-									<tr>
-										<td>序号:</td>
-										<td>
-											<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
-										</td>
-									</tr>
-						
 				        </table>
 				    </div>
 				</fieldset>
@@ -136,7 +132,10 @@
 								<td>
 									<input id="layout" name="layout" value="1" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_file_layout" required="true"/>
 								</td>
-								
+								<td class="reportButtonTR">报表头按钮：</td>
+								<td class="reportButtonTR">
+									<input id="resourceIds" name="resourceIds" class="mini-buttonedit" onbuttonclick="onResourceButtonEdit" emptyText="添加报表按钮" />  
+								</td>
 							</tr>
 							<tr>
 								<td>查询区宽度：</td>
@@ -169,13 +168,14 @@
 									<input id="sortMode" name="sortMode" class="mini-combobox" value="1" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_sort_mode" required="true"/>
 								</td>
 							</tr>
-							<tr id="reportButtonTR">
-								<td>报表头按钮：</td>
-								<td colspan="3">
-									<input id="resourceIds" name="resourceIds" class="mini-buttonedit" onbuttonclick="onResourceButtonEdit" emptyText="添加报表按钮" style="width:100%"/>  
-								</td>
-
-							</tr>
+				        </table>
+		            </div>
+		        </fieldset>
+		            
+				<fieldset style="border:solid 1px #aaa;padding:2px; margin-bottom:2px;">
+		            <legend>导入导出定义</legend>
+		            <div style="padding:2px;">
+				        <table>
 							<tr>
 								<td>是否可以导出 ：</td>
 								<td>
@@ -203,14 +203,33 @@
 									<input id="importDatasourceId" name="importDatasourceId" class="mini-buttonedit" onbuttonclick="onImportDatasourceButtonEdit" emptyText="数据源"/>   
 									<input id="importDatasourceName" name="importDatasourceName" class="mini-hidden" />   
 								</td>
+								<td>导入的数据表：</td>
+								<td>
+									<input name="importTable" id="importTable" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="tableName" valueField="tableName"/>
+								</td>
+								
+							</tr>
+							<tr>
+								<td>数据源副本：</td>
+								<td>
+									<input id="dataReplicaDataSourceId" name="dataReplicaDataSourceId" class="mini-buttonedit" onbuttonclick="onDataReplicaDataSourceIdButtonEdit" emptyText="数据副本数据源" required="true"/>   
+									<input id="dataReplicaDataSourceName" name="dataReplicaDataSourceName" class="mini-hidden" />   
+								</td>
 								<td>副本存储模式：</td>
 								<td>
-									<input name="importDataStorePrecision" id="importDataStorePrecision" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rpt_imported_data_store_precision" />
+									<input name="dataReplicaStroePrecision" id="dataReplicaStroePrecision" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rpt_imported_data_store_precision" />
 								</td>
 							</tr>
+							<tr id="importExportTemplateTR">
+								<td>导入导出模板：</td>
+								<td colspan="3">
+									<input id="importExportTemplate" name="importExportTemplate" class="mini-buttonedit" onclick="onImportExportTemplateButtonEdit"  emptyText="可浏览、上传导入导出excel模板" style="width:100%" /> 
+								</td>
+								 
+							</tr>
 				        </table>
-		            </div>
-		        </fieldset>
+				    </div>
+				</fieldset>
 		            
 				<fieldset style="border:solid 1px #aaa;padding:2px; margin-bottom:2px;height: 130px">
 		            <legend>报表列SQL<font color="red">(用于导入字段使用，可以直接执行)</font></legend>
@@ -245,9 +264,43 @@
 			
 			var importDatasourceName = mini.get("importDatasourceName");
 			var importDatasourceId = mini.get("importDatasourceId");
+			var importTable = mini.get("importTable");
+			
+			var dataReplicaDataSourceId = mini.get("dataReplicaDataSourceId");
+			var dataReplicaDataSourceName = mini.get("dataReplicaDataSourceName");
+			
 			
 			var exportMode = mini.get("exportMode");
 			var importMode = mini.get("importMode");
+
+			
+			
+			function onImportExportTemplateButtonEdit(e) {
+				if(typeof(id.value) == 'undefined' || id.value ==null || id.value =='') {
+					return ;
+				}
+				
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/report/export_template/edit.jsp",
+					title : "导入导出板模",
+					width : 500,
+					height : 400,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {
+							action : "edit",
+							definitionId: id.value
+						};
+						iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						if(action!='cancel') {
+							mini.get("importExportTemplate").setText(action);
+						}
+					}
+				});
+			}
+			
 			
 			function onCanImportChanged(e) {
 				var sender = e.sender;
@@ -278,7 +331,7 @@
 				}
 			}
 			
-		    function ajaxLoadButton(definitionId) { //报表头按钮显示
+		    function ajaxLoadReportHeadButton(definitionId) { //报表头按钮显示
 				var data = {};
 		    	data.definitionId = definitionId;
 		    	if (id.value!='') {
@@ -305,6 +358,8 @@
 		            }); 
 		    	}
 		    }
+		    
+
 			
 			function onResourceButtonEdit(e) {
 				
@@ -385,6 +440,31 @@
 	            });
 			}
 			
+			
+			function onDataReplicaDataSourceIdButtonEdit(e) {
+				var btnEdit = this;
+	            mini.open({
+	                url: "${pageContext.request.contextPath}/apps/default/admin/sys/datasource/seletor_datasource.jsp",
+	                title: "选择列表",
+	                width: 650,
+	                height: 380,
+	                ondestroy: function (action) {
+	                    //if (action == "close") return false;
+	                    if (action == "ok") {
+	                        var iframe = this.getIFrameEl();
+	                        var data = iframe.contentWindow.GetData();
+	                        data = mini.clone(data);    //必须
+	                        if (data) {
+	                            btnEdit.setValue(data.id);
+	                            btnEdit.setText(data.name);
+	                            
+	                            dataReplicaDataSourceName.setValue(data.name);
+	                        }
+	                    }
+	                }
+	            });
+			}
+			
 			function onImportDatasourceButtonEdit(e) {
 				var btnEdit = this;
 	            mini.open({
@@ -403,11 +483,63 @@
 	                            btnEdit.setText(data.name);
 	                            
 	                            importDatasourceName.setValue(data.name);
+	                            
+	                            
+	                            var url = "${pageContext.request.contextPath}/table/page?isQueryDb=true&dataSourceCode="+data.code+"&dbName="+data.loginDefaultDb+"&pageIndex=0&pageSize=9999999" ;
+	                            importTable.setUrl(url);
 	                        }
 	                    }
 	                }
 	            });
 			}
+			
+		    function ajaxLoadImportTable(dataSourceId) {  
+				var data = {};
+		    	data.id= dataSourceId;
+		    	if (id.value!='') {
+		            $.ajax({
+		                url: "${pageContext.request.contextPath}/datasource/get_by_id",
+		                type: "post",
+		                data : data,
+		                success: function (data) {
+		                	if(data) {
+		                		data = mini.decode(data);
+		                		
+		                		 var url = "${pageContext.request.contextPath}/table/page?isQueryDb=true&dataSourceCode="+data.code+"&dbName="+data.loginDefaultDb+"&pageIndex=0&pageSize=9999999" ;
+		                         importTable.setUrl(url);
+		                	}
+		                },
+		                error: function (jqXHR, textStatus, errorThrown) {
+		                    alert(jqXHR.responseText);
+		                }
+		            }); 
+		    	}
+		    }
+		    
+		    function ajaxLoadImportExportTemplateText(definitionId) {  
+				var data = {};
+		    	data.definitionId= definitionId;
+		    	if (id.value!='') {
+		            $.ajax({
+		                url: "${pageContext.request.contextPath}/report/export_template/list",
+		                type: "post",  data : data,
+		                success: function (data) {
+		                	if(data && data.length>0) {
+		                		var array = new Array();
+		                		data = mini.decode(data);
+		                		for(var i=0;i<data.length;i++) {
+		                			array.push(data[i].name);
+		                		}
+		                		mini.get("importExportTemplate").setText(array.join(","));
+		                	}
+		                },
+		                error: function (jqXHR, textStatus, errorThrown) {
+		                    alert(jqXHR.responseText);
+		                }
+		            }); 
+		    	}
+		    }
+		    
 			
 			function SaveData() {
 				var o = form.getData();
@@ -438,7 +570,8 @@
 			function SetData(data) {
 				data = mini.clone(data); //跨页面传递的数据对象，克隆后才可以安全使用
 				if(data.action == 'add') {
-					$("#reportButtonTR").hide();
+					$(".reportButtonTR").hide();
+					$("#importExportTemplateTR").hide();
 					return ;
 				}
 				
@@ -459,6 +592,8 @@
 							categoryId.setText(o.categoryName);
 							importDatasourceId.setText(o.importDatasourceName);
 							
+							dataReplicaDataSourceId.setText(o.dataReplicaDataSourceName);
+							
 							if ("1" == (o.canExport+"")) {
 								$(".exportMode").show();
 							} else {
@@ -475,9 +610,11 @@
 							 
 							 
 							
-							ajaxLoadButton(data.id);
+							ajaxLoadReportHeadButton(data.id);
 							
+							ajaxLoadImportTable(o.importDatasourceId);
 							
+							ajaxLoadImportExportTemplateText(data.id);
 							
 							if (data.action == 'view') {
 								//form.setEnabled(false);
