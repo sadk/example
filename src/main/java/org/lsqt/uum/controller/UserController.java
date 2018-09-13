@@ -171,7 +171,7 @@ public class UserController {
 	
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
-	@After(clazz =(RequestAfterProcess.class),method="convert",args={Object.class,Long.class,String.class})
+	//@After(clazz =(RequestAfterProcess.class),method="convert",args={Object.class,Long.class,String.class})
 	public Page<User> queryForPage(UserQuery query,Boolean isAllChild) throws IOException {
 		if (isAllChild != null && isAllChild) { 
 			Long root = query.getOrgId();
