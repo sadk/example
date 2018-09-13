@@ -266,6 +266,8 @@ public class DefinitionController {
 				
 			//1.导入到数据副本的数据源，如果没有表则新建表
 			Definition def = definitionService.getById(definitionId);
+			final String tableName = "rtp_data_"+definitionId;
+			
 			if (def!=null && def.getDataReplicaDataSourceId() != null) {
 				ColumnQuery query = new ColumnQuery();
 				query.setDataType(Column.DATA_TYPE_IMPORT);
@@ -281,7 +283,7 @@ public class DefinitionController {
 				dbfactory.setBaseDb(db);
 				javax.sql.DataSource ds = dbfactory.getDataSouce(model.getCode());
 
-				final String tableName = "rtp_data_"+definitionId;
+				
 				
 				Connection con = db.getCurrentConnection();
 				try {
@@ -336,10 +338,27 @@ public class DefinitionController {
 			
 			
 			//2.导入excel数据到业务数据源
-			
+			if (def != null && def.getImportDatasourceId() != null) {
+				DataSource targetDS = db.getById(DataSource.class, def.getImportDatasourceId());
+				DataSourceFactory dbfactory = new DataSourceFactory();
+				dbfactory.setBaseDb(db);
+				javax.sql.DataSource ds = dbfactory.getDataSouce(targetDS.getCode());
+				Connection con = db.getCurrentConnection();
+				try {
+					Connection switchConn = ds.getConnection();
+					db.setCurrentConnection(switchConn);
+					db.executePlan(() -> {
+						batchSave(db,tableName,data);
+					});
+				} catch (Exception e) {
+					throw e;
+				} finally {
+					db.setCurrentConnection(con);
+				}
+			}
 		}
 		
-		return null;
+		return true;
 	}
 	
 	/**

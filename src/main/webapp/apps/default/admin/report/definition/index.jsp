@@ -61,8 +61,8 @@
 												<a class="mini-button" iconCls="icon-edit" onclick="buttonConfig()">报表按钮</a>
 												
 												<a class="mini-button" iconCls="icon-ok" onclick="generateReport()">报表生成</a>
-												<a class="mini-button" iconCls="icon-upload" onclick="templateConfig()">报表excel模板配置</a>
-												<!-- 
+											<!-- 	<a class="mini-button" iconCls="icon-upload" onclick="templateConfig()">报表excel模板配置</a>
+												
 												<a class="mini-button" iconCls="icon-upload"   onclick="importDefinition()">导入</a>
 												<a class="mini-button" iconCls="icon-download" onclick="exportDefinition()">导出</a>
 												<span class="separator"></span>  
@@ -449,17 +449,24 @@
 					mini.alert("请选择一个报表记录");
 					return ;
 				}
-				$.ajax({
-					'url': "${pageContext.request.contextPath}/report/definition/generate_report_file?id="+row.id,
-					type: 'post', dataType:'JSON',
-					success: function (json) {
-						mini.alert("生成成功");
-					},
-					error : function(data) {
-				  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
-				  		mini.alert(data.responseText);
-					}
-				});
+		        mini.confirm("报表重新生成将会覆盖已有报表物理文件，确定重新生成？", "确定？",
+		                function (action) {
+		                    if (action == "ok") {
+		        				$.ajax({
+		        					url : "${pageContext.request.contextPath}/report/definition/generate_report_file?id="+row.id,
+		        					type: 'post', dataType:'JSON',
+		        					success: function (json) {
+		        						mini.alert("生成成功");
+		        					},
+		        					error : function(data) {
+		        				  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
+		        				  		mini.alert(data.responseText);
+		        					}
+		        				});
+		                    }  
+		                }
+		            );
+
 			}
 			
 			function add() {
