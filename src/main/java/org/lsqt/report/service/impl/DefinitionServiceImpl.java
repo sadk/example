@@ -96,6 +96,8 @@ public class DefinitionServiceImpl implements DefinitionService{
 		dbfactory.setBaseDb(db);
 		javax.sql.DataSource ds = dbfactory.getDataSouce(dsModel.getCode());
 
+		List<org.lsqt.report.model.Column> reportColumnList = new ArrayList<>();
+		
 		Connection con = db.getCurrentConnection();
 		try {
 			Connection switchConn = ds.getConnection();
@@ -105,7 +107,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 				List<org.lsqt.components.db.Column> list = db.getMetaDataColumn(sqlWrap);
 				
 				if(ArrayUtil.isNotBlank(list)) {
-					List<org.lsqt.report.model.Column> reportColumnList = new ArrayList<>();
+					
 					for(org.lsqt.components.db.Column e: list) {
 						org.lsqt.report.model.Column rptColumn = new org.lsqt.report.model.Column();
 						if("id".equalsIgnoreCase(e.getPropertyName()) || "pk".equalsIgnoreCase(e.getPropertyName())) {
@@ -136,14 +138,16 @@ public class DefinitionServiceImpl implements DefinitionService{
 						rptColumn.setAllowSort(org.lsqt.report.model.Column.NO);
 						reportColumnList.add(rptColumn);
 					}
-					
-					db.batchSave(reportColumnList);
 				}
 			});
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			db.setCurrentConnection(con);
+		}
+		
+		if (ArrayUtil.isNotBlank(reportColumnList)) {
+			db.batchSave(reportColumnList);
 		}
 	}
 	
