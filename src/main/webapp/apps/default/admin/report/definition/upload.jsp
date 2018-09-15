@@ -91,7 +91,7 @@
 					
 					if (data && data.data.length>0) {
 						var  columns = [];
-						columns.push( { type: "indexcolumn",width: 20 }); //添加行号
+						columns.push( { type: "indexcolumn",width: 40 }); //添加行号
 						
 						if(data.hook && data.hook.length>0) {
 							for (var i=0;i<data.hook.length; i++) {

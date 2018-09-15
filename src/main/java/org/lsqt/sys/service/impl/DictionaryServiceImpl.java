@@ -2,9 +2,9 @@ package org.lsqt.sys.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
-import org.lsqt.act.model.NodeButton;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.db.Db;
@@ -87,5 +87,57 @@ public class DictionaryServiceImpl implements DictionaryService{
 		}
 		
 		return db.queryForList("getOptionByCode", Dictionary.class, code, appCode,enable);
+	}
+	
+	
+	public void repairNodePath() {
+		List<Dictionary> list =  db.queryForList("getAll", Dictionary.class);
+		for (Dictionary model : list) {
+			model.setUpdateTime(new Date());
+			repairNodePath(model, list);
+		}
+	}
+	
+	// -------------------------------  辅助方法  -------------------------------
+	private Dictionary repairNodePath(Dictionary model,List<Dictionary> data) {
+		int cnt = 0;
+		int maxLoop = data.size();
+		
+		// 循环向上，处理节点路径
+		List<Long> parentIds = new ArrayList<>();
+		parentIds.add(model.getId());
+		
+		Dictionary parent = getRepairNodeById(model.getPid(),data);
+		while (parent != null) {
+			parentIds.add(parent.getId());
+
+			parent = getRepairNodeById(parent.getPid(),data);
+			
+			cnt ++;
+			
+			if(cnt>maxLoop) { // 如果节点树产生死闭环，也可以跳出
+				break;
+			}
+		}
+		
+		if (!parentIds.isEmpty()) {
+			Collections.reverse(parentIds);
+			model.setNodePath(StringUtil.join(parentIds, ",")+",");
+			db.update(model,"nodePath","updateTime");
+		}
+		
+		return model;
+	}
+	
+	
+	private Dictionary getRepairNodeById(Long id,List<Dictionary> data) {
+		if(id==null) return null;
+		
+		for(Dictionary model : data) {
+			if(model.getId().longValue() == id) {
+				return model;
+			}
+		}
+		return null;
 	}
 }

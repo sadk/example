@@ -11,8 +11,12 @@
 	 		
 	 		<column name="value" property="value" text="资源值"/>
 	 	
-	 		<column name="type" property="type" text="资源类型：1=界面元素"/>
+	 		<column name="type" property="type" text="资源类型：100=菜单 200=页面元素 300=数据查询条件 400=页面 401=链接"/>
 	 	
+	 		<column name="url" property="url" text="资源地址"/>
+	 		
+	 		<column name="icon" property="icon" text="资源图标"/>
+	 		
 	 		<column name="sn" property="sn" text="排序"/>
 	 	
 	 		<column name="node_path" property="nodePath" text=""/>
@@ -50,7 +54,7 @@
 					
 	  						<#if query.pid??> and A.pid = ${query.pid} </#if>
 					
-	  						<#if query.name??> and A.name = '${StringUtil.escapeSql(query.name)}' </#if>
+	  						<#if query.name??> and A.name like '%${StringUtil.escapeSql(query.name)}%' </#if>
 						
 	  						<#if query.code??> and A.code = '${StringUtil.escapeSql(query.code)}' </#if>
 						
@@ -58,9 +62,18 @@
 						
 	  						<#if query.sn??> and A.sn = ${query.sn} </#if>
 					
-	  						<#if query.nodePath??> and A.node_path = '${StringUtil.escapeSql(query.nodePath)}' </#if>
+	  						<#if query.nodePath??> and A.node_path like '${StringUtil.escapeSql(query.nodePath)}%' </#if>
+	  						
+  						    <#if query.nodePathList?? && (query.nodePathList?size > 0)>
+  						    	and (
+							    	<#list query.nodePathList as nodePath>
+							    		  A.node_path like '${StringUtil.escapeSql(nodePath)}%'
+							    		<#if nodePath_has_next>or</#if>
+									</#list>
+									)
+							</#if>
 						
-	  						<#if query.remark??> and A.remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+	  						<#if query.remark??> and A.remark like '%${StringUtil.escapeSql(query.remark)}%' </#if>
 						
 	  						<#if query.appCode??> and A.app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
 						
@@ -116,5 +129,7 @@
 		]]>
 	</statement>
 	
-	
+	<statement id="getAll" parameterName="query">
+		<![CDATA[	select * from uum_res  ]]>
+	</statement>
 </statements>

@@ -33,43 +33,56 @@
 								<td style="width:150px;">
 								 	<input name="name" id="name" class="mini-textbox"  emptyText="请输入名称"/>
 								</td>
-								<td style="width:100px;">编码：</td>
-								<td style="width:150px;"> 
-								 	<input id="code" name="code" class="mini-textbox" emptyText="请输入编码"/>
+								<td style="width:100px;">类型：</td>
+								<td style="width:150px;">
+									<input id="type" name="type" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=res_type"  />
 								</td>
+								
 							</tr>
 							
 							<tr>
+								<td >编码：</td>
+								<td > 
+								 	<input id="code" name="code" class="mini-textbox" emptyText="请输入编码"/>
+								</td>
 								<td>编码值：</td>
 								<td>
 									<input name="value" id="value" class="mini-textbox" emptyText="请输入编码值"/>
 								</td>
-								<td colspan="2" style="color: blue;">说明: 编码值用于自定义元素(如:按钮)的状态</td>
 							</tr>
 							
 							<tr>
-								<td>类型：</td>
+								<td>状态 </td>
 								<td>
-									<input id="type" name="type" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=res_type"  />
+									<input id="status" name="status" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
 								</td>
-								
 								<td>上级：</td>
 								<td>
 								 	<input id="pid" name="pid" class="mini-buttonedit" onbuttonclick="onButtonEdit" emptyText="上级可以为空"/>    
 								</td>
 							</tr>
-							
 							<tr>
+
+								<td>图标：</td>
+								<td> 
+								 	<input name="icon" id="icon" class="mini-textbox"/>
+								</td>
 								<td>序号：</td>
 								<td>
 								 	<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
 								</td>
-								<td>备注：</td>
-								<td> 
-								 	<input id="remark" name="remark" class="mini-textbox" emptyText="请输入备注"/>
+							</tr>
+							<tr>
+								<td>地址：</td>
+								<td colspan="3">
+								 	<input name="url" id="url" class="mini-textbox" style="width:100%"  emptyText="请输入URL地址"/>
 								</td>
-								
-								
+							</tr>
+							<tr>
+								<td>备注：</td>
+								<td colspan="3"> 
+								 	<input id="remark" name="remark" class="mini-textarea" emptyText="请输入备注" style="width:100%"/>
+								</td>
 							</tr>
 				        </table>
 				    </div>

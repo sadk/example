@@ -209,7 +209,7 @@
 								</td>
 								
 							</tr>
-							<tr>
+							<tr class="canImport">
 								<td>数据源副本：</td>
 								<td>
 									<input id="dataReplicaDataSourceId" name="dataReplicaDataSourceId" class="mini-buttonedit" onbuttonclick="onDataReplicaDataSourceIdButtonEdit" emptyText="数据副本数据源" required="true"/>   
@@ -268,7 +268,7 @@
 			
 			var dataReplicaDataSourceId = mini.get("dataReplicaDataSourceId");
 			var dataReplicaDataSourceName = mini.get("dataReplicaDataSourceName");
-			
+			var dataReplicaStroePrecision = mini.get("dataReplicaStroePrecision");
 			
 			var exportMode = mini.get("exportMode");
 			var importMode = mini.get("importMode");
@@ -313,9 +313,23 @@
 					$(".importMode").hide();
 					$(".canImport").hide();
 					importMode.setValue(null);
-					importDatasourceName.setValue(null);
-					importDatasourceId.setValue(null);
-					importDatasourceId.setText(null);
+					
+					
+					var o = form.getData();
+					if (!(o && typeof(o.id) && o.id!=null && o.id!='')) {//如果是编辑,保存已有状态,不清空控件数据
+						importDatasourceName.setValue(null);
+						importDatasourceId.setValue(null);
+						importDatasourceId.setText(null);
+						importTable.setValue(null);
+						
+						dataReplicaDataSourceId.setValue(null);
+						dataReplicaDataSourceId.setText(null);
+						
+						dataReplicaDataSourceName.setValue(null);
+						
+						dataReplicaStroePrecision.setValue(null);
+						dataReplicaStroePrecision.setText(null);
+					}
 				}
 			}
 			
@@ -494,6 +508,10 @@
 			}
 			
 		    function ajaxLoadImportTable(dataSourceId) {  
+		    	if(typeof(dataSourceId) == 'undefined' || dataSourceId == null || dataSourceId == '') {
+		    		return ;
+		    	}
+		    	
 				var data = {};
 		    	data.id= dataSourceId;
 		    	if (id.value!='') {

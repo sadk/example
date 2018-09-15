@@ -15,7 +15,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -23,14 +22,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.util.cellwalk.CellWalk;
 import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
-import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.mvc.util.FileUploadUtil;
@@ -54,7 +50,6 @@ import org.lsqt.report.service.impl.support.SelectorDataFromUrlJson;
 import org.lsqt.report.service.impl.support.SelectorDataFromUrlXml;
 import org.lsqt.sys.model.DataSource;
 import org.lsqt.sys.service.DataSourceService;
-import org.lsqt.sys.service.TableService;
 import org.lsqt.sys.service.impl.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +70,8 @@ public class DefinitionController {
 	@Inject private DataSourceService dataSourceService;
 	@Inject private Db db;
 	
-	@RequestMapping(mapping = { "/page", "/m/page" })
+	
+	@RequestMapping(mapping = { "/page", "/m/page" ,"/ipad"})
 	public Page<Definition> queryForPage(DefinitionQuery query) throws IOException {
 		return definitionService.queryForPage(query); //  
 	}
@@ -295,7 +291,7 @@ public class DefinitionController {
 						Integer cnt = db.executeQueryForObject(sql, Integer.class, tableName,model.getLoginDefaultDb());
 						if (cnt ==null || cnt == 0) {
 							StringBuilder createTable = new StringBuilder();
-							createTable.append("CREATE TABLE " + tableName + " ( id_ bigint(20) NOT NULL AUTO_INCREMENT primary key,");
+							createTable.append("CREATE TABLE " + tableName + " ( id_ bigint(20) NOT NULL AUTO_INCREMENT primary key,remark_ varchar(200) DEFAULT NULL,");
 							
 							for (int i=0;i<columnList.size();i++) {
 								Column e = columnList.get(i);
@@ -323,11 +319,11 @@ public class DefinitionController {
 								}
 							}
 							createTable.append(" ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='"+ def.getName() +"' ");
-							db.executeUpdate(sql);
-							
-							//导入数据到副本数据库
-							batchSave(db,tableName,data);
+							db.executeUpdate(createTable.toString());
 						}
+						
+						//导入数据到副本数据库
+						batchSave(db,tableName,data);
 					});
 				}catch(Exception e) {
 					throw e;
@@ -348,7 +344,7 @@ public class DefinitionController {
 					Connection switchConn = ds.getConnection();
 					db.setCurrentConnection(switchConn);
 					db.executePlan(() -> {
-						batchSave(db,tableName,data);
+						batchSave(db,def.getImportTable(),data);
 					});
 				} catch (Exception e) {
 					throw e;
@@ -391,7 +387,7 @@ public class DefinitionController {
 			columText.append(" ) ");
 			valueText.append(" ) ");
 
-			sql.append(columText).append(valueText);
+			sql.append(columText).append(" values ").append(valueText);
 
 			log.debug(sql.toString());
 
@@ -501,7 +497,7 @@ public class DefinitionController {
 				throw new UnsupportedOperationException("检测到表头定义不在同一个数据行");
 			} else if (rowIndexs.size() == 1) {
 				int headIndex = Integer.valueOf(new ArrayList<>(rowIndexs).get(0)); // 表头所在的行索引
-				if (!(headIndex > 0)) {
+				if (!(headIndex >= 0)) {
 					throw new UnsupportedOperationException("没有检测到表头定义");
 				}
 				List<List<CellWrap>> excelData = getSheetData(sheet, list);
@@ -525,15 +521,12 @@ public class DefinitionController {
 	private List<List<CellWrap>> getSheetData(Sheet sheet,List<Column> columnList) {
 		List<List<CellWrap>> data = new ArrayList<>();
 		
-	/*	if (startRowIndex >= sheet.getLastRowNum()) { // 表格没有数据情况
-			return data;
-		}*/
-		
-		for (int j = 0; j < sheet.getPhysicalNumberOfRows(); j++) {
+		for (int j = 0; j < sheet.getPhysicalNumberOfRows(); j++) { // getPhysicalNumberOfRows此方法，excel里有空行的时候，
 			Row row = sheet.getRow(j);
-			List<CellWrap> rowData = new ArrayList<>(); // 行数据
 			
-			for (int k = 0; k < row.getPhysicalNumberOfCells(); k++) {
+			List<CellWrap> rowData = new ArrayList<>(); // 行数据
+			//row.getPhysicalNumberOfCells();==>注意踩坑!!!!,看英文注释：Gets the number of defined cells (NOT number of cells in the actual row!). That is to say if only columns 0,4,5 have values then there would be 3.
+			for (int k = 0; k < row.getLastCellNum(); k++) {
 				Cell cel = row.getCell(k);
 				if (cel != null) {
 					if (cel instanceof XSSFCell) {

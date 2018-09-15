@@ -29,4 +29,9 @@ public interface DictionaryService {
 	 * @return
 	 */
 	List<Dictionary> getOptionByCode(String code,String appCode,Integer enable ) ;
+	
+	/**
+	 * 修复节点路径
+	 */
+	void repairNodePath();
 }

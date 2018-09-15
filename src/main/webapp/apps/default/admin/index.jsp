@@ -92,8 +92,8 @@
         <div class="mini-splitter" style="width:100%;height:100%;" borderStyle="border:0;">
             <div size="180" maxSize="250" minSize="100" showCollapseButton="true" style="border:0;">
                 <!--OutlookTree-->
-                <div id="leftTree" class="mini-outlooktree" url="tree.txt" onnodeclick="onNodeSelect"
-                    textField="text" idField="id" parentField="pid">
+                <div id="leftTree" class="mini-outlooktree" url="${pageContext.request.contextPath}/user/get_permission_list?type=100" onnodeclick="onNodeSelect"
+                    textField="name" idField="id" parentField="pid">
                 </div>
                 
             </div>
@@ -103,7 +103,7 @@
 				contextMenu="#tabsMenu"
 				plain="false" onactivechanged="onTabsActiveChanged"
 				>
-					<div name="first" title="首页" url="http://baidu.com"></div>
+					<div name="first" title="首页" url=""></div>
 				</div>
 				<ul id="tabsMenu" class="mini-contextmenu" onbeforeopen="onBeforeOpen">
 					<li onclick="reloadTab">

@@ -40,12 +40,12 @@ public class TableServiceImpl implements TableService{
 				Connection con = db.getCurrentConnection();
 				try {
 					Connection switchConn = ds.getConnection();
-					log.info(" --- >>>>>>>>>>>> switchConnection prepare !!! (Thead-id:"+Thread.currentThread().getId()+" ,con:"+switchConn+")");
+					log.debug(" --- >>>>>>>>>>>> switchConnection prepare !!! (Thead-id:"+Thread.currentThread().getId()+" ,con:"+switchConn+")");
 					try{
 						db.setCurrentConnection(switchConn);
 						return db.queryForPage("queryPageFromDb", query.getPageIndex(), query.getPageSize(), Table.class, query);
 					}finally {
-						log.info(" --- >>>>>>>>>>>> switchConnection close !!! (Thead-id:"+Thread.currentThread().getId()+" ,con:"+switchConn+")");
+						log.debug(" --- >>>>>>>>>>>> switchConnection close !!! (Thead-id:"+Thread.currentThread().getId()+" ,con:"+switchConn+")");
 						switchConn.close();
 					}
 					

@@ -20,9 +20,11 @@ public interface ResourceService {
 	Collection<Resource> getAll();
 	
 	/**
-	 * 根据当前id获取多层子部门(含当前部门) 
+	 * 根据当前id获取多层子节点(含当前节点) 
 	 * @param id 
 	 * @return
 	 */
 	List<Resource> getAllChildNodes(Long id);  
+	
+ 
 }

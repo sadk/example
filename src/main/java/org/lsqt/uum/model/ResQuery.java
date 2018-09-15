@@ -1,5 +1,7 @@
 package org.lsqt.uum.model;
 
+import java.util.List;
+
 import org.lsqt.components.db.Page;
 
 /**
@@ -25,7 +27,7 @@ public class ResQuery {
 	/** 编码 */
 	private String code;
 
-	/** 资源类型：1=界面元素 */
+	/** 资源类型：100=菜单 200=页面元素 300=数据查询条件 400=页面 401=链接*/
 	private Integer type;
 
 	/** 排序 */
@@ -59,7 +61,10 @@ public class ResQuery {
 	private String titleIds;
 	
 	// getter、setter
-
+	
+	// ------------- 树状查询使用
+	private List<String> nodePathList;
+		
 	public void setPid(Long pid) {
 		this.pid = pid;
 	}
@@ -234,6 +239,14 @@ public class ResQuery {
 
 	public void setTitleIds(String titleIds) {
 		this.titleIds = titleIds;
+	}
+
+	public List<String> getNodePathList() {
+		return nodePathList;
+	}
+
+	public void setNodePathList(List<String> nodePathList) {
+		this.nodePathList = nodePathList;
 	}
 
 

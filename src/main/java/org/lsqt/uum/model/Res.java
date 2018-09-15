@@ -4,9 +4,12 @@ package org.lsqt.uum.model;
  * 资源表
  */
 public class Res {
-	public static final int type_菜单 = 100;
-	public static final int type_页面元素 = 200;
-	public static final int type_数据查询权限 = 300;
+	public static final int TYPE_菜单 = 100;
+	public static final int TYPE_页面元素 = 200;
+	public static final int TYPE_数据查询条件 = 300;
+	public static final int TYPE_页面 = 400;
+	public static final int TYPE_链接 = 401;
+	
  
 
 	private Long id;
@@ -25,8 +28,13 @@ public class Res {
 	/**资源值**/
 	private String value;
 	
-	/** 资源类型：1=菜单 2=页面元素  3=数据查询权限*/
+	/** 资源类型：100=菜单 200=页面元素 300=数据查询条件 400=页面 401=链接*/
 	private Integer type;
+	
+	private String url;
+	
+	/**资源图标(可以是class样式、也可以是http图标)**/
+	private String icon;
 
 	/** 排序 */
 	private Integer sn;
@@ -35,6 +43,9 @@ public class Res {
 	private String nodePath;
 
 	private String nodePathText;
+	
+
+	
 	
 	/** 备注 */
 	private String remark;
@@ -176,15 +187,37 @@ public class Res {
 	public String getTypeDesc() {
 		if (type == null)
 			return "";
-		if (type_菜单 == type) {
+		if (TYPE_菜单 == type) {
 			return "菜单";
 		}
-		if (type_页面元素 == type) {
+		if (TYPE_页面元素 == type) {
 			return "页面元素";
 		}
-		if (type_数据查询权限 == type) {
-			return "数据查询权限";
+		if (TYPE_数据查询条件 == type) {
+			return "数据查询条件";
+		}
+		if (TYPE_链接 == type) {
+			return "链接";
+		}
+		if (TYPE_页面 == type) {
+			return "页面";
 		}
 		return "";
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 }

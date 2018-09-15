@@ -1,6 +1,7 @@
 package org.lsqt.sys.model;
 
 import java.util.Date;
+import java.util.List;
 
 import org.lsqt.components.db.Page;
 
@@ -28,6 +29,8 @@ public class DictionaryQuery {
 	private String parentCode; // 获取下级(一层)
 	private String code; // 字典编码
 	private String codes;
+	
+	private List<String> nodePathList;
 	
 	private String appCode;
 	private Date createTime;
@@ -121,5 +124,11 @@ public class DictionaryQuery {
 	}
 	public void setParentCode(String parentCode) {
 		this.parentCode = parentCode;
+	}
+	public List<String> getNodePathList() {
+		return nodePathList;
+	}
+	public void setNodePathList(List<String> nodePathList) {
+		this.nodePathList = nodePathList;
 	} 
 }

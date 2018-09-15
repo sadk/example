@@ -24,7 +24,9 @@ public class TableController {
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<Table> queryForPage(TableQuery query) throws IOException {
-		return tableService.queryForPage(query);
+		Page<Table> result = tableService.queryForPage(query);
+		System.out.println(result.getData().size());
+		return result;
 	}
 	
 	@RequestMapping(mapping = { "/all", "/m/all" })

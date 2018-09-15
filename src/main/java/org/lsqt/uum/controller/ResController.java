@@ -1,23 +1,18 @@
 package org.lsqt.uum.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
-import org.lsqt.sys.model.Dictionary;
-import org.lsqt.uum.model.Org;
-import org.lsqt.uum.model.OrgQuery;
 import org.lsqt.uum.model.Res;
 import org.lsqt.uum.model.ResQuery;
-import org.lsqt.uum.service.OrgService;
 import org.lsqt.uum.service.ResService;
 
 
@@ -29,7 +24,7 @@ public class ResController {
 	@Inject private ResService resService; 
 	
 	@Inject private Db db;
-	@Inject private OrgService orgService;
+ 
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<Res> queryForPage(ResQuery query) {
@@ -41,14 +36,39 @@ public class ResController {
 		return resService.getAll();
 	}
 	
-	@RequestMapping(mapping = { "/all_selector", "/m/all_selector" },text="组织机构选择器用（过滤自己节点做为父节点等）")
+	/**
+	 * 
+	 * @param query 
+	 * @param isEnableTreeQuery 是否开启树状查询
+	 * @return
+	 */
+	@RequestMapping(mapping = { "/list", "/m/list" })
+	public Collection<Res> queryForList(ResQuery query,Boolean isEnableTreeQuery) {
+		
+		List<Res> list = resService.queryForList(query);
+		
+		if(ArrayUtil.isNotBlank(list) && (isEnableTreeQuery!=null && isEnableTreeQuery)) {
+			List<String> nodePathList = new ArrayList<>();
+			for(Res e: list) {
+				nodePathList.add(e.getNodePath());
+			}
+			if(ArrayUtil.isNotBlank(nodePathList)) {
+				ResQuery q = new ResQuery();
+				q.setNodePathList(nodePathList);
+				return resService.queryForList(q);
+			}
+		}
+		return list;
+	}
+	
+	@RequestMapping(mapping = { "/all_selector", "/m/all_selector" },text="资源选择器使用（过滤自己节点做为父节点等）")
 	public Collection<Res> getAll(ResQuery query,Boolean isAllChild) {
-		if(isAllChild!=null && isAllChild) { // 获取部门的权限(含下级部门)
-			Long orgRoot = query.getOrgId();
+		if(isAllChild!=null && isAllChild) {
+			Long resRoot = query.getOrgId();
 			query.setOrgId(null);
-			List<Org> list = orgService.getAllChildNodes(orgRoot);
+			List<Res> list = resService.getAllChildNodes(resRoot);
 			List<Long> temp = new ArrayList<>();
-			for(Org e : list){
+			for(Res e : list){
 				temp.add(e.getId());
 			}
 			if(!temp.isEmpty()) {
@@ -68,6 +88,11 @@ public class ResController {
 	public int delete(String ids) {
 		List<Long> list = StringUtil.split(Long.class, ids, ",");
 		return resService.deleteById(list.toArray(new Long[list.size()]));
+	}
+	
+	@RequestMapping(mapping = { "/repair_node_path", "/m/repair_node_path" },text="修复节点路径")
+	public void repairNodePath() {
+		resService.repairNodePath();
 	}
 	
 }

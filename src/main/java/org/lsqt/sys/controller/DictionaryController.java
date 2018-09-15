@@ -1,6 +1,7 @@
 package org.lsqt.sys.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.Default;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.sys.model.Application;
 import org.lsqt.sys.model.Dictionary;
@@ -25,8 +27,32 @@ public class DictionaryController {
 	}
 	
 	@RequestMapping(mapping = { "/all", "/m/all" })
-	public Collection<Dictionary> all(DictionaryQuery query) {
-		  return dictionaryService.queryForList(query);
+	public Collection<Dictionary> getAll() throws IOException {
+		return dictionaryService.getAll();
+	}
+	
+	/**
+	 * 
+	 * @param query
+	 * @param isEnableTreeQuery 是否启用树状查询
+	 * @return
+	 */
+	@RequestMapping(mapping = { "/list", "/m/list" })
+	public Collection<Dictionary> all(DictionaryQuery query,Boolean isEnableTreeQuery) {
+		  List<Dictionary> list = dictionaryService.queryForList(query);
+		  
+			if(ArrayUtil.isNotBlank(list) && (isEnableTreeQuery!=null && isEnableTreeQuery)) {
+				List<String> nodePathList = new ArrayList<>();
+				for(Dictionary e: list) {
+					nodePathList.add(e.getNodePath());
+				}
+				if(ArrayUtil.isNotBlank(nodePathList)) {
+					DictionaryQuery q = new DictionaryQuery();
+					q.setNodePathList(nodePathList);
+					return dictionaryService.queryForList(q);
+				}
+			}
+		  return list;
 	}
 	
 	
@@ -48,6 +74,11 @@ public class DictionaryController {
 		}
 		
 		return dictionaryService.getOptionByCode(code, appCode,enable);
+	}
+	
+	@RequestMapping(mapping = { "/repair_node_path", "/m/repair_node_path" },text="修复节点路径")
+	public void repairNodePath() {
+		dictionaryService.repairNodePath();
 	}
 	
 }

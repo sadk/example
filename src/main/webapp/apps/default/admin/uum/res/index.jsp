@@ -3,7 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>组织机构管理</title>
+		<title>系统资源管理</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pagertree.js" ></script>
@@ -38,7 +38,7 @@
 						<tr>
 							<td>资源名称：</td>
 							<td>
-								<input id="name" name="name"  style="width:140px" class="mini-textbox"  emptyText="请输入机构名称"  onenter="search"/>
+								<input id="name" name="name"  style="width:140px" class="mini-textbox"  emptyText="请输入资源名称"  onenter="search"/>
 							</td>
 						</tr>
 						
@@ -89,7 +89,9 @@
 								<a class="mini-button" iconCls="icon-add" onclick="add()">添加</a>
 								<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
 								<a class="mini-button" iconCls="icon-edit" onclick="edit()">编辑</a>
-								<a class="mini-button" iconCls="icon-node" onclick="edit('view')">查看</a>
+								<!--  
+								<a class="mini-button" iconCls="icon-node" onclick="edit('view')">查看</a> -->
+								<a class="mini-button" iconCls="icon-node" onclick="repairNodePath()">修复节点路径</a>
 								<span class="separator"></span>  
 								<a class="mini-button" iconCls="icon-download" onclick="exportData()">导出</a>
 								<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:60px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"excel"},{id:"1",text:"word"},{id:"2",text:"pdf"},{id:"3",text:"txt"}]' />
@@ -104,24 +106,38 @@
 					</table>
 				</div>
 				<div class="mini-fit">
-					<div id="datagrid1" class="mini-treegrid"" style="width:100%;height:100%;"
-					showTreeIcon="true" allowResize="true" expandOnLoad="true"
+					<div id="datagrid1" class="mini-treegrid"" style="width:100%;height:100%;"  contextMenu="#gridMenu"
+					showTreeIcon="true" allowResize="true" expandOnLoad="false" showLoading="true"
+					allowCellEdit="true" allowCellSelect="true" editNextOnEnterKey="true"  editNextRowCell="true" 
     				treeColumn="name" idField="id" parentField="pid" resultAsTree="false"  checkRecursive="true"  showCheckBox="false" 
-					url="${pageContext.request.contextPath}/res/all" > 
+					url="${pageContext.request.contextPath}/res/list?isEnableTreeQuery=false" > 
 					    <div property="columns">
 					        <div type="indexcolumn"></div>
 					        <div name="name" field="name" width="160" headerAlign="center">名称</div>
-					        <div field="code" width="80" headerAlign="center">编码</div>
-					        <div field="typeDesc" width="80" headerAlign="center">资源类型</div>
+					        <div field="code" width="180" headerAlign="center">编码</div>
+					        <div field="url" width="280" headerAlign="center" align="left">URL
+					        	<input property="editor" class="mini-textbox" style="width:100%;" />
+					        </div>
+					        
+					        <div field="typeDesc" width="80" headerAlign="center" align="center">资源类型</div>
 					        <div field="sn" width="30" align="right" headerAlign="center">序号</div>
 					        <div field="appCode" width="60" align="left">所属应用</div>
 					        <div field="nodePath" width="60" align="left">结点路径</div>
+					        <!-- 
 					        <div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
 					        <div field="updateTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>     
+					         -->
 					        <div name="id" field="id" width="30" >ID</div>
 					        <div name="pid" field="pid" width="30" >父ID</div>              
 					    </div>
 					</div>
+					
+				    <ul id="gridMenu" class="mini-contextmenu" onbeforeopen="onBeforeOpen">              
+				        <li name="expandAll" iconCls="icon-expand" onclick="grid.expandAll()">展开全部</li>
+					    <li name="closeAll" iconCls="icon-collapse" onclick="grid.collapseAll()">关闭全部</li>
+					    <li name="closeOther" iconCls="icon-collapse" onclick="closeOther()">关闭其它</li>
+				    </ul>
+				    
 				</div>
 			</div>
 		</div>
@@ -129,13 +145,47 @@
 		mini.parse();
 
 		var form = new mini.Form("#form1");
-		function clear() {
-			 form.clear();
-		}
-		 
 		var grid = mini.get("datagrid1");
+		var messageId = null;
 		
+		function closeOther() {
+			var row = grid.getSelected();
+			if(row) {
+				grid.collapseAll();
+				grid.expandPath (row);
+
+				/*
+				var nodes = grid.findNodes(function(node){
+				    if(node.id == row.id) return true;
+				});
+				
+				if(nodes!=null && nodes.length>0) {
+					var node = nodes[0];
+					//console.log(grid.isExpandedNode (node))
+					//grid.expandNode(node) 这个方法简直不生效！！！
+					
+					grid.collapseAll();
+					grid.expandPath (node);
+				}
+				*/
+			}
+		}
+		
+		function onBeforeOpen(e) {
+		    var menu = e.sender; 
+		    var row = grid.getSelected();
+		    var rowIndex = grid.indexOf(row);            
+		    if (!row ||  rowIndex== 0) {
+		        e.cancel = true;
+		        //阻止浏览器默认右键菜单
+		        e.htmlEvent.preventDefault();
+		        return;
+		    }
+		}
+		    
 		function search() {
+			loading();
+			
 			var data = form.getData();
 			
 			var createTimeBegin = mini.get('createTimeBegin').text;
@@ -149,9 +199,47 @@
 				data.key = key2;
 			}
 			
-			grid.load(data);
+			//遍历对象所有属性值，如果都为空，查询所有数据
+			var hasValue = false; //是否有输入查询值
+            for(var name in data){
+               var value = data[name];
+               if( (typeof(value) != 'undefined') && value != null && value != '') {
+            	   hasValue = true;
+            	   break;
+               }
+            }
+	       	
+           
+			grid.setAutoLoad(false); // 阻止grid.setUrl方法一调用就自动加载数据!!!
+            var url = "${pageContext.request.contextPath}/res/list";
+            if(hasValue) {
+            	grid.setExpandOnLoad(true);//打开全部节点!!
+				grid.setUrl(url + "?isEnableTreeQuery=true")
+            } else {
+            	grid.setExpandOnLoad(false);
+            	grid.setUrl(url + "?isEnableTreeQuery=false")
+            }
+            grid.load(data);
 		}
-
+		
+		
+		function repairNodePath() {
+			$.ajax({
+				'url': "${pageContext.request.contextPath}/res/repair_node_path",
+				type: 'post',
+				dataType:'JSON',
+				cache: false,
+				async:false,
+				success: function (json) {
+					mini.alert("修复成功");
+					grid.reload();
+				},
+				error : function(data) {
+			  		mini.alert(data.responseText);
+				}
+			});
+		}
+		
 		function remove() {
 			var row = grid.getSelected();
 			if(row) {
@@ -198,8 +286,8 @@
 			mini.open({
 				url : "${pageContext.request.contextPath}/apps/default/admin/uum/res/edit.jsp",
 				title : "添加资源",
-				width : 540,
-				height : 250,
+				width : 490,
+				height : 340,
 				onload : function() {
 					var iframe = this.getIFrameEl();
 					var data = {
@@ -230,8 +318,8 @@
 				mini.open({
 					url : "${pageContext.request.contextPath}/apps/default/admin/uum/res/edit.jsp",
 					title : "编辑资源信息",
-					width : 540,
-					height : 250,
+					width : 490,
+					height : 340,
 					onload : function() {
 						var iframe = this.getIFrameEl();
 						var data = {
@@ -242,6 +330,18 @@
 					},
 					ondestroy : function(action) {
 						grid.reload();
+						
+						var nodes = grid.findNodes(function(node){
+						    if(node.id == row.id) return true;
+						});
+						
+						if(nodes!=null && nodes.length>0) {
+							var node = nodes[0];
+							//console.log(grid.isExpandedNode (node))
+							grid.expandNode(node) //如果是非叶结点，可以展示下一层！！！
+							grid.expandPath (node);
+						}
+						
 					}
 				});
 			} else {
@@ -262,6 +362,21 @@
 					});
 			
 		}
+		
+		function clear() {
+			 form.clear();
+		}
+		
+        function loading() {
+            mini.mask({
+                el: document.body,
+                cls: 'mini-mask-loading',
+                html: '加载中...'
+            });
+            setTimeout(function () {
+                mini.unmask(document.body);
+            }, 1000);
+        }
 		</script>
 	</body>
 </html>

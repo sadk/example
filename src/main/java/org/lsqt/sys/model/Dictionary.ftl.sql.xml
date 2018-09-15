@@ -63,7 +63,7 @@
 			</#if>
 			
 			<#if query.name??>
-				and A.name = '${query.name}' 
+				and A.name like '%${StringUtil.escapeSql(query.name)}%' 
 			</#if>
 			<#if query.value??>
 				and A.value like '%${StringUtil.escapeSql(query.value)}%' 
@@ -91,7 +91,15 @@
 				and B.name like '%${StringUtil.escapeSql(query.categoryName)}%' 
 			</#if>
 			
-			
+		    <#if query.nodePathList?? && (query.nodePathList?size > 0)>
+		    	and (
+			    	<#list query.nodePathList as nodePath>
+			    		  A.node_path like '${StringUtil.escapeSql(nodePath)}%'
+			    		<#if nodePath_has_next>or</#if>
+					</#list>
+					)
+			</#if>
+							
 			<#if query.sortField?? && query.sortOrder??>
 				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
 			<#else>
@@ -110,5 +118,9 @@
 				</#if> 
 			order by sn 
 		]]>
+	</statement>
+	
+	<statement id="getAll" >
+		<![CDATA[ select * from sys_dictionary   ]]>
 	</statement>
 </statements>

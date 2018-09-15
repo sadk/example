@@ -20,6 +20,7 @@ import org.lsqt.components.context.annotation.mvc.After;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.db.orm.ftl.FtlDbExecute;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.uum.model.Group;
 import org.lsqt.uum.model.GroupQuery;
@@ -38,6 +39,8 @@ import org.lsqt.uum.service.UserService;
 import org.lsqt.uum.util.CodeUtil;
 import org.lsqt.uum.util.HttpUtil;
 import org.lsqt.uum.util.ResourceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
@@ -60,7 +63,7 @@ class RequestAfterProcess {
 
 @Controller(mapping={"/user"})
 public class UserController {
-	    
+	private static final Logger log = LoggerFactory.getLogger(UserController.class);
 	
 	@Inject private UserService userService; 
 	@Inject private OrgService orgService;
@@ -265,10 +268,20 @@ public class UserController {
 	
 	@RequestMapping(mapping = { "/get_permission_list", "/m/get_permission_list" },text="获取用户的权限")
 	public List<Res> getPermissionList(ResQuery query) {
-		if(query.getUserId()!=null) {
-			return db.queryForList("queryForPage", Res.class, query);
+		String enablePermission = ResourceUtil.getValue("user.permission.enable");
+		if(StringUtil.isBlank(enablePermission)) {
+			log.error("没有配置权限是否开启参数，见：config.properties");
+			return new ArrayList<>();
 		}
-		return new ArrayList<>();
+		
+		if("true".equalsIgnoreCase(enablePermission)) {
+			if(query.getUserId()!=null) {
+				return db.queryForList("queryForPage", Res.class, query);
+			}
+			return new ArrayList<>();
+		} else {
+			return db.queryForList("getAll", Res.class);
+		}
 	}
 	
 	@RequestMapping(mapping = { "/add_object_to_user", "/m/add_object_to_user" },text="给用户添加角色、组、部门、称谓")

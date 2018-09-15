@@ -87,7 +87,11 @@
 								<a class="mini-button" iconCls="icon-add" onclick="add()">添加</a>
 								<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
 								<a class="mini-button" iconCls="icon-edit" onclick="edit()">编辑</a>
+								<!-- 
 								<a class="mini-button" iconCls="icon-node" onclick="edit('view')">查看</a>
+								 -->
+								 <a class="mini-button" iconCls="icon-node" onclick="repairNodePath()">修复节点路径</a>
+								
 								<span class="separator"></span>  
 								<a class="mini-button" iconCls="icon-download" onclick="exportData()">导出</a>
 								<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:60px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"excel"},{id:"1",text:"word"},{id:"2",text:"pdf"},{id:"3",text:"txt"}]' />
@@ -103,9 +107,10 @@
 				</div>
 				<div class="mini-fit">
 					<div id="datagrid1" class="mini-treegrid"" style="width:100%;height:100%;"
-					showTreeIcon="true" allowResize="true" expandOnLoad="true"
+					showTreeIcon="true" allowResize="true" expandOnLoad="false"  contextMenu="#gridMenu"
+					allowCellEdit="true" allowCellSelect="true" editNextOnEnterKey="true"  editNextRowCell="true" 
     				treeColumn="name" idField="id" parentField="pid" resultAsTree="false"  checkRecursive="true"  showCheckBox="false" 
-					url="${pageContext.request.contextPath}/dictionary/all" > 
+					url="${pageContext.request.contextPath}/dictionary/list?isEnableTreeQuery=false" > 
 					    <div property="columns">
 					        <div type="indexcolumn"></div>
 					        <div name="name" field="name" width="160" headerAlign="center">名称</div>
@@ -126,6 +131,11 @@
 					        <div name="pid" field="pid" width="30" >父ID</div>              
 					    </div>
 					</div>
+				    <ul id="gridMenu" class="mini-contextmenu" onbeforeopen="onBeforeOpen">              
+				        <li name="expandAll" iconCls="icon-expand" onclick="grid.expandAll()">展开全部</li>
+					    <li name="closeAll" iconCls="icon-collapse" onclick="grid.collapseAll()">关闭全部</li>
+					    <li name="closeOther" iconCls="icon-collapse" onclick="closeOther()">关闭其它</li>
+				    </ul>
 				</div>
 			</div>
 		</div>
@@ -133,11 +143,63 @@
 		mini.parse();
 
 		var form = new mini.Form("#form1");
+		var grid = mini.get("datagrid1");
+
+		function closeOther() {
+			var row = grid.getSelected();
+			if(row) {
+				grid.collapseAll();
+				grid.expandPath (row);
+
+				/*
+				var nodes = grid.findNodes(function(node){
+				    if(node.id == row.id) return true;
+				});
+				
+				if(nodes!=null && nodes.length>0) {
+					var node = nodes[0];
+					//console.log(grid.isExpandedNode (node))
+					//grid.expandNode(node) 这个方法简直不生效！！！
+					
+					grid.collapseAll();
+					grid.expandPath (node);
+				}
+				*/
+			}
+		}
+		
+		function onBeforeOpen(e) {
+		    var menu = e.sender; 
+		    var row = grid.getSelected();
+		    var rowIndex = grid.indexOf(row);            
+		    if (!row ||  rowIndex== 0) {
+		        e.cancel = true;
+		        //阻止浏览器默认右键菜单
+		        e.htmlEvent.preventDefault();
+		        return;
+		    }
+		}
+		
 		function clear() {
 			 form.clear();
 		}
 		 
-		var grid = mini.get("datagrid1");
+		function repairNodePath() {
+			$.ajax({
+				'url': "${pageContext.request.contextPath}/dictionary/repair_node_path",
+				type: 'post',
+				dataType:'JSON',
+				cache: false,
+				async:false,
+				success: function (json) {
+					mini.alert("修复成功");
+					grid.reload();
+				},
+				error : function(data) {
+			  		mini.alert(data.responseText);
+				}
+			});
+		}
 		
 		function search() {
 			var data = form.getData();
@@ -153,6 +215,25 @@
 				data.key = key2;
 			}
 			
+			//遍历对象所有属性值，如果都为空，查询所有数据
+			var hasValue = false; //是否有输入查询值
+            for(var name in data){
+               var value = data[name];
+               if( (typeof(value) != 'undefined') && value != null && value != '') {
+            	   hasValue = true;
+            	   break;
+               }
+            }
+	       	
+            grid.setAutoLoad(false); // 阻止grid.setUrl方法一调用就自动加载数据!!!
+            var url = "${pageContext.request.contextPath}/dictionary/list";
+            if(hasValue) {
+            	grid.setExpandOnLoad(true);//打开全部节点!!
+				grid.setUrl(url + "?isEnableTreeQuery=true")
+            } else {
+            	grid.setExpandOnLoad(false);
+            	grid.setUrl(url + "?isEnableTreeQuery=false")
+            }
 			grid.load(data);
 		}
 
@@ -237,6 +318,17 @@
 					},
 					ondestroy : function(action) {
 						grid.reload();
+						
+						var nodes = grid.findNodes(function(node){
+						    if(node.id == row.id) return true;
+						});
+						
+						if(nodes!=null && nodes.length>0) {
+							var node = nodes[0];
+							//console.log(grid.isExpandedNode (node))
+							grid.expandNode(node) //如果是非叶结点，可以展示下一层！！！
+							grid.expandPath (node);
+						}
 					}
 				});
 			} else {

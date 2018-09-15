@@ -115,16 +115,23 @@
 				var o = form.getData();
 				form.validate();
 				if(form.isValid() == false) return;
-				$.ajax({
-					url : "${pageContext.request.contextPath}/datasource/save_or_update",
-					dataType: 'json',
-					type : 'post',
-					cache : false,
-					data: form.getData(),
-					success : function(text) {
-						CloseWindow("save");
-					}
-				});
+		        mini.confirm("提示:修改IP或端口请重新启动应用(不重启需重新指定不存在的编码)!!!", "确定？",
+		                function (action) {
+		                    if (action == "ok") {
+		        				$.ajax({
+		        					url : "${pageContext.request.contextPath}/datasource/save_or_update",
+		        					dataType: 'json',
+		        					type : 'post',
+		        					cache : false,
+		        					data: form.getData(),
+		        					success : function(text) {
+		        						CloseWindow("save");
+		        					}
+		        				});
+		                    }  
+		                }
+		            );
+
 			}
 			
 			function testConnection() {

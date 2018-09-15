@@ -40,7 +40,7 @@ public class DbReverseEnginner {
 	
 	public static void main(String... args) throws Exception {
 		DbReverseEnginner enginner = new DbReverseEnginner();
-		enginner.reverseTable("test_user").codegenForSingle("com.syswin", "uum", "User","");
+		enginner.reverseTable("uum_user").codegenForSingle("com.example", "uum", "User","");
 	}
 	
 	public Connection prepareConnection() {

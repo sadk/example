@@ -63,50 +63,25 @@
 	*/
 	
 	{id: "uum", text: "用户系统"},
-	{id: "uum0",pid:"uum", text: "本地用户系统"},
+	{id: "uum0",pid:"uum", text: "基础信息"},
+	{id: "uum1", text: "资源管理" , pid: "uum0", url: "/apps/default/admin/uum/res/index.jsp"},
 	{id: "uum2", text: "用户管理" , pid: "uum0", url: "/apps/default/admin/uum/user/index.jsp"} ,
 	{id: "uum3", text: "角色管理" , pid: "uum0", url: "/apps/default/admin/uum/role/index.jsp"} ,
 	{id: "uum4", text: "组织机构" , pid: "uum0", url: "/apps/default/admin/uum/org/index.jsp"} ,
 	{id: "uum5", text: "称谓管理" , pid: "uum0", url: "/apps/default/admin/uum/title/index.jsp"} ,
-	{id: "uum6", text: "资源管理" , pid: "uum0", url: "/apps/default/admin/uum/res/index.jsp"},
-	{id: "uum7", text: "组管理" , pid: "uum0", url: "/apps/default/admin/uum/group/index.jsp"},
+	{id: "uum7", text: "用户组管理" , pid: "uum0", url: "/apps/default/admin/uum/group/index.jsp"},
+	{id: "uum6", text: "关联管理" , pid: "uum"},
 	
-	{id: "uum8", text: "权限管理" , pid: "uum0", url: ""},
 	{id: "uum9", text: "用户" , pid: "uum6", url: "/apps/default/admin/uum/user/permission_index.jsp"},
 	
-	{id: "uum10", text: "机构" , pid: "uum6", url: ""},
-	{id: "uum11", text: "机构-(通讯录)" , pid: "uum8", url: "/apps/default/admin/uum/org/permission_contact.jsp"},
-	{id: "uum12", text: "机构" , pid: "uum8", url: "/apps/default/admin/uum/org/permission_index.jsp"},
+	{id: "uum10", text: "组织" , pid: "uum6", url: "/apps/default/admin/uum/org/permission_index.jsp"},
+	
 	
 	{id: "uum13", text: "角色" , pid: "uum6", url: "/apps/default/admin/uum/role/permission_index.jsp"},
 	{id: "uum14", text: "组" , pid: "uum6", url: "/apps/default/admin/uum/group/permission_index.jsp"},
 	{id: "uum15", text: "称谓" , pid: "uum6", url: "/apps/default/admin/uum/title/permission_index.jsp"},
 	
-	/*
-	{id: "uum_syswin",pid:"uum", text: "思源用户系统"},
-	{id: "uum_syswin_0", text: "基础数据" , pid: "uum_syswin"},
-	
-	{id: "uum_syswin_6", text: "角色数据" , pid: "uum_syswin_0"},
-	{id: "uum_syswin_7", text: "角色分类" , pid: "uum_syswin_6", url: "/apps/default/syswin/uum/role/category/index.jsp"} ,
-	{id: "uum_syswin_8", text: "角色数据" , pid: "uum_syswin_6", url: "/apps/default/syswin/uum/role/index.jsp"} ,
-	
-	{id: "uum_syswin_2", text: "组织架构" , pid: "uum_syswin_0", url: "/apps/default/syswin/uum/org/index.jsp"} ,
-	{id: "uum_syswin_3", text: "岗位相关" , pid: "uum_syswin_0"} ,
-	{id: "uum_syswin_9", text: "岗位分类" , pid: "uum_syswin_3", url: "/apps/default/syswin/uum/position/category/index.jsp"} ,
-	{id: "uum_syswin_4", text: "岗位数据" , pid: "uum_syswin_3", url: "/apps/default/syswin/uum/position/index.jsp"} ,
-	{id: "uum_syswin_5", text: "岗位角色" , pid: "uum_syswin_3", url: "/apps/default/syswin/uum/position/position_roles.jsp"} ,
-	{id: "uum_syswin_1", text: "用户数据" , pid: "uum_syswin_0", url: "/apps/default/syswin/uum/user/index.jsp"} ,
-	
-	
-		
-	
-	{id: "uum_syswin_authority", text: "授权管理" , pid: "uum_syswin"} ,
-	{id: "uum_syswin_authority_2", text: "权限资源" , pid: "uum_syswin_authority", url: "/apps/default/syswin/uum/button/index.jsp"},
-	
-	{id: "uum_syswin_authority_1", text: "菜单定义" , pid: "uum_syswin_authority", url: "/apps/default/syswin/uum/menu/index.jsp"},
-	
-	{id: "uum_syswin_authority_5", text: "角色授权" , pid: "uum_syswin_authority", url: "/apps/default/syswin/uum/role/authority.jsp"} ,
-	*/
+	{id: "uum16", text: "权限管理" , pid: "uum", url: ""},
 
 	
 	{id: "flow", text: "办公系统"},
@@ -128,6 +103,7 @@
 	{id: "flow-107", text: "考勤管理", pid: "flow", url:"" },
 	{id: "flow-108", text: "我的考勤", pid: "flow-107", url:"" },
 	
+	{id: "flow-111", text: "通讯录管理" , pid: "flow", url: "/apps/default/admin/uum/org/permission_contact.jsp"},
 	{id: "flow-109", text: "日程管理", pid: "flow", url:"" },
 	{id: "flow-110", text: "我的日程", pid: "flow-107", url:"" },
 	

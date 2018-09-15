@@ -8,7 +8,7 @@
     <p>Our latest product: 
     <a href="${user.name}">${user.age}</a>! <br>
     
-    <#if userList??>
+    <#if userList?? && (userList?size > 0)>
     	<#list userList as user>
     		${user.name} <br>
     		<#if user_has_next>,</#if>
