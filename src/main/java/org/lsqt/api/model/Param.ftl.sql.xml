@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.api.model.Param" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="api_param">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 		<column name="definition_id" property="definitionId" text="系统缓存管理表ID"/>
+	 		<column name="name" property="name" text="参数名称"/>
+	 		<column name="value" property="value" text="参数值"/>
+	 		<column name="code" property="code" text="参数编码"/>
+	 		<column name="type" property="type" text="参数类型: 100=动态值 ; 200=静态值 "/>
+	 		<column name="required" property="required" text="是否必填, 1=是 0=否"/>
+	 		
+	 		<column name="sn" property="sn" text="排序"/>
+	 		<column name="remark" property="remark" text="备注"/>
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from api_param where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							definition_id = %${key}%  or 
+							name like '%${key}%'  or 
+							value like '%${key}%'  or 
+							code like '%${key}%'  or 
+							type = '%${key}%'  or 
+							remark like '%${key}%' 
+					)
+				</#if>
+ 
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						<#if query.required??> and required = ${query.required} </#if>
+					
+	  						<#if query.definitionId??> and definition_id = ${query.definitionId} </#if>
+					
+	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+					
+	  						<#if query.value??> and value = '${StringUtil.escapeSql(query.value)}' </#if>
+						
+	  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+	  						<#if query.type??> and type = '${StringUtil.escapeSql(query.type)}' </#if>
+					
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from api_param ]]>
+	</statement>
+	
+</statements>
