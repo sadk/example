@@ -19,7 +19,8 @@
 <div class="mini-splitter" style="width:100%;height:100%;">
     <div size="${definition.searchAreaWidth}" showCollapseButton="true">
 				<div id="form1"  style="padding:8px;">
-					<table>						
+					<table>	
+						<!-- 			
 						<tr>
 							<td>关键字 ：</td>
 							<td>
@@ -27,8 +28,10 @@
 								<input id="key" name="key" style="width:140px" class="mini-textbox" emptyText="请输入关键字搜索" style="width: 150px;" onenter="search"/>
 							</td>
 						</tr>
+						 -->
 						<#-- 字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键  4=文本框 5=整型框 6=精度型框 7=日期 8=文件  9=下拉框(常量JSON) -->
 						<#list columnList as column>
+						<#if (column.searchType?? && column.searchType==1)>
 							<#if column.columnCodegenType??>
 								
 								
@@ -86,6 +89,7 @@
 								
 								
 							</#if>
+						</#if>
 						</#list>
 
 					</table>

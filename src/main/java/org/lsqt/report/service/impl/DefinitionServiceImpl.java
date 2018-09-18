@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -215,6 +216,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 	}
 	
 	public Page<Map<String,Object>> search(Long id,Map<String,Object> formMap) {
+		
 		class Result { public Page<Map<String,Object>> data; }
 		Result rs = new Result();
 		
@@ -253,6 +255,27 @@ public class DefinitionServiceImpl implements DefinitionService{
 		}finally {
 			db.setCurrentConnection(con);
 		}
+		
+		//跟据DB字段，转化成java属性字段
+		List<Map<String, Object>> pojoData = new ArrayList<>();
+		if (ArrayUtil.isNotBlank(rs.data.getData())) {
+			for (Map<String, Object> row : rs.data.getData()) {
+				Map<String,Object> pojoMap = new LinkedHashMap<>();
+				
+				List<String> keyList = MapUtil.toKeyList(row);
+				for(String k: keyList) {
+					for (org.lsqt.report.model.Column column: list) {
+						if(k.equals(column.getCode())) {
+							pojoMap.put(column.getPropertyName(), row.get(k));
+							break;
+						}
+					}
+				}
+				pojoData.add(pojoMap);
+			}
+		}
+		rs.data.setData(pojoData);
+		
 		
 		return rs.data;
 	}
