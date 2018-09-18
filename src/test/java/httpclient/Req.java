@@ -41,7 +41,35 @@ public class Req<T> {
 		return req;
 	}
 	
- 
+	/**
+	 * 添加合同号
+	 * @param contractNo
+	 * @return
+	 */
+	public Req<T> contractNo(String contractNo) {
+		this.SERVICE.SERVICE_HEADER.CONTRACT_NO = contractNo;
+		return this;
+	}
+	
+	/**
+	 * 添加客户号
+	 * @param customerNo
+	 * @return
+	 */
+	public Req<T> customerNo(String customerNo) {
+		this.SERVICE.SERVICE_HEADER.CUSTOMER_NO = customerNo;
+		return this;
+	}
+	
+	/**
+	 * 添加身份证号
+	 * @param idNo
+	 * @return
+	 */
+	public Req<T> idNo(String idNo) {
+		this.SERVICE.SERVICE_HEADER.ID_NO = idNo;
+		return this;
+	}
 	
 	public static class Service {
 		public ServiceHeader SERVICE_HEADER;
@@ -72,19 +100,23 @@ public class Req<T> {
 		}
 	}
 
+	public String toJSONString() {
+		return JSON.toJSONString(this, true);
+	}
 	
 	public static void main(String[] args) {
 		Map<String,String> map = new HashMap<>();
 		map.put("CERT_ID", "130901196604155209");
 		
-		User user = new User();
-		user.setId(2343L);
-		user.setLoginName("张三");
-		user.setBirthday(new Date());
+		User form = new User();
+		form.setId(2343L);
+		form.setLoginName("张三");
+		form.setBirthday(new Date());
 		
 		
-		Req<User> req = Req.newInstance(user);
+		Req<User> req = Req.newInstance(form).contractNo("这是合同号").idNo("这是身分证号").customerNo("这是客户号");
 		
-		System.out.println(JSON.toJSONString(req, true));
+		
+		System.out.println(req.toJSONString());
 	}
 }

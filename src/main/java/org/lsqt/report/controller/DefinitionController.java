@@ -300,7 +300,7 @@ public class DefinitionController {
 								
 								if (def.getDataReplicaStroePrecision()!=null 
 										&& Definition.DATA_REPLICA_STROE_PRECISION_ALL_STRING == def.getDataReplicaStroePrecision()) {
-									createTable.append(" varchar(200) ");
+									//createTable.append(" varchar(200) ");
 								} else {
 									if (StringUtil.isNotBlank(e.getDbTypeLength())) {
 										createTable.append(" (" + e.getDbTypeLength() + ") ");
@@ -525,8 +525,8 @@ public class DefinitionController {
 			Row row = sheet.getRow(j);
 			
 			List<CellWrap> rowData = new ArrayList<>(); // 行数据
-			//row.getPhysicalNumberOfCells();==>注意踩坑!!!!,看英文注释：Gets the number of defined cells (NOT number of cells in the actual row!). That is to say if only columns 0,4,5 have values then there would be 3.
-			for (int k = 0; k < row.getLastCellNum(); k++) {
+			
+			for (int k = 0; k < row.getLastCellNum(); k++) { //row.getPhysicalNumberOfCells();==>注意踩坑!!!!,看英文注释：Gets the number of defined cells (NOT number of cells in the actual row!). That is to say if only columns 0,4,5 have values then there would be 3.
 				Cell cel = row.getCell(k);
 				if (cel != null) {
 					if (cel instanceof XSSFCell) {
@@ -547,6 +547,22 @@ public class DefinitionController {
 						}
 					} else {
 						throw new UnsupportedOperationException("不支持的单元格实例");
+					}
+				} else { //空值单元格不要遗漏!!!
+					for (Column e : columnList) {
+						CellReference cr = new CellReference(e.getCoordinate());
+						
+						if (cr.getCol() == k) {
+							CellWrap cellWrap = new CellWrap();
+							cellWrap.cellCoordinate = e.getCoordinate();
+							cellWrap.cellRowIndex = j;
+							cellWrap.cellColumnIndex = k;
+							cellWrap.cellValue = null;
+							cellWrap.columnConfig = e;
+							rowData.add(cellWrap);
+							break;
+						}
+						
 					}
 				}
 			}

@@ -223,6 +223,9 @@ public class UserController {
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public User saveOrUpdate(User form) {
+		if (StringUtil.isNotBlank(form.getLoginPwd())) {
+			form.setLoginPwd(CodeUtil.passwodEncrypt(form.getLoginPwd() + User.PWD_SALT));
+		}
 		return userService.saveOrUpdate(form);
 	}
 	
@@ -266,21 +269,21 @@ public class UserController {
 		return new ArrayList<>();
 	}
 	
-	@RequestMapping(mapping = { "/get_permission_list", "/m/get_permission_list" },text="获取用户的权限")
+	@RequestMapping(mapping = { "/get_permission_list", "/m/get_permission_list" },text="获取用户的所有资源权限")
 	public List<Res> getPermissionList(ResQuery query) {
 		String enablePermission = ResourceUtil.getValue("user.permission.enable");
-		if(StringUtil.isBlank(enablePermission)) {
+		if (StringUtil.isBlank(enablePermission)) {
 			log.error("没有配置权限是否开启参数，见：config.properties");
 			return new ArrayList<>();
 		}
-		
-		if("true".equalsIgnoreCase(enablePermission)) {
-			if(query.getUserId()!=null) {
+
+		if ("true".equalsIgnoreCase(enablePermission)) {
+			if (query.getUserId() != null) {
 				return db.queryForList("queryForPage", Res.class, query);
 			}
 			return new ArrayList<>();
 		} else {
-			return db.queryForList("getAll", Res.class);
+			return db.queryForList("queryForPage", Res.class,query);
 		}
 	}
 	

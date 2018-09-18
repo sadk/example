@@ -95,4 +95,61 @@ public class ResController {
 		resService.repairNodePath();
 	}
 	
+	@RequestMapping(mapping = { "/tree", "/m/tree" }, text = "权限管理")
+	public Collection<SimpleNode> getTree() {
+		List<SimpleNode> list = new ArrayList<>();
+		
+		ResQuery query2 = new ResQuery();
+		query2.setType(Res.TYPE_页面元素);
+		Collection<Res> buttonList = resService.queryForList(query2); // 获取所有菜单
+		
+		
+		ResQuery query = new ResQuery();
+		query.setType(Res.TYPE_菜单);
+		Collection<Res> data = resService.queryForList(query); // 获取所有菜单
+		
+		if (ArrayUtil.isNotBlank(data)) {
+			for (Res e : data) {
+				SimpleNode node = new SimpleNode();
+				node.id = e.getId();
+				node.pid = e.getPid();
+				node.name = e.getName();
+				
+				List<SimpleNode.Function> funs = new ArrayList<>();
+				for(Res button : buttonList) {
+					if(button.getPid().longValue() == e.getId()) {
+						SimpleNode.Function btn = new SimpleNode.Function();
+						btn.action = button.getCode();
+						btn.name = button.getName();
+						btn.checked = false;
+						funs.add(btn);
+					}
+				}
+				
+				node.functions = funs;
+				
+				list.add(node);
+			}
+		}
+		return list;
+	}
+	
+	/**
+	 * 用于权限管理
+	 * @author mingmin.yuan
+	 *
+	 */
+	public static class SimpleNode{
+		public Long id;
+		public Long pid;
+		public String name;
+		public List<Function> functions = new ArrayList<>();
+		
+		public static class Function {
+			public String action ;
+			public String name;
+			public boolean checked ;
+		}
+	}
+	
 }

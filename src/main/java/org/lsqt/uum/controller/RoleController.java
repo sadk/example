@@ -1,16 +1,20 @@
 package org.lsqt.uum.controller;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.bean.BeanUtil;
+import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.sys.model.Dictionary;
 import org.lsqt.uum.model.Org;
@@ -47,6 +51,39 @@ public class RoleController {
 		return roleService.queryForPage(query);
 	}
 	
+	/**
+	 * 用来构建设角色树
+	 * @author mingmin.yuan
+	 *
+	 */
+	public static class Node extends Role {
+		private Long pid;
+
+		public Long getPid() {
+			return pid;
+		}
+
+		public void setPid(Long pid) {
+			this.pid = pid;
+		}
+	}
+	
+	@RequestMapping(mapping = { "/tree", "/m/tree" })
+	public Collection<Role> queryForTree(RoleQuery query) throws Exception {
+		List<Role> nodeList = new ArrayList<>();
+
+		Page<Role> page = roleService.queryForPage(query);
+		if (ArrayUtil.isNotBlank(page.getData())) {
+			for (Role e : page.getData()) {
+				Node n = new Node();
+				n.pid = -1L;
+				BeanUtils.copyProperties(n, e);
+				nodeList.add(n);
+			}
+		}
+		return nodeList;
+	}
+
 	@RequestMapping(mapping = { "/all", "/m/all" })
 	public Collection<Role> getAll() {
 		return roleService.getAll();

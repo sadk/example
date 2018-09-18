@@ -2304,4 +2304,96 @@ CREATE TABLE `rpt_export_tempalte` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='报表导入导出数据模板';
 
+
+
+-- ----------------------------------- API系统 ----------------------------------------------
+drop table  IF EXISTS  api_category ;
+CREATE TABLE `api_category` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `pid` bigint(20) DEFAULT NULL,
+  `code` varchar(255) NOT NULL COMMENT '编码',
+  `sn` int(11) DEFAULT '0' COMMENT '排序',
+  `name` varchar(255) NOT NULL COMMENT '名称',
+  `value` varchar(255) DEFAULT NULL COMMENT '分类值',
+  
+  `category_code` varchar(250) DEFAULT NULL COMMENT '分类维度编码引用 sys_category.code',
+  `category_name` varchar(250) DEFAULT NULL COMMENT '分类维度名称',
+  
+  `data_type` varchar(255) DEFAULT NULL COMMENT '数据（业务）类型',
+  `node_path` varchar(1000) DEFAULT NULL,
+  `app_code` varchar(20) DEFAULT NULL,
+  `remark` varchar(256) DEFAULT NULL COMMENT '备注',
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_dic_name_code` (`code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='API分类表';
+
+drop table  IF EXISTS  api_definition ;
+CREATE TABLE `api_definition` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `pid` bigint(20) DEFAULT NULL ,
+  `category_id` bigint(20) DEFAULT NULL COMMENT '分类id',
+  `category_name` varchar(100) DEFAULT NULL COMMENT '分类名称',
+  
+  `value` varchar(200) DEFAULT NULL COMMENT '配置键',
+  `name` varchar(200) NOT NULL COMMENT '配置名称',
+  `code` varchar(256) DEFAULT NULL COMMENT '配置编码',
+  
+  `type` varchar(4) NOT NULL COMMENT '映射类型: 1=外部系统-http-json 2=本地系统',
+  `entity_class_request` varchar(200)  NULL COMMENT '请求实体',
+  `entity_class_response` varchar(200)  NULL COMMENT '响应实体',
+  
+  `url` varchar(100) NOT NULL COMMENT '接口地址(不带参数的地址)',
+  `method` varchar(20) NOT NULL COMMENT '请求方法：post/get/delete/put...',
+  `send_type` varchar(20) NOT NULL COMMENT '报文发送方式: 1=form_data 2=x-www-form-urlencodeed 3=raw 4=binary(选择文件)',
+  `timeout` int(20) DEFAULT NULL COMMENT 'url请求超时间',
+  
+  `data_prop` varchar(200) DEFAULT NULL COMMENT 'JSON数据数据字段',
+  
+  
+  `app_code` varchar(50) DEFAULT NULL COMMENT '应用编码',
+  `sn` int(10) DEFAULT '0' COMMENT '排序',
+  `remark` varchar(256) DEFAULT NULL COMMENT '备注',
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='系统API接口定义';
+
+drop table  IF EXISTS  api_param ;
+CREATE TABLE `api_param` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `definition_id` bigint(20) NOT NULL COMMENT '系统缓存管理表ID',
+  `name` varchar(255) NOT NULL COMMENT '参数名称',
+  `value` varchar(255) DEFAULT NULL COMMENT '参数值',
+  `code` varchar(255) NOT NULL COMMENT '参数编码',
+  `type` varchar(4) DEFAULT NULL COMMENT '参数值类型: 100=动态值 ; 200=静态值 ',
+  `required` int(2) DEFAULT '0' COMMENT '是否必填 1=是  0=否',
+  `sn` int(10) DEFAULT '0' COMMENT '排序',
+  `remark` varchar(256) DEFAULT NULL COMMENT '备注',
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='API参数配置';
+
+drop table  IF EXISTS  api_request_mock ;
+CREATE TABLE `api_request_mock` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `definition_id` bigint(20) NOT NULL COMMENT '系统缓存管理表ID',
+  `content_request` text DEFAULT NULL COMMENT '请求报文',
+  `content_response` text DEFAULT NULL COMMENT '向应报文',
+  `sn` int(11) DEFAULT '0' COMMENT '排序',
+  `remark` varchar(256) DEFAULT NULL COMMENT '备注',
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='API模拟配置';
+
+
+
+
 commit;
