@@ -1533,9 +1533,9 @@ CREATE TABLE `uum_object_role` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `role_id` bigint(20) NOT NULL ,
   `obj_id`  bigint(20) NOT NULL ,
-  `obj_type` varchar(4) DEFAULT NULL COMMENT '对象类型: 1=职称 2=岗位 3=部门 4=组',
+  `obj_type` varchar(4) DEFAULT NULL COMMENT '对象类型: 1=职称 2=岗位 3=部门 4=组 5=用户',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='对象(指的是部门、组、岗位/职称)拥有的角色，多对多表(中间表)';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='对象(指的是部门、组、岗位/职称、用户[注意用户的角色保存在这张表!])拥有的角色，多对多表(中间表)';
 
 
 drop table  IF EXISTS  uum_user_object;
@@ -1548,7 +1548,7 @@ CREATE TABLE `uum_user_object` (
   `obj_node_path` text default NULL ,
   
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户所在(部门、组、岗位/职称)，多对多表(中间表)';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户所在(部门、组、岗位/职称)[注意没有角色!该表只保存用户的"职能",而角色不是"职能体"]，多对多表(中间表)';
 
 
 drop table  IF EXISTS  uum_role_res;

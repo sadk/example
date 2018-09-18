@@ -283,6 +283,7 @@
 										
 										<div property="columns">
 											<div type="checkcolumn" ></div>
+											<div field="id" width="60" headerAlign="center" allowSort="true" align="center">ID</div>
 											<div field="name" width="160" headerAlign="center" allowSort="true" align="center">名称</div>
 											<div field="nameShort" width="160" headerAlign="center" allowSort="true" align="center">简称</div>
 											<div field="code" width="160" headerAlign="center" allowSort="true" align="center">编码</div>
@@ -606,7 +607,7 @@
 				}
 				else if(objType == '3') {
 					 text="部门";
-					 ajaxUrl = "${pageContext.request.contextPath}/apps/default/admin/uum/org/selector_org.jsp";
+					 ajaxUrl = "${pageContext.request.contextPath}/apps/default/admin/uum/org/selector_org.jsp?isMutil=true";
 				}
 				else if(objType == '4') {
 					 text="组";
@@ -627,6 +628,10 @@
 						if(action == 'ok'){
 							var iframe = this.getIFrameEl();
 							var dt = iframe.contentWindow.GetData();
+							
+							if(objType == '3') {
+								dt = iframe.contentWindow.GetDatas();
+							}
 							
 							var roleIds = mini.clone(dt);
 							
