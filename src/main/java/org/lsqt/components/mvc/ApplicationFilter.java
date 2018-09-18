@@ -612,7 +612,7 @@ public class ApplicationFilter implements Filter{
 	
 	@Override
 	public void destroy() {
-		
+		ContextUtil.clear();
 	}
 	
 }
