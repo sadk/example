@@ -21,6 +21,7 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.db.orm.ftl.FtlDbExecute;
+import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.uum.model.Group;
 import org.lsqt.uum.model.GroupQuery;
@@ -280,6 +281,16 @@ public class UserController {
 		if ("true".equalsIgnoreCase(enablePermission)) {
 			if (query.getUserId() != null) {
 				return db.queryForList("queryForPage", Res.class, query);
+				
+			} else {
+				String loginName = ContextUtil.getLoginName();
+				UserQuery q = new UserQuery();
+				q.setLoginName(loginName);
+				User user = db.queryForObject("queryForPage", User.class, q);
+				if (user != null) {
+					query.setUserId(user.getId());
+					return db.queryForList("queryForPage", Res.class, query);
+				}
 			}
 			return new ArrayList<>();
 		} else {

@@ -105,16 +105,17 @@ public class RoleController {
 	public Long addUserToRole(Long roleId,String userIds) {
 		Long cnt = 0L;
 		if(roleId!=null && StringUtil.isNotBlank(userIds)) {
-			String sql = "select count(1) cnt from uum_user_object where obj_type=? and obj_id=? and user_id=?";
+			String sql = "select count(1) cnt from uum_user_object where (obj_type=? and obj_id=?) and user_id=?";
 			
 			List<Long> uids = StringUtil.split(Long.class ,userIds, ",");
-			for(Long userId: uids) {
-				Integer count = db.executeQueryForObject(sql, Integer.class,Role.OBJ_TYPE_角色, roleId,userId);
-				if(count!=null && count==0) {
+			for (Long userId : uids) {
+				Integer count = db.executeQueryForObject(sql, Integer.class, Role.OBJ_TYPE_角色, roleId, userId);
+				if (count != null && count == 0) {
 					String sql2 = "insert uum_user_object(user_id,obj_type,obj_id) values (?,?,?) ";
-					Long tmp = db.executeUpdate(sql2, userId,Role.OBJ_TYPE_角色,roleId);
+					Long tmp = db.executeUpdate(sql2, userId, Role.OBJ_TYPE_角色, roleId);
 					cnt += tmp;
 				}
+
 			}
 		}
 		return cnt;

@@ -556,20 +556,27 @@ public class ApplicationFilter implements Filter{
 		ContextUtil.getContextMap().put(ContextUtil.CONTEXT_REQUEST_OBJECT, request);
 		ContextUtil.getContextMap().put(ContextUtil.CONTEXT_RESPONSE_OBJECT, response);
 		
-		// ---------------------------------------------测试代码,注意删除  Begin--------------------------------------------
-		/*
-		final Long testUserId=3890L;
-		final String testUserName="刘泉志";
-		final String testLoginNo="lqz";
-		ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_ID_OBJECT,testUserId); //系统默主以刘泉志登陆系统
-		ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_NAME_OBJECT,testUserName);
-		User user= new User();
-		user.setUserId(testUserId);
-		user.setUserName(testUserName);
-		user.setLoginNo(testLoginNo);
-		ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_USER_OBJECT, user);
-		*/
-		// ---------------------------------------------测试代码,注意删除  End----------------------------------------------
+		// 获取第一个cookie
+		Cookie[] cookies = request.getCookies();
+		if(cookies == null) {
+			return ;
+		}
+		
+		List<String> uidList = null;
+		for (Cookie e : cookies) {
+			if (CodeUtil.UID.equals(e.getName())) {
+				String uidValue = CodeUtil.simpleDecode(e.getValue());
+				if (StringUtil.isNotBlank(uidValue)) {
+					uidList = StringUtil.split(uidValue, ",");
+				}
+				break;
+			}
+		}
+		
+		// 绑定用户ID到上下文
+		if (ArrayUtil.isNotBlank(uidList)) {
+			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_NAME_OBJECT, uidList.get(0));
+		}	
 	}
 	
 	
