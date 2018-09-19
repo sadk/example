@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.mvc.util.ActionFormUtil;
 import org.lsqt.components.util.collection.MapUtil;
 import org.lsqt.crm.util.HttpClient;
@@ -42,6 +43,27 @@ public class Req<T> {
 		}
 		return req;
 	}
+
+	// ------------------------------  请求头部字段  Begin:-----------------------------------------
+	/**
+	 * 交易服务码
+	 * @param serviceId 交易服务码
+	 * @return
+	 */
+	public Req<T> serviceId(String serviceId) {
+		this.SERVICE.SERVICE_HEADER.SERVICE_ID = serviceId;
+		return this;
+	}
+	
+	/**
+	 * 服务接入渠道编号 : 渠道编号API 
+	 * @param channelId 服务接入渠道编号(默认BANK)
+	 * @return
+	 */
+	public Req<T> channelId(String channelId) {
+		this.SERVICE.SERVICE_HEADER.CHANNEL_ID = channelId;
+		return this;
+	}
 	
 	/**
 	 * 添加合同号
@@ -72,19 +94,19 @@ public class Req<T> {
 		this.SERVICE.SERVICE_HEADER.ID_NO = idNo;
 		return this;
 	}
-	
+	// ------------------------------  请求头部字段  END!!-----------------------------------------
 	public static class Service {
 		public ServiceHeader SERVICE_HEADER;
 		public ServiceBody SERVICE_BODY;
 		
 		public static class ServiceHeader {
-			public String SERVICE_ID="MMTCustomerInfoHandler";
+			public String SERVICE_ID;
 			public String ORG="000000000001";
-			public String CHANNEL_ID="SUNS";
-			public String ACQ_ID="00130000";
+			public String CHANNEL_ID="BANK";
+			public String ACQ_ID="00130000"; 
 			public String SUB_TERMINAL_TYPE="Web"; //终端类型
 			public String SERVICESN=System.currentTimeMillis()+"";//请求交易流水号
-			public String OP_ID="opId"; //操作员号
+			public String OP_ID= ContextUtil.getLoginName(); //操作员号
 			public String REQUEST_TIME= new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 			public String VERSION_ID="01";
 			public String MAC="mac";
