@@ -115,13 +115,17 @@
 									</#list>
 								</#if>
 								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
+								<span class="separator"></span>
 								<#if (definition.canExport?? && definition.canExport == 1)>
-									<span class="separator"></span>
-									<a id="importData" class="mini-button" iconCls="icon-upload" onclick="importData()">导入</a>
 									<a id="exportFile" class="mini-button" iconCls="icon-download" onclick="exportData()">导出</a>
-									<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:74px" value="1" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_export_file_type&enable=1" />
-									
 								</#if>
+								
+								<#if (definition.canImport?? && definition.canImport == 1)>
+									<a id="importData" class="mini-button" iconCls="icon-upload" onclick="importData()">导入</a>
+								</#if>
+								<!-- 
+									<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:74px" value="1" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_export_file_type&enable=1" />
+								 -->
 							</td>
 							<!-- 
 							<td style="white-space:nowrap;">
@@ -268,41 +272,29 @@
 		if(form.isValid() == false) return;
 		
     	<#list columnList as column>
-    	<#if column.columnCodegenType??>
-    		<#if column.columnCodegenType == 5 || column.columnCodegenType == 6>
-	    		if(data.${column.propertyName} == null) {
-					data.${column.propertyName} = "";
-				}
-    		</#if>
-    		<#if column.columnCodegenType == 7>
-    			data.${column.propertyName}Begin =  mini.get('${column.propertyName}Begin').text;
-    			data.${column.propertyName}End =  mini.get('${column.propertyName}End').text;
-    		</#if>
-    	</#if>
+    		<#if (column.searchType?? && column.searchType==1)>
+		    	<#if column.columnCodegenType??>
+		    		<#if column.columnCodegenType == 5 || column.columnCodegenType == 6>
+			    		if(data.${column.propertyName} == null) {
+							data.${column.propertyName} = "";
+						}
+		    		</#if>
+		    		<#if column.columnCodegenType == 7>
+		    			data.${column.propertyName}Begin =  mini.get('${column.propertyName}Begin').text;
+		    			data.${column.propertyName}End =  mini.get('${column.propertyName}End').text;
+		    		</#if>
+		    	</#if>
+		    </#if>
 		</#list>
-	
+		
+		 <#if (definition.showPager?? && definition.showPager==1)>
+		 	data.pageIndex = grid.pageIndex;
+		 	data.pageSize = grid.pageSize;
+		 </#if>
 		data.reportDefinitionId=${definition.id};
 		
 		download(data);
-		/*
-        $.ajax({ 
-            url: "${pageContext.request.contextPath}/report/definition/export",
-            data: data,
-            type: "post",
-           // dataType: "blob",
-            success: function (text) {
-            	console.log(text)
-            	 
-             	 
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                mini.showTips({
-                    content: jqXHR.responseText,
-                    state: 'danger',  x: "right",  y: "bottom",
-                    timeout: 10000
-                });
-            }
-        });*/
+
 	}
 	
     function download(data) {
@@ -383,43 +375,55 @@
 		if(form.isValid() == false) return;
 		
     	<#list columnList as column>
-	    	<#if column.columnCodegenType??>
-	    		<#if column.columnCodegenType == 5 || column.columnCodegenType == 6>
-		    		if(data.${column.propertyName} == null) {
-						data.${column.propertyName} = "";
-					}
-	    		</#if>
-	    		<#if column.columnCodegenType == 7>
-	    			data.${column.propertyName}Begin =  mini.get('${column.propertyName}Begin').text;
-	    			data.${column.propertyName}End =  mini.get('${column.propertyName}End').text;
-	    		</#if>
-	    	</#if>
+    		<#if (column.searchType?? && column.searchType==1)>
+		    	<#if column.columnCodegenType??>
+		    		<#if column.columnCodegenType == 5 || column.columnCodegenType == 6>
+			    		if(data.${column.propertyName} == null) {
+							data.${column.propertyName} = "";
+						}
+		    		</#if>
+		    		<#if column.columnCodegenType == 7>
+		    			data.${column.propertyName}Begin =  mini.get('${column.propertyName}Begin').text;
+		    			data.${column.propertyName}End =  mini.get('${column.propertyName}End').text;
+		    		</#if>
+		    	</#if>
+		    </#if>
     	</#list>
     	
     	data.reportDefinitionId=${definition.id};
-    	grid.load(data)
-    	/*
-        $.ajax({ 
-            url: "${pageContext.request.contextPath}/report/definition/search",
-            data: data,
-            type: "post",
-            success: function (text) {
-            	
-            	<#if (definition.showPager?? && definition.showPager == 1) >
-					if(text) {
-						grid.setData(text.data)
-	            	}
-            	</#if>
-            	
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                mini.showTips({
-                    content: jqXHR.responseText,
-                    state: 'danger',  x: "right",  y: "bottom",
-                    timeout: 10000
-                });
-            }
-        });*/
+    	grid.load(data);
+    	
+		grid.on("drawcell", function (e) { //如果有日期类型，转换为人工可讯形式
+		   var record = e.record,
+		   column = e.column,
+		   field = e.field,
+		   value = e.value;
+		   
+		   if (mini.isDate(value)) {
+	    		e.cellHtml = mini.formatDate(value, "yyyy-MM-dd HH:mm:ss");
+		   }
+		   
+		   <#--
+		   if (mini.isDate(value)) {
+	    		e.cellHtml = mini.formatDate(value, "${columnCodegenFormat}");
+		   }
+		   
+	    	<#list columnList as column>
+		    	<#if column.columnCodegenType?? && column.columnCodegenType == 7 >
+		    		<#assign columnCodegenFormat = 'yyyy-MM-dd'/>
+		    		
+		    		<#if column.columnCodegenFormat??>
+		    			<#assign columnCodegenFormat = column.columnCodegenFormat>
+		    		</#if>
+		    		
+			    	
+			    	<#break>
+		    	</#if>
+	    	</#list>
+	     	-->
+ 
+
+		})
     }
     
     function clear() {
