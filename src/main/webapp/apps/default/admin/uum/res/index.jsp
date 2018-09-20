@@ -107,7 +107,7 @@
 				</div>
 				<div class="mini-fit">
 					<div id="datagrid1" class="mini-treegrid"" style="width:100%;height:100%;"  contextMenu="#gridMenu"
-					showTreeIcon="true" allowResize="true" expandOnLoad="false" showLoading="true"
+					showTreeIcon="true" allowResize="true" expandOnLoad="false" showLoading="true"  sortField="sn" sortOrder="asc"
 					allowCellEdit="true" allowCellSelect="true" editNextOnEnterKey="true"  editNextRowCell="true" 
     				treeColumn="name" idField="id" parentField="pid" resultAsTree="false"  checkRecursive="true"  showCheckBox="false" 
 					url="${pageContext.request.contextPath}/res/list?isEnableTreeQuery=false" > 
@@ -219,6 +219,9 @@
             	grid.setExpandOnLoad(false);
             	grid.setUrl(url + "?isEnableTreeQuery=false")
             }
+            
+            // data.sortField = "sn"; 排序已经在界面上指定值了!!
+            //	data.sortOrder = "asc";
             grid.load(data);
 		}
 		

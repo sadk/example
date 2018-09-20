@@ -391,7 +391,7 @@ public class ApplicationFilter implements Filter{
 	}
  
 	@SuppressWarnings("unchecked")
-	private Closeable buildInvokeParam(HttpServletRequest request,HttpServletResponse response) throws ApplicationException{
+	private Closeable buildInvokeParam(HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String uri = request.getRequestURI();
 		logger.debug(request.getRequestURL()+" ===> "+ContextUtil.getFormMap());
 		
@@ -462,13 +462,9 @@ public class ApplicationFilter implements Filter{
 				}
 				
 			} else if (ActionFormUtil.isCanBeBeanType(paramType)) { // 处理bean类型
-				try {
 					Object formBean = paramType.newInstance();
 					paramValue = formBean;
 					ActionFormUtil.fillBean(formBean, ContextUtil.getFormMap());
-				} catch (Exception e) {
-					throw new ApplicationException("action form to bean fail~!",e);
-				}
 			}
 			
 			methodInputParamValues.add(paramValue);
@@ -481,22 +477,36 @@ public class ApplicationFilter implements Filter{
 		}
 		final Result result = new Result();
 		try {
-			db.executePlan(() -> {
+			
+			boolean isExcludeTransaction = false;
+			boolean isTransaction = true;
+			
+			Method action = urlMappingDef.getMethod();
+			RequestMapping rm = action.getAnnotation(RequestMapping.class);
+			if (rm != null) {
+				isExcludeTransaction = rm.excludeTransaction();
+				isTransaction = rm.isTransaction();
+			}
+			
+			long start = System.currentTimeMillis();
+			
+			if (isExcludeTransaction) {
+				result.invokedResult = urlMappingDef.getMethod().invoke(controller, methodInputParamValues.toArray());
+			} else {
+				db.executePlan(isTransaction, () -> {
+					try {
+						result.invokedResult = urlMappingDef.getMethod().invoke(controller, methodInputParamValues.toArray());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				});
+			}
+			
+			long end = System.currentTimeMillis();
+			logger.debug(" --- thread-id:" + Thread.currentThread().getId() + " Controller["
+					+ controller.getClass().getName() + "#" + urlMappingDef.getMethod().getName() + "("
+					+ methodInputParamValues + ")] invoke cost:" + (end - start) + "(ms)");
 
-				long start = System.currentTimeMillis();
-
-				try {
-					result.invokedResult = urlMappingDef.getMethod().invoke(controller,methodInputParamValues.toArray());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				long end = System.currentTimeMillis();
-				logger.debug(" --- thread-id:" + Thread.currentThread().getId() + " Controller["
-						+ controller.getClass().getName() + "#" + urlMappingDef.getMethod().getName() + "("
-						+ methodInputParamValues + ")] invoke cost:" + (end - start) + "(ms)");
-
-			});
 		} catch (Exception ex) {
 			throw ex;
 		} finally{

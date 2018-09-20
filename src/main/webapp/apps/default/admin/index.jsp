@@ -92,7 +92,7 @@
         <div class="mini-splitter" style="width:100%;height:100%;" borderStyle="border:0;">
             <div size="180" maxSize="250" minSize="100" showCollapseButton="true" style="border:0;">
                 <!--OutlookTree-->
-                <div id="leftTree" class="mini-outlooktree" url="${pageContext.request.contextPath}/user/get_permission_list?type=100" onnodeclick="onNodeSelect"
+                <div id="leftTree" class="mini-outlooktree" url="${pageContext.request.contextPath}/user/get_permission_list?type=100&sortField=sn&sortOrder=asc" onnodeclick="onNodeSelect"
                     textField="name" idField="id" parentField="pid">
                 </div>
                 

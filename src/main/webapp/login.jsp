@@ -19,13 +19,13 @@
             <tr>
                 <td style="width:60px;"><label for="username$text">帐号：</label></td>
                 <td>
-                    <input id="username" name="username" class="mini-textbox" required="true" style="width:150px;"/>
+                    <input id="username" name="username" class="mini-textbox" emptyText="请输入工号" required="true" style="width:150px;"/>
                 </td>    
             </tr>
             <tr>
                 <td style="width:60px;"><label for="pwd$text">密码：</label></td>
                 <td>
-                    <input id="password" name="password"  class="mini-password" required="true" style="width:150px;" onenter="onLoginClick"/>
+                    <input id="password" name="password"  class="mini-password" emptyText="请输入密码" required="true" style="width:150px;" onenter="onLoginClick"/>
                 </td>
             </tr>            
             <tr>

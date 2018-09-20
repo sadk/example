@@ -22,26 +22,26 @@
 			<div size="280" showCollapseButton="true">
 			    <div class="mini-panel" showToolbar="true" showHeader="false" style="width:100%;height:100%;">
 				     
-				    <!--body-->
+				    <div id="form1"  style="padding:0;">
 				    <div style="padding-left:3px;padding-bottom:5px;">
 			            <div style="padding:5px;">
 					        <table>
 					            <tr>
-					            	<td style="width:90px;">工程模板名：</td>
+					            	<td style="width:90px;">工程标识：</td>
 					                <td style="width:150px;">    
-					                    <input style="width:150px;" name="customer.custNo" class="mini-textbox"  />
+					                    <input style="width:150px;" name="name" id="name" class="mini-textbox"  />
 					                </td>
 					            </tr>
 					            <tr>
-					            	<td style="width:90px;">文件名：</td>
+					            	<td style="width:90px;">工程编码：</td>
 					                <td style="width:150px;">    
-					                    <input style="width:150px;" name="customer.custName" class="mini-textbox" />
+					                    <input style="width:150px;" name="code" id="code" class="mini-textbox" />
 					                </td>
 					            </tr>
 					            <tr>
 					                <td style="width:90px;">备注：</td>
 					                <td style="width:150px;">    
-					                    <input style="width:150px;" name="account.accNo" class="mini-textbox" />
+					                    <input style="width:150px;" name="remark" id="remark" class="mini-textbox" />
 					                </td>
 					            </tr>
 					        </table>
@@ -51,7 +51,7 @@
 							</div>
 					    </div>
 					</div>
-					
+					</div>
 					
 				</div>       
 			</div>
@@ -68,7 +68,9 @@
 												<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
 												<a class="mini-button" iconCls="icon-edit" onclick="eidtProject()">编辑</a>
 												<span class="separator"></span>  
+												<!-- 
 												<a class="mini-button" iconCls="icon-download" onclick="exportData()">导出</a>
+												 -->
 											</td>
 											<td style="white-space:nowrap;">
 						                        <input id="key2" name="key2" class="mini-textbox" emptyText="请输入关键字" style="width:150px;" onenter="search"/>   
@@ -80,7 +82,7 @@
 						
 						        <div class="mini-fit">
 						            <div id="projectGrid" class="mini-datagrid" style="width:100%;height:100%;" showReloadButton="true"
-						                url="${pageContext.request.contextPath}/project/page" idField="id" allowResize="false"
+						                url="${pageContext.request.contextPath}/project/page" idField="id" allowResize="false" autoLoad="true"
 						                sizeList="[5,10,20,50]" pageSize="20" showEmptyText="true" emptyText="暂无待修改信息" sortMode="client" >
 						                <div property="columns">
 											<div type="checkcolumn" ></div>
@@ -380,8 +382,17 @@
 		</div>
 		<script type="text/javascript">
 			mini.parse();
+			var form = new mini.Form("#form1");
 			var tabs = mini.get("tabs1");
 			var tabs2 = mini.get("tabs2");
+			
+			var grid = mini.get("projectGrid");
+			var oroGrid = mini.get("oroGrid");
+			var daoGrid = mini.get("daoGrid");
+			var serviceGrid = mini.get("serviceGrid");
+			var controllerGrid = mini.get("controllerGrid");
+			var modelGrid = mini.get("modelGrid");
+			var pageGrid = mini.get("pageGrid");
 			
 			var currentTab = null;
 			function onBeforeOpen(e) {
@@ -395,22 +406,15 @@
 				tabs.reloadTab(currentTab);
 			}
 			
-			var grid = mini.get("projectGrid");
-			var oroGrid = mini.get("oroGrid");
-			var daoGrid = mini.get("daoGrid");
-			var serviceGrid = mini.get("serviceGrid");
-			var controllerGrid = mini.get("controllerGrid");
-			var modelGrid = mini.get("modelGrid");
-			var pageGrid = mini.get("pageGrid");
+			function search() {
+				var data = form.getData();
+				grid.load(data);
+			}
 			
+			function clear() {
+				 form.clear();
+			}
 			
-			grid.load();
-			/*oroGrid.load();
-			daoGrid.load();
-			serviceGrid.load();
-			controllerGrid.load();
-			pageGrid.load();
-			*/
 			function onActivechanged(sender) {
 				var index = sender.index;
 				var name = sender.name;

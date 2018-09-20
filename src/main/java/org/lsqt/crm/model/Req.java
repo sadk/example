@@ -10,7 +10,6 @@ import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.mvc.util.ActionFormUtil;
 import org.lsqt.components.util.collection.MapUtil;
 import org.lsqt.crm.util.HttpClient;
-import org.lsqt.uum.model.User;
 
 import com.alibaba.fastjson.JSON;
 

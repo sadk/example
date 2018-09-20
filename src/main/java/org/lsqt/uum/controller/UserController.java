@@ -102,25 +102,33 @@ public class UserController {
 		}
 		
 		
-		String url = ResourceUtil.getValue("sso.login.url");
+		String url = ResourceUtil.getValue("login.sso.url");
+		if (StringUtil.isBlank(url)) {
+			return Result.fail("单点登陆地址没有配置，请联系管理员");
+		}
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("username", username);
 		paramMap.put("password", password);
+		paramMap.put("syscode", "CSP");
 		String json = HttpUtil.getResponse(url, paramMap);
 
 		if (StringUtil.isBlank(json)) {
 			return Result.fail("请求链路异常");
 		}
 
-		Map<String, Object> userMap = JSON.parseObject(json, Map.class);
-		if (userMap.get("success") == null) {
+		Map<String, Object> resMap = JSON.parseObject(json, Map.class);
+		if (resMap.get("success") == null) {
 			return Result.fail("请求链路异常");
 		}
-		boolean success = Boolean.valueOf(userMap.get("success").toString());
+		boolean success = Boolean.valueOf(resMap.get("success").toString());
 		if (!success) {
-			return Result.fail("登陆失败：" + userMap.get("msg"));
+			return Result.fail("登陆失败：" + resMap.get("msg"));
 		}
 		
+		Map<String,Object> userMap = (Map<String,Object>)resMap.get("jsonData");
+		if(userMap == null) {
+			return Result.fail("没有找到当前用户数据");
+		}
 		
 		UserQuery query = new UserQuery();
 		query.setLoginName(username);;
@@ -284,6 +292,11 @@ public class UserController {
 				
 			} else {
 				String loginName = ContextUtil.getLoginName();
+				if("admin".equals(loginName)) { // 写死如果是超级管理员admin,显示全部菜单，
+					query.setUserId(null);
+					return db.queryForList("queryForPage", Res.class,query);
+				}
+				
 				UserQuery q = new UserQuery();
 				q.setLoginName(loginName);
 				User user = db.queryForObject("queryForPage", User.class, q);

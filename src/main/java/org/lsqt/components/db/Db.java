@@ -210,7 +210,7 @@ public interface Db extends Closeable{
 	 * @param isTransaction 是否开启事物
 	 * @throws DbException
 	 */
-	void executePlan(boolean isTransaction,Plan plan) throws DbException ;
+	void executePlan(boolean isTransaction,Plan plan) throws Exception ;
 	
 	/**
 	 * 释放绑定到当前线程上的资源
