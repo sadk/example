@@ -176,7 +176,7 @@
 						<div type="checkcolumn" ></div>
 						<div field="name" width="160" headerAlign="center" allowSort="true" align="center">姓名</div>
 						<div field="loginName" width="160" headerAlign="center" allowSort="true" align="center">帐号</div>
-						<div field="loginPwd" width="160" headerAlign="center" allowSort="true" align="center">密码</div>
+						<!-- <div field="loginPwd" width="160" headerAlign="center" allowSort="true" align="center">密码</div> -->
 						<div field="statusDesc" width="160" headerAlign="center" allowSort="true" align="center">状态</div>
 						<div field="email" width="160" headerAlign="center" allowSort="true" align="center">邮箱</div>
 						<div field="mobile" width="160" headerAlign="center" allowSort="true" align="center">手机</div>

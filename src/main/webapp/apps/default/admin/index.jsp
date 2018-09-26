@@ -57,20 +57,23 @@
           <h1 style="margin:0;padding:15px;cursor:default;font-family:微软雅黑,黑体,宋体;"><!-- 后台管理   --></h1>
           <!-- <div style="margin-left:5px;line-height:15px;text-align:left;cursor:default;color: green">晴天集团 Copyright © 版权所有 </div> -->
         <div class="topNav">    
-            <a href="../index.html">首页</a> |
-            <a href="../demo/index.html">在线示例</a> |
-            <a href="../docs/api/index.html">Api手册</a> |            
-            <a href="../index.html#tutorial">开发教程</a> |
-            <a href="../index.html#quickstart">快速入门</a>
+            <a href="#">首页</a> |
+            <a href="#">在线示例</a> |
+            <a href="#">Api手册</a> |            
+            <a href="#">开发教程</a> |
+            <a href="#">快速入门</a> |
+            <a href="javascript:logout()" style="color:Red;font-family:Tahoma;font-weight: bold;" >退出</a>
         </div>
 
         <div style="position:absolute;right:12px;bottom:5px;font-size:12px;line-height:25px;font-weight:normal;">
             <span style="color:Red;font-family:Tahoma">（推荐Blue）</span>选择皮肤：
             <select id="selectSkin" onchange="onSkinChange(this.value)" style="width:100px;" >
              	<option value="default">Default</option>
+             	<option value="blue">Blue</option>
+             	<option value="blue2003">Blue2003</option>
            	 	<option value="blue2010">Blue2010</option>
                 <option value="bootstrap">Bootstrap</option>
-
+				<option value="gray">Gray</option>
             </select>
              尺寸：
             <select id="selectMode" onchange="onModeChange(this.value)" style="width:100px;" >
@@ -92,7 +95,7 @@
         <div class="mini-splitter" style="width:100%;height:100%;" borderStyle="border:0;">
             <div size="180" maxSize="250" minSize="100" showCollapseButton="true" style="border:0;">
                 <!--OutlookTree-->
-                <div id="leftTree" class="mini-outlooktree" url="${pageContext.request.contextPath}/user/get_permission_list?type=100&sortField=sn&sortOrder=asc" onnodeclick="onNodeSelect"
+                <div id="leftTree" class="mini-outlooktree" url="${pageContext.request.contextPath}/user/get_permission_list?status=1&type=100&sortField=sn&sortOrder=asc" onnodeclick="onNodeSelect"
                     textField="name" idField="id" parentField="pid">
                 </div>
                 
@@ -134,11 +137,38 @@
         
         var codeGenNode = null; // "代码生成器"节点
         tree.on("drawnode",function(sender){ // 绘制结点时发生
-        	if("sys-5" == sender.node.id) {
+        	/* if("sys-5" == sender.node.id) {
         		codeGenNode = sender.node;
-        	}
+        	} */
         })
-		
+
+        function logout() {
+        	var messageId = mini.loading("正在退出，请稍后 ...", "Loading");
+            setTimeout(function () {
+            	
+                $.ajax({
+                    url: "${pageContext.request.contextPath}/user/logout",
+                   // data:  form.getData(),
+                    type: "post",
+                    success: function (text) {
+                    	mini.hideMessageBox(messageId);
+                    	if(text) {
+                    		//console.log(text);
+                    		if(text.isSuccess == true) {
+                    			window.location = "${pageContext.request.contextPath}/login.jsp";
+                    		}else {
+                    			mini.alert("退出失败!");
+                    		}
+                    	}
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        mini.alert(jqXHR.responseText);
+                    }
+                });
+               
+            }, 1000);
+        }
+        
         function expandNode() {
         	/*
         	if(codeGenNode.expanded == false){
@@ -185,6 +215,13 @@
         	 mini.Cookie.set('miniuiSkin', skin);
         	 window.location.reload();
         }
+        
+        function onModeChange(skin) {
+            mini.Cookie.set('miniuiMode', skin);
+            //mini.Cookie.set('miniuiMode', skin, 100);//100天过期
+            window.location.reload()
+        }
+        
         
         function onNodeSelect(e) {
             var node = e.node;

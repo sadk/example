@@ -119,6 +119,10 @@
 					        	<input property="editor" class="mini-textbox" style="width:100%;" />
 					        </div>
 					        
+							<div type="comboboxcolumn" field="status" width="60" headerAlign="center" align="center" allowSort="true">是否启用
+								<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
+							</div>
+							
 					        <div field="typeDesc" width="80" headerAlign="center" align="center">资源类型</div>
 					        <div field="sn" width="30" align="right" headerAlign="center">序号</div>
 					        <div field="appCode" width="60" align="left">所属应用</div>

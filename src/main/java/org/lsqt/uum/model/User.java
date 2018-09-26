@@ -32,7 +32,7 @@ public class User {
 	private String loginName;
 
 	/** 密码 */
-	private transient String loginPwd;
+	private  String loginPwd;
 
 	/**
 	 * 状态 3=过期(长久没有登陆，僵尸用户) 2=锁定（可登陆不能操作） 1=激活（可登陆、可操作） 0=禁用（不可登陆） -1=删除

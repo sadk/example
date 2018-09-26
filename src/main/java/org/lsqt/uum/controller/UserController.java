@@ -16,12 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
-import org.lsqt.components.context.annotation.mvc.After;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
-import org.lsqt.components.db.orm.ftl.FtlDbExecute;
-import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.uum.model.Group;
 import org.lsqt.uum.model.GroupQuery;
@@ -69,6 +66,26 @@ public class UserController {
 	@Inject private UserService userService; 
 	@Inject private OrgService orgService;
 	@Inject private Db db;
+	
+	@RequestMapping(mapping = { "/logout", "/m/logout" }, text = "登出")
+	public Result logout() {
+		HttpServletRequest request = ContextUtil.getRequest();
+		HttpServletResponse response = ContextUtil.getResponse();
+
+		Cookie[] cookies = request.getCookies();
+		if (cookies == null) {
+			return Result.fail("当前没有登陆");
+		}
+
+		for (Cookie cookie : cookies) {
+			cookie.setValue(null);
+			cookie.setMaxAge(0);// 立即销毁cookie
+			cookie.setPath("/");
+			response.addCookie(cookie);
+		}
+		return Result.ok("已退出");
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(mapping = { "/login", "/m/login"},text="cooke的key是(登陆账号明文-->对称加密-->16进制串表示)后的散列值，value是（密码明文+盐分 的16进制串表示）后的散列值")
@@ -231,9 +248,10 @@ public class UserController {
 	}
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
-	public User saveOrUpdate(User form) {
-		if (StringUtil.isNotBlank(form.getLoginPwd())) {
-			form.setLoginPwd(CodeUtil.passwodEncrypt(form.getLoginPwd() + User.PWD_SALT));
+	public User saveOrUpdate(User form,String loginPwdReboot) {
+		
+		if(StringUtil.isNotBlank(loginPwdReboot)) { //用户重新输入了密码
+			form.setLoginPwd(CodeUtil.passwodEncrypt(loginPwdReboot + User.PWD_SALT));
 		}
 		return userService.saveOrUpdate(form);
 	}

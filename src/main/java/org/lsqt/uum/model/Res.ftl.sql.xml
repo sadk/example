@@ -11,6 +11,8 @@
 	 		
 	 		<column name="value" property="value" text="资源值"/>
 	 	
+	 		<column name="status" property="status" text="状态 1=启用 0=禁用  " />
+	 		
 	 		<column name="type" property="type" text="资源类型：100=菜单 200=页面元素 300=数据查询条件 400=页面 401=链接"/>
 	 	
 	 		<column name="url" property="url" text="资源地址"/>
@@ -58,6 +60,8 @@
 						
 	  						<#if query.code??> and A.code = '${StringUtil.escapeSql(query.code)}' </#if>
 						
+							<#if query.status??> and A.status = ${query.status} </#if>
+							
 	  						<#if query.type??> and A.type = ${query.type} </#if>
 						
 	  						<#if query.sn??> and A.sn = ${query.sn} </#if>

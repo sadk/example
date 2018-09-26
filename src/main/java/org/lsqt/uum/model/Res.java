@@ -31,6 +31,9 @@ public class Res {
 	/** 资源类型：100=菜单 200=页面元素 300=数据查询条件 400=页面 401=链接*/
 	private Integer type;
 	
+	/**1=启用 0=禁用 -1=已删除**/
+	private Integer status;
+	
 	private String url;
 	
 	/**资源图标(可以是class样式、也可以是http图标)**/
@@ -219,5 +222,13 @@ public class Res {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 }

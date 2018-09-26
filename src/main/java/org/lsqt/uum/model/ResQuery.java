@@ -26,6 +26,9 @@ public class ResQuery {
 
 	/** 编码 */
 	private String code;
+	
+	/**1=启用 0=禁用 -1=已删除**/
+	private Integer status;
 
 	/** 资源类型：100=菜单 200=页面元素 300=数据查询条件 400=页面 401=链接*/
 	private Integer type;
@@ -247,6 +250,14 @@ public class ResQuery {
 
 	public void setNodePathList(List<String> nodePathList) {
 		this.nodePathList = nodePathList;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 
 

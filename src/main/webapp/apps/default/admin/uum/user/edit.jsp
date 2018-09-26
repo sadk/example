@@ -51,7 +51,7 @@
 									<tr>
 										<td>姓名：</td>
 										<td>
-											<input id="name" name="name"  class="mini-textbox"  emptyText="请输入姓名"  onenter="search"/>
+											<input id="name" name="name"  class="mini-textbox"  emptyText="请输入姓名"  />
 										</td>
 										<td>性别：</td>
 										<td>
@@ -64,11 +64,12 @@
 									<tr>
 										<td>帐号：</td>
 										<td>
-											<input id="loginName" name="loginName"  class="mini-textbox"  emptyText="请输入帐号"  onenter="search"/>
+											<input id="loginName" name="loginName"  class="mini-textbox"  emptyText="请输入帐号"  />
 										</td>
 										<td>密码：</td>
 										<td>
-											<input id="loginPwd" name="loginPwd"  class="mini-textbox"  emptyText="请输入密码"  onenter="search"/>
+											<input id="loginPwdReboot" name="loginPwdReboot"  class="mini-textbox"  emptyText="请输入密码"  />
+											<input id="loginPwd" name="loginPwd" class="mini-hidden" />
 										</td>
 									</tr>
 									
@@ -81,7 +82,7 @@
 										</td>
 										<td>电话：</td>
 										<td>
-											<input id="tel" name="tel"  class="mini-textbox"  emptyText="请输入电话"  onenter="search"/>
+											<input id="tel" name="tel"  class="mini-textbox"  emptyText="请输入电话"  />
 										</td>
 									</tr>
 									
@@ -89,11 +90,11 @@
 									<tr>
 										<td>手机：</td>
 										<td>
-											<input id="mobile" name="mobile"  class="mini-textbox"  emptyText="请输入手机"  onenter="search"/>
+											<input id="mobile" name="mobile"  class="mini-textbox"  emptyText="请输入手机"  />
 										</td>
 										<td>邮箱：</td>
 										<td>
-											<input id="email" name="email"  class="mini-textbox"  emptyText="请输入邮箱"  onenter="search"/>
+											<input id="email" name="email"  class="mini-textbox"  emptyText="请输入邮箱"  />
 										</td>
 									</tr>
 									
@@ -110,11 +111,11 @@
 									<tr>
 										<td>QQ：</td>
 										<td>
-											<input id="numQq" name="numQq"  class="mini-textbox"  emptyText="请输入QQ"  onenter="search"/>
+											<input id="numQq" name="numQq"  class="mini-textbox"  emptyText="请输入QQ"  />
 										</td>
 										<td>微信：</td>
 										<td>
-											<input id="numWx" name="numWx"  class="mini-textbox"  emptyText="请输入微信"  onenter="search"/>
+											<input id="numWx" name="numWx"  class="mini-textbox"  emptyText="请输入微信"  />
 										</td>
 									</tr>
 									
@@ -131,11 +132,11 @@
 									<tr>
 										<td>家庭地址：</td>
 										<td>
-											<input id="addressHome" name="addressHome"  class="mini-textbox"  emptyText="请输入家庭地址（多个地址用分号分割）"  onenter="search"/>
+											<input id="addressHome" name="addressHome"  class="mini-textbox"  emptyText="请输入家庭地址（多个地址用分号分割）"  />
 										</td>
 										<td>办公地点：</td>
 										<td>
-											<input id="addressOffice" name="addressOffice"  class="mini-textbox"  emptyText="请输入办公地点（多个地址用分号分割）"  onenter="search"/>
+											<input id="addressOffice" name="addressOffice"  class="mini-textbox"  emptyText="请输入办公地点（多个地址用分号分割）"  />
 										</td>
 									</tr>
 									
@@ -166,7 +167,7 @@
 										</td>
 										<td>备注：</td>
 										<td>
-											<input id="remark" name="remark"  class="mini-textbox"  emptyText="请输入备注"  onenter="search"/>
+											<input id="remark" name="remark"  class="mini-textbox"  emptyText="请输入备注"  />
 										</td>
 									</tr>
 									
@@ -200,8 +201,6 @@
 				
 				o.birthday = mini.get("birthday").text;
 				
-				//alert(o.birthday);
-				//alert(o.loginPwd);
 				$.ajax({
 					url : "${pageContext.request.contextPath}/user/save_or_update",
 					dataType: 'json',
@@ -229,6 +228,7 @@
 							if(o!=null && o.data!=null && o.data.length>0) {
 								o = o.data[0];
 							}
+							console.log(o)
 							form.setData(o);
 							form.setChanged(false);
 							//alert(o.birthday);
