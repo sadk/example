@@ -121,22 +121,32 @@ public class ApplicationFilter implements Filter{
 		
 	}
 	
+	private List<String> contextWrap(FilterConfig filterConfig,List<String> list) {
+		List<String> pathList = new ArrayList<>();
+		if (ArrayUtil.isNotBlank(list)) {
+			String contextPath = filterConfig.getServletContext().getContextPath();
+			for(String p: list) {
+				pathList.add(contextPath+p);
+			}
+		}
+		return pathList;
+	}
 	
 	public void init(FilterConfig filterConfig) throws ServletException {
-
+		
 		String staticRes = filterConfig.getInitParameter("static");
 		if (StringUtil.isNotBlank(staticRes)) {
-			URI_STATIC.addAll(StringUtil.split(String.class, staticRes, ",",true));
+			URI_STATIC.addAll(contextWrap(filterConfig,StringUtil.split(String.class, staticRes, ",",true)));
 		}
 		
 		String escape = filterConfig.getInitParameter("escape");
 		if (StringUtil.isNotBlank(staticRes)) {
-			URI_ESCAPE.addAll(StringUtil.split(String.class, escape, ",",true));
+			URI_ESCAPE.addAll(contextWrap(filterConfig,StringUtil.split(String.class, escape, ",",true)));
 		}
 		
 		String anonymous = filterConfig.getInitParameter("anonymous");
 		if (StringUtil.isNotBlank(staticRes)) {
-			URI_ANONYMOUS.addAll(StringUtil.split(String.class, anonymous, ",",true));
+			URI_ANONYMOUS.addAll(contextWrap(filterConfig,StringUtil.split(String.class, anonymous, ",",true)));
 		}
 		
 		LOGIN_ENABLED = filterConfig.getInitParameter("login");
