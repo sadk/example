@@ -20,7 +20,7 @@ import org.lsqt.components.util.lang.StringUtil;
 
 /**
  * 
- * @author mmyuan
+ * @author mmyuan 
  *
  */
 public final class ActUtil {
