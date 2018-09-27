@@ -93,39 +93,67 @@ public final class ActUtil {
 		if(PROCESS_ENGINE != null) {
 			return PROCESS_ENGINE;
 		}
-		
+		/*
 		PROCESS_ENGINE = ProcessEngineConfiguration.createProcessEngineConfigurationFromResource("activiti.cfg.xml").buildProcessEngine();
 		ProcessEngines.init();
-		
+		*/
 		return PROCESS_ENGINE;
 	}
 	
 	public static RepositoryService getRepositoryService() {
-		return getProcessEngine().getRepositoryService();
+		ProcessEngine pe = getProcessEngine();
+		if(pe!=null) {
+			return pe.getRepositoryService();
+		}
+		return null;
 	}
 
 	public static RuntimeService getRuntimeService() {
-		return getProcessEngine().getRuntimeService();
+		ProcessEngine pe = getProcessEngine();
+		if(pe!=null) {
+			return pe.getRuntimeService();
+		}
+		return null;
 	}
 
 	public static FormService getFormService() {
-		return getProcessEngine().getFormService();
+		ProcessEngine pe = getProcessEngine();
+		if(pe!=null) {
+			return pe.getFormService();
+		}
+		return null;
 	}
 
 	public static IdentityService getIdentityService() {
-		return getProcessEngine().getIdentityService();
+		ProcessEngine pe = getProcessEngine();
+		if(pe!=null) {
+			return pe.getIdentityService();
+		}
+		return null;
 	}
 
 	public static TaskService getTaskService() {
-		return getProcessEngine().getTaskService();
+		ProcessEngine pe = getProcessEngine();
+		if(pe!=null) {
+			return pe.getTaskService();
+		}
+		return null;
 	}
 
 	public static HistoryService getHistoryService(){
-		return getProcessEngine().getHistoryService();
+		ProcessEngine pe = getProcessEngine();
+		if(pe!=null) {
+			return pe.getHistoryService();
+		}
+		return null;
 	}
 	
 	public static ManagementService getManagementService(){
-		return getProcessEngine().getManagementService();
+		ProcessEngine pe = getProcessEngine();
+		if(pe!=null) {
+			return pe.getManagementService();
+		}
+		return null;
 	}
 	
 	
