@@ -54,21 +54,21 @@ public interface Db extends Closeable{
 	 * @param prop
 	 * @return 
 	 */
-	Object save(Object pojo,String ... prop)  throws DbException;
+	Object save(Object pojo,String ... prop)  ;
 	
 	/**
 	 * 删除一个对象
 	 * @param pojo
 	 * @return
 	 */
-	int delete(Object ... models)  throws DbException;
+	int delete(Object ... models)  ;
 	
 	/**
 	 * 跟据id删除对象
 	 * @param id
 	 * @return
 	 */
-	int  deleteById(Class<?> type, Object ...ids)  throws DbException;
+	int  deleteById(Class<?> type, Object ...ids)  ;
 	
 	/**
 	 * 
@@ -76,16 +76,15 @@ public interface Db extends Closeable{
 	 * @param id
 	 * @return
 	 */
-	<T> T getById(Class<T> type,Object id)  throws DbException;
+	<T> T getById(Class<T> type,Object id)  ;
 	
 	/**
 	 * 更新一个对象
 	 * @param pojo
 	 * @param props
 	 * @return
-	 * @throws DbException
 	 */
-	<T> T update(T model, String ... props) throws DbException;
+	<T> T update(T model, String ... props) ;
 	
 	/**
 	 * <pre>
@@ -95,18 +94,15 @@ public interface Db extends Closeable{
 	 * </pre>
 	 * @param model
 	 * @param props
-	 * @return
-	 * @throws DbException
 	 */
-	<T> T saveOrUpdate(T model,String ... props) throws DbException;
+	<T> T saveOrUpdate(T model,String ... props) ;
 	
 	/**
 	 * 级联加载指定属性
 	 * @param model
 	 * @param props
-	 * @throws DbException
 	 */
-	void cascade(Object model,String ...props) throws DbException;
+	void cascade(Object model,String ...props) ;
 	
 	
 	/**
@@ -114,18 +110,16 @@ public interface Db extends Closeable{
 	 * @param sql SQL语句
 	 * @param args SQL参数值
 	 * @return 影响的行数
-	 * @throws DbException
 	 */
-	<T> T executeUpdate(String sql, Object ... args) throws DbException ;
+	<T> T executeUpdate(String sql, Object ... args)  ;
 	
 	/**
 	 * 执行给定的SQL查询语句,返回List<Map>
 	 * @param sql SQL语句
 	 * @param args
 	 * @return
-	 * @throws DbException
 	 */
-	List<Map<String,Object>> executeQuery(String sql, Object ... args) throws DbException ;
+	List<Map<String,Object>> executeQuery(String sql, Object ... args)  ;
 	
 	/**
 	 * 
@@ -134,27 +128,24 @@ public interface Db extends Closeable{
 	 * @param pageSize 分页大小
 	 * @param args SQL语句参数
 	 * @return 
-	 * @throws DbException
 	 */
-	Page<Map<String,Object>> executeQueryForPage(String sql,Integer pageIndex, Integer pageSize, Object ... args) throws DbException ;
+	Page<Map<String,Object>> executeQueryForPage(String sql,Integer pageIndex, Integer pageSize, Object ... args)  ;
 	
 	/**
 	 * 执行给定的SQL查询语句,返回单值Object
 	 * @param sql SQL语句
 	 * @param args
 	 * @return
-	 * @throws DbException
 	 */
-	<T> T executeQueryForObject(String sql, Class<T> requiredType, Object ... args) throws DbException ;
+	<T> T executeQueryForObject(String sql, Class<T> requiredType, Object ... args)  ;
 	
 	/**
 	 * @param sql_or_sqlID 如果用XML做模型映射，则传入sqlID； 如果用注解做模型映射，测传入SQL语句
 	 * @param requiredType 可以是基础类型、Map、POJO
 	 * @param args
 	 * @return
-	 * @throws DbException
 	 */
-	<T> T queryForObject(String sqlID_or_SQL, Class<T> requiredType, Object... args) throws DbException;
+	<T> T queryForObject(String sqlID_or_SQL, Class<T> requiredType, Object... args) ;
 	
 	/**
 	 * @param nameSpace SQL定义的命名空间
@@ -162,9 +153,8 @@ public interface Db extends Closeable{
 	 * @param requiredType 可以是基础类型、Map、POJO
 	 * @param args
 	 * @return
-	 * @throws DbException
 	 */
-	<T> T queryForObject(String nameSpace,String sqlID_or_SQL, Class<T> requiredType, Object... args) throws DbException;
+	<T> T queryForObject(String nameSpace,String sqlID_or_SQL, Class<T> requiredType, Object... args) ;
 	
 	/**
 	 * 
@@ -172,12 +162,11 @@ public interface Db extends Closeable{
 	 * @param requiredType 可以是基础类型、Map、POJO
 	 * @param args
 	 * @return
-	 * @throws DbException
 	 */
-	<T> List<T> queryForList(String sqlID_or_SQL, Class<T> requiredType, Object... args) throws DbException;
+	<T> List<T> queryForList(String sqlID_or_SQL, Class<T> requiredType, Object... args) ;
 	
 	
-	<T> List<T> queryForList(String nameSpace,String sqlID, Class<T> requiredType, Object... args) throws DbException;
+	<T> List<T> queryForList(String nameSpace,String sqlID, Class<T> requiredType, Object... args) ;
 	
 	/**
 	 * 
@@ -187,9 +176,8 @@ public interface Db extends Closeable{
 	 * @param requiredType 可以是基础类型、Map、POJO
 	 * @param args
 	 * @return
-	 * @throws DbException
 	 */
-	<T> Page<T> queryForPage(String sqlID_or_SQL,int pageIndex,int pageSize,Class<T> requiredType,Object ... args) throws DbException;
+	<T> Page<T> queryForPage(String sqlID_or_SQL,int pageIndex,int pageSize,Class<T> requiredType,Object ... args) ;
 	
 	/**
 	 * 获取空的分页对象
@@ -200,22 +188,20 @@ public interface Db extends Closeable{
 	/**
 	 * 执行一个SQL计划
 	 * @param plan 
-	 * @throws DbException
 	 */
-	void executePlan(Plan plan) throws DbException ;
+	void executePlan(Plan plan)  ;
 	
 	/**
 	 * 执行一个SQL计划
 	 * @param plan 
 	 * @param isTransaction 是否开启事物
-	 * @throws DbException
 	 */
-	void executePlan(boolean isTransaction,Plan plan) throws Exception ;
+	void executePlan(boolean isTransaction,Plan plan)  ;
 	
 	/**
 	 * 释放绑定到当前线程上的资源
 	 */
-	void close() throws DbException;
+	void close() ;
 	
 	/**
 	 * 批量更新或插入

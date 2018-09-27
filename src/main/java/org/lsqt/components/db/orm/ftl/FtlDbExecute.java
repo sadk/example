@@ -324,7 +324,7 @@ public class FtlDbExecute implements ORMappingDb{
 	}
 	 
 	
-	public Serializable save(Object model, String... prop) throws DbException {
+	public Serializable save(Object model, String... prop)  {
 		
 		Table table = getModelMappedTable(model);
 		
@@ -396,7 +396,7 @@ public class FtlDbExecute implements ORMappingDb{
 	}
  
 
-	public <T> T saveOrUpdate(T model, String... props) throws DbException {
+	public <T> T saveOrUpdate(T model, String... props)  {
 		Object id = getIdValue(model);
 		if (id == null) {
 			save(model, props);
@@ -655,7 +655,7 @@ public class FtlDbExecute implements ORMappingDb{
 		return null;
 	}
 	
-	public <T> T update(T pojo, String... prop) throws DbException {
+	public <T> T update(T pojo, String... prop)  {
 		if(prop == null) {
 			log.warn("入参值为null");
 			return (T)pojo;
@@ -757,7 +757,7 @@ public class FtlDbExecute implements ORMappingDb{
 		return (T) pojo;
 	}
 
-	public <T> T executeUpdate(String sql, Object... args) throws DbException {
+	public <T> T executeUpdate(String sql, Object... args)  {
 		return exe.executeUpdate(sql, args);
 	}
 	
@@ -780,7 +780,7 @@ public class FtlDbExecute implements ORMappingDb{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> T executeQueryForObject(String sql,Class<T> requiredType,Object ...args) throws DbException {
+	public <T> T executeQueryForObject(String sql,Class<T> requiredType,Object ...args)  {
 		List<Map<String, Object>> data = exe.executeQuery(sql,args);
 		if (data == null || data.isEmpty()) {
 			return null;
@@ -813,14 +813,17 @@ public class FtlDbExecute implements ORMappingDb{
 			throw new DbException("没有在映射文件件里找到指定的sql编号");
 		}
 
-		try {
+	
 			String sql = prepareRenderedSql(stmt, args);
 
 			List<Map<String, Object>> data = exe.executeQuery(sql);
 			if (data == null || data.isEmpty()) {
 				return null;
 			}
-
+			
+			if(data!=null && data.size()>1) {
+				throw new DbException("The query result set has multiple rows, please confirm.");
+			}
 			// 可是以map
 			if (Map.class.isAssignableFrom(requiredType)) {
 				return (T) data.get(0);
@@ -838,12 +841,10 @@ public class FtlDbExecute implements ORMappingDb{
 
 			// 可以是bean类型
 			return toModel(requiredType, data.get(0)) ;
-		} catch (Exception ex) {
-			throw new DbException(ex);
-		}
+
 	}
 
-	public <T> T queryForObject(String sqlID, Class<T> requiredType, Object... args) throws DbException {
+	public <T> T queryForObject(String sqlID, Class<T> requiredType, Object... args)  {
 		return queryForObject(requiredType.getName(), sqlID, requiredType, args);
 	}
 	
@@ -904,7 +905,7 @@ public class FtlDbExecute implements ORMappingDb{
 	/**
 	 * 如果requiredType是实体类型,则不需要输入表空间名
 	 */
-	public <T> List<T> queryForList(String sqlID, Class<T> requiredType, Object... args) throws DbException {
+	public <T> List<T> queryForList(String sqlID, Class<T> requiredType, Object... args)  {
 		return queryForList(requiredType.getName(), sqlID, requiredType, args);
 	}
 	
@@ -1059,7 +1060,7 @@ public class FtlDbExecute implements ORMappingDb{
 	}
 	
 	public <T> Page<T> queryForPage(String sqlID, int pageIndex, int pageSize, Class<T> requiredType, Object... args)
-			throws DbException {
+			 {
 		return queryForPage(requiredType.getName(),sqlID,pageIndex,pageSize, requiredType, args);
 	}
 
@@ -1075,7 +1076,7 @@ public class FtlDbExecute implements ORMappingDb{
 		return page;
 	}
 
-	public void executePlan(boolean isTransaction,Plan plan) throws DbException {
+	public void executePlan(boolean isTransaction,Plan plan)  {
 		Connection con = null;
 		try{
 			con = exe.prepareConnection();
@@ -1116,7 +1117,7 @@ public class FtlDbExecute implements ORMappingDb{
 		}
 	}
 	
-	public void executePlan(Plan plan) throws DbException {
+	public void executePlan(Plan plan)  {
 		executePlan(true,plan);
 	}
 	 
@@ -1177,7 +1178,7 @@ public class FtlDbExecute implements ORMappingDb{
 	}
 
 
-	public void cascade(Object model, String... props) throws DbException {
+	public void cascade(Object model, String... props)  {
 		if (props == null || props.length == 0) return ;
 	}
 
