@@ -81,7 +81,7 @@
 	            var idNotIn = mini.get("idNotIn").getValue();
 	            //alert(idNotIn);
 	            mini.open({
-	                url: "${pageContext.request.contextPath}/apps/default/admin/uum/group/seletor_group.jsp?idNotIn="+idNotIn,
+	                url: "${pageContext.request.contextPath}/apps/default/admin/uum/group/selector_group.jsp?idNotIn="+idNotIn,
 	                title: "选择列表",
 	                width: 650,
 	                height: 380,
