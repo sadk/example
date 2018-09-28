@@ -10,7 +10,6 @@ import java.util.Map;
 import org.lsqt.components.context.annotation.Component;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.db.Db;
-import org.lsqt.components.mvc.spi.exception.ApplicationException;
 import org.lsqt.components.util.file.FileUtil;
 import org.lsqt.components.util.file.PathUtil;
 import org.lsqt.components.util.lang.StringUtil;
@@ -35,7 +34,7 @@ public class CodeGenForExampleImpl {
 	 * @param entityName
 	 * @return 返回代码生成的root目录
 	 */
-	public String codegenForSingle(Long tableId,String groupId,String modules,String entityName) {
+	public String codegenForSingle(Long tableId,String groupId,String modules,String entityName) throws Exception {
 		Table table = db.getById(Table.class, tableId);
 		if(table == null) return null;
 		
@@ -97,74 +96,43 @@ public class CodeGenForExampleImpl {
 			md = "/"+modules;
 		}
 		String fullOutFile = outputDirBase + example +md+"/controller/"+entityName+"Controller.java";
-		try { 
-			FreemarkCodeGenUtil.toCode(tmplDir, "Controller.java", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成Controller代码失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "Controller.java", root, fullOutFile);
+		 
 		
 		//  2.生成Example工程标准的Model代码
 		tmplDir = tmplDirBase + "/example/model";
 		fullOutFile = outputDirBase + example +md+"/model/"+entityName+".java";
-		try {
-			FreemarkCodeGenUtil.toCode(tmplDir, "Model.java", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成Model代码失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "Model.java", root, fullOutFile);
 		
 		//  2.1生成Example工程标准的ModelQuery代码
 		tmplDir = tmplDirBase  + "/example/model";
 		fullOutFile = outputDirBase + example +md+"/model/"+entityName+"Query.java";
-		try {
-			FreemarkCodeGenUtil.toCode(tmplDir, "ModelQuery.java", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成Model代码失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "ModelQuery.java", root, fullOutFile);
 		
 		// 3.生成Example工程标准的ORO映射文件
 		tmplDir = tmplDirBase + "/example/model";
 		fullOutFile = outputDirBase + example + md+"/model/"+entityName+".ftl.sql.xml";
-		try {
-			FreemarkCodeGenUtil.toCode(tmplDir, "Model.ftl.sql.xml", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成SQL文件失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "Model.ftl.sql.xml", root, fullOutFile);
 		
 		// 4.生成Service接口文件
 		tmplDir = tmplDirBase  +"/example/service";
 		fullOutFile = outputDirBase + example + md +"/service/"+entityName+"Service.java";
-		try {
-			FreemarkCodeGenUtil.toCode(tmplDir, "Service.java", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成Service接口代码失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "Service.java", root, fullOutFile);
 		
 		// 5.生成ServiceImpl文件
 		tmplDir = tmplDirBase  +"/example/service/impl";
 		fullOutFile = outputDirBase + example + md +"/service/impl/"+entityName+"ServiceImpl.java";
-		try {
-			FreemarkCodeGenUtil.toCode(tmplDir, "ServiceImpl.java", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成ServiceImpl代码失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "ServiceImpl.java", root, fullOutFile);
 		
 		// 6.生成UI页面-list页
 		tmplDir = tmplDirBase  + "/example/webapp/single";
 		fullOutFile = outputDirBase + example +"/webapp/single/index.jsp";
-		try {
-			FreemarkCodeGenUtil.toCode(tmplDir, "index.jsp", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成UI页面-index.jsp代码失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "index.jsp", root, fullOutFile);
 		
 		// 7.生成UI页面-编辑页
 		tmplDir = tmplDirBase  +"/example/webapp/single";
 		fullOutFile = outputDirBase + example +"/webapp/single/edit.jsp";
-		try {
-			FreemarkCodeGenUtil.toCode(tmplDir, "edit.jsp", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成UI页面-edit.jsp代码失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "edit.jsp", root, fullOutFile);
 		
 		
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 子表页面 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

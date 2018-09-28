@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -18,7 +17,7 @@ import org.lsqt.components.context.bean.BeanDefinition;
 import org.lsqt.components.context.bean.BeanException;
 import org.lsqt.components.context.bean.XmlConfig.AttrFactoryConfig;
 import org.lsqt.components.context.bean.XmlConfig.PropertyConfig;
-import org.lsqt.components.context.bean.resolve.BeanMetaResolve;
+import org.lsqt.components.context.bean.BeanMetaResolve;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.components.util.reflect.ClassLoaderUtil;
 import org.w3c.dom.Document;

@@ -864,25 +864,20 @@
 		                    if (action == "ok") {
 		                    	window.location = "${pageContext.request.contextPath}/code_template/codegen?tableId="+data.tableId+"&groupId="+data.groupId+"&modules="+data.modules+"&entityName="+data.entityName+"&codegenType="+data.codegenType;
 		                    } else {
-		                        
+		        				$.ajax({
+		        					url : "${pageContext.request.contextPath}/code_template/codegen",
+		        					dataType: 'json', type : 'post',
+		        					data: data,
+		        					success : function(text) {
+		        						//mini.alert('生成成功');
+		        					},
+		        					error : function(data) {
+		        				  		mini.alert(data.responseText);
+		        					}
+		        				});
 		                    }
 		                }
 		            );
-				
-				/*
-				$.ajax({
-					url : "${pageContext.request.contextPath}/code_template/codegen",
-					dataType: 'json',
-					type : 'post',
-					cache : false,
-					data: data,
-					success : function(text) {
-						//mini.alert('生成成功');
-					},
-					error : function(data) {
-				  		mini.alert(data.responseText);
-					}
-				});*/
 			}
 			
 		</script>

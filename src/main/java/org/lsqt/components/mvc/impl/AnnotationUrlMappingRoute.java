@@ -1,4 +1,4 @@
-package org.lsqt.components.mvc.spi.impl;
+package org.lsqt.components.mvc.impl;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -11,10 +11,9 @@ import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.impl.bean.resolve.AnnotationBeanMetaResolveImpl;
 import org.lsqt.components.context.bean.BeanDefinition;
-import org.lsqt.components.context.bean.resolve.BeanMetaResolve;
-import org.lsqt.components.mvc.spi.UrlMappingDefinition;
-import org.lsqt.components.mvc.spi.UrlMappingRoute;
-import org.lsqt.components.mvc.spi.exception.UrlMappingException;
+import org.lsqt.components.context.bean.BeanMetaResolve;
+import org.lsqt.components.mvc.impl.UrlMappingDefinition;
+import org.lsqt.components.mvc.impl.UrlMappingRoute;
 import org.lsqt.components.util.collection.ArrayUtil;
 
 /**
@@ -43,7 +42,7 @@ public class AnnotationUrlMappingRoute implements UrlMappingRoute{
 	/**
 	 * 构建控制器类的所有URL路由定义
 	 */
-	public void buildUrlMapping(){
+	public void buildUrlMapping() throws Exception{
 		final String controllerNameEndFix="Controller";
 		final String actionNameEndFix="Action";
 		final String urlDefPrifix="/";
@@ -99,8 +98,8 @@ public class AnnotationUrlMappingRoute implements UrlMappingRoute{
 	 * @throws UrlMappingException
 	 */
 	@SuppressWarnings("unchecked")
-	private List<UrlMappingDefinition> process(Class<?> controller,String [] urlForClass,Map<String,Method> urlForMethod) throws UrlMappingException{
-		if(urlForClass==null ||urlForClass.length==0)throw new UrlMappingException("have not found url mapping for Controller or Action!");
+	private List<UrlMappingDefinition> process(Class<?> controller,String [] urlForClass,Map<String,Method> urlForMethod) throws Exception{
+		if(urlForClass==null ||urlForClass.length==0)throw new Exception("have not found url mapping for Controller or Action!");
 		//if(urlForMethod == null || urlForMethod.isEmpty())throw new UrlMappingException("none method maping!");
 		if(urlForMethod == null || urlForMethod.isEmpty()) return ArrayUtil.EMPTY_LIST;
 		

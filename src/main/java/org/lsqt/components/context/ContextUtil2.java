@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.lsqt.components.db.execute.util.CacheReflectUtil;
-import org.lsqt.components.mvc.spi.exception.ApplicationException;
 import org.lsqt.components.mvc.util.ViewResolveFtlUtil;
 import org.lsqt.components.util.bean.BeanUtil;
 import org.lsqt.components.util.file.IOUtil;
@@ -92,7 +91,7 @@ public class ContextUtil2 {
 		 * @param key 
 		 * @param model
 		 */
-		void put(String fileName, String key, Object model);
+		void put(String fileName, String key, Object model) throws Exception;
 		void put(String fileName, String templatePath,String key, Object model);
 		void put(File file);
 		
@@ -234,10 +233,10 @@ public class ContextUtil2 {
 	public static class FileContext implements File {
 
 		@Override
-		public void put(String fileName, String key, Object model) {
+		public void put(String fileName, String key, Object model) throws Exception {
 			
 			if(fileName.lastIndexOf(".")==-1) {
-				throw new ApplicationException("请指定文件后缀名");
+				throw new Exception("请指定文件后缀名");
 			}
 			
 			// Excel导出
@@ -256,7 +255,7 @@ public class ContextUtil2 {
 						//res.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 					}
 				} catch (Exception ex) {
-					throw new ApplicationException("下载文件，设置响应头出错!",ex);
+					throw new Exception("下载文件，设置响应头出错!",ex);
 				}
 				
 				java.io.File dir = new java.io.File(ContextUtil2.class.getResource("/").getPath());
@@ -283,8 +282,7 @@ public class ContextUtil2 {
 					
 					workbook.write(out);
 				} catch (Exception e) {
-					e.printStackTrace();
-					throw new ApplicationException(e);
+					throw new Exception(e);
 				} finally {
 					IOUtil.close(in, out);
 				}
@@ -304,7 +302,7 @@ public class ContextUtil2 {
 					 
 					}
 				} catch (Exception ex) {
-					throw new ApplicationException("下载文件，设置响应头出错!",ex);
+					throw new Exception("下载文件，设置响应头出错!",ex);
 				}
 				
 				java.io.File dir = new java.io.File(ContextUtil2.class.getResource("/").getPath());
@@ -331,8 +329,7 @@ public class ContextUtil2 {
 					
 					workbook.write(out);
 				} catch (Exception e) {
-					e.printStackTrace();
-					throw new ApplicationException(e);
+					throw e;
 				} finally {
 					IOUtil.close(in, out);
 				}

@@ -59,7 +59,7 @@ public class CodeTemplateServiceImpl implements CodeTemplateService{
 	}
 
 	
-	public String codegenForSingle(String codeGenType,Long tableId,String groupId,String modules,String entityName)  {
+	public String codegenForSingle(String codeGenType,Long tableId,String groupId,String modules,String entityName) throws Exception {
 		Table table = db.getById(Table.class, tableId);
 
 		// 单表一键生成

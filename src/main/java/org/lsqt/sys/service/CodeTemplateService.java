@@ -31,7 +31,7 @@ public interface CodeTemplateService {
 	 * @param entityName 实体名(不含前com.xxx前缀的名称)
 	 * @return 返回代码生成的root目录
 	 */
-	String codegenForSingle(String codeGenType,Long tableId,String groupId,String modules,String entityName);
+	String codegenForSingle(String codeGenType,Long tableId,String groupId,String modules,String entityName) throws Exception;
 	
 	/**
 	 * 一键生成主子表代码

@@ -40,9 +40,8 @@ import org.lsqt.components.context.impl.bean.factory.AnnotationBeanFactory;
 import org.lsqt.components.context.impl.bean.factory.SpringBeanFactoryAdapter;
 import org.lsqt.components.context.bean.BeanFactory;
 import org.lsqt.components.db.Db;
-import org.lsqt.components.mvc.spi.UrlMappingDefinition;
-import org.lsqt.components.mvc.spi.exception.ApplicationException;
-import org.lsqt.components.mvc.spi.impl.AnnotationUrlMappingRoute;
+import org.lsqt.components.mvc.impl.UrlMappingDefinition;
+import org.lsqt.components.mvc.impl.AnnotationUrlMappingRoute;
 import org.lsqt.components.mvc.util.ActionFormUtil;
 import org.lsqt.components.mvc.util.ParameterNameUtil;
 import org.lsqt.components.mvc.util.ViewResolveFtlUtil;
@@ -96,7 +95,7 @@ public class ApplicationFilter implements Filter{
 	
 	private static String LOGIN_ENABLED ;
 	
-	private void initContainer(){
+	private void initContainer() throws Exception{
 		//容器
 		factory.buildBeanMeta();
 		factory.buildBean();
@@ -171,7 +170,11 @@ public class ApplicationFilter implements Filter{
 		
 		executor.execute(() -> {
 			long begin = System.currentTimeMillis();
-			initContainer();
+			try {
+				initContainer();
+			} catch (Exception e) {
+				log.error(e.getMessage());
+			}
 			log.info(" --- container stated cost " + (System.currentTimeMillis() - begin)+"(ms) ~!!!");
 		});
 	}
@@ -388,13 +391,13 @@ public class ApplicationFilter implements Filter{
 		}
 		
 		if (urlMappingDef.getMethod() == null) {
-			throw new ApplicationException("have not found url mapping definition method to invoke~!");
+			throw new Exception("have not found url mapping definition method to invoke~!");
 		}
 
 		Object controller = factory.getBean(urlMappingDef.getControllerClass());
 		
 		if (controller == null) {
-			throw new ApplicationException("have not found url mapping of the controller~!");
+			throw new Exception("have not found url mapping of the controller~!");
 		}
 
 		RequestPayload requestPayloadClass = urlMappingDef.getControllerClass().getAnnotation(RequestPayload.class); //类级别
@@ -436,7 +439,7 @@ public class ApplicationFilter implements Filter{
 				try {
 					paramValue = ActionFormUtil.prepareDateValue(param,ContextUtil.getFormMap().get(paramName));
 				} catch (ParseException e) {
-					throw new ApplicationException("prepare Date Value fail~!",e);
+					throw new Exception("prepare Date Value fail~!",e);
 				}
 				
 			} else if (ActionFormUtil.isCanBeBeanType(paramType)) { // 处理bean类型
@@ -486,7 +489,7 @@ public class ApplicationFilter implements Filter{
 	
 		// 3.展现视图
 		Closeable closeable = null;
-		try {
+		
 			Method method = urlMappingDef.getMethod();
 			RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 			if (requestMapping == null) {
@@ -524,9 +527,7 @@ public class ApplicationFilter implements Filter{
 					request.getRequestDispatcher(viewPrefix+template).forward(request, response);
 				}
 			}
-		} catch (Exception e) {
-			throw new ApplicationException(e);
-		} 
+ 
 		return closeable;
 	}
 	

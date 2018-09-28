@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
-import org.lsqt.components.mvc.spi.UrlMappingDefinition;
+import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.util.file.PathUtil;
 import org.lsqt.components.util.lang.StringUtil;
 

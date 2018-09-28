@@ -22,7 +22,7 @@ import org.lsqt.components.context.impl.bean.resolve.XmlBeanMetaResolveImpl;
 import org.lsqt.components.context.bean.BeanDefinition;
 import org.lsqt.components.context.bean.BeanException;
 import org.lsqt.components.context.bean.BeanFactory;
-import org.lsqt.components.context.bean.resolve.BeanMetaResolve;
+import org.lsqt.components.context.bean.BeanMetaResolve;
 import org.lsqt.components.util.lang.StringUtil;
 
 /**

@@ -24,7 +24,6 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
-import org.lsqt.components.mvc.spi.exception.ApplicationException;
 import org.lsqt.components.util.file.FileUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.sys.model.CodeContent;
@@ -80,20 +79,20 @@ public class CodeTemplateController {
 
 	
 	@RequestMapping(mapping = { "/codegen", "/m/codegen" })
-	public String codegen(Long tableId,String groupId,String modules,String entityName,String codegenType,String isCreateZip) {
+	public String codegen(Long tableId,String groupId,String modules,String entityName,String codegenType,String isCreateZip) throws Exception{
 		// 暂只生成单表，
 		String dir = codeTemplateService.codegenForSingle(codegenType, tableId, groupId, modules, entityName);
 		
-		if("true".equals(isCreateZip)) {
+		if ("true".equals(isCreateZip)) {
 			// 创建压缩zip
-			String tmpDir=System.getProperty("java.io.tmpdir");
-			String codeDir = (tmpDir+"codegen"+File.separator);
+			String tmpDir = System.getProperty("java.io.tmpdir");
+			String codeDir = (tmpDir + "codegen" + File.separator);
 			FileUtil.deleteDir(new File(codeDir));
-			
-			String fileFullPath = CompressUtil.zip(dir, codeDir+System.currentTimeMillis()+".zip",null);
+
+			String fileFullPath = CompressUtil.zip(dir, codeDir + System.currentTimeMillis() + ".zip", null);
 			download(fileFullPath);
 		}
-		
+
 		return dir;
 	}
 	
@@ -148,9 +147,9 @@ public class CodeTemplateController {
 	 * @param subTableJson
 	 */
 	@RequestMapping(mapping = { "/save_or_update_main_sub", "/m/save_or_update_main_sub" })
-	public void saveOrUpdateMainSub(String projectCode,Long id,String subTableJson) {
+	public void saveOrUpdateMainSub(String projectCode,Long id,String subTableJson) throws Exception{
 		if(StringUtil.isBlank(projectCode) || id ==null || StringUtil.isBlank(subTableJson)) {
-			throw new ApplicationException("参数不能为空");
+			throw new Exception("参数不能为空");
 		}
 		List<TableSub> list = JSON.parseArray(subTableJson,TableSub.class);
 		

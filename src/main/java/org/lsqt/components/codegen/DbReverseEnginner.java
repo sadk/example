@@ -23,7 +23,6 @@ import javax.sql.DataSource;
 
 import org.lsqt.components.codegen.bean.Column;
 import org.lsqt.components.codegen.bean.Table;
-import org.lsqt.components.mvc.spi.exception.ApplicationException;
 import org.lsqt.components.util.file.PathUtil;
 import org.lsqt.components.util.lang.StringUtil;
 
@@ -247,7 +246,7 @@ public class DbReverseEnginner {
 	 * @param entityName 实体名
 	 * @param outputDir 代码输出的文件夹，为空则生成到  PROJECT_HOME/src/main/resources/template/codegen-output
 	 */
-	public void codegenForSingle(String groupId,String modules,String entityName,String outputDir) {
+	public void codegenForSingle(String groupId,String modules,String entityName,String outputDir) throws Exception{
 		System.out.println(" --- 正在生成代码~!");
 		String clazzFirstLower = entityName.substring(0, 1).toLowerCase().concat(entityName.substring(1,entityName.length()));
 		Map<String,Object> root = new HashMap<String,Object>();
@@ -286,62 +285,43 @@ public class DbReverseEnginner {
 		try { 
 			FreemarkCodeGenUtil.toCode(tmplDir, "Controller.java", root, fullOutFile);
 		} catch (Exception e) {
-			throw new ApplicationException("生成Controller代码失败~!",e);
+			throw new Exception("生成Controller代码失败~!",e);
 		}
 		
 		//  2.生成工程标准的Model代码
 		tmplDir = tmplDirBase + SPRING3_MYBATIS3 + "/model";
 		fullOutFile = outputDirBase + SPRING3_MYBATIS3 + md + "/model/"+entityName+".java";
-		try {
-			FreemarkCodeGenUtil.toCode(tmplDir, "Model.java", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成Model代码失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "Model.java", root, fullOutFile);
+		 
 		
 		//  2.1生成工程标准的ModelQuery代码
 		tmplDir = tmplDirBase + SPRING3_MYBATIS3 +"/model";
 		fullOutFile = outputDirBase + SPRING3_MYBATIS3 + md + "/model/" + entityName + "Query.java";
-		try {
-			FreemarkCodeGenUtil.toCode(tmplDir, "ModelQuery.java", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成Model代码失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "ModelQuery.java", root, fullOutFile);
+	 
 		
 		// 3.生成工程标准的ORO映射文件
 		tmplDir = tmplDirBase + SPRING3_MYBATIS3 +"/mapper";
 		fullOutFile = outputDirBase + SPRING3_MYBATIS3 + md + "/mapper/" + entityName + "Mapper.xml";
-		try {
-			FreemarkCodeGenUtil.toCode(tmplDir, "Mapper.xml", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成SQL文件失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "Mapper.xml", root, fullOutFile);
+	 
 		
 		// 3.1生成工程标准的ORO映射文件
 		tmplDir = tmplDirBase + SPRING3_MYBATIS3 +"/mapper";
 		fullOutFile = outputDirBase + SPRING3_MYBATIS3 + md + "/mapper/" + entityName + "Mapper.java";
-		try {
-			FreemarkCodeGenUtil.toCode(tmplDir, "Mapper.java", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成SQL文件失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "Mapper.java", root, fullOutFile);
+		 
 		
 		// 4.生成Service接口文件
 		tmplDir = tmplDirBase + SPRING3_MYBATIS3 +"/service";
 		fullOutFile = outputDirBase + SPRING3_MYBATIS3 + md + "/service/" + entityName + "Service.java";
-		try {
-			FreemarkCodeGenUtil.toCode(tmplDir, "Service.java", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成Service接口代码失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "Service.java", root, fullOutFile);
+		
 		
 		// 5.生成ServiceImpl文件
 		tmplDir = tmplDirBase + SPRING3_MYBATIS3 +"/service/impl";
 		fullOutFile = outputDirBase + SPRING3_MYBATIS3 + md + "/service/impl/" + entityName + "ServiceImpl.java";
-		try {
-			FreemarkCodeGenUtil.toCode(tmplDir, "ServiceImpl.java", root, fullOutFile);
-		} catch (Exception e) {
-			throw new ApplicationException("生成ServiceImpl代码失败~!",e);
-		}
+		FreemarkCodeGenUtil.toCode(tmplDir, "ServiceImpl.java", root, fullOutFile);
 		
 		System.out.println(" --- 代码生成成功~!");
 		System.out.println(" --- 代码路径: "+ new File(outputDirBase));

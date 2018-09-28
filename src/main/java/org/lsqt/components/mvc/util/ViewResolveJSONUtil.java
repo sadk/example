@@ -11,7 +11,7 @@ import org.lsqt.components.context.annotation.model.Pattern;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.context.impl.util.CacheReflect;
-import org.lsqt.components.mvc.spi.UrlMappingDefinition;
+import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.util.lang.StringUtil;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;

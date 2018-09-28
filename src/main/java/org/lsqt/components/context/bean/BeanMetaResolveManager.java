@@ -1,4 +1,4 @@
-package org.lsqt.components.context.bean.resolve;
+package org.lsqt.components.context.bean;
 
 import java.util.List;
 
