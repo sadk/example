@@ -1,7 +1,7 @@
 package org.lsqt.components.context.impl.bean.factory;
 
-import org.lsqt.components.context.spi.bean.BeanException;
-import org.lsqt.components.context.spi.bean.BeanFactory;
+import org.lsqt.components.context.bean.BeanException;
+import org.lsqt.components.context.bean.BeanFactory;
 import org.springframework.context.ApplicationContext;
 
 public class SpringBeanFactoryAdapter implements BeanFactory{

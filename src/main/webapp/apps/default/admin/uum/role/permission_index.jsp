@@ -447,7 +447,7 @@
     				ondestroy : function(action) {
     					if (action == "ok") {
     			            var iframe = this.getIFrameEl();
-    			            var datas = iframe.contentWindow.GetData();
+    			            var datas = iframe.contentWindow.GetDatas();
     			            datas = mini.clone(datas);    //必须。克隆数据。
     			            //alert(mini.encode(datas));
     			            if(!datas)return;

@@ -1,6 +1,6 @@
 package org.lsqt.components.context.impl.bean.meta;
 
-import org.lsqt.components.context.spi.bean.BeanDefinition;
+import org.lsqt.components.context.bean.BeanDefinition;
 
 
 

@@ -22,15 +22,21 @@ import ${pkg}.service.${Model}Service;
 /**
  * ${comment}
  */
-@Controller(mapping={"/${model}"})
+@Controller(mapping={"/${module}/${model}"})
 public class ${Model}Controller {
 	
 	@Resource private ${Model}Service ${model}Service; 
 	
+	@RequestMapping(mapping = { "/list", "/m/list" })
+	@RequestBody
+	public List<${Model}> queryForList(${Model}Query query) {
+		return ${model}Service.queryForList(query);
+	}
+	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	@RequestBody
 	public Page<${Model}> queryForPage(${Model}Query query) {
-		return ${model}Service.queryForPage(query); // <#--  首字母小写: ${Model?uncap_first}  大写:${Model?cap_first} --> 
+		return ${model}Service.queryForPage(query); //<#--  首字母小写: ${Model?uncap_first}  大写:${Model?cap_first} --> 
 	}
 	
 	@RequestMapping(mapping = { "/all", "/m/all" })
@@ -43,6 +49,12 @@ public class ${Model}Controller {
 	@RequestBody
 	public ${Model} saveOrUpdate(${Model} form) {
 		return ${model}Service.saveOrUpdate(form);
+	}
+	
+	@RequestMapping(mapping = { "/get_by_id", "/m/get_by_id" })
+	@RequestBody
+	public ${Model} getById(Long id) {
+		return ${model}Service.getById(id);
 	}
 	
 	@RequestMapping(mapping = { "/delete", "/m/delete" })

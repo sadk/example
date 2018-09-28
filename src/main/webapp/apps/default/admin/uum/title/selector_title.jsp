@@ -50,8 +50,16 @@
 	    	//var value = grid.getValue();
 	        //return value;
 	        
+	        return grid.getSelected();
+	    }
+	    
+	    function GetDatas() {
+	    	//var value = grid.getValue();
+	        //return value;
+	        
 	        return grid.getSelecteds();
 	    }
+	    
 	    function search() {
 	        var key = mini.get("key").getValue();
 	        grid.load({ key: key });

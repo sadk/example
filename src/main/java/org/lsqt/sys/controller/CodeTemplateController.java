@@ -79,18 +79,22 @@ public class CodeTemplateController {
 
 
 	
-	@RequestMapping(mapping = { "/codegen", "/m/codegen" },view = View.JSON)
-	public void codegen(Long tableId,String groupId,String modules,String entityName,String codegenType) {
+	@RequestMapping(mapping = { "/codegen", "/m/codegen" })
+	public String codegen(Long tableId,String groupId,String modules,String entityName,String codegenType,String isCreateZip) {
 		// 暂只生成单表，
 		String dir = codeTemplateService.codegenForSingle(codegenType, tableId, groupId, modules, entityName);
 		
-		// 创建压缩zip
-		String tmpDir=System.getProperty("java.io.tmpdir");
-		String codeDir = (tmpDir+"codegen"+File.separator);
-		FileUtil.deleteDir(new File(codeDir));
+		if("true".equals(isCreateZip)) {
+			// 创建压缩zip
+			String tmpDir=System.getProperty("java.io.tmpdir");
+			String codeDir = (tmpDir+"codegen"+File.separator);
+			FileUtil.deleteDir(new File(codeDir));
+			
+			String fileFullPath = CompressUtil.zip(dir, codeDir+System.currentTimeMillis()+".zip",null);
+			download(fileFullPath);
+		}
 		
-		String fileFullPath = CompressUtil.zip(dir, codeDir+System.currentTimeMillis()+".zip",null);
-		download(fileFullPath);
+		return dir;
 	}
 	
 	private void download(String fileFullPath) {

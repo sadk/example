@@ -103,7 +103,7 @@
 				</div>
 				<div class="mini-fit">
 					<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" 
-					url="<#noparse>${pageContext.request.contextPath}</#noparse>/${model}/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
+					url="<#noparse>${pageContext.request.contextPath}</#noparse>/${module}/${model}/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
 					<div property="columns">
 						<div type="checkcolumn" ></div>
 						<#list columnList as column>
@@ -166,7 +166,7 @@
 				function (action) {
 					if (action == "ok") {
 						$.ajax({
-							'url': "<#noparse>${pageContext.request.contextPath}</#noparse>/${model}/delete?ids="+ids.join(","),
+							'url': "<#noparse>${pageContext.request.contextPath}</#noparse>/${module}/${model}/delete?ids="+ids.join(","),
 							type: 'post',
 							dataType:'JSON',
 							cache: false,
@@ -187,8 +187,8 @@
 		
 		function add() {
 			mini.open({
-				url : "<#noparse>${pageContext.request.contextPath}</#noparse>/apps/default/admin/sys/${model}/edit.jsp",
-				title : "添加系统",
+				url : "<#noparse>${pageContext.request.contextPath}</#noparse>/apps/default/admin/${module}/${model}/edit.jsp",
+				title : "添加",
 				width : 480,
 				height : 220,
 				onload : function() {
@@ -213,8 +213,8 @@
 			
 			if (row) {
 				mini.open({
-					url : "<#noparse>${pageContext.request.contextPath}</#noparse>/apps/default/admin/sys/application/edit.jsp",
-					title : "编辑系统信息",
+					url : "<#noparse>${pageContext.request.contextPath}</#noparse>/apps/default/admin/${module}/${model}/edit.jsp",
+					title : "编辑",
 					width : 480,
 					height : 220,
 					onload : function() {
@@ -234,20 +234,6 @@
 			}
 		}
 		
-		function exportData() {
-			var exportDataType = mini.get("exportDataType").value;
-			var exportFileType = mini.get("exportFileType").value;
-			mini.confirm("确定导出记录？", "确定？",
-		            function (action) {
-		                if (action == "ok") {
-		    				var o = form.getData();
-		    				
-							var url = "<#noparse>${pageContext.request.contextPath}</#noparse>/${model}/export?exportFileType="+exportFileType+"&exportDataType="+exportDataType;
-							location.href=url;
-						}
-					});
-			
-		}
 		</script>
 	</body>
 </html>

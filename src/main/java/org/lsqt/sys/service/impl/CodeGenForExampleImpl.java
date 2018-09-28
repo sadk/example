@@ -1,6 +1,8 @@
 package org.lsqt.sys.service.impl;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,8 +63,13 @@ public class CodeGenForExampleImpl {
 		
 		if (StringUtil.isNotBlank(modules)) {
 			root.put("pkg", groupId.concat(".").concat(modules));
+			
+			root.put("module", modules.toLowerCase());
 		} else {
 			root.put("pkg", groupId);
+			
+			root.put("module", entityName.toLowerCase());
+			
 		}
 		
 		root.put("tableName", table.getTableName());
@@ -75,7 +82,7 @@ public class CodeGenForExampleImpl {
 		String tmplDirBase   = PathUtil.getAppRootDir()+File.separator+"src/main/resources/template/codegen";
 		String outputDirBase = PathUtil.getAppRootDir()+File.separator+"src/main/resources/template/codegen-output";
 		
-		final String example="/example";
+		final String example="/example_"+new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 		File dir = new File(outputDirBase+example);
 		if(dir.exists()) {
 			System.out.println(" --- 清空录目: "+dir);
@@ -83,13 +90,13 @@ public class CodeGenForExampleImpl {
 		}
 		
 		// 1.生成Example工程标准的Controller代码
-		String tmplDir = tmplDirBase+"/example/controller";
+		String tmplDir = tmplDirBase  +"/example/controller";
 		
 		String md = "";
 		if(StringUtil.isNotBlank(modules)) {
 			md = "/"+modules;
 		}
-		String fullOutFile = outputDirBase + "/example"+md+"/controller/"+entityName+"Controller.java";
+		String fullOutFile = outputDirBase + example +md+"/controller/"+entityName+"Controller.java";
 		try { 
 			FreemarkCodeGenUtil.toCode(tmplDir, "Controller.java", root, fullOutFile);
 		} catch (Exception e) {
@@ -98,7 +105,7 @@ public class CodeGenForExampleImpl {
 		
 		//  2.生成Example工程标准的Model代码
 		tmplDir = tmplDirBase + "/example/model";
-		fullOutFile = outputDirBase + "/example"+md+"/model/"+entityName+".java";
+		fullOutFile = outputDirBase + example +md+"/model/"+entityName+".java";
 		try {
 			FreemarkCodeGenUtil.toCode(tmplDir, "Model.java", root, fullOutFile);
 		} catch (Exception e) {
@@ -106,8 +113,8 @@ public class CodeGenForExampleImpl {
 		}
 		
 		//  2.1生成Example工程标准的ModelQuery代码
-		tmplDir = tmplDirBase + "/example/model";
-		fullOutFile = outputDirBase + "/example"+md+"/model/"+entityName+"Query.java";
+		tmplDir = tmplDirBase  + "/example/model";
+		fullOutFile = outputDirBase + example +md+"/model/"+entityName+"Query.java";
 		try {
 			FreemarkCodeGenUtil.toCode(tmplDir, "ModelQuery.java", root, fullOutFile);
 		} catch (Exception e) {
@@ -116,7 +123,7 @@ public class CodeGenForExampleImpl {
 		
 		// 3.生成Example工程标准的ORO映射文件
 		tmplDir = tmplDirBase + "/example/model";
-		fullOutFile = outputDirBase + "/example"+md+"/model/"+entityName+".ftl.sql.xml";
+		fullOutFile = outputDirBase + example + md+"/model/"+entityName+".ftl.sql.xml";
 		try {
 			FreemarkCodeGenUtil.toCode(tmplDir, "Model.ftl.sql.xml", root, fullOutFile);
 		} catch (Exception e) {
@@ -124,8 +131,8 @@ public class CodeGenForExampleImpl {
 		}
 		
 		// 4.生成Service接口文件
-		tmplDir = tmplDirBase + "/example/service";
-		fullOutFile = outputDirBase + "/example"+md+"/service/"+entityName+"Service.java";
+		tmplDir = tmplDirBase  +"/example/service";
+		fullOutFile = outputDirBase + example + md +"/service/"+entityName+"Service.java";
 		try {
 			FreemarkCodeGenUtil.toCode(tmplDir, "Service.java", root, fullOutFile);
 		} catch (Exception e) {
@@ -133,8 +140,8 @@ public class CodeGenForExampleImpl {
 		}
 		
 		// 5.生成ServiceImpl文件
-		tmplDir = tmplDirBase + "/example/service/impl";
-		fullOutFile = outputDirBase + "/example"+md+"/service/impl/"+entityName+"ServiceImpl.java";
+		tmplDir = tmplDirBase  +"/example/service/impl";
+		fullOutFile = outputDirBase + example + md +"/service/impl/"+entityName+"ServiceImpl.java";
 		try {
 			FreemarkCodeGenUtil.toCode(tmplDir, "ServiceImpl.java", root, fullOutFile);
 		} catch (Exception e) {
@@ -142,8 +149,8 @@ public class CodeGenForExampleImpl {
 		}
 		
 		// 6.生成UI页面-list页
-		tmplDir = tmplDirBase + "/example/webapp/single";
-		fullOutFile = outputDirBase + "/example/webapp/single/index.jsp";
+		tmplDir = tmplDirBase  + "/example/webapp/single";
+		fullOutFile = outputDirBase + example +"/webapp/single/index.jsp";
 		try {
 			FreemarkCodeGenUtil.toCode(tmplDir, "index.jsp", root, fullOutFile);
 		} catch (Exception e) {
@@ -151,8 +158,8 @@ public class CodeGenForExampleImpl {
 		}
 		
 		// 7.生成UI页面-编辑页
-		tmplDir = tmplDirBase + "/example/webapp/single";
-		fullOutFile = outputDirBase + "/example/webapp/single/edit.jsp";
+		tmplDir = tmplDirBase  +"/example/webapp/single";
+		fullOutFile = outputDirBase + example +"/webapp/single/edit.jsp";
 		try {
 			FreemarkCodeGenUtil.toCode(tmplDir, "edit.jsp", root, fullOutFile);
 		} catch (Exception e) {
@@ -182,7 +189,7 @@ public class CodeGenForExampleImpl {
 			throw new ApplicationException("生成UI页面-index_main_sub.jsp代码失败~!",e);
 		}*/
 		
-		File rs = new File(outputDirBase+"/example");
+		File rs = new File(outputDirBase+example);
 		System.out.println(" --- 代码生成成功~!");
 		System.out.println(" --- 代码路径: "+ rs);
 		return rs.getAbsolutePath();

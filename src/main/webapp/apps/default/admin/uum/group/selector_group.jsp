@@ -49,7 +49,11 @@
 	    function GetData() {
 	       // var value = grid.getValue();
 	       //return value;
-	       
+	       return grid.getSelected();
+	    }
+	    
+		
+	    function GetDatas() {
 	       return grid.getSelecteds();
 	    }
 	    

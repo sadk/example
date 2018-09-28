@@ -48,7 +48,7 @@ public class TitleServiceImpl implements TitleService{
 		
 		if (!parentIds.isEmpty()) {
 			Collections.reverse(parentIds);
-			model.setNodePath(StringUtil.join(parentIds, ","));
+			model.setNodePath(StringUtil.join(parentIds, ",")+",");
 			db.update(model, "nodePath");
 		}
 		
@@ -62,10 +62,10 @@ public class TitleServiceImpl implements TitleService{
 		}
 		int cnt = 0;
 		for(Long id: ids){
-			Org org = db.getById(Org.class, id);
+			Title org = db.getById(Title.class, id);
 			if(org!=null){
 				String sql="delete from %s where node_path like %s";
-				int temp = db.executeUpdate(String.format(sql, db.getFullTable(Org.class),"'"+org.getNodePath()+"%'"));
+				int temp = db.executeUpdate(String.format(sql, db.getFullTable(Title.class),"'"+org.getNodePath()+"%'"));
 				cnt += temp;
 			}
 		}

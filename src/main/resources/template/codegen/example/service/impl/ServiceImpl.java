@@ -16,7 +16,15 @@ public class ${Model}ServiceImpl implements ${Model}Service{
 	
 	@Inject private Db db;
 	
-	public Page<${Model}>  queryForPage(${Model}Query query) {
+	public ${Model} getById(Long id) {
+		return db.getById(${Model}.class, id) ;
+	}
+	
+	public List<${Model}> queryForList(${Model}Query query) {
+		return db.queryForList("queryForPage", ${Model}.class, query);
+	}
+	
+	public Page<${Model}> queryForPage(${Model}Query query) {
 		return db.queryForPage("queryForPage", query.getPageIndex(), query.getPageSize(), ${Model}.class, query);
 	}
 

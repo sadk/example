@@ -8,6 +8,8 @@ import ${pkg}.model.${Model}Query;
 
 public interface ${Model}Service {
 	
+	${Model} getById(Long id);
+	
 	${Model} saveOrUpdate(${Model} model);
 
 	int deleteById(Long... ids);

@@ -19,10 +19,10 @@ import javax.sql.DataSource;
 
 import org.lsqt.components.context.impl.bean.meta.BeanWrapper;
 import org.lsqt.components.context.impl.bean.resolve.XmlBeanMetaResolveImpl;
-import org.lsqt.components.context.spi.bean.BeanDefinition;
-import org.lsqt.components.context.spi.bean.BeanException;
-import org.lsqt.components.context.spi.bean.BeanFactory;
-import org.lsqt.components.context.spi.bean.resolve.BeanMetaResolve;
+import org.lsqt.components.context.bean.BeanDefinition;
+import org.lsqt.components.context.bean.BeanException;
+import org.lsqt.components.context.bean.BeanFactory;
+import org.lsqt.components.context.bean.resolve.BeanMetaResolve;
 import org.lsqt.components.util.lang.StringUtil;
 
 /**

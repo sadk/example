@@ -7,7 +7,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.lsqt.components.context.spi.bean.BeanException;
+import org.lsqt.components.context.bean.BeanException;
 
 
 

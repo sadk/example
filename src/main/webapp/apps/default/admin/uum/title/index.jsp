@@ -148,15 +148,12 @@
 		function remove() {
 			var row = grid.getSelected();
 			if(row) {
-				mini.confirm("删除当前机构，其子机构也即将删除，确定删除？", "确定？",
+				mini.confirm("删除当前结点，其子结点也将删除，确定删除？", "确定？",
 						function (action) {
 							if (action == "ok") {
 								$.ajax({
 									'url': "${pageContext.request.contextPath}/title/delete?ids="+row.id,
-									type: 'post',
-									dataType:'JSON',
-									cache: false,
-									async:false,
+									type: 'post', 	dataType:'JSON',
 									success: function (json) {
 										mini.alert("删除成功");
 										grid.reload();

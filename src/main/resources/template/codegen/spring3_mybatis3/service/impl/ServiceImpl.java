@@ -32,6 +32,10 @@ public class ${Model}ServiceImpl implements ${Model}Service{
 		}
 		return model;
 	}
+	
+	public ${Model} getById(Long id) {
+		return ${model}Mapper.getById(id);
+	}
 
 	public int deleteById(Long ... ids) {
 		return ${model}Mapper.deleteById(ids);

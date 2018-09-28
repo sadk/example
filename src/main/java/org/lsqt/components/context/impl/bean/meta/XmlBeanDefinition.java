@@ -3,10 +3,10 @@ package org.lsqt.components.context.impl.bean.meta;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lsqt.components.context.spi.bean.BeanDefinition;
-import org.lsqt.components.context.spi.bean.XmlConfig.AttrFactoryConfig;
-import org.lsqt.components.context.spi.bean.XmlConfig.Propery;
-import org.lsqt.components.context.spi.bean.XmlConfig.PropertyConfig;
+import org.lsqt.components.context.bean.BeanDefinition;
+import org.lsqt.components.context.bean.XmlConfig.AttrFactoryConfig;
+import org.lsqt.components.context.bean.XmlConfig.Propery;
+import org.lsqt.components.context.bean.XmlConfig.PropertyConfig;
 
 /**
  * 用以描述spirng.xml配置bean的元信息
@@ -133,7 +133,7 @@ public class XmlBeanDefinition implements BeanDefinition, AttrFactoryConfig, Pro
 		this.propertyConfigs = items;
 	}
  
-	public static class ProperyItem implements org.lsqt.components.context.spi.bean.XmlConfig.Propery {
+	public static class ProperyItem implements org.lsqt.components.context.bean.XmlConfig.Propery {
 		public String name;
 		public String ref;
 		public String value;

@@ -88,7 +88,7 @@
 				form.validate();
 				if(form.isValid() == false) return;
 				$.ajax({
-					url : "<#noparse>${pageContext.request.contextPath}</#noparse>/${model}/save_or_update",
+					url : "<#noparse>${pageContext.request.contextPath}</#noparse>/${module}/${model}/save_or_update",
 					dataType: 'json',
 					type : 'post',
 					cache : false,
@@ -106,7 +106,7 @@
 				
 				 if(data.action == "edit" || data.action=='view') {
 					$.ajax({
-						url : "<#noparse>${pageContext.request.contextPath}</#noparse>/${model}/page?id=" + data.id,
+						url : "<#noparse>${pageContext.request.contextPath}</#noparse>/${module}/${model}/page?id=" + data.id,
 						dataType: 'json',
 						cache : false,
 						success : function(text) {

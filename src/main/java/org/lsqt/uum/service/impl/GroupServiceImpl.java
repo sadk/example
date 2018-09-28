@@ -15,6 +15,7 @@ import org.lsqt.sys.model.Dictionary;
 import org.lsqt.uum.model.Group;
 import org.lsqt.uum.model.GroupQuery;
 import org.lsqt.uum.model.Org;
+import org.lsqt.uum.model.Role;
 import org.lsqt.uum.service.GroupService;
 
 @Service
@@ -49,7 +50,7 @@ public class GroupServiceImpl implements GroupService{
 		
 		if (!parentIds.isEmpty()) {
 			Collections.reverse(parentIds);
-			model.setNodePath(StringUtil.join(parentIds, ","));
+			model.setNodePath(StringUtil.join(parentIds, ",")+",");
 			db.update(model, "nodePath");
 		}
 		
@@ -73,8 +74,8 @@ public class GroupServiceImpl implements GroupService{
 				query.setNodePath(group.getNodePath());
 				List<Group> list = db.queryForList("queryForPage", Group.class, query); // 获取多层
 				for(Group g: list) {
-					sql = "delete from uum_user_group where group_id=?";
-					temp = db.executeUpdate(sql, g.getId());
+					sql = "delete from uum_user_object where obj_id=? and obj_type=?";
+					temp = db.executeUpdate(sql, g.getId(),Role.OBJ_TYPE_组);
 					cnt+=temp;
 				}
 				

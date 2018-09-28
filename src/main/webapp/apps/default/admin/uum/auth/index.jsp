@@ -162,7 +162,7 @@
         	} else if(e.node.nodeType == "0") {
         	 	grid.load({ tenantCode: e.node.code });
         	}*/
-        	grid.load({ id: e.node.id });
+        	tree.load({ id: e.node.id });
         });
         
         function search() {

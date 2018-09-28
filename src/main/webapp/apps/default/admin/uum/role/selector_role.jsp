@@ -58,6 +58,11 @@
 	    	}
 	        return row;
 	    }
+	    
+	    function GetDatas() {
+	    	return grid.getSelecteds();
+	    }
+	    
 	    function search() {
 	        var key = mini.get("key").getValue();
 	        grid.load({ key: key });

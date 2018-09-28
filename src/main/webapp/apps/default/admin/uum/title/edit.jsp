@@ -46,7 +46,7 @@
 								
 								<td>父级：</td>
 								<td>
-								 	<input id="pid" name="pid" class="mini-buttonedit" readonly="readonly" onbuttonclick="onButtonEdit" emptyText="父级可以为空"/>    
+								 	<input id="pid" name="pid"  class="mini-buttonedit" onbuttonclick="onButtonEdit" emptyText="父级可以为空"/>    
 								</td>
 							</tr>
 							
@@ -83,9 +83,9 @@
 	        function onButtonEdit(e) {
 	            var btnEdit = this;
 	            var idNotIn = mini.get("idNotIn").getValue();
-	            //alert(idNotIn);
+	           // alert(idNotIn);
 	            mini.open({
-	                url: "${pageContext.request.contextPath}/apps/default/admin/uum/title/seletor_title.jsp?idNotIn="+idNotIn,
+	                url: "${pageContext.request.contextPath}/apps/default/admin/uum/title/selector_title.jsp?idNotIn="+idNotIn,
 	                title: "选择列表",
 	                width: 650,
 	                height: 380,

@@ -1,3 +1,4 @@
+package org.lsqt.httpserver;
 /*
  *  Copyright © 2005-2018 Amichai Rothman
  *
@@ -3055,7 +3056,7 @@ public class HTTPServer {
                     "-Djavax.net.ssl.keyStorePassword, etc.%n", HTTPServer.class.getName());
                 return;
             }*/
-        	args = new String[]{"D:\\workspace\\example\\src\\main\\webapp","80"};
+        	args = new String[]{"E:/workspace/example/src/main/webapp","80"};
             File dir = new File(args[0]);
             if (!dir.canRead())
                 throw new FileNotFoundException(dir.getAbsolutePath());

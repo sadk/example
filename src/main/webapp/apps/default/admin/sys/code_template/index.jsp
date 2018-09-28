@@ -829,35 +829,60 @@
 			
 			function codegenOneKey() { // 1=一键生成单表 2=一键生成主子表代码 3=定制生成代码
 				var row = grid.getSelected();
-				if(row) {
-					var data = {};
-					var r = mini.clone(row);
-					data.tableId = r.id;
-					data.dbName = r.dbName;
-					data.version = r.version;
-					data.tableName = r.tableName;
-					data.codegenType = codegenTypeCmb.getValue();
-					data.groupId = mini.get("groupId").value;
-					data.modules = mini.get("modules").value;
-					data.entityName = mini.get("entityName").value;
-					window.location = "${pageContext.request.contextPath}/code_template/codegen?tableId="+data.tableId+"&groupId="+data.groupId+"&modules="+data.modules+"&entityName="+data.entityName+"&codegenType="+data.codegenType;
-					/*
-					$.ajax({
-						url : "${pageContext.request.contextPath}/code_template/codegen",
-						dataType: 'json',
-						type : 'post',
-						cache : false,
-						data: data,
-						success : function(text) {
-							//mini.alert('生成成功');
-						},
-						error : function(data) {
-					  		mini.alert(data.responseText);
-						}
-					});*/
-				} else {
+				if(!row) {
 					mini.alert("请选择一个表定义的记录");
+					return;
 				}
+				
+				var data = {};
+				var r = mini.clone(row);
+				data.tableId = r.id;
+				data.dbName = r.dbName;
+				data.version = r.version;
+				data.tableName = r.tableName;
+				data.codegenType = codegenTypeCmb.getValue();
+				
+				data.groupId = mini.get("groupId").value;
+				data.modules = mini.get("modules").value;
+				data.entityName = mini.get("entityName").value;
+				
+				if(data.groupId == '') {
+					mini.alert("groupId不能为空");
+					return ;
+				}
+				if(data.modules == '') {
+					mini.alert("模块名能为空");
+					return ;
+				}
+				if(data.entityName == '') {
+					mini.alert("实体类不能为空");
+					return ;
+				}
+				
+		        mini.confirm("是否要生成zip包下载？", "确定？",
+		                function (action) {
+		                    if (action == "ok") {
+		                    	window.location = "${pageContext.request.contextPath}/code_template/codegen?tableId="+data.tableId+"&groupId="+data.groupId+"&modules="+data.modules+"&entityName="+data.entityName+"&codegenType="+data.codegenType;
+		                    } else {
+		                        
+		                    }
+		                }
+		            );
+				
+				/*
+				$.ajax({
+					url : "${pageContext.request.contextPath}/code_template/codegen",
+					dataType: 'json',
+					type : 'post',
+					cache : false,
+					data: data,
+					success : function(text) {
+						//mini.alert('生成成功');
+					},
+					error : function(data) {
+				  		mini.alert(data.responseText);
+					}
+				});*/
 			}
 			
 		</script>

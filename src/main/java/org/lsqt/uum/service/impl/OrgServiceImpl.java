@@ -15,6 +15,7 @@ import org.lsqt.uum.model.Group;
 import org.lsqt.uum.model.GroupQuery;
 import org.lsqt.uum.model.Org;
 import org.lsqt.uum.model.OrgQuery;
+import org.lsqt.uum.model.Role;
 import org.lsqt.uum.service.OrgService;
 
 @Service
@@ -72,8 +73,8 @@ public class OrgServiceImpl implements OrgService{
 				query.setNodePath(org.getNodePath());
 				List<Org> list = db.queryForList("queryForPage", Org.class, query); // 获取多层
 				for(Org g: list) {
-					sql = "delete from uum_user_org where org_id=?";
-					temp = db.executeUpdate(sql, g.getId());
+					sql = "delete from uum_user_object where obj_id=? and obj_type=?";
+					temp = db.executeUpdate(sql, g.getId(),Role.OBJ_TYPE_部门);
 					cnt+=temp;
 				}
 				

@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.text.ParseException;
@@ -19,7 +18,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
@@ -40,7 +38,7 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.context.annotation.mvc.RequestPayload;
 import org.lsqt.components.context.impl.bean.factory.AnnotationBeanFactory;
 import org.lsqt.components.context.impl.bean.factory.SpringBeanFactoryAdapter;
-import org.lsqt.components.context.spi.bean.BeanFactory;
+import org.lsqt.components.context.bean.BeanFactory;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.mvc.spi.UrlMappingDefinition;
 import org.lsqt.components.mvc.spi.exception.ApplicationException;
@@ -78,7 +76,7 @@ import com.alibaba.fastjson.JSON;
  *
  */
 public class ApplicationFilter implements Filter{
-	private static final Logger logger = LoggerFactory.getLogger(ApplicationFilter.class);
+	private static final Logger log = LoggerFactory.getLogger(ApplicationFilter.class);
 	
 	private static final String  CHARACTER_ENCODING_UTF8 = "UTF-8";
 	
@@ -174,7 +172,7 @@ public class ApplicationFilter implements Filter{
 		executor.execute(() -> {
 			long begin = System.currentTimeMillis();
 			initContainer();
-			logger.info(" --- container stated cost " + (System.currentTimeMillis() - begin)+"(ms) ~!!!");
+			log.info(" --- container stated cost " + (System.currentTimeMillis() - begin)+"(ms) ~!!!");
 		});
 	}
 
@@ -288,32 +286,6 @@ public class ApplicationFilter implements Filter{
 	}
 	
 	
-	public static void main(String[] args) {
-	      // 按指定模式在字符串查找
-	      String line = "This order was placed for QT3000! OK?";
-	      String pattern = "(\\D*)(\\d+)(.*)";
-	 
-	      // 创建 Pattern 对象
-	      Pattern r = Pattern.compile(pattern);
-	 
-	      // 现在创建 matcher 对象
-	      Matcher m = r.matcher(line);
-	      if (m.find( )) {
-	    	 System.out.println(m.group());
-	    	 
-	         System.out.println("Found value: " + m.group(0) );
-	         System.out.println("Found value: " + m.group(1) );
-	         System.out.println("Found value: " + m.group(2) );
-	      } else {
-	         System.out.println("NO MATCH");
-	      }
-	      
-	}
-	
-	
-	
-	
-	
 	protected void setCharacterEncoding(HttpServletRequest request,HttpServletResponse response) {
 		response.setCharacterEncoding(CHARACTER_ENCODING_UTF8);
 		try {
@@ -346,7 +318,6 @@ public class ApplicationFilter implements Filter{
 			}
 		}
 		
-		//logger.info(" --- "+ request.getRequestURL());
 		setCharacterEncoding(request,response);
 		
 		//1.构建formMap
@@ -403,7 +374,7 @@ public class ApplicationFilter implements Filter{
 	@SuppressWarnings("unchecked")
 	private Closeable buildInvokeParam(HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String uri = request.getRequestURI();
-		logger.debug(request.getRequestURL()+" ===> "+ContextUtil.getFormMap());
+		log.debug(request.getRequestURL()+" ===> "+ContextUtil.getFormMap());
 		
 		
 		
@@ -436,20 +407,17 @@ public class ApplicationFilter implements Filter{
 					Map<String,Object> form = JSON.parseObject(IOUtils.toString(request.getInputStream(),"UTF-8"),Map.class);
 					ContextUtil.getFormMap().putAll(form);
 				//}
-				logger.debug(" --- parse RequestPayload : "+request.getRequestURI()+"===>" + ContextUtil.getFormMap());
+				log.debug(" --- parse RequestPayload : "+request.getRequestURI()+"===>" + ContextUtil.getFormMap());
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 
 		}
 		
 		Class<?>[] types = urlMappingDef.getMethod().getParameterTypes();
-		
-		
-		
-		
 		List<String> methodInputParamNames = ParameterNameUtil.getParameterNames(urlMappingDef.getMethod());
+		
 		if(types.length != methodInputParamNames.size()) {
-			throw new ApplicationException("param value count and param name count are't equal~!");
+			throw new Exception("param value count and param name count are't equal~!");
 		}
 		
 		// 1.填充表单
@@ -488,8 +456,8 @@ public class ApplicationFilter implements Filter{
 		final Result result = new Result();
 		try {
 			
-			boolean isExcludeTransaction = false;
-			boolean isTransaction = true;
+			boolean isExcludeTransaction = false; // 是否脱离数据库(事务)环境
+			boolean isTransaction = true; //开启事务
 			
 			Method action = urlMappingDef.getMethod();
 			RequestMapping rm = action.getAnnotation(RequestMapping.class);
@@ -497,8 +465,6 @@ public class ApplicationFilter implements Filter{
 				isExcludeTransaction = rm.excludeTransaction();
 				isTransaction = rm.isTransaction();
 			}
-			
-			long start = System.currentTimeMillis();
 			
 			if (isExcludeTransaction) {
 				result.invokedResult = urlMappingDef.getMethod().invoke(controller, methodInputParamValues.toArray());
@@ -512,11 +478,6 @@ public class ApplicationFilter implements Filter{
 				});
 			}
 			
-			long end = System.currentTimeMillis();
-			logger.debug(" --- thread-id:" + Thread.currentThread().getId() + " Controller["
-					+ controller.getClass().getName() + "#" + urlMappingDef.getMethod().getName() + "("
-					+ methodInputParamValues + ")] invoke cost:" + (end - start) + "(ms)");
-
 		} catch (Exception ex) {
 			throw ex;
 		} finally{

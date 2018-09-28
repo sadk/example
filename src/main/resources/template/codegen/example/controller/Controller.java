@@ -19,12 +19,17 @@ import ${pkg}.service.${Model}Service;
 
 
 
-@Controller(mapping={"/${model}"})
+@Controller(mapping={"/${module}/${model}"})
 public class ${Model}Controller {
 	
 	@Inject private ${Model}Service ${model}Service; 
 	
 	@Inject private Db db;
+	
+	@RequestMapping(mapping = { "/get_by_id", "/m/get_by_id" })
+	public ${Model} getById(Long id) throws IOException {
+		return ${model}Service.getById(id);
+	}
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<${Model}> queryForPage(${Model}Query query) throws IOException {

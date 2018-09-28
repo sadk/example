@@ -627,11 +627,11 @@
 					ondestroy : function(action) {
 						if(action == 'ok'){
 							var iframe = this.getIFrameEl();
-							var dt = iframe.contentWindow.GetData();
+							//var dt = iframe.contentWindow.GetData();
 							
-							if(objType == '3') {
+							//if(objType == '3') {
 								dt = iframe.contentWindow.GetDatas();
-							}
+							//}
 							
 							var roleIds = mini.clone(dt);
 							

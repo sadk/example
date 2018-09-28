@@ -250,7 +250,7 @@
 		function remove() {
 			var row = grid.getSelected();
 			if(row) {
-				mini.confirm("删除当前机构，其子机构也即将删除，确定删除？", "确定？",
+				mini.confirm("删除当前节点，其子节点也即将删除，确定删除？", "确定？",
 						function (action) {
 							if (action == "ok") {
 								$.ajax({
