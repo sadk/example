@@ -30,6 +30,8 @@ import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.sys.model.Application;
 import org.lsqt.sys.model.ApplicationQuery;
 import org.lsqt.sys.model.Dictionary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.w3c.dom.Document;
@@ -48,9 +50,10 @@ import freemarker.template.Configuration;
  *
  */
 public class SqlStatementFactory implements SqlStatementBuilder {
+	private static final Logger log = LoggerFactory.getLogger(FtlDbExecute.class);
 	
-	static final List<Table>  SQL_MAPPINGS_TABLES = new ArrayList<>();
-	static final List<SqlStatement> SQL_MAPPINGS_STATMENTS = new ArrayList<SqlStatement>();
+	private static final List<Table>  SQL_MAPPINGS_TABLES = new ArrayList<>();
+	private static final List<SqlStatement> SQL_MAPPINGS_STATMENTS = new ArrayList<SqlStatement>();
 
 	static boolean isBuilded ;
 	private List<String> locations ;
@@ -85,7 +88,7 @@ public class SqlStatementFactory implements SqlStatementBuilder {
 	}
 	
 	public SqlStatementBuilder buildBefore(){
-		System.out.println(" --- 构建ORMaping文件开始~!");
+		log.info(" --- 构建ORMaping文件开始~!");
 		return this;
 	}
 	
@@ -239,7 +242,7 @@ public class SqlStatementFactory implements SqlStatementBuilder {
 	}
 	
 	public SqlStatementBuilder buildAfter() {
-		System.out.println(" --- 构建ORMaping文件结束~!");
+		log.info(" --- 构建ORMaping文件结束~!");
 		return this;
 	}
 	

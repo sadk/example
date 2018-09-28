@@ -123,7 +123,9 @@ public class ApplicationFilter implements Filter{
 		if (ArrayUtil.isNotBlank(list)) {
 			String contextPath = filterConfig.getServletContext().getContextPath();
 			for(String p: list) {
-				pathList.add(contextPath+p);
+				String wrapUrl=contextPath+p;
+				pathList.add(wrapUrl);
+				log.info("匿名访问url : {} ", wrapUrl);
 			}
 		}
 		return pathList;
@@ -147,6 +149,7 @@ public class ApplicationFilter implements Filter{
 		}
 		
 		LOGIN_ENABLED = filterConfig.getInitParameter("login");
+		log.info("是否开启登陆验证: {}", LOGIN_ENABLED);
 		
 		// 静态资源访问的URL
 		URI_STATIC.add(".*.ico");
@@ -304,7 +307,7 @@ public class ApplicationFilter implements Filter{
 		HttpServletResponse response = (HttpServletResponse)res;
 		
 		if (!isContainerInit) { // 容器还没有初使化完成，跳过，什么也不干
-			System.out.println(" --- 系统正在启动...");
+			log.info(" --- 系统正在启动...");
 			filterChain.doFilter(request, response);
 			return ;
 		}

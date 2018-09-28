@@ -12,9 +12,12 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.impl.bean.resolve.AnnotationBeanMetaResolveImpl;
 import org.lsqt.components.context.bean.BeanDefinition;
 import org.lsqt.components.context.bean.BeanMetaResolve;
+import org.lsqt.components.mvc.ApplicationFilter;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.mvc.impl.UrlMappingRoute;
 import org.lsqt.components.util.collection.ArrayUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 注解路由实现
@@ -22,6 +25,7 @@ import org.lsqt.components.util.collection.ArrayUtil;
  *
  */
 public class AnnotationUrlMappingRoute implements UrlMappingRoute{
+	private static final Logger log = LoggerFactory.getLogger(AnnotationUrlMappingRoute.class);
 	
 	private List<BeanDefinition> beanDefinitionList = new ArrayList<BeanDefinition>();
 	public List<BeanDefinition> getBeanDefinitionList() {
@@ -110,7 +114,7 @@ public class AnnotationUrlMappingRoute implements UrlMappingRoute{
 				meta.setControllerClass(controller);
 				meta.setMethod(urlForMethod.get(um));
 				meta.setUrl(uc.concat(um));
-				
+				log.debug("URL mapping : {} , METHOD : {}",meta.getUrl(),meta.getMethod());
 				rs.add(meta);
 			}
 		}

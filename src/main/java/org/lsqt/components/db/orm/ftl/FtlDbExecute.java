@@ -54,16 +54,18 @@ import freemarker.template.TemplateModelException;
 
 public class FtlDbExecute implements ORMappingDb{
 
-	static final String formatStr = " --- %s -- ===> %s";
+	private static final String formatStr = " --- %s -- ===> %s";
 
-	static final Logger log = LoggerFactory.getLogger(FtlDbExecute.class);
+	private static final Logger log = LoggerFactory.getLogger(FtlDbExecute.class);
 
-	final JDBCExecutor exe = new JDBCExecutor();
+	private final JDBCExecutor exe = new JDBCExecutor();
 
-	final IdGenerator idGenerator = new ORMappingIdGenerator();
+	private final IdGenerator idGenerator = new ORMappingIdGenerator();
 	
 	private SqlStatementBuilder sqlStatementBuilder;
+	
 	public FtlDbExecute(){}
+	
 	public FtlDbExecute(SqlStatementBuilder sqlStatementBuilder) {
 		this.sqlStatementBuilder = sqlStatementBuilder;
 	}
@@ -1083,7 +1085,7 @@ public class FtlDbExecute implements ORMappingDb{
 			con.setAutoCommit(!isTransaction);
 
 			if(isTransaction) {
-				log.info(" --- >>>>>>>>>>>>> Transaction Begin !!! (Thead-id:"+Thread.currentThread().getId()+")");
+				log.debug(" --- >>>>>>>>>>>>> Transaction Begin !!! (Thead-id:"+Thread.currentThread().getId()+")");
 			}
 			
 			if(isTransaction) {
@@ -1093,7 +1095,7 @@ public class FtlDbExecute implements ORMappingDb{
 			
 			if(isTransaction) { // 开启了事务，才进行事物操作！！回滚也是！
 				con.commit();
-				log.info(" --- >>>>>>>>>>>> Transaction Commited !!! (Thead-id:"+Thread.currentThread().getId()+")");
+				log.debug(" --- >>>>>>>>>>>> Transaction Commited !!! (Thead-id:"+Thread.currentThread().getId()+")");
 			}
 			
 		} catch(Exception ex){
