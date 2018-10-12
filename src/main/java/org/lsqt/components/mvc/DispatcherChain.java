@@ -105,6 +105,7 @@ public class DispatcherChain implements Chain{
 		viewHandler.resolve(urlMapping, modelAndView);
 		
 		
+		
 		if (!response.isCommitted()) {
 			filterChain.doFilter(request, response);
 		}
