@@ -10,7 +10,7 @@ public class Result<T> {
 	/**用于标记Controller层调用底层service是否成功**/
 	private boolean isSuccess = false;
 	private String code;
-	private String desc;
+	private String message;
 	private String status;
 	
 	private T data;
@@ -22,25 +22,30 @@ public class Result<T> {
 		r.setIsSuccess(true);
 		r.setData(data);
 		if (msg != null && msg.length > 0) {
-			r.setDesc(msg[0]);
+			r.setMessage(msg[0]);
 		} else {
-			r.setDesc("请求成功");
+			r.setMessage("请求成功");
 		}
 		return r;
 	}
 	
 	public static <T> Result<T> ok(String msg) {
-		return ok(null,msg);
+		return ok(null, msg);
 	}
+
+	public static <T> Result<T> ok() {
+		return ok(null, "");
+	}
+	
 	
 	public static <T> Result<T> fail(T data, String... msg) {
 		Result<T> r = new Result<>();
 		r.setIsSuccess(false);
 		r.setData(data);
 		if (msg != null && msg.length > 0) {
-			r.setDesc(msg[0]);
+			r.setMessage(msg[0]);
 		} else {
-			r.setDesc("请求失败");
+			r.setMessage("请求失败");
 		}
 		return r;
 	}
@@ -58,12 +63,6 @@ public class Result<T> {
 	}
 	public void setCode(String code) {
 		this.code = code;
-	}
-	public String getDesc() {
-		return desc;
-	}
-	public void setDesc(String desc) {
-		this.desc = desc;
 	}
 	
 	/**
@@ -120,6 +119,14 @@ public class Result<T> {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 }
 

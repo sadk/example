@@ -1,6 +1,7 @@
 package org.lsqt.components.db;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -62,17 +63,20 @@ public class JDBCExecutor {
 	}
 	
 	private void print(Connection con) throws SQLException {
-		/*
+		/**/
 		if (log.isDebugEnabled()) {
-			DatabaseMetaData meta = con.getMetaData();
-			log.debug(" --- >>>>>>>>>>>> thread-id:" + Thread.currentThread().getId() + ", prepare Connection--> instance: " + con + ", url: "+meta.getURL()+"  , username: "+meta.getUserName()+"");
-			log.debug(" --- >>>>>>>>>>>> thread-id:" + Thread.currentThread().getId() + "," 
+			//DatabaseMetaData meta = con.getMetaData();
+			log.debug("[THREAD-ID:{} Connection={}]",Thread.currentThread().getId(), con);
+			
+			
+		//	log.debug("[THREAD-ID: {}] Prepare connection instance: {}, url: {}  , username: {}", con,meta.getURL(),meta.getUserName());
+		/*	log.debug(" --- >>>>>>>>>>>> thread-id:" + Thread.currentThread().getId() + "," 
 					+ con.getMetaData().getDatabaseProductName() 
 					+ con.getMetaData().getDatabaseMajorVersion() + "." 
 					+ con.getMetaData().getDatabaseMinorVersion() + "  "
-					+ con.getMetaData().getDriverVersion() + "  ") ;
+					+ con.getMetaData().getDriverVersion() + "  ") ;*/
 		}
-		*/
+		
 	}
 	
 	
@@ -603,13 +607,14 @@ public class JDBCExecutor {
 			} finally {
 				try {
 					if (con != null ){
-						//if(!con.isClosed()) { 
-							log.debug(" --- >>>>>>>>>>>> thread-id:"+ Thread.currentThread().getId() + ", >>close connection, instance:"+con);
-						//}
+						log.debug("[THREAD-ID:{} Connection={} Closing~!]",Thread.currentThread().getId(),con);
+						
 						con.close();
+						
+						log.debug("[THREAD-ID:{} Connection={} Closed ~!]",Thread.currentThread().getId(),con);
 					}
 				} catch (SQLException ec) {
-					log.error(" --- SqlExecutor close Connection fail  ,"+ ec.getMessage());
+						log.error("[THREAD-ID:{} Connection={} Closed Error!]"+ ec.getMessage());
 				}
 			}
 		}

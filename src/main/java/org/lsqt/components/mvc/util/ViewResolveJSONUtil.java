@@ -20,19 +20,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.serializer.ValueFilter;
 
+@Deprecated
 public class ViewResolveJSONUtil {
 	private static final Logger log = LoggerFactory.getLogger(ViewResolveJSONUtil.class);
 	
 	private static final DateValueFilter DATE_VALUE_FILTER = new DateValueFilter() ;
 	
-	public static void resolve(OutputStream out,UrlMappingDefinition urlMapDefinition,Object dataModel) throws IOException  {
-		if(urlMapDefinition == null || urlMapDefinition.getMethod() == null) return ;
-		
-		RequestMapping requestMapping =urlMapDefinition.getMethod().getAnnotation(RequestMapping.class);
-		if(requestMapping == null ) return ;
-		if(requestMapping.view() != View.JSON) return ;
-		
-	
+	public static void resolve(OutputStream out,Object dataModel) throws IOException  {
 		
 		if (dataModel != null) {
 			if (String.class.isAssignableFrom(dataModel.getClass())) {

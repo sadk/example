@@ -17,7 +17,7 @@
    
     
 <div class="mini-splitter" style="width:100%;height:100%;">
-    <div size="280" showCollapseButton="true">
+    <div size="290" showCollapseButton="true">
 				<div id="form1"  style="padding:8px;">
 					<table>	
 						<!-- 			
@@ -35,9 +35,11 @@
 									<tr>
 										<td>合同编号：</td>
 										<td>
-											<input id="contractNo" name="contractNo"  style="width:140px" class="mini-textbox"  emptyText="请输入合同编号"  onenter="search" required="true" />
+											<input id="contractNo" name="contractNo"  style="width:140px" class="mini-textbox"  emptyText="请输入合同编号"  onenter="search"  />
 										</td>
 									</tr>
+								
+								
 								
 								
 								
@@ -48,58 +50,17 @@
 								
 								
 									<tr>
-										<td>借款人姓名：</td>
+										<td>合同注册日期(开始)：</td>
 										<td>
-											<input id="customername" name="customername"  style="width:140px" class="mini-textbox"  emptyText="请输入借款人姓名"  onenter="search"  />
+											<input id="registrationdateBegin" name="registrationdateBegin" class="mini-datepicker" style="width:140px;" nullValue="null"   showTime="true" showOkButton="true" showClearButton="false"  emptyText="请输入" required="true" />
 										</td>
 									</tr>
-								
-								
-								
-								
-								
-								
-								
-								
-								
 									<tr>
-										<td>借款人电子邮箱：</td>
+										<td>合同注册日期(结束)：</td>
 										<td>
-											<input id="emailadd" name="emailadd"  style="width:140px" class="mini-textbox"  emptyText="请输入借款人电子邮箱"  onenter="search"  />
+											<input id="registrationdateEnd" name="registrationdateEnd" class="mini-datepicker" style="width:140px;" nullValue="null"   showTime="true" showOkButton="true" showClearButton="false"  emptyText="请输入" required="true" />
 										</td>
 									</tr>
-								
-								
-								
-								
-								
-								
-								
-								
-								
-									<tr>
-										<td>借款人手机号：</td>
-										<td>
-											<input id="personMobil" name="personMobil"  style="width:140px" class="mini-textbox"  emptyText="请输入借款人手机号"  onenter="search"  />
-										</td>
-									</tr>
-								
-								
-								
-								
-								
-								
-								
-								
-								
-									<tr>
-										<td>借款人身份证号码：</td>
-										<td>
-											<input id="certid" name="certid"  style="width:140px" class="mini-textbox"  emptyText="请输入借款人身份证号码"  onenter="search"  />
-										</td>
-									</tr>
-								
-								
 								
 								
 								
@@ -121,6 +82,12 @@
 						<tr>
 							<td style="width:100%;">
 								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
+								<span class="separator"></span>
+									<a id="exportFile" class="mini-button" iconCls="icon-download" onclick="exportData()">导出</a>
+								
+								<!-- 
+									<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:74px" value="1" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="/dictionary/option?code=report_export_file_type&enable=1" />
+								 -->
 							</td>
 							<!-- 
 							<td style="white-space:nowrap;">
@@ -132,11 +99,11 @@
 					</table>
 		        </div>
 		        <div class="mini-fit" >
-					<div id="report_fwbb" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" showPager="true"  sizeList="[20,50,100,500]"  pageSize="20" 
+					<div id="report_fwbb" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" showPager="true"  sizeList="[20,50,100,500,1000,2000]"  pageSize="20" 
 						url="${pageContext.request.contextPath}/report/definition/search"  idField="id" >
 						<div property="columns">
 							<div type="checkcolumn" ></div>
-									<div field="id" width="120" headerAlign="center" visible="true"   align="center" >id</div>
+									<div field="id" width="40" headerAlign="center" visible="true"   align="center" >id</div>
 									<div field="contractNo" width="120" headerAlign="center" visible="true"   align="center" >合同编号</div>
 									<div field="customername" width="120" headerAlign="center" visible="true"   align="center" >借款人姓名</div>
 									<div field="emailadd" width="120" headerAlign="center" visible="true"   align="center" >借款人电子邮箱</div>
@@ -353,29 +320,15 @@
     	form.validate();
 		if(form.isValid() == false) return;
 		
-	
+		    			data.registrationdateBegin =  mini.get('registrationdateBegin').text;
+		    			data.registrationdateEnd =  mini.get('registrationdateEnd').text;
+		
+		 	data.pageIndex = grid.pageIndex;
+		 	data.pageSize = grid.pageSize;
 		data.reportDefinitionId=5;
 		
 		download(data);
-		/*
-        $.ajax({ 
-            url: "/report/definition/export",
-            data: data,
-            type: "post",
-           // dataType: "blob",
-            success: function (text) {
-            	console.log(text)
-            	 
-             	 
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                mini.showTips({
-                    content: jqXHR.responseText,
-                    state: 'danger',  x: "right",  y: "bottom",
-                    timeout: 10000
-                });
-            }
-        });*/
+
 	}
 	
     function download(data) {
@@ -455,29 +408,25 @@
     	form.validate();
 		if(form.isValid() == false) return;
 		
+		    			data.registrationdateBegin =  mini.get('registrationdateBegin').text;
+		    			data.registrationdateEnd =  mini.get('registrationdateEnd').text;
     	
     	data.reportDefinitionId=5;
-    	grid.load(data)
-    	/*
-        $.ajax({ 
-            url: "/report/definition/search",
-            data: data,
-            type: "post",
-            success: function (text) {
-            	
-					if(text) {
-						grid.setData(text.data)
-	            	}
-            	
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                mini.showTips({
-                    content: jqXHR.responseText,
-                    state: 'danger',  x: "right",  y: "bottom",
-                    timeout: 10000
-                });
-            }
-        });*/
+    	grid.load(data);
+    	
+		grid.on("drawcell", function (e) { //如果有日期类型，转换为人工可讯形式
+		   var record = e.record,
+		   column = e.column,
+		   field = e.field,
+		   value = e.value;
+		   
+		   if (mini.isDate(value)) {
+	    		e.cellHtml = mini.formatDate(value, "yyyy-MM-dd HH:mm:ss");
+		   }
+		   
+ 
+
+		})
     }
     
     function clear() {

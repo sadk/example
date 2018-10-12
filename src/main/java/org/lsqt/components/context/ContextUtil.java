@@ -21,6 +21,7 @@ public class ContextUtil {
 	
 	// 登陆用户上下文
 	public static final String CONTEXT_LOGIN_USER_OBJECT = "context_login_user_object".concat(KEY_END_FIX);
+	public static final String CONTEXT_LOGIN_ACCOUNT_OBJECT = "context_login_account_object".concat(KEY_END_FIX);
 	public static final String CONTEXT_LOGIN_NAME_OBJECT = "context_login_name_object".concat(KEY_END_FIX);
 	public static final String CONTEXT_LOGIN_ID_OBJECT = "context_login_id_object".concat(KEY_END_FIX);
 	
@@ -28,35 +29,8 @@ public class ContextUtil {
 	public static final String CONTEXT_SPRING_HOLDER = "context_spring_container_holder".concat(KEY_END_FIX);
 	
 	
-	/**
-	 * 获取Spring容器
-	 * 
-	 * @return 返回null
-	 */
-	public static <T> T getSpringContext() {
-		if (THREADLOCAL_CONTEXT_MAP.get() != null) {
-			return (T) THREADLOCAL_CONTEXT_MAP.get().get(CONTEXT_SPRING_HOLDER);
-		}
-		return null;
-	}
 	
-	/**
-	 * 获取用户的登陆名
-	 * @return 返回null
-	 */
-	public static String getLoginName() {
-		
-		if (THREADLOCAL_CONTEXT_MAP.get() == null) {
-			return null;
-		}
 
-		Object loginName = THREADLOCAL_CONTEXT_MAP.get().get(CONTEXT_LOGIN_NAME_OBJECT);
-		if (loginName != null) {
-			return loginName.toString();
-		}
-		return null;
-	}
-	
 	/**
 	 * 获取用户ID
 	 * @return 返回null
@@ -73,6 +47,41 @@ public class ContextUtil {
 		}
 		return null;
 	}
+	
+	/**
+	 * 获取用户的登陆姓名
+	 * @return 返回null
+	 */
+	public static String getLoginName() {
+		
+		if (THREADLOCAL_CONTEXT_MAP.get() == null) {
+			return null;
+		}
+
+		Object loginName = THREADLOCAL_CONTEXT_MAP.get().get(CONTEXT_LOGIN_NAME_OBJECT);
+		if (loginName != null) {
+			return loginName.toString();
+		}
+		return null;
+	}
+	
+	/**
+	 * 获取用户的登陆账号
+	 * @return 返回null
+	 */
+	public static String getLoginAccount() {
+		
+		if (THREADLOCAL_CONTEXT_MAP.get() == null) {
+			return null;
+		}
+
+		Object loginAccount = THREADLOCAL_CONTEXT_MAP.get().get(CONTEXT_LOGIN_ACCOUNT_OBJECT);
+		if (loginAccount != null) {
+			return loginAccount.toString();
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * 获取用户对象
@@ -129,12 +138,32 @@ public class ContextUtil {
 		}
 		return null;
 	}
+
+
+	/**
+	 * 获取Spring容器
+	 * 
+	 * @return 返回null
+	 */
+	public static <T> T getSpringContext() {
+		if (THREADLOCAL_CONTEXT_MAP.get() != null) {
+			return (T) THREADLOCAL_CONTEXT_MAP.get().get(CONTEXT_SPRING_HOLDER);
+		}
+		return null;
+	}
+	
 	
 	public static void clear() {
-		THREADLOCAL_FORM_MAP.get().clear();
+		Map<String, Object> formMap = THREADLOCAL_FORM_MAP.get();
+		if (formMap != null) {
+			formMap.clear();
+		}
 		THREADLOCAL_FORM_MAP.set(null);
-		
-		THREADLOCAL_CONTEXT_MAP.get().clear();
+
+		Map<String, Object> contextMap = THREADLOCAL_CONTEXT_MAP.get();
+		if (contextMap != null) {
+			contextMap.clear();
+		}
 		THREADLOCAL_CONTEXT_MAP.set(null);
 	}
 	

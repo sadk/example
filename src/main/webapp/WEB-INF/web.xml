@@ -44,7 +44,7 @@
 
   <filter>
     <filter-name>applicationFilter</filter-name>
-    <filter-class>org.lsqt.components.mvc.ApplicationFilter</filter-class>
+    <filter-class>org.lsqt.components.mvc.BootApplicationFilter</filter-class>
     
      <!-- 指定是否需要登陆 -->
     <init-param>
@@ -81,6 +81,7 @@
     <filter-name>applicationFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+
 
 
 

@@ -12,10 +12,11 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.impl.bean.resolve.AnnotationBeanMetaResolveImpl;
 import org.lsqt.components.context.bean.BeanDefinition;
 import org.lsqt.components.context.bean.BeanMetaResolve;
-import org.lsqt.components.mvc.ApplicationFilter;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.mvc.impl.UrlMappingRoute;
 import org.lsqt.components.util.collection.ArrayUtil;
+import org.lsqt.components.util.collection.MapUtil;
+import org.lsqt.uum.controller.DemoController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class AnnotationUrlMappingRoute implements UrlMappingRoute{
 	/**
 	 * 构建控制器类的所有URL路由定义
 	 */
-	public void buildUrlMapping() throws Exception{
+	public UrlMappingRoute buildUrlMapping() {
 		final String controllerNameEndFix="Controller";
 		final String actionNameEndFix="Action";
 		final String urlDefPrifix="/";
@@ -85,12 +86,46 @@ public class AnnotationUrlMappingRoute implements UrlMappingRoute{
 				}
 				
 			}
+		
+			
+			List<String> oneClazzMethodUrlList = MapUtil.toKeyList(urlForMethodMap); // 一个类的方法映射路径
+			if (ArrayUtil.isNotBlank(oneClazzMethodUrlList)) {
+				for (String currUrl : oneClazzMethodUrlList) {
+
+					int cnt = 0;
+					Method errorMethod = null;
+					String errorUri = "";
+
+					for (Method m : list) {
+						RequestMapping rm = m.getAnnotation(RequestMapping.class);
+						if (rm != null) {
+							for (String t : rm.mapping()) {
+								if (currUrl.equals(t)) {
+									cnt++;
+									errorMethod = m;
+									errorUri = currUrl;
+								}
+							}
+						}
+					}
+					if (cnt > 1)
+						throw new RuntimeException("URI mapping error: please check invoked Method "
+								+ beanClass.getName() + "#" + errorMethod.getName() + " and URI is \"" + errorUri+"\"");
+
+				}
+			}
 			
 			//3.构建映射元数据对象
 			List<UrlMappingDefinition> rs = process(e.getBeanClass(),urlForClass,urlForMethodMap);
 			
+			
+			
+			
+
 			this.urlMappingDefs.addAll(rs);
 		}
+		
+		return this;
 	}
 	
 	/**
@@ -102,8 +137,8 @@ public class AnnotationUrlMappingRoute implements UrlMappingRoute{
 	 * @throws UrlMappingException
 	 */
 	@SuppressWarnings("unchecked")
-	private List<UrlMappingDefinition> process(Class<?> controller,String [] urlForClass,Map<String,Method> urlForMethod) throws Exception{
-		if(urlForClass==null ||urlForClass.length==0)throw new Exception("have not found url mapping for Controller or Action!");
+	private List<UrlMappingDefinition> process(Class<?> controller,String [] urlForClass,Map<String,Method> urlForMethod) {
+		if(urlForClass==null ||urlForClass.length==0)throw new RuntimeException("have not found url mapping for Controller or Action!");
 		//if(urlForMethod == null || urlForMethod.isEmpty())throw new UrlMappingException("none method maping!");
 		if(urlForMethod == null || urlForMethod.isEmpty()) return ArrayUtil.EMPTY_LIST;
 		
@@ -114,7 +149,7 @@ public class AnnotationUrlMappingRoute implements UrlMappingRoute{
 				meta.setControllerClass(controller);
 				meta.setMethod(urlForMethod.get(um));
 				meta.setUrl(uc.concat(um));
-				log.debug("URL mapping : {} , METHOD : {}",meta.getUrl(),meta.getMethod());
+				log.debug("URL mapping: {} ,  METHOD : {}",meta.getUrl(),meta.getMethod());
 				rs.add(meta);
 			}
 		}

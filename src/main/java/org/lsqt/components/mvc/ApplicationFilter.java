@@ -6,10 +6,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -33,15 +35,24 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.lsqt.components.context.ContextUtil;
+import org.lsqt.components.context.Result;
+import org.lsqt.components.context.annotation.Component;
+import org.lsqt.components.context.annotation.Controller;
+import org.lsqt.components.context.annotation.Dao;
+import org.lsqt.components.context.annotation.Service;
+import org.lsqt.components.context.annotation.mvc.After;
+import org.lsqt.components.context.annotation.mvc.Before;
+import org.lsqt.components.context.annotation.mvc.Match;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.context.annotation.mvc.RequestPayload;
+import org.lsqt.components.context.bean.BeanFactory;
 import org.lsqt.components.context.impl.bean.factory.AnnotationBeanFactory;
 import org.lsqt.components.context.impl.bean.factory.SpringBeanFactoryAdapter;
-import org.lsqt.components.context.bean.BeanFactory;
+import org.lsqt.components.context.impl.util.CacheMethodUtil;
 import org.lsqt.components.db.Db;
-import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.mvc.impl.AnnotationUrlMappingRoute;
+import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.mvc.util.ActionFormUtil;
 import org.lsqt.components.mvc.util.ParameterNameUtil;
 import org.lsqt.components.mvc.util.ViewResolveFtlUtil;
@@ -74,6 +85,7 @@ import com.alibaba.fastjson.JSON;
  * @author yuanmm
  *
  */
+@Deprecated
 public class ApplicationFilter implements Filter{
 	private static final Logger log = LoggerFactory.getLogger(ApplicationFilter.class);
 	
@@ -139,12 +151,12 @@ public class ApplicationFilter implements Filter{
 		}
 		
 		String escape = filterConfig.getInitParameter("escape");
-		if (StringUtil.isNotBlank(staticRes)) {
+		if (StringUtil.isNotBlank(escape)) {
 			URI_ESCAPE.addAll(contextWrap(filterConfig,StringUtil.split(String.class, escape, ",",true)));
 		}
 		
 		String anonymous = filterConfig.getInitParameter("anonymous");
-		if (StringUtil.isNotBlank(staticRes)) {
+		if (StringUtil.isNotBlank(anonymous)) {
 			URI_ANONYMOUS.addAll(contextWrap(filterConfig,StringUtil.split(String.class, anonymous, ",",true)));
 		}
 		
@@ -176,7 +188,8 @@ public class ApplicationFilter implements Filter{
 			try {
 				initContainer();
 			} catch (Exception e) {
-				log.error(e.getMessage());
+				e.printStackTrace();
+				//log.error(e.getMessage());
 			}
 			log.info(" --- container stated cost " + (System.currentTimeMillis() - begin)+"(ms) ~!!!");
 		});
@@ -277,7 +290,7 @@ public class ApplicationFilter implements Filter{
 		}
 
 		// 比较密码+时间戳相等
-		if ((uidList != null && uid2List != null) && (uidList.size() == 3 && uid2List.size() == 2)) {
+		if ((uidList != null && uid2List != null) && (uidList.size() == 5 && uid2List.size() == 2)) {
 			String accPwd1 = uidList.get(1);
 			String accTime1 = uidList.get(2);
 
@@ -339,14 +352,61 @@ public class ApplicationFilter implements Filter{
 		response.addHeader("Cache-Control","private");
 		
 		
+		
+		
+		
+		final UrlMappingDefinition urlMappingDefinition = router.find(getRequestURI());
+		
 		boolean isInvokedOk = true;
 		Closeable out = null;
 		try {
-			out = buildInvokeParam(request,response);
-		} catch (Exception e) {
-			//打印到控制台
+			/* 
+			Before处理异常、--> 选择相应的视图显示异常
+			Before处理有异常（但补Result包裹）--> 返回Result不成功，选择相应的视图显示异常
+
+			action异常、选择相应的视图显示异常
+
+			After异常、选择相应的视图显示异常
+			After异常（但补Result包裹）--> 返回Result不成功，选择相应的视图显示异常
+			*/
+			Result<Object> result= buildParamInvoke(urlMappingDefinition,request,response);
+			if (result != null) {
+				
+				Object hook = result.getHook();
+				if (hook!=null && (hook instanceof Closeable)) {
+					out = (Closeable) hook;
+				}
+				
+				if (!result.getIsSuccess()) {// 如果失败，选择相应的视图返回到浏览器
+					Method method = urlMappingDefinition.getMethod();
+					RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+					if (requestMapping != null) {
+						View view = requestMapping.view();
+						if (view == View.FTL) {
+
+						}
+						if (view == View.JSON) {
+							OutputStream os = response.getOutputStream();
+							ViewResolveJSONUtil.resolve(os, result.getData());
+							response.setContentType("application/json; charset=utf-8");
+							result.setHook(os);
+
+						}
+						if (view == View.JSP) {
+							
+						}
+					}
+				} 
+				
+				
+			}
+		} catch (Throwable e) {
 			e.printStackTrace();
 			
+			if(e instanceof InvocationTargetException) {
+				InvocationTargetException t = (InvocationTargetException) e ;
+				e = t.getTargetException();
+			}
 			
 			//打印到浏览器
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -365,7 +425,6 @@ public class ApplicationFilter implements Filter{
 			
 			isInvokedOk = false;
 		} finally {
-			//logger.debug(request.getRequestURL()+" ===> "+ContextUtil.getFormMap()+"\n\n\n");
 			ContextUtil.clear();
 			if (out != null) {
 				out.close();
@@ -378,17 +437,7 @@ public class ApplicationFilter implements Filter{
 	}
  
 	@SuppressWarnings("unchecked")
-	private Closeable buildInvokeParam(HttpServletRequest request,HttpServletResponse response) throws Exception{
-		String uri = request.getRequestURI();
-		log.debug(request.getRequestURL()+" ===> "+ContextUtil.getFormMap());
-		
-		
-		
-		//bugFix: 去掉工程名前缀，如: http://ip:poart/工程名(也就是context)/user/login
-		String ctx = request.getContextPath();
-		uri = uri.substring(ctx.length(), uri.length());
-	
-		final UrlMappingDefinition urlMappingDef = router.find(uri);
+	private  Result<Object> buildParamInvoke(UrlMappingDefinition urlMappingDef  , HttpServletRequest request,HttpServletResponse response) throws Exception{
 		if (urlMappingDef == null) {
 			return null;
 		}
@@ -416,51 +465,24 @@ public class ApplicationFilter implements Filter{
 				log.debug(" --- parse RequestPayload : "+request.getRequestURI()+"===>" + ContextUtil.getFormMap());
 			} catch (IOException e) {
 				e.printStackTrace();
+				return Result.fail(e.getMessage());
 			} 
 		}
 		
-		Class<?>[] types = urlMappingDef.getMethod().getParameterTypes();
-		List<String> methodInputParamNames = ParameterNameUtil.getParameterNames(urlMappingDef.getMethod());
-		
-		if(types.length != methodInputParamNames.size()) {
-			throw new Exception("param value count and param name count are't equal~!");
-		}
-		
-		// 1.填充表单
-		List<Object> methodInputParamValues = new ArrayList<Object>();
-		for (int i=0;i<methodInputParamNames.size();i++) {
-			Parameter param = urlMappingDef.getMethod().getParameters()[i];
-
-			Class<?> paramType = types[i];
-			String paramName = methodInputParamNames.get(i);
-			Object paramValue = null;
-			
-			if (ActionFormUtil.isCanBeBaseType(paramType)) { // 处理常规类型
-				paramValue = ActionFormUtil.prepareBaseValue(paramType,ContextUtil.getFormMap().get(paramName));
-				
-			} else if(ActionFormUtil.isCanBeDate(param)){ // 处理日期类型
-				try {
-					paramValue = ActionFormUtil.prepareDateValue(param,ContextUtil.getFormMap().get(paramName));
-				} catch (ParseException e) {
-					throw new Exception("prepare Date Value fail~!",e);
-				}
-				
-			} else if (ActionFormUtil.isCanBeBeanType(paramType)) { // 处理bean类型
-					Object formBean = paramType.newInstance();
-					paramValue = formBean;
-					ActionFormUtil.fillBean(formBean, ContextUtil.getFormMap());
-			}
-			
-			methodInputParamValues.add(paramValue);
-		}
-		
+		List<Object> methodInputParamValues = getMethodArgsValue(urlMappingDef.getMethod());
+	
 		
 		// 2.Action调用
-		final class Result {
-			public Object invokedResult;
-		}
-		final Result result = new Result();
+		final Result<Object> result = Result.ok();
 		try {
+			Object beforeMethodReturnObject = invokeBefore(urlMappingDef, methodInputParamValues.toArray()); // 可能有DB操作，记得处理事务！
+			if (beforeMethodReturnObject instanceof Result<?>) {
+				Result<Object> r = (Result<Object>) beforeMethodReturnObject;
+				if (!r.getIsSuccess()) { // 抛出异常或返回失败，返回到浏览器
+					return r;
+				}
+			}
+			
 			
 			boolean isExcludeTransaction = false; // 是否脱离数据库(事务)环境
 			boolean isTransaction = true; //开启事务
@@ -473,65 +495,315 @@ public class ApplicationFilter implements Filter{
 			}
 			
 			if (isExcludeTransaction) {
-				result.invokedResult = urlMappingDef.getMethod().invoke(controller, methodInputParamValues.toArray());
+				result.setData(urlMappingDef.getMethod().invoke(controller, methodInputParamValues.toArray()));
 			} else {
 				db.executePlan(isTransaction, () -> {
 					try {
-						result.invokedResult = urlMappingDef.getMethod().invoke(controller, methodInputParamValues.toArray());
+						result.setData(urlMappingDef.getMethod().invoke(controller, methodInputParamValues.toArray()));
+						
+						//后置处理，一定纳入到当前事务中
+						invokeAfter(urlMappingDef, result);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				});
 			}
 			
-		} catch (Exception ex) {
-			throw ex;
+			 
 		} finally{
 			db.close();
 		}
 	
-		// 3.展现视图
-		Closeable closeable = null;
+
+ 
 		
-			Method method = urlMappingDef.getMethod();
-			RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-			if (requestMapping == null) {
-				return null;
+		// 3.展现视图
+		Method method = urlMappingDef.getMethod();
+		RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+		if (requestMapping == null) {
+			return null;
+		}
+
+		View view = requestMapping.view();
+		if (view == View.FTL) {
+			
+			PrintWriter out = response.getWriter();
+			ViewResolveFtlUtil.resolve(out, requestMapping.path() , result.getData());
+			
+			result.setHook(out);
+			
+		} else if (view == View.JSON) {
+			OutputStream out = response.getOutputStream();
+			ViewResolveJSONUtil.resolve(out, result.getData());
+			response.setContentType("application/json; charset=utf-8");
+			
+			result.setHook(out);
+
+		} else if (view == View.JSP) {
+			String viewPrefix = requestMapping.path();
+			if(!viewPrefix.endsWith("/")) {
+				viewPrefix+="/";
 			}
-
-			View view = requestMapping.view();
-			if (view == View.FTL) {
-				PrintWriter out = response.getWriter();
-				ViewResolveFtlUtil.resolve(out, urlMappingDef, result.invokedResult);
-
-				closeable = out;
-
-			} else if (view == View.JSON) {
-				OutputStream out = response.getOutputStream();
-				ViewResolveJSONUtil.resolve(out, urlMappingDef, result.invokedResult);
-				response.setContentType("application/json; charset=utf-8");
-				closeable = out;
-
-			} else if (view == View.JSP) {
-				String viewPrefix = requestMapping.path();
-				if(!viewPrefix.endsWith("/")) {
-					viewPrefix+="/";
+			Object rs = result.getData();
+			if(rs instanceof String) {
+				String template = rs.toString();
+				if(!template.endsWith(".jsp")) {
+					template += ".jsp";
 				}
-				Object rs = result.invokedResult;
-				if(rs instanceof String) {
-					String template = rs.toString();
-					if(!template.endsWith(".jsp")) {
-						template += ".jsp";
-					}
-					
-					if(template.startsWith("redirect:")) {
-						response.sendRedirect(viewPrefix+template);
-					}
+				
+				if(template.startsWith("redirect:")) {
+					response.sendRedirect(viewPrefix+template);
+				} else {
 					request.getRequestDispatcher(viewPrefix+template).forward(request, response);
 				}
 			}
+		}
  
-		return closeable;
+		return result;
+	}
+
+	/**
+	 * 绑定当前URL请求参数值到类的某个方法 (如:Controller的某个方法)
+	 * @param method
+	 * @return 
+	 * @throws Exception
+	 */
+	private List<Object> getMethodArgsValue(Method method) throws Exception {
+		Class<?>[] types = method.getParameterTypes();
+		List<String> methodInputParamNames = ParameterNameUtil.getParameterNames(method);
+		
+		if(types.length != methodInputParamNames.size()) {
+			throw new Exception("param value count and param name count are't equal~!");
+		}
+		
+		// 1.填充表单
+		List<Object> methodInputParamValues = new ArrayList<Object>();
+		for (int i=0;i<methodInputParamNames.size();i++) {
+			Parameter param = method.getParameters()[i];
+
+			Class<?> paramType = types[i];
+			String paramName = methodInputParamNames.get(i);
+			Object paramValue = null;
+			
+			if (ActionFormUtil.isCanBeBaseType(paramType)) { // 处理常规类型
+				paramValue = ActionFormUtil.prepareBaseValue(paramType,ContextUtil.getFormMap().get(paramName));
+				
+			} else if(ActionFormUtil.isCanBeDate(param)){ // 处理日期类型
+				 
+				paramValue = ActionFormUtil.prepareDateValue(param,ContextUtil.getFormMap().get(paramName));
+				 
+				
+			} else if (ActionFormUtil.isCanBeBeanType(paramType)) { // 处理bean类型
+					Object formBean = paramType.newInstance();
+					paramValue = formBean;
+					ActionFormUtil.fillBean(formBean, ContextUtil.getFormMap());
+			}
+			
+			methodInputParamValues.add(paramValue);
+		}
+		return methodInputParamValues;
+	}
+
+	/**
+	 * 
+	 * 获取请求的URI地址
+	 * @param request
+	 * @return
+	 */
+	private String getRequestURI() {
+		HttpServletRequest request = ContextUtil.getRequest();
+		String uri = request.getRequestURI();
+
+		// bugFix: 去掉工程名前缀，如: http://ip:poart/工程名(也就是context)/user/login
+		String ctx = request.getContextPath();
+		uri = uri.substring(ctx.length(), uri.length());
+		return uri;
+	}
+
+	/**
+	 * controller方法的前置处理
+	 * @param urlMappingDefinition 当前请求对应的映射元信息
+	 * @param params 当前请求controller方法的入参值
+	 * @return
+	 * @throws Exception
+	 */
+	private Object invokeBefore(final UrlMappingDefinition urlMappingDefinition,  Object ... params) throws Exception {
+		if(urlMappingDefinition == null) return null;
+		
+		Object beforeMethodReturnObject = null; //前置处理器方法返回值
+		
+		Before before = urlMappingDefinition.getMethod().getAnnotation(Before.class);
+		if (before != null) {
+			Class<?> processClass = before.clazz();
+
+			List<Method> processMethodList = CacheMethodUtil.getMethodList(processClass);
+
+			if (ArrayUtil.isNotBlank(processMethodList)) {
+				 
+				Method processMethod = null; 
+				final List<Object> processMethodParamValue = new ArrayList<>();
+
+				if(processMethodList.size() == 1) {
+					processMethod = processMethodList.get(0);
+					processMethodParamValue.addAll(getMethodArgsValue(processMethod));
+					
+				} else {
+					String controllerMethodName = urlMappingDefinition.getMethod().getName();
+					Class<?>[] controllerMethodArgsTypes = urlMappingDefinition.getMethod().getParameterTypes();
+					
+					if (StringUtil.isBlank(before.method())) {// 如果没有标注哪个处理方法，用controller的源方法名和参数查找处理“方法”
+						processMethod = processClass.getMethod(controllerMethodName, controllerMethodArgsTypes);
+						processMethodParamValue.addAll(Arrays.asList(params));
+	
+					} else if (StringUtil.isNotBlank(before.method()) && before.args().length == 0) { // 如果标注了处理方法，没有标注方法参数，用源方法参数查找处理“方法”
+						processMethod = processClass.getMethod(before.method(), controllerMethodArgsTypes);
+						processMethodParamValue.addAll(getMethodArgsValue(processMethod));
+						
+					} else if (StringUtil.isNotBlank(before.method()) && before.args().length > 0) {// 即标注了处理方法又指定了方法参数类型，直接查找到处理“方法”
+						processMethod = processClass.getMethod(before.method(), before.args());
+						processMethodParamValue.addAll(getMethodArgsValue(processMethod));
+					}
+				}
+				
+				if (processMethod != null) {
+					boolean isMatch = false;
+					Match matcher = processMethod.getAnnotation(Match.class);
+					
+					if (matcher == null) {//不写match，controller的任何url都匹配，处理器执行！
+						isMatch = true; 
+					} else {
+						String[] urls = matcher.mapping();
+						if (ArrayUtil.isBlank(Arrays.asList(urls))) {
+							return null;
+						}
+						 
+						String currUrl = getRequestURI();
+						
+						Controller ctl = urlMappingDefinition.getControllerClass().getAnnotation(Controller.class);
+						String [] ctlMapping = ctl.mapping();
+						if (ArrayUtil.isBlank(Arrays.asList(ctlMapping))) { //控制器定义的url没有标注模块前缀
+							for (String path: urls) {
+								isMatch = Pattern.matches(path.concat(".*"), currUrl);
+								if(isMatch) {
+									break;
+								}
+							}
+						} else {
+							
+							for (String ctlUrl : ctlMapping) {
+								boolean isFind = false;
+								for (String path : urls) {
+									isFind = Pattern.matches(ctlUrl.concat(path).concat(".*"), currUrl);
+									if (isFind) {
+										break;
+									}
+								}
+								if (isFind) {
+									isMatch = isFind;
+									break;
+								}
+							}
+						}
+					}
+					
+					
+					
+					if (isMatch && processMethod != null) {
+						processMethod.setAccessible(true);
+
+						Object bean = null;
+						if (processClass.getAnnotation(Dao.class) != null
+								|| processClass.getAnnotation(Service.class) != null
+								|| processClass.getAnnotation(Component.class) != null
+								|| processClass.getAnnotation(Controller.class) != null) {
+							bean = factory.getBean(processClass);
+						}
+
+						if (bean == null) {// 单纯的POJO
+							bean = processClass.newInstance();
+						}
+
+						
+						
+						//如果有前置事务处理
+						boolean isExcludeTransaction = matcher.excludeTransaction(); // 是否脱离数据库(事务)环境
+						boolean isTransaction = true; //开启事务
+						
+						if (isExcludeTransaction) {
+							beforeMethodReturnObject = processMethod.invoke(bean, processMethodParamValue.toArray());
+						} else {
+							
+							Result<Object> result = Result.ok();
+							result.setHook(processMethod);
+							result.setData(bean);
+							
+							db.executePlan(isTransaction, ()->{
+								try {
+									Method m = (Method)result.getHook();
+									Object b = result.getData();
+									result.setData( m.invoke(b, processMethodParamValue.toArray()));
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							});
+							
+							beforeMethodReturnObject = result.getData();
+						}
+						
+					}
+				}
+				
+			} 
+		}
+		return beforeMethodReturnObject;
+	}
+
+	
+	/**
+	 * 请求后置处理
+	 * @param urlMappingDefinition 当前URI映射定义
+	 * @param controllerResult controller方法返回值
+	 * @throws Exception
+	 */
+	private void invokeAfter(final UrlMappingDefinition urlMappingDefinition, final Result<Object> controllerResult) throws Exception {
+		
+		After after = urlMappingDefinition.getMethod().getAnnotation(After.class);
+		if (after != null) {
+			Class<?> processClass = after.clazz();
+
+			List<Method> methodList = CacheMethodUtil.getMethodList(processClass);
+
+			if (ArrayUtil.isNotBlank(methodList)) {
+				Method processMethod = null;
+				if (after.args() == null || after.args().length == 0) {
+					for (Method m : methodList) {
+						if (m.getName().equals(after.method())) {
+							processMethod = m;
+							break;
+						}
+					}
+				} else {
+					processMethod = processClass.getMethod(after.method(), after.args());
+				}
+
+				if (processMethod != null) {
+
+					processMethod.setAccessible(true);
+
+					Object bean = factory.getBean(processClass);
+					if (bean == null) {
+						bean = processClass.newInstance();
+					}
+
+					Object wrappedObject = processMethod.invoke(bean, controllerResult.getData());
+					
+					controllerResult.setData(wrappedObject);
+				}
+
+			} else {
+				log.warn("类 {} 没有定义方法", processClass);
+			}
+		}
 	}
 	
 
@@ -560,7 +832,9 @@ public class ApplicationFilter implements Filter{
 		
 		// 绑定用户ID到上下文
 		if (ArrayUtil.isNotBlank(uidList)) {
-			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_NAME_OBJECT, uidList.get(0));
+			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_ACCOUNT_OBJECT, uidList.get(0));
+			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_ID_OBJECT, uidList.get(3));
+			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_NAME_OBJECT, uidList.get(4));
 		}	
 	}
 	

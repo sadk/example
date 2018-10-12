@@ -299,7 +299,7 @@
 	
     function download(data) {
  	   loading();
- 	   var url = '${pageContext.request.contextPath}/report/definition/export?1=1';
+ 	   var url = '<#noparse>${pageContext.request.contextPath}</#noparse>/report/definition/export?1=1';
    		
  	   var params = new Array();
  	    for (var i in data) {	// 获取对象属性

@@ -13,22 +13,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.lsqt.components.util.bean.BeanUtil;
 
 /**
- * java bean的元信息缓存工具类.供反射赋值调用
+ * java bean的元信息缓存工具类.供反射赋值调用,主要是缓存Getter和Setter方法
  * 没有使用javaBean的自省，是因为性能太差!
  * @author Sky
  *
  */
 public abstract class CacheReflect{
-	public static final Map<Class<?>,List<Method>> BEAN_METHODS = new ConcurrentHashMap<Class<?>,List<Method>>();
-	public static final Map<Class<?>,List<Method>> BEAN_METHODS_SETTER = new ConcurrentHashMap<Class<?>,List<Method>>();
-	public static final Map<Class<?>,List<Method>> BEAN_METHODS_GETTER = new ConcurrentHashMap<Class<?>,List<Method>>();
+	/**Bean的getter和setter方法**/
+	private static final Map<Class<?>,List<Method>> BEAN_METHODS_GETTER_AND_SETTER = new ConcurrentHashMap<Class<?>,List<Method>>();
+	private static final Map<Class<?>,List<Method>> BEAN_METHODS_SETTER = new ConcurrentHashMap<Class<?>,List<Method>>();
+	private static final Map<Class<?>,List<Method>> BEAN_METHODS_GETTER = new ConcurrentHashMap<Class<?>,List<Method>>();
 	
-	public static final Map<Class<?>,List<Field>> BEAN_FIELDS = new ConcurrentHashMap<Class<?>,List<Field>>();
-	public static final Map<Class<?>,Map<Field,Method>> BEAN_FIELD_METHOD_MAPPING = new ConcurrentHashMap<Class<?>,Map<Field,Method>>();
+	private static final Map<Class<?>,List<Field>> BEAN_FIELDS = new ConcurrentHashMap<Class<?>,List<Field>>();
+	private static final Map<Class<?>,Map<Field,Method>> BEAN_FIELD_METHOD_MAPPING = new ConcurrentHashMap<Class<?>,Map<Field,Method>>();
 	
 	public static List<Method> getBeanSetterGetterMethod(Class<?> clazz) {
-		if (BEAN_METHODS.containsKey(clazz)) {
-			return BEAN_METHODS.get(clazz);
+		if (BEAN_METHODS_GETTER_AND_SETTER.containsKey(clazz)) {
+			return BEAN_METHODS_GETTER_AND_SETTER.get(clazz);
 		}
 
 		List<Method> list = new ArrayList<Method>();
@@ -38,7 +39,7 @@ public abstract class CacheReflect{
 		list.addAll(mapSetter.values());
 		list.addAll(mapGetter.values());
 
-		BEAN_METHODS.put(clazz, list);
+		BEAN_METHODS_GETTER_AND_SETTER.put(clazz, list);
 
 		return list;
 	}

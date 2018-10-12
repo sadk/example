@@ -1,10 +1,8 @@
 package org.lsqt.uum.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.lsqt.components.context.ContextUtil;
+import org.lsqt.components.context.Result;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -42,22 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
-@SuppressWarnings("unchecked")
-class RequestAfterProcess {
-	
-	public Object toPc(Object invokedValue, Long id, String name) {
-		Page<User> page = (Page<User>)invokedValue;
-		page.setTotal(10000);
-		
-		return page;
-	}
 
-	public Object toMobile(Object invokedValue, Date date) {
-		Page<User> page = (Page<User>)invokedValue;
-		page.setTotal(2000);
-		return page;
-	}
-}
 
 @Controller(mapping={"/user"})
 public class UserController {
@@ -67,8 +51,72 @@ public class UserController {
 	@Inject private OrgService orgService;
 	@Inject private Db db;
 	
-	@RequestMapping(mapping = { "/logout", "/m/logout" }, text = "登出")
-	public Result logout() {
+	
+	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
+	public User saveOrUpdate(User form, String loginPwdReboot) {
+
+		if (StringUtil.isNotBlank(loginPwdReboot)) { // 用户重新输入了密码
+			form.setLoginPwd(CodeUtil.passwodEncrypt(loginPwdReboot + User.PWD_SALT));
+		}
+		return userService.saveOrUpdate(form);
+	}
+	
+	@RequestMapping(mapping = { "/update_password", "/m/update_password"},text="登陆用户修改自己的密码")
+	public User updatePassword(String loginPwd,String loginPwdReboot) {
+		if (!loginPwd.equals(loginPwdReboot)) {
+			return null;
+		}
+		
+		String id = ContextUtil.getLoginId();
+		if(StringUtil.isBlank(id)) {
+			return null;
+		}
+		
+		User loginUser = userService.getById(Long.valueOf(id));
+		loginUser.setLoginPwd(CodeUtil.passwodEncrypt(loginPwd + User.PWD_SALT));
+		db.update(loginUser, "loginPwd");
+		
+		loginUser.setLoginPwd(null);
+		
+		return loginUser;
+		
+	}
+	
+	@RequestMapping(mapping = { "/get_login_user", "/m/get_login_user"},text="获取登陆用户详细信息")
+	public User getLoginUser() {
+		
+		String id = ContextUtil.getLoginId();
+		if(StringUtil.isBlank(id)) {
+			return null;
+		}
+		
+		User loginUser = userService.getById(Long.valueOf(id));
+		if(loginUser!=null) {
+			loginUser.setLoginPwd(null);
+		}
+		return loginUser;
+	}
+	
+	@RequestMapping(mapping = { "/page", "/m/page" },isTransaction = false)
+	public Page<User> queryForPage(UserQuery query,Boolean isAllChild) {
+		if (isAllChild != null && isAllChild) {
+			Long root = query.getOrgId();
+			List<Org> list = orgService.getAllChildNodes(root);
+			
+			List<Long> ids = new ArrayList<>();
+			for(Org e: list) {
+				ids.add(e.getId());
+			}
+			
+			query.setOrgId(null);
+			query.setOrgIds(StringUtil.join(ids, ","));
+		}
+		return userService.queryForPage(query); 
+	}
+	
+	
+	@RequestMapping(mapping = { "/logout", "/m/logout" }, text = "登出", excludeTransaction = true)
+	public Result<User> logout() {
 		HttpServletRequest request = ContextUtil.getRequest();
 		HttpServletResponse response = ContextUtil.getResponse();
 
@@ -89,7 +137,7 @@ public class UserController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(mapping = { "/login", "/m/login"},text="cooke的key是(登陆账号明文-->对称加密-->16进制串表示)后的散列值，value是（密码明文+盐分 的16进制串表示）后的散列值")
-	public Result login(String username,String password) {
+	public Result<User> login(String username,String password) {
 		if (StringUtil.isBlank(username)) {
 			return Result.fail("登陆账号不能为空");
 		}
@@ -114,7 +162,7 @@ public class UserController {
 				return Result.fail("密码错误");
 			}
 			
-			writeCookie(username,password);
+			writeCookie(user.getId().toString(),user.getName(),username,password);
 			return Result.ok(user);
 		}
 		
@@ -169,54 +217,40 @@ public class UserController {
 		}
 		
 		
-		writeCookie(username, password);
+		writeCookie(dbUser.getId().toString(),dbUser.getName(),username, password);
 		
 	 
-		return Result.ok("登陆成功",dbUser);
+		return Result.ok(dbUser,"登陆成功");
 	}
 
 
 
-	private void writeCookie(String username, String password) {
+	/**
+	 * 用户ID、用户名、登陆账号、密码散列后存储到cookie
+	 * @param id 用户ID
+	 * @param name 用户姓名
+	 * @param loginName 用户登陆账号
+	 * @param password 明文密码
+	 */
+	private void writeCookie(String id,String name,String loginName, String password) {
 		HttpServletResponse response = ContextUtil.getResponse();
 
 		String passwodEncrypted = CodeUtil.passwodEncrypt(password + User.PWD_SALT);
 		long currTime = System.currentTimeMillis();
-		// 第一个cookie存（uid）<==>（账号，密码，时间戳）
-		List<String> uidValue = Arrays.asList(username, passwodEncrypted, currTime + "");
+		// 第一个cookie存（uid）<==>（账号，密码，时间戳,id,姓名）
+		List<String> uidValue = Arrays.asList(loginName, passwodEncrypted, currTime + "", id , name);
 		Cookie uid = new Cookie("uid", CodeUtil.simpleEncode(StringUtil.join(uidValue)));
 		uid.setPath("/");
 		uid.setMaxAge(-1);
 		response.addCookie(uid);
 
-		// 第二个cookie存（账号，时间戳）<==> (密码，时间戳）
+		// 第二个cookie存（账号，时间戳）<==> (密码，时间戳)
 		Cookie userCookie = new Cookie(CodeUtil.simpleEncode(uidValue.get(0) + "," + uidValue.get(2)),
 				CodeUtil.simpleEncode(uidValue.get(1) + "," + uidValue.get(2)));
 		userCookie.setPath("/");
 		userCookie.setMaxAge(-1);// 关闭即消失
 		response.addCookie(userCookie);
 	}
-
-	
-	
-	@RequestMapping(mapping = { "/page", "/m/page" })
-	//@After(clazz =(RequestAfterProcess.class),method="convert",args={Object.class,Long.class,String.class})
-	public Page<User> queryForPage(UserQuery query,Boolean isAllChild) throws IOException {
-		if (isAllChild != null && isAllChild) { 
-			Long root = query.getOrgId();
-			List<Org> list = orgService.getAllChildNodes(root);
-			
-			List<Long> ids = new ArrayList<>();
-			for(Org e: list) {
-				ids.add(e.getId());
-			}
-			
-			query.setOrgId(null);
-			query.setOrgIds(StringUtil.join(ids, ","));
-		}
-		return userService.queryForPage(query); 
-	}
-	
 	@RequestMapping(mapping = { "/get_all_user_by_orgid", "/m/get_all_user_by_orgid" },text="获取部门下的用户(多层)")
 	public Page<User> getAllUserByOrgId(UserQuery query){
 		
@@ -245,15 +279,6 @@ public class UserController {
 	@RequestMapping(mapping = { "/all", "/m/all" })
 	public Collection<User> getAll() {
 		return userService.getAll();
-	}
-	
-	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
-	public User saveOrUpdate(User form,String loginPwdReboot) {
-		
-		if(StringUtil.isNotBlank(loginPwdReboot)) { //用户重新输入了密码
-			form.setLoginPwd(CodeUtil.passwodEncrypt(loginPwdReboot + User.PWD_SALT));
-		}
-		return userService.saveOrUpdate(form);
 	}
 	
 	@RequestMapping(mapping = { "/delete", "/m/delete" })
@@ -309,7 +334,7 @@ public class UserController {
 				return db.queryForList("queryForPage", Res.class, query);
 				
 			} else {
-				String loginName = ContextUtil.getLoginName();
+				String loginName = ContextUtil.getLoginAccount();
 				if("admin".equals(loginName)) { // 写死如果是超级管理员admin,显示全部菜单，
 					query.setUserId(null);
 					return db.queryForList("queryForPage", Res.class,query);
