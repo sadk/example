@@ -11,7 +11,7 @@ import java.io.StringWriter;
  */
 public class ExceptionUtil {
 	
-	public static String getStackTrace(Exception e) {
+	public static String getStackTrace(Throwable e) {
 		StringWriter sw = null;
 		PrintWriter pw = null;
 		try {

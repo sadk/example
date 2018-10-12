@@ -70,6 +70,8 @@ public class SqlStatementFactory implements SqlStatementBuilder {
 		List<File> rs = new ArrayList<>();
 	
 		String dir = PathUtil.getAppRootDir();
+		log.info("Get App root dir : "+new File(dir));
+		
 		File root = new File(dir);
 		if(root.exists() && root.isDirectory()) {
 			List<String> list = FileUtil.getDeepFiles(root);
@@ -80,7 +82,11 @@ public class SqlStatementFactory implements SqlStatementBuilder {
 					if(path.endsWith("Model.ftl.sql.xml")){
 						continue;
 					}
-					rs.add(new File(path));
+					
+					File temp = new File(path);
+					log.info("Loading XML(SQL) from >>> {}",temp.getPath());
+					
+					rs.add(temp);
 				}
 			}
 		}
@@ -88,7 +94,7 @@ public class SqlStatementFactory implements SqlStatementBuilder {
 	}
 	
 	public SqlStatementBuilder buildBefore(){
-		log.info(" --- 构建ORMaping文件开始~!");
+		log.info(" -------------------------------- 构建ORMaping文件开始~! -----------------------------------");
 		return this;
 	}
 	
@@ -242,7 +248,7 @@ public class SqlStatementFactory implements SqlStatementBuilder {
 	}
 	
 	public SqlStatementBuilder buildAfter() {
-		log.info(" --- 构建ORMaping文件结束~!");
+		log.info(" -------------------------------- 构建ORMaping文件结束~! -----------------------------------");
 		return this;
 	}
 	

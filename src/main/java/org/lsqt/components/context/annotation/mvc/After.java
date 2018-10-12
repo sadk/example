@@ -13,4 +13,5 @@ public @interface After {
 	Class<?> clazz() default Object.class;
 	String method() default "";
 	Class<?>[] args() default {};
+	String text() default "";
 }

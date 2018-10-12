@@ -29,5 +29,4 @@ public class SpringBeanFactoryAdapter implements BeanFactory{
 	public <T> T getBean(String id) throws BeanException {
 		return (T) application.getBean(id);
 	}
-
 }

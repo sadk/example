@@ -196,7 +196,7 @@ public interface Db extends Closeable{
 	 * @param plan 
 	 * @param isTransaction 是否开启事物
 	 */
-	void executePlan(boolean isTransaction,Plan plan)  ;
+	void executePlan(boolean isTransaction,Plan plan) ;
 	
 	/**
 	 * 释放绑定到当前线程上的资源

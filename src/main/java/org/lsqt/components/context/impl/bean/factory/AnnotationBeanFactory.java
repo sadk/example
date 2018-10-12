@@ -636,9 +636,5 @@ public class AnnotationBeanFactory implements BeanFactory{
 	public List<BeanDefinition> getBeanDefinitions(){
 		return this.beanDefinitionList;
 	}
-	
-	 
-
-
 
 }

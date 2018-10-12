@@ -202,15 +202,15 @@ public class BeanUtil  {
 	 * @throws Exception
 	 */
 	public static void forceSetProperty(Field field,Object instance,Object fieldValue) throws Exception {
-		boolean isAccess = field.isAccessible();
-		try {
+		//boolean isAccess = field.isAccessible();
+		//try {
 			field.setAccessible(true);
 			field.set(instance, fieldValue);
-		} catch (Exception ex) {
+		/*} catch (Exception ex) {
 			throw ex;
-		} finally {
+		} finally { 
 			field.setAccessible(isAccess);
-		}
+		}*/
 	}
 	
 	/**
@@ -221,14 +221,14 @@ public class BeanUtil  {
 	 * @throws Exception
 	 */
 	public static void forceSetProperty(Method setterMethod,Object instance,Object fieldValue) throws Exception {
-		boolean isAcess = setterMethod.isAccessible();
-		try{
+		//boolean isAcess = setterMethod.isAccessible();
+		//try{
 			setterMethod.setAccessible(true);
 			setterMethod.invoke(instance,fieldValue);
-		} catch(Exception ex) {
+		/*} catch(Exception ex) {
 			throw ex;
 		} finally{
 			setterMethod.setAccessible(isAcess);
-		}
+		}*/
 	}
 }

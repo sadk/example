@@ -69,10 +69,12 @@
 	                data:  form.getData(),
 	                type: "post",
 	                success: function (text) {
+	                	console.log(text);
+	                	
 	                	mini.hideMessageBox(messageId);
 	                	if(text) {
-	                		//console.log(text);
-	                		if(text.status == 0) {
+	                		
+	                		if(text.isSuccess) {
 	                			window.location = "${pageContext.request.contextPath}/apps/default/admin/index.jsp";
 	                		}else {
 	                			mini.alert(text.message,"登陆提示",function(){

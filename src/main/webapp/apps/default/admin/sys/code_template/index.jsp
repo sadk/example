@@ -862,8 +862,9 @@
 		        mini.confirm("是否要生成zip包下载？", "确定？",
 		                function (action) {
 		                    if (action == "ok") {
-		                    	window.location = "${pageContext.request.contextPath}/code_template/codegen?tableId="+data.tableId+"&groupId="+data.groupId+"&modules="+data.modules+"&entityName="+data.entityName+"&codegenType="+data.codegenType;
+		                    	window.location = "${pageContext.request.contextPath}/code_template/codegen?tableId="+data.tableId+"&groupId="+data.groupId+"&modules="+data.modules+"&entityName="+data.entityName+"&codegenType="+data.codegenType+"&isCreateZip=true";
 		                    } else {
+		                    	data.isCreateZip = false;
 		        				$.ajax({
 		        					url : "${pageContext.request.contextPath}/code_template/codegen",
 		        					dataType: 'json', type : 'post',

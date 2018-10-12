@@ -62,6 +62,8 @@
             <a href="#">Api手册</a> |            
             <a href="#">开发教程</a> |
             <a href="#">快速入门</a> |
+            <a href="#" id="loginNameWelcome">欢迎，登陆</a> |     
+            <a href="javascript:updatePwd()">修改密码</a> |    
             <a href="javascript:logout()" style="color:Red;font-family:Tahoma;font-weight: bold;" >退出</a>
         </div>
 
@@ -142,6 +144,41 @@
         	} */
         })
 
+        function getLoginUser() {
+			$.ajax({
+				url : "${pageContext.request.contextPath}/user/get_login_user",
+				dataType: 'json',
+				success : function(text) {
+					var o = mini.decode(text);
+					if(o) {
+						$("#loginNameWelcome").html("欢迎，<b>"+o.name+"</b>登陆");
+					}
+				}
+			});
+        };
+        setTimeout(getLoginUser,500);
+        
+        function updatePwd() {
+			mini.open({
+				url : "${pageContext.request.contextPath}/apps/default/admin/uum/user/edit_password.jsp",
+				title : "修改密码",
+				width : 500,
+				height : 200,
+				onload : function() {
+					var iframe = this.getIFrameEl();
+					var data = {
+						action : "updatePwd"
+					};
+					iframe.contentWindow.SetData(data);
+				},
+				ondestroy : function(action) {
+					if("update" == action) {
+						mini.alert("密码修改成功，请退出重新登陆");
+					}
+				}
+			});
+        }
+        
         function logout() {
         	var messageId = mini.loading("正在退出，请稍后 ...", "Loading");
             setTimeout(function () {

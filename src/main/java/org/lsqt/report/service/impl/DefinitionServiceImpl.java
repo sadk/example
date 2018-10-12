@@ -163,6 +163,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 			query.setDefinitionId(rpt.getId());
 			query.setSortField("sn");
 			query.setSortOrder("asc");
+			query.setDataType(Column.DATA_TYPE_REPORT_SHOW);
 			List<Column> list = db.queryForList("queryForPage", Column.class, query);
 			
 			ResourceQuery btnQuery = new ResourceQuery();
@@ -243,7 +244,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 		try {
 			Connection switchConn = ds.getConnection();
 			db.setCurrentConnection(switchConn); //切换到报表数据源!!!!
-			db.executePlan(() -> {
+			db.executePlan(false,() -> {//查询不开启事务!!
 				try {
 					rs.data = queryData(db,model,formMap); //queryData方法体中所有方法已切换到报表数据源，如果中间方法有调用db.xxx方法的将不是当前系统数据库
 				} catch (Exception e) {

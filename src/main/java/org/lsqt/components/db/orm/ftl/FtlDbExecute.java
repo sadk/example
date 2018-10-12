@@ -1086,16 +1086,14 @@ public class FtlDbExecute implements ORMappingDb{
 
 			if(isTransaction) {
 				log.debug(" --- >>>>>>>>>>>>> Transaction Begin !!! (Thead-id:"+Thread.currentThread().getId()+")");
-			}
-			
-			if(isTransaction) {
 				con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			}
+			
 			plan.doExecutePlan();
 			
 			if(isTransaction) { // 开启了事务，才进行事物操作！！回滚也是！
 				con.commit();
-				log.debug(" --- >>>>>>>>>>>> Transaction Commited !!! (Thead-id:"+Thread.currentThread().getId()+")");
+				log.debug(" --- Transaction Commited !!! (Thead-id:"+Thread.currentThread().getId()+")");
 			}
 			
 		} catch(Exception ex){
@@ -1103,7 +1101,7 @@ public class FtlDbExecute implements ORMappingDb{
 				try {
 					if(isTransaction) {
 						con.rollback();
-						log.info(" --- >>>>>>>>>>>> Transaction Rollback !!! (Thead-id:"+Thread.currentThread().getId()+" ,con:"+con+")");
+						log.debug(" --- Transaction Rollback !!! (Thead-id:"+Thread.currentThread().getId()+" ,con:"+con+")");
 					}
 					
 				} catch (SQLException e) {

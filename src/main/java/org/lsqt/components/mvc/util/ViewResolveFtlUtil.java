@@ -25,6 +25,7 @@ import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
+@Deprecated
 public class ViewResolveFtlUtil {
 	private  static final Logger log = Logger.getLogger(ViewResolveFtlUtil.class.getName());
 	
@@ -38,17 +39,10 @@ public class ViewResolveFtlUtil {
 		}
 	}
 	
-	public static void resolve(Writer writer,UrlMappingDefinition urlMapDefinition,Object dataModel) throws IOException, TemplateException {
-		if(isNull(urlMapDefinition) || isNull(urlMapDefinition.getMethod())) return ;
+	public static void resolve(Writer writer,String path,Object dataModel) throws IOException, TemplateException {
 		
-		RequestMapping requestMapping = urlMapDefinition.getMethod().getAnnotation(RequestMapping.class);
-		if (isNull(requestMapping)  || requestMapping.view() != View.FTL) return;
-		if (isNull(writer)) return;
-		
-		
-		String tmpl = requestMapping.path();
-		String fileName = tmpl.substring(tmpl.lastIndexOf("/")+1, tmpl.length());
-		String fileDir = tmpl.substring(0,tmpl.lastIndexOf("/"));
+		String fileName = path.substring(path.lastIndexOf("/")+1, path.length());
+		String fileDir = path.substring(0,path.lastIndexOf("/"));
 		
 		String root = ViewResolveFtlUtil.class.getResource("/").getPath();
 		cfg.setDirectoryForTemplateLoading(new File(root+fileDir));
@@ -59,6 +53,8 @@ public class ViewResolveFtlUtil {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String ...strings) throws Exception{
+		System.out.println(ViewResolveFtlUtil.class.getResource("/").getPath());
+		if(true)return;
 		Map map = new HashMap();
 		map.put("user", "lavasoft哈哈鞢");
 		map.put("url", "http://www.baidu.com/");

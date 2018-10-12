@@ -140,7 +140,7 @@ public class DefinitionController {
 	}
 
 	
-	@RequestMapping(mapping = { "/search", "/m/search" }, text = "通用报表查询")
+	@RequestMapping(mapping = { "/search", "/m/search" }, text = "通用报表查询",isTransaction = false)
 	public Object search(Long reportDefinitionId) throws Exception {
 		if(reportDefinitionId == null) {
 			return new Page.PageModel<>();
@@ -165,11 +165,27 @@ public class DefinitionController {
 			ExportTemplate model = exportTemplateService.queryForObject(query);
 			
 			if(model!=null) {
+				//查询不导出的列，将字段数据置为null
+				ColumnQuery columnQuery = new ColumnQuery();
+				columnQuery.setDefinitionId(reportDefinitionId);
+				columnQuery.setDataType(Column.DATA_TYPE_REPORT_SHOW);
+				columnQuery.setAllowExport(Column.NO);
+				List<Column> notAllowColumn = columnService.queryForList(columnQuery);
+				
 				HttpServletRequest request = ContextUtil.getRequest();
 				String root = request.getServletContext().getRealPath("/");
 				String srcFilePath =  root + model.getPath();
 			 
 				Page<Map<String, Object>> data = definitionService.search(reportDefinitionId, ContextUtil.getFormMap());
+				if (ArrayUtil.isNotBlank(notAllowColumn)) {
+					Collection<Map<String, Object>> tableData = data.getData();
+					for (Map<String, Object> row : tableData) {
+						for (Column c : notAllowColumn) {
+							row.put(c.getCode(), null);
+						}
+					}
+				}
+				
 				Map<String,Object> ct = new HashMap<>();
 				ct.put("data",data.getData());
 				

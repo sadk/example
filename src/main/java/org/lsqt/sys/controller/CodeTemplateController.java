@@ -18,8 +18,10 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.lsqt.components.context.ContextUtil;
+import org.lsqt.components.context.annotation.Component;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
+import org.lsqt.components.context.annotation.mvc.After;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
@@ -76,8 +78,14 @@ public class CodeTemplateController {
 		return codeTemplateService.deleteById(list.toArray(new Long[list.size()]));
 	}
 
+	//@Component
+	public static class CodegenAfter<T> {
+		public T afterProcess(T target) {
+			return target;
+		}
+	}
 
-	
+	@After(clazz=CodegenAfter.class,method="afterProcess") 
 	@RequestMapping(mapping = { "/codegen", "/m/codegen" })
 	public String codegen(Long tableId,String groupId,String modules,String entityName,String codegenType,String isCreateZip) throws Exception{
 		// 暂只生成单表，
