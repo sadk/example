@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.lsqt.components.context.ContextUtil;
+import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ public class DispatcherChain implements Chain{
 	
 	private boolean enable = true;
 	private int order = 0;
-	private int state = STATE_DO_NEXT_NOT_ALLOW;
+	private int state = STATE_NO_WORK;
 	
 	private ConfigInitialization configInitialization;
 	private HttpServletRequest request;
@@ -85,15 +86,18 @@ public class DispatcherChain implements Chain{
 		
 		Object modelAndView = null;
 		for (Chain chain : chainList) {
-			System.out.println(chain + "-----" + getRequestURI());
+			
 			modelAndView = chain.handle();
 
-			if (chain.getState() == Chain.STATE_DO_NEXT_BREAK) { // 如:已 send redirect!
+			//正在启动或匿名访问
+			if (chain.getState() == Chain.STATE_IS_STARTING 
+					|| chain.getState() == Chain.STATE_IS_STATIC_OR_ESCAPE_ACCESS) {
+				this.filterChain.doFilter(request, response);
 				return null;
 			}
-
-			if (chain.getState() != Chain.STATE_DO_NEXT_CONTINUE) {
-				this.filterChain.doFilter(request, response);
+			
+			//已redirect
+			if (chain.getState() == Chain.STATE_IS_REDIRECTED) { // 如:已 send redirect!
 				return null;
 			}
 
@@ -104,8 +108,7 @@ public class DispatcherChain implements Chain{
 		ViewHandler viewHandler = new ViewSelectHandler(request, response);
 		viewHandler.resolve(urlMapping, modelAndView);
 		
-		
-		
+	 
 		if (!response.isCommitted()) {
 			filterChain.doFilter(request, response);
 		}

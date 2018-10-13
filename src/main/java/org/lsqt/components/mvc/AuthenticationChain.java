@@ -25,7 +25,7 @@ public class AuthenticationChain implements Chain{
 	
 	private boolean enable = true;
 	private int order = 700;
-	private int state = STATE_DO_NEXT_NOT_ALLOW;
+	private int state = STATE_NO_WORK;
 	
 	
 	private Configuration configuration;
@@ -62,11 +62,11 @@ public class AuthenticationChain implements Chain{
 	public Object handle() throws IOException {
 		
 		if (!this.configuration.isEnableLogin()) {
-			this.state = STATE_DO_NEXT_CONTINUE;
+			this.state = STATE_IS_CONTINUE_TO_EXECUTE;
 		} else {
 			if (!isLogined() && !isAnonymous()) { // 没有登陆并且不是非匿名访问,返回到登陆页
 				response.sendRedirect(request.getContextPath() + "/login.jsp");
-				this.state = STATE_DO_NEXT_BREAK;
+				this.state = STATE_IS_REDIRECTED;
 			}
 		}
 		return null;

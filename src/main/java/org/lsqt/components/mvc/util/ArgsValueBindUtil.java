@@ -27,6 +27,11 @@ public class ArgsValueBindUtil {
 		return scopeThreadLocal.get();
 	}
 	
+	public static void clear() {
+		getContextMap().clear();
+		scopeThreadLocal.set(null);
+	}
+	
 	/**
 	 * 绑定当前URL请求参数值到类的某个方法 (如:Controller的某个方法)
 	 * @param method

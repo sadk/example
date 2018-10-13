@@ -21,7 +21,7 @@ public class FormMapBindingChain implements Chain{
 	
 	private boolean enable = true;
 	private int order = 500;
-	private int state = STATE_DO_NEXT_NOT_ALLOW;
+	private int state = STATE_NO_WORK;
 	
 	private HttpServletRequest request;
 	private HttpServletResponse response;
@@ -55,7 +55,7 @@ public class FormMapBindingChain implements Chain{
 
 	@Override
 	public Object handle() throws Exception {
-		this.state = STATE_DO_NEXT_CONTINUE;
+		this.state = STATE_IS_CONTINUE_TO_EXECUTE;
 		
 		Set<Entry<String, String[]>> set = request.getParameterMap().entrySet();
 		if (set == null) {

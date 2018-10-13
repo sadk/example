@@ -16,7 +16,7 @@ public class GlobalBeforeRequestChain implements Chain{
 	
 	private boolean enable = true;
 	private int order = 700;
-	private int state = STATE_DO_NEXT_NOT_ALLOW;
+	private int state = STATE_NO_WORK;
 	
 	private HttpServletRequest request;
 	private HttpServletResponse response;
@@ -52,7 +52,7 @@ public class GlobalBeforeRequestChain implements Chain{
 	public Object handle() throws Exception{
 		//暂时没有!!!
 		
-		this.state = STATE_DO_NEXT_CONTINUE;
+		this.state = STATE_IS_CONTINUE_TO_EXECUTE;
 		return null;
 	}
 

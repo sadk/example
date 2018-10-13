@@ -17,7 +17,9 @@ public class ViewSelectHandler implements ViewHandler {
 	
 	List<ViewHandler> selector = new ArrayList<>();
 	
+	 
 	public ViewSelectHandler(HttpServletRequest request,HttpServletResponse response) {
+		
 		JSONViewHandler jsonView = new JSONViewHandler(response);
 		JSPViewHandler jspViewHandler = new JSPViewHandler(request, response);
 		FreemarkViewHandler freemarkViewHandler = new FreemarkViewHandler(response);

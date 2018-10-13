@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.lsqt.components.context.ContextUtil;
+import org.lsqt.components.mvc.util.ArgsValueBindUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,7 @@ public class BootApplicationFilter implements Filter{
 		try {
 			dispatcherChain.handle();
 		} catch (Exception e) {
+			e.printStackTrace();
 			//异常视图处理器，显示异常视图!!
 			
 		} finally {

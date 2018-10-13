@@ -23,7 +23,7 @@ public class ContextMapBindingChain implements Chain{
 	
 	private boolean enable = true;
 	private int order = 400;
-	private int state = STATE_DO_NEXT_NOT_ALLOW;
+	private int state = STATE_NO_WORK;
 	
 	private HttpServletRequest request;
 	private HttpServletResponse response;
@@ -70,12 +70,15 @@ public class ContextMapBindingChain implements Chain{
 			}
 		}
 		
+		
 		// 绑定用户ID或账号到上下文
 		if (ArrayUtil.isNotBlank(uidList)) {
-			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_NAME_OBJECT, uidList.get(0));
+			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_ACCOUNT_OBJECT, uidList.get(0));
+			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_ID_OBJECT, uidList.get(3));
+			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_NAME_OBJECT, uidList.get(4));
 		}	
 		
-		this.state = STATE_DO_NEXT_CONTINUE;
+		this.state = STATE_IS_CONTINUE_TO_EXECUTE;
 		
 		return null;
 	}

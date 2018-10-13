@@ -6,16 +6,21 @@ package org.lsqt.components.mvc;
  *
  */
 public interface Chain extends Order{
+	/** 过滤器链初使态  **/
+	int STATE_NO_WORK = -1;
 	
-	/** 过滤器链继续向下执行 */
-	int STATE_DO_NEXT_CONTINUE = 1;
+	/** 过滤器链整链正在启动 */
+	int STATE_IS_STARTING = 0;
 
-	/** 过滤器链执行中断,比如:已经redirected,dofilter(request,response)不在执行 **/
-	int STATE_DO_NEXT_BREAK = 2;
-
-	/** 过滤器链不允许执行,常用于初使状态  **/
-	int STATE_DO_NEXT_NOT_ALLOW = 3;
-
+	/** 静态资源或脱离容器的URI **/
+	int STATE_IS_STATIC_OR_ESCAPE_ACCESS = 1;
+	
+	/** 已重定向过**/
+	int STATE_IS_REDIRECTED = 2;
+	
+	/** 链继续往下执行 */
+	int STATE_IS_CONTINUE_TO_EXECUTE = 3;
+	
 	/** 执行异常 **/
 	int STATE_EXE_EXCEPTION = 4;
 	

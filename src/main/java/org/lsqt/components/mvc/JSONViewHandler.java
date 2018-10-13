@@ -34,7 +34,7 @@ public class JSONViewHandler implements ViewHandler{
 	private static final DateValueFilter DATE_VALUE_FILTER = new DateValueFilter() ;
 	
 	private HttpServletResponse response;
-	
+	 
 	public JSONViewHandler(HttpServletResponse response) {
 		this.response = response;
 	}
@@ -84,6 +84,9 @@ public class JSONViewHandler implements ViewHandler{
 				log.info("{}#write was invoked, The output stream has been shut down in advance.",out.getClass().getName());
 			}
 		}
+		
+		out.flush();
+		
 		return null;
 	}
 

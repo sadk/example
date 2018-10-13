@@ -36,7 +36,7 @@ public class BeforeHandleChain implements Chain{
 	
 	private boolean enable = true;
 	private int order = 1000;
-	private int state = STATE_DO_NEXT_NOT_ALLOW;
+	private int state = STATE_NO_WORK;
 	
 	private HttpServletRequest request;
 	
@@ -92,7 +92,9 @@ public class BeforeHandleChain implements Chain{
 		
 		
 		UrlMappingDefinition urlMappingDefinition = route.find(getRequestURI());
-		
+		if(urlMappingDefinition == null) {
+			return null;
+		}
 		//Object controller = beanFactory.getBean(urlMappingDefinition.getControllerClass());
 		
 		List<Object> methodInputParamValues = ArgsValueBindUtil.getMethodArgsValue(urlMappingDefinition.getMethod());
@@ -101,7 +103,7 @@ public class BeforeHandleChain implements Chain{
 		
 		Object beforeMethodReturnObject = invokeBefore(urlMappingDefinition, methodInputParamValues.toArray());
 		
-		this.state = STATE_DO_NEXT_CONTINUE;
+		this.state = STATE_IS_CONTINUE_TO_EXECUTE;
 		
 		
 		return beforeMethodReturnObject;

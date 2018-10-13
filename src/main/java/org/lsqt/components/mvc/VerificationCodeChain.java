@@ -16,7 +16,7 @@ public class VerificationCodeChain implements Chain{
 	
 	private boolean enable = true;
 	private int order = 600;
-	private int state = STATE_DO_NEXT_NOT_ALLOW;
+	private int state = STATE_NO_WORK;
 	
 	private HttpServletRequest request;
 	private HttpServletResponse response;
@@ -52,7 +52,7 @@ public class VerificationCodeChain implements Chain{
 	public Object handle() {
 		//暂时没有验证码!!!!
 		
-		this.state = STATE_DO_NEXT_CONTINUE;
+		this.state = STATE_IS_CONTINUE_TO_EXECUTE;
 		return null;
 	}
 

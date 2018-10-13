@@ -16,7 +16,7 @@ public class CharacterEncodingChain implements Chain{
 	
 	private boolean enable = true;
 	private int order = 300;
-	private int state = STATE_DO_NEXT_NOT_ALLOW;
+	private int state = STATE_NO_WORK;
 	
 	private HttpServletRequest request;
 	private HttpServletResponse response;
@@ -49,7 +49,7 @@ public class CharacterEncodingChain implements Chain{
 		 
 		request.setCharacterEncoding(characterEncoding);
 		 
-		this.state = STATE_DO_NEXT_CONTINUE;
+		this.state = STATE_IS_CONTINUE_TO_EXECUTE;
 		
 		log.debug("characterEncoding = {}",characterEncoding);
 		return null;

@@ -28,7 +28,7 @@ public class ControllerInvokeChain implements Chain{
 	
 	private boolean enable = true;
 	private int order = Integer.MAX_VALUE;
-	private int state = STATE_DO_NEXT_NOT_ALLOW;
+	private int state = STATE_NO_WORK;
 	
 	private HttpServletRequest request;
 	
@@ -69,6 +69,10 @@ public class ControllerInvokeChain implements Chain{
 		UrlMappingRoute route = configuration.getUrlMappingRoute();
 		UrlMappingDefinition urlMappingDefinition = route.find(getRequestURI());
 		
+		if (urlMappingDefinition == null) {
+			return null;
+		}
+		
 		Object controller = beanFactory.getBean(urlMappingDefinition.getControllerClass());
 		
 		List<Object> methodInputParamValues = ArgsValueBindUtil.getMethodArgsValue(urlMappingDefinition.getMethod());
@@ -102,8 +106,10 @@ public class ControllerInvokeChain implements Chain{
 		}
 		
 		if (this.state != STATE_EXE_EXCEPTION) {
-			this.state = STATE_DO_NEXT_CONTINUE;
+			this.state = STATE_IS_CONTINUE_TO_EXECUTE;
 		}
+		
+		ArgsValueBindUtil.clear();
 		return result.getData();
 	}
 	

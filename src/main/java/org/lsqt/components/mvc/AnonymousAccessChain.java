@@ -15,7 +15,7 @@ import org.lsqt.components.util.collection.ArrayUtil;
 public class AnonymousAccessChain implements Chain {
 	private int order = 200;
 	private boolean enable = true; 
-	private int state = STATE_DO_NEXT_NOT_ALLOW;
+	private int state = STATE_NO_WORK;
 	
 	private Configuration configuration;
 	private HttpServletRequest request;
@@ -45,8 +45,9 @@ public class AnonymousAccessChain implements Chain {
 	public Object handle() throws Exception {
 		// 静态资源URI 或脱离容器处理的URI
 		if (isAccessNext(this.configuration.getURIStatic()) || isAccessNext(this.configuration.getURIEscape())) { 
-			this.state = STATE_DO_NEXT_CONTINUE;
+			this.state = STATE_IS_STATIC_OR_ESCAPE_ACCESS;
 		}
+		
 		return null;
 	}
 
