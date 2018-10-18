@@ -41,6 +41,9 @@
 			<#if query.id??>
 				and A.id = ${query.id} 
 			</#if>
+			<#if query.idNotIn??>
+				and A.id not in (${StringUtil.escapeSql(query.idNotIn)})
+			</#if>
 			<#if query.code??>
 				and A.code = '${query.code}' 
 			</#if>

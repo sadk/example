@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 验证用户
+ * 主要用来判断是否启用登陆、是否已登陆
  * @author mm
  *
  */

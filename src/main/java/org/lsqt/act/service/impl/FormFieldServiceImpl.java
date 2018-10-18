@@ -54,7 +54,7 @@ public class FormFieldServiceImpl implements FormFieldService{
 		Table table = db.queryForObject("queryForPage",Table.class, query);
 
 		ColumnQuery cq = new ColumnQuery();
-		cq.setTableId(table.getId());
+		cq.setDefinitionId(table.getId());
 		List<Column> list = db.queryForList("queryForPage",Column.class,cq);
 		if(ArrayUtil.isBlank(list)) {
 			return ;

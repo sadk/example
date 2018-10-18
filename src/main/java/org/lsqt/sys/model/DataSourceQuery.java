@@ -14,6 +14,8 @@ public class DataSourceQuery {
 	private String key; // 关键字
 	
 	private Long id;
+	private String idNotIn;//多个以逗号分割
+	
 	private String code;
 	private String name;
 	private String remark;
@@ -117,5 +119,11 @@ public class DataSourceQuery {
 	}
 	public void setAppCode(String appCode) {
 		this.appCode = appCode;
+	}
+	public String getIdNotIn() {
+		return idNotIn;
+	}
+	public void setIdNotIn(String idNotIn) {
+		this.idNotIn = idNotIn;
 	}
 }

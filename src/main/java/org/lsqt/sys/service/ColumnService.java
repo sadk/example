@@ -8,6 +8,7 @@ import org.lsqt.sys.model.ColumnQuery;
 
 public interface ColumnService {
 	
+	Column getById(Long id);
 	
 	Page<Column> queryForPage(ColumnQuery query);
 

@@ -7,7 +7,6 @@ import java.util.List;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
-import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
@@ -23,29 +22,34 @@ public class ColumnController {
 	@Inject private ColumnService columnService; 
 	@Inject private Db db;
 	
-	@RequestMapping(mapping = { "/page", "/m/page" }, view = View.JSON)
+	@RequestMapping(mapping = { "/get_by_id", "/m/get_by_id" })
+	public Column getById(Long id) throws IOException {
+		return columnService.getById(id);
+	}
+	
+	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<Column> queryForPage(ColumnQuery query) throws IOException {
 		return columnService.queryForPage(query);
 	}
 	
-	@RequestMapping(mapping = { "/all", "/m/all" },view = View.JSON)
+	@RequestMapping(mapping = { "/all", "/m/all" })
 	public Collection<Column> getAll() {
 		return columnService.getAll();
 	}
 	
-	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" }, view = View.JSON)
+	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public Column saveOrUpdate(Column form) {
 		
 		return columnService.saveOrUpdate(form);
 	}
 	
-	@RequestMapping(mapping = { "/delete", "/m/delete" },view = View.JSON)
+	@RequestMapping(mapping = { "/delete", "/m/delete" })
 	public int delete(String ids) {
 		List<Long> list = StringUtil.split(Long.class, ids, ",");
 		return columnService.deleteById(list.toArray(new Long[list.size()]));
 	}
 	
-	@RequestMapping(mapping = { "/imp_columns_by_table", "/m/imp_columns_by_table" },view = View.JSON)
+	@RequestMapping(mapping = { "/imp_columns_by_table", "/m/imp_columns_by_table" })
 	public void impColumsByTable(Long tableId) {
 		 columnService.impColumsByTable(tableId);
 	}
@@ -54,7 +58,7 @@ public class ColumnController {
 	public void updateShort(String  data) {
 		List<Column> list = JSON.parseArray(data, Column.class);
 		for(Column e: list) {
-			db.update(e,"name","propertyName", "searchType","comment","javaType","oroColumnType","columnCodegenType","columnCodegenFormat","columnCodegenGroupCode");
+			db.update(e,"name","propertyName", "primaryKey","searchType","comment","javaType","oroColumnType","columnCodegenType","columnCodegenFormat","columnCodegenGroupCode");
 		}
 		//System.out.println(data);
 		

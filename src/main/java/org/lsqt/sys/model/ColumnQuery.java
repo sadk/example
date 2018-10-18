@@ -12,8 +12,12 @@ public class ColumnQuery {
 	private String key; // 关键字
 	
 	private Long id;
+	
 	private String dbName;
-	private Long tableId;
+	private Long definitionId;
+	private String definitionName;
+	private Integer dataType; // 数据类型 1=报表展示列  2=数据导入列
+	
 	private String tableName;
 	private String name;
 	private String remark;
@@ -100,11 +104,23 @@ public class ColumnQuery {
 	public void setVersion(String version) {
 		this.version = version;
 	}
-	public Long getTableId() {
-		return tableId;
+	public Long getDefinitionId() {
+		return definitionId;
 	}
-	public void setTableId(Long tableId) {
-		this.tableId = tableId;
+	public void setDefinitionId(Long definitionId) {
+		this.definitionId = definitionId;
+	}
+	public String getDefinitionName() {
+		return definitionName;
+	}
+	public void setDefinitionName(String definitionName) {
+		this.definitionName = definitionName;
+	}
+	public Integer getDataType() {
+		return dataType;
+	}
+	public void setDataType(Integer dataType) {
+		this.dataType = dataType;
 	}
 	
 }

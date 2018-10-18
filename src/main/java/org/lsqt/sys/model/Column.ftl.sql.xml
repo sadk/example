@@ -1,119 +1,212 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <statements namespace="org.lsqt.sys.model.Column" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
 	<table name="sys_column">
-		<column id="id" type="auto" property="id" text="主键" />
-		<column name="version" property="version"/>
-		<column name="db_name" property="dbName"/>
-		<column name="table_id" property="tableId"/>
-		<column name="table_name" property="tableName"/>
-		<column name="name" property="name"/>
-		<column name="comment" property="comment"/>
-		<column name="db_type" property="dbType"/>
-		<column name="search_type" property="searchType" text="生成代码时是否作为查询条件"/>
-		<column name="java_type" property="javaType"/>
-		<column name="property_name" property="propertyName"/>
-		<column name="primary_key" property="primaryKey"/>
-		<column name="oro_column_type" property="oroColumnType" text="ORMapping映射的字段类型：gid=全局唯一码 updateTime=更新时间 createTime=创建时间"/>
-		
-		<column name="column_codegen_type" property="columnCodegenType" text="字段的代码生成器类型 1=选择器 2=字典 3=外键 4=text 5=long 6=double 7=date 8=file"/>
-		<column name="column_codegen_format" property="columnCodegenFormat" text="默认：double型的为两个小数点， date 为'yyyy-MM-dd HH:mm:ss' " />
-		<column name="column_codegen_group_code" property="columnCodegenGroupCode" text="字段组:用于生成html的fieldset框"/>
-		
-		<!-- 
-		<column name="fk_table_name" property="fkTableName"/>
-		<column name="fk_table_commnet" property="fkTableCommnet"/>
-		<column name="fk_col" property="fkCol"/>
-		 -->
-		 
-		<!-- 
-		<column name="selector_ref_table_name" property="selectorRefTableName"/>
-		<column name="selector_ref_table_comment" property="selectorRefTableComment"/>
-		<column name="selector_ref_table_column" property="selectorRefTableColumn"/>
-		 -->
-		 
-		<column name="selector_multil_select" property="selectorMultilSelect"/>
-		<column name="selector_text_cols" property="selectorTextCols"/>
-		<column name="selector_value_cols" property="selectorValueCols"/>
-		
-		<column name="selector_data_from_type" property="selectorDataFromType"/>
-		<column name="selector_data_from" property="selectorDataFrom"/>
-		<column name="selector_data_source_code" property="selectorDataSourceCode"/>
-		<column name="selector_db_name" property="selectorDbName"/>
-		
-		<column name="file_multil" property="fileMultil"/>
-		<column name="file_custom_content" property="fileCustomContent"/>
-		
-		
-		<column name="dict_ref_code" property="dictRefCode" />
-		<column name="dict_text_col" property="dictTextCol" />
-		<column name="dict_value_col" property="dictValueCol" />
-		
-		<column name="sn" property="sn" />
-		<column name="version" property="version" />
-		<column name="opt_log" property="optLog" />
-		<column name="remark" property="remark" />
-		<column name="app_code" property="appCode" />
-		
-		<column gid="gid" property="gid" />
-		<column createTime="create_time" property="createTime" text="创建时间"/>
-		<column updateTime="update_time" property="updateTime" text="更新时间"/>
-		
+			<column id="id" type="auto" property="id" text="主键" />
+	 	
+	 		<column name="data_type" property="dataType" text="数据类型：1=报表展示列 2=报表导入列配置"/>
+	 		
+	 		<column name="definition_id" property="definitionId" text="当前列所属的(报)表"/>
+	 		
+	 		<column name="definition_name" property="definitionName" text="当前列所属的(报)表"/>
+	 	
+	 		<column name="code" property="code" text="列字段sql编码"/>
+	 		
+	 		<column name="name" property="name" text="列名中文"/>
+	 	
+	 		<column name="comment" property="comment" text="列注释"/>
+	 	
+	 		<column name="db_name" property="dbName" text="DB库名"/>
+	 		<column name="db_type" property="dbType" text="DB字段类型"/>
+	 		
+	 		<column name="db_type_length" property="dbTypeLength" text="DB字段长度:如decimal保留两位小数，填 10,2"/>
+	 		
+	 		<column name="import_required" property="importRequired" text="是否导入数据时必填"/>
+	 		
+	 		<column name="coordinate" property="coordinate" text="Excel表头单元格坐标"/>
+	 		
+	 		<column name="java_type" property="javaType" text="JAVA类型"/>
+	 	
+	 		<column name="property_name" property="propertyName" text="JAVA属性名"/>
+	 	
+	 		<column name="primary_key" property="primaryKey" text="是否是主键：1=是，0=否"/>
+	 	
+	 		<column name="oro_column_type" property="oroColumnType" text="ORMapping映射的字段类型：gid(全局唯一码)=1 updateTime(更新时间)=2 createTime(创建时间)=3"/>
+	 	
+	 		<column name="search_type" property="searchType" text="当前列是否作为查询条件: 0=否，1=是"/>
+	 		
+	 		<column name="search_required" property="searchRequired" text="查询是否必填: 0=否，1=是"/>
+	 		
+	 		<column name="like_search_is" property="likeSearchIs" text="是否是模糊查询"/>
+	 		
+	 		<column name="like_search_type" property="likeSearchType" text="是否是模糊查询: 1=匹配开头 ，2=匹配中间 3=匹配结尾"/>
+	 	
+	 		<column name="column_codegen_type" property="columnCodegenType" text="字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键    4=文本框 5=整型框  6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)"/>
+	 	
+	 		<column name="column_codegen_format" property="columnCodegenFormat" text="默认：double型的为两个小数点， date 为 [yyyy-MM-dd HH:mm:ss] "/>
+	 	
+	 		<column name="column_codegen_group_code" property="columnCodegenGroupCode" text="字段组:用于生成html的fieldset框"/>
+	 	
+	 		<column name="selector_multil_select" property="selectorMultilSelect" text="选择器，是单选还是多选"/>
+	 	
+	 		<column name="selector_text_cols" property="selectorTextCols" text="选择器选择后显示的文本字段(多选以逗号分割)"/>
+	 	
+	 		<column name="selector_value_cols" property="selectorValueCols" text="选择器选择后显示的值字段(多选以逗号分割)"/>
+	 	
+	 		<column name="selector_data_from_type" property="selectorDataFromType" text="选择器数据来源:0=URL(页面)  1=URL(返回JSON) 2=URL(返回XML) 3=代码片断(JavaScript)数组  4=SQL"/>
+	 	
+	 		<column name="selector_data_from" property="selectorDataFrom" text="选择器数据来源"/>
+	 	
+	 		<column name="selector_data_source_code" property="selectorDataSourceCode" text="选择器的数据来源为SQL时，选定的数据源"/>
+	 	
+	 		<column name="selector_db_name" property="selectorDbName" text="选择器的数据来源为SQL时，选定的数据库"/>
+	 	
+	 		<column name="dict_ref_code" property="dictRefCode" text="当前列是字典值时，对应的字典code值，如(值为“sex”就是男、女,对应的值就是1和0)"/>
+	 	
+	 		<column name="dict_text_col" property="dictTextCol" text="显示的文本字段"/>
+	 	
+	 		<column name="dict_value_col" property="dictValueCol" text="显示的值字段"/>
+	 	
+	 		<column name="file_multil" property="fileMultil" text="是否可多选批量上传"/>
+	 	
+	 		<column name="file_custom_content" property="fileCustomContent" text="自定义的文件上传控件(代码片断)"/>
+	 	
+	 		<column name="align_type" property="alignType" text="列对齐方式: "/>
+	 		<column name="width" property="width" text="列宽: "/>
+	 		<column name="height" property="height" text="列高 "/>
+	 		<column name="hidde" property="hidde" text="是否显示: 0=隐藏 1=显示"/>
+	 		<column name="frozen" property="frozen" text="是否冻结列 "/>
+			<column name="allow_sort" property="allowSort" text="是否排序"/>
+	 		
+	 		<column name="allow_import" property="allowImport" text="是否允许导入:1=允许  0=不允许"/>
+	 		<column name="allow_export" property="allowExport" text="是否允许导出:1=允许  0=不允许"/>
+	 		
+	 		<column name="sn" property="sn" text=""/>
+	 	
+	 		<column name="version" property="version" text="表字段的版本号"/>
+	 	
+	 		<column name="opt_log" property="optLog" text="用户操作备注"/>
+	 	
+	 		<column name="remark" property="remark" text="用户备注"/>
+	 	
+	 		<column name="app_code" property="appCode" text=""/>
+	 	
+	 
+	 
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
 	</table>
 	
 	<statement id="queryForPage" parameterName="query">
 	 	<![CDATA[
-		select A.* from sys_column A where 1=1
-		<#if query??>
-			<#if query.key??>
-		        and (
-		           A.id like '%${StringUtil.escapeSql(query.key)}%' 
-		        or A.db_name like '%${StringUtil.escapeSql(query.key)}%' 
-		        or A.table_name like '%${StringUtil.escapeSql(query.key)}%' 
-		        or A.name like '%${StringUtil.escapeSql(query.key)}%' 
-		        or A.comment like '%${StringUtil.escapeSql(query.key)}%' 
-		        or A.remark like '%${StringUtil.escapeSql(query.key)}%' )
-			</#if>
-			<#if query.id??>
-				and A.id = ${query.id} 
-			</#if>
-			
-			<#if query.version??>
-				and A.version = '${query.version}' 
-			</#if>
-			
-			<#if query.dbName??>
-				and A.db_name = '${query.dbName}' 
-			</#if>
-			
-			<#if query.tableId??>
-				and A.table_id = '${query.tableId}' 
-			</#if>
-			
-			<#if query.tableName??>
-				and A.table_name = '${query.tableName}' 
-			</#if>
-			
-			<#if query.name??>
-				and A.name = '${query.name}' 
-			</#if>
-			
-			<#if query.comment??>
-				and A.comment = '${query.comment}' 
-			</#if>
-			
-			<#if query.remark??>
-				and A.remark like '%${StringUtil.escapeSql(query.remark)}%' 
-			</#if>
-			<#if query.appCode??>
-				and A.app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
-			</#if>
-			
-			<#if query.sortField?? && query.sortOrder??>
-				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
-			<#else>
-				order by sn 
-			</#if>
-        </#if>
+		 	select * from sys_column where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and ( 
+							code = '${key}'  or 
+							name like '%${key}%'  or 
+							comment like '%${key}%'  or 
+							property_name like '%${key}%'  or 
+							selector_db_name like '%${key}%'  or 
+							remark like '%${key}%'  or 
+							app_code = '${key}' 
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						<#if query.dataType??> and data_type = ${query.dataType} </#if>
+						
+	  						<#if query.definitionId??> and definition_id = ${query.definitionId} </#if>
+	  						<#if query.definitionName??> and definition_name = ${StringUtil.escapeSql(query.definitionName)} </#if>
+	  						<#if query.dbName??> and db_name = '${StringUtil.escapeSql(query.dbName)}' </#if>
+					
+	  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+					
+	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+						
+	  						<#if query.comment??> and like '%${StringUtil.escapeSql(query.comment)}%' </#if>
+						
+	  						<#if query.dbType??> and db_type = '${StringUtil.escapeSql(query.dbType)}' </#if>
+						
+	  						<#if query.javaType??> and java_type = ${query.javaType} </#if>
+					
+	  						<#if query.propertyName??> and property_name = '${StringUtil.escapeSql(query.propertyName)}' </#if>
+						
+	  						<#if query.primaryKey??> and primary_key = ${query.primaryKey} </#if>
+						
+	  						<#if query.oroColumnType??> and oro_column_type = ${query.oroColumnType} </#if>
+						
+	  						<#if query.searchType??> and search_type = ${query.searchType} </#if>
+	  						
+	  						<#if query.allowImport??> and allow_import = ${query.allowImport} </#if>
+	  						
+	  						<#if query.allowExport??> and allow_export = ${query.allowExport} </#if>
+					
+	  						<#if query.columnCodegenType??> and column_codegen_type = '${StringUtil.escapeSql(query.columnCodegenType)}' </#if>
+						
+	  						<#if query.columnCodegenFormat??> and column_codegen_format = '${StringUtil.escapeSql(query.columnCodegenFormat)}' </#if>
+					
+	  						<#if query.columnCodegenGroupCode??> and column_codegen_group_code = '${StringUtil.escapeSql(query.columnCodegenGroupCode)}' </#if>
+						
+	  						<#if query.selectorMultilSelect??> and selector_multil_select = '${StringUtil.escapeSql(query.selectorMultilSelect)}' </#if>
+					
+	  						<#if query.selectorTextCols??> and selector_text_cols = '${StringUtil.escapeSql(query.selectorTextCols)}' </#if>
+					
+	  						<#if query.selectorValueCols??> and selector_value_cols = '${StringUtil.escapeSql(query.selectorValueCols)}' </#if>
+					
+	  						<#if query.selectorDataFromType??> and selector_data_from_type = '${StringUtil.escapeSql(query.selectorDataFromType)}' </#if>
+						
+	  						<#if query.selectorDataFrom??> and selector_data_from = '${StringUtil.escapeSql(query.selectorDataFrom)}' </#if>
+						
+	  						<#if query.selectorDataSourceCode??> and selector_data_source_code = '${StringUtil.escapeSql(query.selectorDataSourceCode)}' </#if>
+						
+	  						<#if query.selectorDbName??> and selector_db_name = '${StringUtil.escapeSql(query.selectorDbName)}' </#if>
+						
+	  						<#if query.dictRefCode??> and dict_ref_code = '${StringUtil.escapeSql(query.dictRefCode)}' </#if>
+						
+	  						<#if query.dictTextCol??> and dict_text_col = '${StringUtil.escapeSql(query.dictTextCol)}' </#if>
+
+	  						<#if query.dictValueCol??> and dict_value_col = '${StringUtil.escapeSql(query.dictValueCol)}' </#if>
+						
+	  						<#if query.fileMultil??> and file_multil = '${StringUtil.escapeSql(query.fileMultil)}' </#if>
+						
+	  						<#if query.fileCustomContent??> and file_custom_content = '${StringUtil.escapeSql(query.fileCustomContent)}' </#if>
+						
+	  						<#if query.alignType??> and align_type = '${StringUtil.escapeSql(query.alignType)}' </#if>
+						
+	  						<#if query.width??> and width = '${StringUtil.escapeSql(query.width)}' </#if>
+						
+	  						<#if query.height??> and height = '${StringUtil.escapeSql(query.height)}' </#if>
+						
+	  						<#if query.hidde??> and hidde = '${StringUtil.escapeSql(query.hidde)}' </#if>
+					
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.version??> and version = '${StringUtil.escapeSql(query.version)}' </#if>
+					
+	  						<#if query.optLog??> and opt_log = '${StringUtil.escapeSql(query.optLog)}' </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+ 
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+							<#if query.sortField?? && query.sortOrder??>
+								order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+							<#else>
+								order by sn 
+							</#if>
+        	</#if>
+        	
 		]]>
 	</statement>
 	
@@ -122,6 +215,7 @@
 			SELECT 
 			    A.TABLE_NAME table_name,
 			    A.COLUMN_NAME name,
+			    A.COLUMN_NAME code,
 			    A.COLUMN_COMMENT comment,
 			    A.DATA_TYPE db_type,
 			    CAST((CASE WHEN A.COLUMN_KEY = 'PRI' then 1 else 0 END) as SIGNED) as primary_key,
@@ -134,4 +228,5 @@
 		        and table_name = '${StringUtil.escapeSql(args[1])}'
 	 	]]>
 	</statement>
+	
 </statements>

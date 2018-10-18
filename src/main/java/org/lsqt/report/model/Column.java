@@ -6,16 +6,16 @@ package org.lsqt.report.model;
  */
 public class Column {
 
-	public static final int YES=1;
-	public static final int NO=0;
+	public static final int YES=org.lsqt.sys.model.Column.YES;
+	public static final int NO=org.lsqt.sys.model.Column.NO;
 	
 	/***/
 	private Long id;
 
-	/**数据类型 1=报表展示列  2=数据导入列**/
+	/**数据类型 1=展示用的列  2=数据导入列**/
 	private Integer dataType;
-	public static final int DATA_TYPE_REPORT_SHOW=1;
-	public static final int DATA_TYPE_IMPORT = 2;
+	public static final int DATA_TYPE_REPORT_SHOW = org.lsqt.sys.model.Column.DATA_TYPE_REPORT_SHOW;
+	public static final int DATA_TYPE_IMPORT = org.lsqt.sys.model.Column.DATA_TYPE_IMPORT;
 	
 	/** 当前列所属的报表 */
 	private Long definitionId;
@@ -64,16 +64,16 @@ public class Column {
 	
 	/**是否是模糊查询: 1=匹配开头 ，2=匹配中间 3=匹配结尾**/
 	private Integer likeSearchType; 
-	public static final int LIKE_SEARCH_TYPE_LEFT = 1; //like '张%'
-	public static final int LIKE_SEARCH_TYPE_MID = 2; //like '%张%'
-	public static final int LIKE_SEARCH_TYPE_RIGHT = 3;//like '%张'
-	public static final int LIKE_SEARCH_TYPE_NO_WRAP=4; // 不做包装处理
+	public static final int LIKE_SEARCH_TYPE_LEFT =  org.lsqt.sys.model.Column.LIKE_SEARCH_TYPE_LEFT; //like '张%'
+	public static final int LIKE_SEARCH_TYPE_MID = org.lsqt.sys.model.Column.ALIGN_TYPE_MID; //like '%张%'
+	public static final int LIKE_SEARCH_TYPE_RIGHT = org.lsqt.sys.model.Column.ALIGN_TYPE_RIGHT;//like '%张'
+	public static final int LIKE_SEARCH_TYPE_NO_WRAP=  org.lsqt.sys.model.Column.LIKE_SEARCH_TYPE_NO_WRAP; // 不做包装处理
 	
 	private Integer allowSort;
 	
 	private Integer frozen;
-	public static int FROZEN_YES = 1;
-	public static int FROZEN_NO = 0;
+	public static int FROZEN_YES = YES;
+	public static int FROZEN_NO = NO;
 	
 	
 	/**是否允许导入：1=允许  0=不允许*/
@@ -134,9 +134,9 @@ public class Column {
 
 	/** 列对齐方式: 左=1 中=2 右=3*/
 	private Integer alignType;
-	public static final int ALIGN_TYPE_LEFT=1;
-	public static final int ALIGN_TYPE_MID=2;
-	public static final int ALIGN_TYPE_RIGHT=3;
+	public static final int ALIGN_TYPE_LEFT = org.lsqt.sys.model.Column.ALIGN_TYPE_LEFT;
+	public static final int ALIGN_TYPE_MID = org.lsqt.sys.model.Column.ALIGN_TYPE_MID;
+	public static final int ALIGN_TYPE_RIGHT = org.lsqt.sys.model.Column.ALIGN_TYPE_RIGHT;
 
 	/** 列宽: 默认=120 */
 	private Integer width;
@@ -146,8 +146,8 @@ public class Column {
 
 	/** 是否隐藏: 1=隐藏 0=不隐藏*/
 	private Integer hidde;
-	public static int HIDE_YES=1;
-	public static int HIDE_NO = 0;
+	public static int HIDE_YES=YES;
+	public static int HIDE_NO = NO;
 
 	/***/
 	private Integer sn;

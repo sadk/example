@@ -116,7 +116,7 @@ public class CodeTemplateServiceImpl implements CodeTemplateService{
 		
 		// 固定加载表元信息
 		ColumnQuery filter = new ColumnQuery();
-		filter.setTableId(tableId);
+		filter.setDefinitionId(tableId);
 		List<Column> columnList = db.queryForList("queryForPage", Column.class, filter);
 
 		// 内置变量

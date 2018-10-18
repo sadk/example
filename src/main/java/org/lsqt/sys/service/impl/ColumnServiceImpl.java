@@ -30,6 +30,10 @@ public class ColumnServiceImpl implements ColumnService{
 	
 	@Inject private Db db;
 	
+	public Column getById(Long id) {
+		return db.getById(Column.class, id);
+	}
+	
 	public Page<Column>  queryForPage(ColumnQuery query) {
  
 		return db.queryForPage("queryForPage", query.getPageIndex(), query.getPageSize(), Column.class, query); // 查sys_table定义的表元信息
@@ -127,7 +131,7 @@ public class ColumnServiceImpl implements ColumnService{
 			return ;
 		}
 		
-		db.executeUpdate("delete from "+db.getFullTable(Column.class)+" where table_id=?", tableId);
+		db.executeUpdate("delete from "+db.getFullTable(Column.class)+" where definition_id=?", tableId);
 		
 		// 补全字段 java_type
 		// 补全字段 oro_column_type  (ORMapping映射的字段类型)：gid=全局唯一码 updateTime=更新时间 createTime=创建时间
@@ -135,8 +139,9 @@ public class ColumnServiceImpl implements ColumnService{
 		
 		// 补全外键 、选择器、字典信息
 		for(Column e: list) {
-			e.setTableId(tableId);
-			e.setTableName(table.getTableName());
+			e.setDataType(Column.DATA_TYPE_REPORT_SHOW);
+			e.setDefinitionId(tableId);
+			e.setDefinitionName(table.getTableName());
 			e.setDbName(table.getDbName());
 			e.setVersion(table.getVersion());
 			e.setPropertyName(ColumnUtil.toPropertyName(e.getName()));

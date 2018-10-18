@@ -213,7 +213,7 @@ public class FormField {
 	private String version;
 	private String optLog;
 	
-	public Long sn;
+	public Integer sn;
 	private String remark;
 	private String appCode;
 	
@@ -463,11 +463,11 @@ public class FormField {
 		this.columnCodegenGroupCode = columnCodegenGroupCode;
 	}
 
-	public Long getSn() {
+	public Integer getSn() {
 		return sn;
 	}
 
-	public void setSn(Long sn) {
+	public void setSn(Integer sn) {
 		this.sn = sn;
 	}
 

@@ -39,7 +39,7 @@ public class CodeGenForSpring3Mybatis3SyswinImpl {
 		
 		// 加载表元信息
 		ColumnQuery query = new ColumnQuery();
-		query.setTableId(tableId);
+		query.setDefinitionId(tableId);
 		List<Column> columnList = db.queryForList("queryForPage", Column.class, query);
 		
 		String clazzFirstLower = entityName.substring(0, 1).toLowerCase().concat(entityName.substring(1,entityName.length()));

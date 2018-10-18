@@ -151,7 +151,6 @@
 												<a class="mini-button" iconCls="icon-edit" onclick="editProp('edit')">编辑</a>
 												<a class="mini-button" iconCls="icon-save" onclick="saveShortProp()">保存</a>
 												<span class="separator"></span>
-												<input id="dataSourceCode" name="dataSourceCode" value="localhost" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/datasource/all" />
 												<a class="mini-button" iconCls="icon-edit" onclick="copyProp()">复制</a>
 											</td>
 											
@@ -469,6 +468,59 @@
 	                    alert(jqXHR.responseText);
 	                }
 	            });
+			}
+			
+			function copyProp() {
+				var row = grid.getSelected();
+				if (!row) {
+					mini.alert("请选择一个数据源"); return 
+				}
+
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/sys/datasource/seletor_datasource.jsp?idNotId="+row.id,
+					title : "请选择需要拷贝的数据源",
+					width : 500, height : 460,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {
+							action : 'copy'
+						};
+						data.type ="datasource";
+						//data.idNotIn = row.id;
+						//iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						if("ok" == action) {
+							var iframe = this.getIFrameEl();
+							var ds = iframe.contentWindow.GetData();
+							ds = mini.clone(ds);
+							var data ={};
+							data.sourceDatasourceId = ds.id;
+							data.targetDataSourceId = row.id;
+							data.type = "datasource";
+							
+					        mini.confirm("确定复制属性? 将会删除已存在的属性配置.", "确定？",
+				                function (action) {
+				                    if (action == "ok") {
+							            $.ajax({
+							                url: "${pageContext.request.contextPath}/property/copy_properties_by_datasource_id",
+							                data: data ,  type: "post",
+							                success: function (text) {
+							                	mini.alert("复制成功");
+							                	propertyGrid.reload();
+							                },
+							                error: function (jqXHR, textStatus, errorThrown) {
+							                    alert(jqXHR.responseText);
+							                }
+							            });
+				                    }
+				                }
+					        );
+						}
+					}
+				});
+		     
+				
 			}
 		</script>
 	</body>

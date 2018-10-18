@@ -1,30 +1,10 @@
 package org.lsqt.sys.model;
 
-import java.util.Date;
-
+/**
+ * @see org.lsqt.sys.model.Column
+ * 报表字段定义管理
+ */
 public class Column {
-	public static int ORO_COLUMN_TYPE_GID=1;
-	public static int ORO_COLUMN_TYPE_CREATE_TIME=2;
-	public static int ORO_COLUMN_TYPE_UPDATE_TIME=3;
-	public static int ORO_COLUMN_TYPE_ORDINARY=4;
-	public static int ORO_COLUMN_TYPE_PRIMARY=5;
-	
-	public static int COLUMN_CODEGEN_TYPE_选择器=1;
-	public static int COLUMN_CODEGEN_TYPE_下拉框_字典=2;
-	//public static int COLUMN_CODEGEN_TYPE_外键=3;
-	public static int COLUMN_CODEGEN_TYPE_文本=4;
-	public static int COLUMN_CODEGEN_TYPE_数字整型=5;
-	public static int COLUMN_CODEGEN_TYPE_数字精度型=6;
-	public static int COLUMN_CODEGEN_TYPE_日期=7;
-	public static int COLUMN_CODEGEN_TYPE_文件上传=8;
-	public static int COLUMN_CODEGEN_TYPE_下拉框_常量JSON = 9;
-	public static int COLUMN_CODEGEN_TYPE_未知 = 100;
-	
-	
-	// 是否是主键、是否作为查询条件、是否是外键、是否是大字段
-	public static int YES=1;
-	public static int NO=0;
-	
 	
 	public static int JAVA_TYPE_JAVA_LANG_STRING=0;
 	public static int JAVA_TYPE_JAVA_LANG_CHARACTER=1;
@@ -48,7 +28,31 @@ public class Column {
 	public static int JAVA_TYPE_JAVA_SQL_TIMESTAMP=14;
 	
 	public static int JAVA_TYPE_JAVA_LANG_BYTE_ARRAY=15;
-
+	
+	
+	
+	
+	
+	
+	public static int ORO_COLUMN_TYPE_GID=1;
+	public static int ORO_COLUMN_TYPE_CREATE_TIME=2;
+	public static int ORO_COLUMN_TYPE_UPDATE_TIME=3;
+	public static int ORO_COLUMN_TYPE_ORDINARY=4;
+	public static int ORO_COLUMN_TYPE_PRIMARY=5;
+	
+	
+	public static int COLUMN_CODEGEN_TYPE_选择器=1;
+	public static int COLUMN_CODEGEN_TYPE_下拉框_字典=2;
+	//public static int COLUMN_CODEGEN_TYPE_外键=3;
+	public static int COLUMN_CODEGEN_TYPE_文本=4;
+	public static int COLUMN_CODEGEN_TYPE_数字整型=5;
+	public static int COLUMN_CODEGEN_TYPE_数字精度型=6;
+	public static int COLUMN_CODEGEN_TYPE_日期=7;
+	public static int COLUMN_CODEGEN_TYPE_文件上传=8;
+	public static int COLUMN_CODEGEN_TYPE_下拉框_常量JSON = 9;
+	public static int COLUMN_CODEGEN_TYPE_未知 = 100;
+	
+	
 	
 	public static String JAVA_TYPE_DESC_JAVA_LANG_STRING="java.lang.String";
 	public static String JAVA_TYPE_DESC_JAVA_LANG_BYTE="java.lang.Byte";
@@ -65,82 +69,96 @@ public class Column {
 	public static String JAVA_TYPE_DESC_JAVA_UTIL_DATE="java.util.Date";
 	public static String JAVA_TYPE_DESC_JAVA_LANG_BYTE_ARRAY="[B"; // Blob数据类型
 	
+	
+	
+	
+
+	public static final int YES=1;
+	public static final int NO=0;
+	
+	/***/
 	private Long id;
-	private String dbName;
-	private Long tableId;
-	private String tableName;
+
+	/**数据类型 1=报表展示列  2=数据导入列**/
+	private Integer dataType;
+	public static final int DATA_TYPE_REPORT_SHOW=1;
+	public static final int DATA_TYPE_IMPORT = 2;
+	
+	/** 当前列所属的（报）表定义 */
+	private Long definitionId;
+	private String definitionName;
+	
+	/** 列字段sql编码 */
+	private String code;
+
+	/** 列名中文 */
 	private String name;
+	
+	private String reportName;
+
+	/** 列注释 */
 	private String comment;
-	private String dbType; 
-	private Integer searchType; // 当前列是否作为查询条件(代码生成器生成查询) 0=不作为查询条件 1=作为查询条件
+
+	/**DB数据库**/
+	private String dbName;
+	
+	/** DB字段类型 */
+	private String dbType;
+
+	/** DB字段长度 */
+	private String dbTypeLength;
+	
+	private Integer importRequired; // 1=必填 0=非必填
+
+	private String coordinate; // Excel表头单元格坐标
+	
+	/** JAVA类型 */
+	private Integer javaType;
+
+	/** JAVA属性名 */
+	private String propertyName;
+
+	/** 是否是主键：1=是，0=否 */
+	private Integer primaryKey;
+
+	/** ORMapping映射的字段类型：gid(全局唯一码)=1 updateTime(更新时间)=2 createTime(创建时间)=3 */
+	private Integer oroColumnType;
+
+	/** 当前列是否作为查询条件: 0=否，1=是 */
+	private Integer searchType;
+	
+	/** 查询是否必填**/
+	private Integer searchRequired;
+
+	/**是否模糊查询**/
+	private Integer likeSearchIs;
+	
+	/**是否是模糊查询: 1=匹配开头 ，2=匹配中间 3=匹配结尾**/
+	private Integer likeSearchType; 
+	public static final int LIKE_SEARCH_TYPE_LEFT = 1; //like '张%'
+	public static final int LIKE_SEARCH_TYPE_MID = 2; //like '%张%'
+	public static final int LIKE_SEARCH_TYPE_RIGHT = 3;//like '%张'
+	public static final int LIKE_SEARCH_TYPE_NO_WRAP=4; // 不做包装处理
+	
+	private Integer allowSort;
+	
+	private Integer frozen;
+	public static int FROZEN_YES = 1;
+	public static int FROZEN_NO = 0;
+	
+	
+	/**是否允许导入：1=允许  0=不允许*/
+	private Integer allowImport;
+	
+	/**是否允许导出：1=允许  0=不允许*/
+	private Integer allowExport;
 	
 	
 	/**
-	 * 列的java(常用)数据类型定义
-	 * <pre>
-	 * java.lang.String=0
-	 * java.lang.Character=1
-	 * java.lang.Byte=2
-	 * java.lang.Short=3
-	 * java.lang.Integer=4
-	 * java.lang.Long=5
-	 * java.lang.Float=6
-	 * java.lang.Double=7
-	 * java.lang.Boolean=8
-	 * java.util.Date=9
-	 * java.math.BigDecimal=10
-	 * java.math.BigInteger=11
-	 * java.sql.Time=12
-	 * java.sql.Date=13
-	 * java.sql.TimeStamp=14
-	 * java.lang.Byte [] =15
-	 * </pre>
+	 * 字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键  4=文本框 5=整型框 6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)
 	 */
-	private Integer javaType;  
-	private String propertyName; //javaBean属性名
+	private Integer columnCodegenType;
 	
-	private Integer primaryKey; // 是否是主键：1=是，0=否
-	public String getPrimaryKeyDesc() {
-		if(this.primaryKey == null) {
-			return null;
-		}
-		
-		if(YES == this.primaryKey) {
-			return "是";
-		}
-		else if(NO == this.primaryKey) {
-			return "否";
-		}
-		else {
-			return null;
-		}
-		
-	}
-	
-	
-	private Integer oroColumnType; // ORMapping映射的字段类型： gid=1 createTime=2 updateTime=3  普通列=4 主键=5  
-	public String getOroColumnTypeDesc() {
-		if(this.oroColumnType!=null) {
-			if(ORO_COLUMN_TYPE_GID == this.oroColumnType) {
-				return "全局唯一码字段";
-			}
-			else if(ORO_COLUMN_TYPE_CREATE_TIME == this.oroColumnType) {
-				return "创建时间字段";
-			}
-			else if(ORO_COLUMN_TYPE_UPDATE_TIME == this.oroColumnType) {
-				return "更新时间字段";
-			}
-		}
-		return null;
-	}
-	
-	
-	//private String largeFiled; // 是否是大字段,blob=二进制大字段,clob=字符大字段
-	
-	private Integer columnCodegenType ; // 字段的代码生成器类型 1=选择器 2=下拉框(字典) 3=外键    4=text 5=long 6=double 7=date 8=file 9=下拉框(常量JSON)
-	private String columnCodegenFormat; // 默认：double型的为两个小数点， date 为 "yyyy-MM-dd HH:mm:ss" 
-	private String columnCodegenGroupCode ; // 字段组:用于生成html的fieldset框
-
 	public String getColumnCodegenTypeDesc() {
 		if(columnCodegenType!=null) {
 			if(COLUMN_CODEGEN_TYPE_选择器 == this.columnCodegenType) {
@@ -176,24 +194,30 @@ public class Column {
 		}
 		return null;
 	}
-	
-	/*
-	private String fkTableName;
-	private String fkTableCommnet;
-	private String fkCol;
-	*/
-	
-	/*
-	private String selectorRefTableName;
-	private String selectorRefTableComment;
-	private String selectorRefTableColumn;
-	*/
-	private String selectorMultilSelect; // （选择器）是否可多选: 1=是 0=否
+
+	/** 默认：double型的为两个小数点， date 为 [yyyy-MM-dd HH:mm:ss] */
+	private String columnCodegenFormat;
+
+	/** 字段组:用于生成html的fieldset框 */
+	private String columnCodegenGroupCode;
+
+	/** 选择器，是单选还是多选 */
+	private String selectorMultilSelect;
+
+	/** 选择器选择后显示的文本字段(多选以逗号分割) */
 	private String selectorTextCols;
+
+	/** 选择器选择后显示的值字段(多选以逗号分割) */
 	private String selectorValueCols;
-	
-	private String selectorDataFromType; // 选择器数据来源类型:0=URL(页面) 1=URL(返回JSON) 2=URL(返回XML) 3=代码片断(JavaScript)数组  4=SQL 
+
+	/**
+	 * 选择器数据来源:0=URL(页面) 1=URL(返回JSON) 2=URL(返回XML) 3=代码片断(JavaScript)数组 4=SQL
+	 */
+	private String selectorDataFromType;
+
+	/** 选择器数据来源 */
 	private String selectorDataFrom;
+	
 	public static final String SELECTOR_DATA_FROM_TYPE_URL_页面="0";
 	public static final String SELECTOR_DATA_FROM_TYPE_URL_返回JSON="1";
 	public static final String SELECTOR_DATA_FROM_TYPE_URL_返回XML="2";
@@ -201,76 +225,350 @@ public class Column {
 	public static final String SELECTOR_DATA_FROM_TYPE_SQL="4";
 	
 	
-	private String selectorDataSourceCode; //选择器的数据来源为SQL时，选定的数据源
-	private String selectorDbName; // 选择器的数据来源为SQL时，选定的数据库
-	
-	
-	
+
+	/** 选择器的数据来源为SQL时，选定的数据源 */
+	private String selectorDataSourceCode;
+
+	/** 选择器的数据来源为SQL时，选定的数据库 */
+	private String selectorDbName;
+
+	/** 当前列是字典值时，对应的字典code值，如(值为“sex”就是男、女,对应的值就是1和0) */
 	private String dictRefCode;
+
+	/** 显示的文本字段 */
 	private String dictTextCol;
+
+	/** 显示的值字段 */
 	private String dictValueCol;
-	
-	private String fileMultil; // 文件是否可多选批量上传
-	private String fileCustomContent;// 自定义的文件上传控件（可为HTML+JS的代码片断）
-	
+
+	/** 是否可多选批量上传 */
+	private String fileMultil;
+
+	/** 自定义的文件上传控件(代码片断) */
+	private String fileCustomContent;
+
+	/** 列对齐方式: 左=1 中=2 右=3*/
+	private Integer alignType;
+	public static final int ALIGN_TYPE_LEFT=1;
+	public static final int ALIGN_TYPE_MID=2;
+	public static final int ALIGN_TYPE_RIGHT=3;
+
+	/** 列宽: 默认=120 */
+	private Integer width;
+
+	/** 列高 */
+	private String height;
+
+	/** 是否隐藏: 1=隐藏 0=不隐藏*/
+	private Integer hidde;
+	public static int HIDE_YES=1;
+	public static int HIDE_NO = 0;
+
+	/***/
+	private Integer sn;
+
+	/** 表字段的版本号 */
 	private String version;
+
+	/** 用户操作备注 */
 	private String optLog;
-	
-	public Long sn;
+
+	/** 用户备注 */
 	private String remark;
+
+	/***/
 	private String appCode;
 	
-	private String gid;
-	private Date createTime;
-	private Date updateTime;
-	
-	
-	public Long getId() {
-		return id;
-	}
 
+	/***/
+	private String gid;
+
+	/** 创建日期 */
+	private java.util.Date createTime;
+
+	/***/
+	private java.util.Date updateTime;
+
+	// getter、setter
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public String getTableName() {
-		return tableName;
+	public Long getId() {
+		return this.id;
 	}
 
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
+	public void setDefinitionId(Long definitionId) {
+		this.definitionId = definitionId;
 	}
 
-	public String getName() {
-		return name;
+	public Long getDefinitionId() {
+		return this.definitionId;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getCode() {
+		return this.code;
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public String getComment() {
-		return comment;
+	public String getName() {
+		return this.name;
 	}
 
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
 
-	public String getDbType() {
-		return dbType;
+	public String getComment() {
+		return this.comment;
 	}
 
 	public void setDbType(String dbType) {
 		this.dbType = dbType;
 	}
 
-	public Integer getJavaType() {
-		return javaType;
+	public String getDbType() {
+		return this.dbType;
 	}
 
-	public void setJavaType(Integer javaType) {
-		this.javaType = javaType;
+ 
+	public void setPropertyName(String propertyName) {
+		this.propertyName = propertyName;
+	}
+
+	public String getPropertyName() {
+		return this.propertyName;
+	}
+
+	public void setColumnCodegenFormat(String columnCodegenFormat) {
+		this.columnCodegenFormat = columnCodegenFormat;
+	}
+
+	public String getColumnCodegenFormat() {
+		return this.columnCodegenFormat;
+	}
+
+	public void setColumnCodegenGroupCode(String columnCodegenGroupCode) {
+		this.columnCodegenGroupCode = columnCodegenGroupCode;
+	}
+
+	public String getColumnCodegenGroupCode() {
+		return this.columnCodegenGroupCode;
+	}
+
+	public void setSelectorMultilSelect(String selectorMultilSelect) {
+		this.selectorMultilSelect = selectorMultilSelect;
+	}
+
+	public String getSelectorMultilSelect() {
+		return this.selectorMultilSelect;
+	}
+
+	public void setSelectorTextCols(String selectorTextCols) {
+		this.selectorTextCols = selectorTextCols;
+	}
+
+	public String getSelectorTextCols() {
+		return this.selectorTextCols;
+	}
+
+	public void setSelectorValueCols(String selectorValueCols) {
+		this.selectorValueCols = selectorValueCols;
+	}
+
+	public String getSelectorValueCols() {
+		return this.selectorValueCols;
+	}
+
+	public void setSelectorDataFromType(String selectorDataFromType) {
+		this.selectorDataFromType = selectorDataFromType;
+	}
+
+	public String getSelectorDataFromType() {
+		return this.selectorDataFromType;
+	}
+
+	public void setSelectorDataFrom(String selectorDataFrom) {
+		this.selectorDataFrom = selectorDataFrom;
+	}
+
+	public String getSelectorDataFrom() {
+		return this.selectorDataFrom;
+	}
+
+	public void setSelectorDataSourceCode(String selectorDataSourceCode) {
+		this.selectorDataSourceCode = selectorDataSourceCode;
+	}
+
+	public String getSelectorDataSourceCode() {
+		return this.selectorDataSourceCode;
+	}
+
+	public void setSelectorDbName(String selectorDbName) {
+		this.selectorDbName = selectorDbName;
+	}
+
+	public String getSelectorDbName() {
+		return this.selectorDbName;
+	}
+
+	public void setDictRefCode(String dictRefCode) {
+		this.dictRefCode = dictRefCode;
+	}
+
+	public String getDictRefCode() {
+		return this.dictRefCode;
+	}
+
+	public void setDictTextCol(String dictTextCol) {
+		this.dictTextCol = dictTextCol;
+	}
+
+	public String getDictTextCol() {
+		return this.dictTextCol;
+	}
+
+	public void setDictValueCol(String dictValueCol) {
+		this.dictValueCol = dictValueCol;
+	}
+
+	public String getDictValueCol() {
+		return this.dictValueCol;
+	}
+
+	public void setFileMultil(String fileMultil) {
+		this.fileMultil = fileMultil;
+	}
+
+	public String getFileMultil() {
+		return this.fileMultil;
+	}
+
+	public void setFileCustomContent(String fileCustomContent) {
+		this.fileCustomContent = fileCustomContent;
+	}
+
+	public String getFileCustomContent() {
+		return this.fileCustomContent;
+	}
+
+	public void setHeight(String height) {
+		this.height = height;
+	}
+
+	public String getHeight() {
+		return this.height;
+	}
+
+	public void setSn(Integer sn) {
+		this.sn = sn;
+	}
+
+	public Integer getSn() {
+		return this.sn;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public String getVersion() {
+		return this.version;
+	}
+
+	public void setOptLog(String optLog) {
+		this.optLog = optLog;
+	}
+
+	public String getOptLog() {
+		return this.optLog;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getRemark() {
+		return this.remark;
+	}
+
+	public void setAppCode(String appCode) {
+		this.appCode = appCode;
+	}
+
+	public String getAppCode() {
+		return this.appCode;
+	}
+
+	public void setGid(String gid) {
+		this.gid = gid;
+	}
+
+	public String getGid() {
+		return this.gid;
+	}
+
+	public void setCreateTime(java.util.Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public java.util.Date getCreateTime() {
+		return this.createTime;
+	}
+
+	public void setUpdateTime(java.util.Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public java.util.Date getUpdateTime() {
+		return this.updateTime;
+	}
+
+	public String getReportName() {
+		return reportName;
+	}
+
+	public void setReportName(String reportName) {
+		this.reportName = reportName;
+	}
+
+	public Integer getWidth() {
+		return width;
+	}
+
+	public void setWidth(Integer width) {
+		this.width = width;
+	}
+
+	public Integer getColumnCodegenType() {
+		return columnCodegenType;
+	}
+
+	public void setColumnCodegenType(Integer columnCodegenType) {
+		this.columnCodegenType = columnCodegenType;
+	}
+
+	public Integer getAllowSort() {
+		return allowSort;
+	}
+
+	public void setAllowSort(Integer allowSort) {
+		this.allowSort = allowSort;
+	}
+
+	public Integer getFrozen() {
+		return frozen;
+	}
+
+	public void setFrozen(Integer frozen) {
+		this.frozen = frozen;
 	}
 
 	public Integer getPrimaryKey() {
@@ -288,222 +586,13 @@ public class Column {
 	public void setOroColumnType(Integer oroColumnType) {
 		this.oroColumnType = oroColumnType;
 	}
-	/*
-	public String getLargeFiled() {
-		return largeFiled;
+
+	public Integer getJavaType() {
+		return javaType;
 	}
 
-	public void setLargeFiled(String largeFiled) {
-		this.largeFiled = largeFiled;
-	}
-	 */
-	public Integer getColumnCodegenType() {
-		return columnCodegenType;
-	}
-
-	public void setColumnCodegenType(Integer columnCodegenType) {
-		this.columnCodegenType = columnCodegenType;
-	}
-/*
-	public String getFkTableName() {
-		return fkTableName;
-	}
-
-	public void setFkTableName(String fkTableName) {
-		this.fkTableName = fkTableName;
-	}
-
-	public String getFkTableCommnet() {
-		return fkTableCommnet;
-	}
-
-	public void setFkTableCommnet(String fkTableCommnet) {
-		this.fkTableCommnet = fkTableCommnet;
-	}
-
-	public String getFkCol() {
-		return fkCol;
-	}
-
-	public void setFkCol(String fkCol) {
-		this.fkCol = fkCol;
-	}
-*/
-	
-/*	public String getSelectorRefTableName() {
-		return selectorRefTableName;
-	}
-
-	public void setSelectorRefTableName(String selectorRefTableName) {
-		this.selectorRefTableName = selectorRefTableName;
-	}
-
-	public String getSelectorRefTableComment() {
-		return selectorRefTableComment;
-	}
-
-	public void setSelectorRefTableComment(String selectorRefTableComment) {
-		this.selectorRefTableComment = selectorRefTableComment;
-	}
-
-	public String getSelectorRefTableColumn() {
-		return selectorRefTableColumn;
-	}
-
-	public void setSelectorRefTableColumn(String selectorRefTableColumn) {
-		this.selectorRefTableColumn = selectorRefTableColumn;
-	}
-*/
-	public String getSelectorMultilSelect() {
-		return selectorMultilSelect;
-	}
-
-	public void setSelectorMultilSelect(String selectorMultilSelect) {
-		this.selectorMultilSelect = selectorMultilSelect;
-	}
-
-	public String getSelectorTextCols() {
-		return selectorTextCols;
-	}
-
-	public void setSelectorTextCols(String selectorTextCols) {
-		this.selectorTextCols = selectorTextCols;
-	}
-
-	public String getSelectorValueCols() {
-		return selectorValueCols;
-	}
-
-	public void setSelectorValueCols(String selectorValueCols) {
-		this.selectorValueCols = selectorValueCols;
-	}
-
-	public String getDictRefCode() {
-		return dictRefCode;
-	}
-
-	public void setDictRefCode(String dictRefCode) {
-		this.dictRefCode = dictRefCode;
-	}
-
-	public String getDictTextCol() {
-		return dictTextCol;
-	}
-
-	public void setDictTextCol(String dictTextCol) {
-		this.dictTextCol = dictTextCol;
-	}
-
-	public String getDictValueCol() {
-		return dictValueCol;
-	}
-
-	public void setDictValueCol(String dictValueCol) {
-		this.dictValueCol = dictValueCol;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
-	public String getOptLog() {
-		return optLog;
-	}
-
-	public void setOptLog(String optLog) {
-		this.optLog = optLog;
-	}
-
-	public String getRemark() {
-		return remark;
-	}
-
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-
-	public String getAppCode() {
-		return appCode;
-	}
-
-	public void setAppCode(String appCode) {
-		this.appCode = appCode;
-	}
-
-	public String getGid() {
-		return gid;
-	}
-
-	public void setGid(String gid) {
-		this.gid = gid;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public Date getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
-
-	public String getColumnCodegenFormat() {
-		return columnCodegenFormat;
-	}
-
-	public void setColumnCodegenFormat(String columnCodegenFormat) {
-		this.columnCodegenFormat = columnCodegenFormat;
-	}
-
-	public String getColumnCodegenGroupCode() {
-		return columnCodegenGroupCode;
-	}
-
-	public void setColumnCodegenGroupCode(String columnCodegenGroupCode) {
-		this.columnCodegenGroupCode = columnCodegenGroupCode;
-	}
-
-	public Long getSn() {
-		return sn;
-	}
-
-	public void setSn(Long sn) {
-		this.sn = sn;
-	}
-
-	public String getDbName() {
-		return dbName;
-	}
-
-	public void setDbName(String dbName) {
-		this.dbName = dbName;
-	}
-
-	public Long getTableId() {
-		return tableId;
-	}
-
-	public void setTableId(Long tableId) {
-		this.tableId = tableId;
-	}
-
-	public String getPropertyName() {
-		return propertyName;
-	}
-
-	public void setPropertyName(String propertyName) {
-		this.propertyName = propertyName;
+	public void setJavaType(Integer javaType) {
+		this.javaType = javaType;
 	}
 
 	public Integer getSearchType() {
@@ -514,53 +603,107 @@ public class Column {
 		this.searchType = searchType;
 	}
 
-	public String getSelectorDataSourceCode() {
-		return selectorDataSourceCode;
+	public Integer getLikeSearchIs() {
+		return likeSearchIs;
 	}
 
-	public void setSelectorDataSourceCode(String selectorDataSourceCode) {
-		this.selectorDataSourceCode = selectorDataSourceCode;
+	public void setLikeSearchIs(Integer likeSearchIs) {
+		this.likeSearchIs = likeSearchIs;
 	}
 
-	public String getSelectorDbName() {
-		return selectorDbName;
+	public Integer getLikeSearchType() {
+		return likeSearchType;
 	}
 
-	public void setSelectorDbName(String selectorDbName) {
-		this.selectorDbName = selectorDbName;
+	public void setLikeSearchType(Integer likeSearchType) {
+		this.likeSearchType = likeSearchType;
 	}
 
-	public String getSelectorDataFromType() {
-		return selectorDataFromType;
+	public Integer getAlignType() {
+		return alignType;
 	}
 
-	public void setSelectorDataFromType(String selectorDataFromType) {
-		this.selectorDataFromType = selectorDataFromType;
+	public void setAlignType(Integer alignType) {
+		this.alignType = alignType;
 	}
 
-	public String getSelectorDataFrom() {
-		return selectorDataFrom;
+	public Integer getHidde() {
+		return hidde;
 	}
 
-	public void setSelectorDataFrom(String selectorDataFrom) {
-		this.selectorDataFrom = selectorDataFrom;
+	public void setHidde(Integer hidde) {
+		this.hidde = hidde;
 	}
 
-	public String getFileMultil() {
-		return fileMultil;
+	public Integer getSearchRequired() {
+		return searchRequired;
 	}
 
-	public void setFileMultil(String fileMultil) {
-		this.fileMultil = fileMultil;
+	public void setSearchRequired(Integer searchRequired) {
+		this.searchRequired = searchRequired;
 	}
 
-	public String getFileCustomContent() {
-		return fileCustomContent;
+	public Integer getDataType() {
+		return dataType;
 	}
 
-	public void setFileCustomContent(String fileCustomContent) {
-		this.fileCustomContent = fileCustomContent;
+	public void setDataType(Integer dataType) {
+		this.dataType = dataType;
 	}
 
- 
+	public Integer getImportRequired() {
+		return importRequired;
+	}
+
+	public void setImportRequired(Integer importRequired) {
+		this.importRequired = importRequired;
+	}
+
+	public String getCoordinate() {
+		return coordinate;
+	}
+
+	public void setCoordinate(String coordinate) {
+		this.coordinate = coordinate;
+	}
+
+	public Integer getAllowImport() {
+		return allowImport;
+	}
+
+	public void setAllowImport(Integer allowImport) {
+		this.allowImport = allowImport;
+	}
+
+	public Integer getAllowExport() {
+		return allowExport;
+	}
+
+	public void setAllowExport(Integer allowExport) {
+		this.allowExport = allowExport;
+	}
+
+	public String getDbTypeLength() {
+		return dbTypeLength;
+	}
+
+	public void setDbTypeLength(String dbTypeLength) {
+		this.dbTypeLength = dbTypeLength;
+	}
+
+	public String getDbName() {
+		return dbName;
+	}
+
+	public void setDbName(String dbName) {
+		this.dbName = dbName;
+	}
+
+	public String getDefinitionName() {
+		return definitionName;
+	}
+
+	public void setDefinitionName(String definitionName) {
+		this.definitionName = definitionName;
+	}
 }

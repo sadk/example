@@ -40,7 +40,7 @@
 						            <tr>
 						            	<td style="width:120px;">表名：</td>
 						                <td style="width:150px;">    
-						                    <input style="width:150px;" name="tableName" id="tableName" class="mini-textbox" emptyText="请输入表名称" />
+						                    <input style="width:150px;" name="tableName" id="tableName" class="mini-textbox" emptyText="请输入表名称" onenter="search"/>
 						                </td>
 						            </tr>
 						            <tr>
@@ -123,10 +123,11 @@
 									<table style="width:100%;">
 										<tr>
 											<td style="width:100%;">
+												
 												<a class="mini-button" onclick="impColumsByTable()" iconCls="icon-redo" >从DB导入</a>
-												<a class="mini-button" onclick="reload()" iconCls="icon-reload" >从DB同步到系统</a>
-												<span class="separator"></span>
-												<a class="mini-button" onclick="addColumn()" iconCls="icon-add" >手工添加</a>  
+												<!-- <a class="mini-button" onclick="reload()" iconCls="icon-reload" >从DB同步到系统</a>-->
+												<span class="separator"></span>  
+												<!-- <a class="mini-button" onclick="addColumn()" iconCls="icon-add" >手工添加</a>   -->
 												<a class="mini-button" onclick="editColumn()" iconCls="icon-edit" >编辑</a>
 												<a class="mini-button" onclick="saveColumn()" iconCls="icon-save" >保存</a>
 												<a class="mini-button" onclick="removeColumn()" iconCls="icon-remove" >删除字段定义</a>
@@ -142,7 +143,7 @@
 										<div property="columns">
 											<div type="checkcolumn" ></div>
 											<div field="version" width="150" headerAlign="center" allowSort="true">版本</div>
-											<div field="tableName" width="120" headerAlign="center" allowSort="true">DB表名</div>	
+											<div field="definitionName" width="120" headerAlign="center" allowSort="true">DB表名</div>	
 											<div field="name" width="100" headerAlign="center" allowSort="true">DB字段名
 												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
 											</div>
@@ -347,7 +348,7 @@
 						url : "${pageContext.request.contextPath}/apps/default/admin/sys/column/edit.jsp",
 						title : "编辑字段信息",
 						width : 540,
-						height : 690,
+						height : 620,
 						onload : function() {
 							var iframe = this.getIFrameEl();
 							var data = {

@@ -49,7 +49,7 @@ public final class ActionFormUtil {
 		
 		List<Field> list = CacheReflect.getBeanField(bean.getClass());
 		for(Field e : list) {
-			try{
+			
 				if(isCanBeBaseType(e.getType())){
 					Object paramValue = formMap.get(e.getName());
 					paramValue = "".equals(paramValue) ? null : paramValue ;
@@ -69,10 +69,7 @@ public final class ActionFormUtil {
 				} else if(isCanBeBeanType(e.getType())){
 					fillField(e,bean,maxLevel,formMap,e.getName());
 				}
-			}catch(Exception ex) {
-				System.out.println(" --- fill filed error:"+e+", value is :"+formMap.get(e.getName()));
-				throw ex; 
-			}
+			
 		}
 		
 		// log.info(JSON.toJSONString(bean));

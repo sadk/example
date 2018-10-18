@@ -660,6 +660,11 @@ INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (305,290,'VIEW','15','VIEW','dictionary',NULL,'1','1000',1,'290,305',NULL,'VIEW','2018-04-23 10:57:24','2018-04-23 10:57:24');
 
 
+-- 服务器类型
+INSERT INTO `sys_dictionary` (id,`pid`, `name`, `value`, `code`, `category_code`, `app_code`, `sn`, `node_path`, `remark`, `gid`, `create_time`, `update_time`) VALUES (306,'182', 'RabitMQ服务器', '3', 'rabitmq', 'dictionary', '1000', '0', '182,306', 'RabitMQ服务器', 'rabitmq', '2017-05-12 10:28:39', '2017-05-12 10:28:39');
+
+
+
 drop table  if exists sys_machine;
 CREATE TABLE `sys_machine` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -1129,64 +1134,63 @@ insert into sys_project(id,name,code,file_name,file_path,structure,eclipse,level
 drop table  IF EXISTS  sys_column ;
 CREATE TABLE `sys_column` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `db_name` varchar(255) NOT NULL COMMENT '数据库名称',
-  `table_id` bigint(20) NOT NULL COMMENT '当前列所属的表' ,
-  `table_name` varchar(255) NOT NULL COMMENT '表名',
-  `name` varchar(255) NOT NULL COMMENT '列名',
-  `comment` varchar(500) DEFAULT NULL COMMENT '列注释',
+  `data_type` int(2) DEFAULT NULL COMMENT '列的类型：1=展示用的列  2=导入数据用的列',
   
-  `db_type` varchar(255) NOT NULL COMMENT 'DB类型',
-  `java_type` int(4) NOT NULL COMMENT 'JAVA类型',
-  `property_name` varchar(255) NOT NULL COMMENT 'JAVA属性名',
-  `primary_key` int(4) NOT NULL COMMENT '是否是主键：1=是，0=否',
+  `definition_id` bigint(20) NOT NULL COMMENT '当前列所属的表ID(定义的表或SQL结果集)',
+  `definition_name` varchar(40) NOT NULL COMMENT '当前列所属的名(定义表或SQL结果集)',
+  `db_name` varchar(40) NULL COMMENT 'Db数据库名（冗余字段）',
   
-  `oro_column_type` int(4)  NULL COMMENT 'ORMapping映射的字段类型：gid(全局唯一码)=1 updateTime(更新时间)=2 createTime(创建时间)=3',
-  -- `large_filed` varchar(20) DEFAULT NULL COMMENT '是否是大字段,blob=二进制大字段,clob=字符大字段(可填可不填，辅助字段)',
-  
-  `search_type` int(2) NOT NULL DEFAULT 0 COMMENT '当前列是否作为查询条件: 0=否，1=是',
-  
-  `column_codegen_type` varchar(255) NOT NULL COMMENT '字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键    4=文本框 5=整型框  6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)',
-  `column_codegen_format` varchar(255) NULL COMMENT '默认：double型的为两个小数点， date 为 [yyyy-MM-dd HH:mm:ss] ',
-  `column_codegen_group_code` varchar(100) DEFAULT NULL COMMENT '字段组:用于生成html的fieldset框',
-  
---  `fk_table_name` varchar(255)  NULL COMMENT '当前字段为外键时，引用的外键表',
---  `fk_table_commnet` varchar(255)  NULL COMMENT '当前字段为外键时，引用的外键表注释',
---  `fk_col` varchar(255)  NULL COMMENT '当前字段为外键时，引用的外键字段',
-  
-  
- -- `selector_ref_table_name` varchar(100) DEFAULT NULL COMMENT '选择器，引用的表名',
- -- `selector_ref_table_comment` varchar(100) DEFAULT NULL COMMENT '选择器，引用的表名注释',
- -- `selector_ref_table_column` varchar(100) DEFAULT NULL COMMENT '选择器，引用的表名字段',
-  
-  `selector_multil_select` varchar(100) DEFAULT NULL COMMENT '选择器，是单选还是多选',
+  `code` varchar(50) NOT NULL COMMENT '列字段sql编码',
+  `name` varchar(100) NOT NULL COMMENT '列名中文',
+  `comment` varchar(200) DEFAULT NULL COMMENT '列注释',
+  `db_type` varchar(50) NOT NULL COMMENT 'DB字段类型',
+  `java_type` int(4) DEFAULT NULL COMMENT 'JAVA类型',
+  `property_name` varchar(100) NOT NULL COMMENT 'JAVA属性名',
+  `primary_key` int(4) DEFAULT NULL COMMENT '是否是主键：1=是，0=否',
+  `oro_column_type` int(4) DEFAULT NULL COMMENT 'ORMapping映射的字段类型：gid(全局唯一码)=1 updateTime(更新时间)=2 createTime(创建时间)=3',
+  `search_type` int(2) NOT NULL DEFAULT '0' COMMENT '当前列是否作为查询条件: 0=否，1=是',
+  `search_required` int(2) DEFAULT NULL COMMENT '是否查询必填：search_required',
+  `column_codegen_type` int(2) DEFAULT NULL COMMENT '字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键    4=文本框 5=整型框  6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)',
+  `column_codegen_format` varchar(50) DEFAULT NULL COMMENT '默认：double型的为两个小数点， date 为 [yyyy-MM-dd HH:mm:ss] ',
+  `column_codegen_group_code` varchar(20) DEFAULT NULL COMMENT '字段组:用于生成html的fieldset框',
+  `selector_multil_select` varchar(4) DEFAULT NULL COMMENT '选择器，是单选还是多选',
   `selector_text_cols` varchar(100) DEFAULT NULL COMMENT '选择器选择后显示的文本字段(多选以逗号分割)',
   `selector_value_cols` varchar(100) DEFAULT NULL COMMENT '选择器选择后显示的值字段(多选以逗号分割)',
-  
   `selector_data_from_type` varchar(4) DEFAULT NULL COMMENT '选择器数据来源:0=URL(页面)  1=URL(返回JSON) 2=URL(返回XML) 3=代码片断(JavaScript)数组  4=SQL',
-  `selector_data_from` text DEFAULT NULL COMMENT '选择器数据来源',
-  
-  `selector_data_source_code`  varchar(50) DEFAULT NULL COMMENT '选择器的数据来源为SQL时，选定的数据源',
-  `selector_db_name`  varchar(50) DEFAULT NULL COMMENT '选择器的数据来源为SQL时，选定的数据库',
-  
+  `selector_data_from` text COMMENT '选择器数据来源',
+  `selector_data_source_code` varchar(50) DEFAULT NULL COMMENT '选择器的数据来源为SQL时，选定的数据源',
+  `selector_db_name` varchar(50) DEFAULT NULL COMMENT '选择器的数据来源为SQL时，选定的数据库',
   `dict_ref_code` varchar(100) DEFAULT NULL COMMENT '当前列是字典值时，对应的字典code值，如(值为“sex”就是男、女,对应的值就是1和0)',
   `dict_text_col` varchar(100) DEFAULT NULL COMMENT '显示的文本字段',
   `dict_value_col` varchar(100) DEFAULT NULL COMMENT '显示的值字段',
-  
   `file_multil` varchar(4) DEFAULT NULL COMMENT '是否可多选批量上传',
-  `file_custom_content` text DEFAULT NULL COMMENT '自定义的文件上传控件(代码片断)',
-    
-  `sn` int(4) DEFAULT '0' ,
+  `file_custom_content` text COMMENT '自定义的文件上传控件(代码片断)',
+  `align_type` varchar(2) DEFAULT NULL COMMENT '列对齐方式: ',
+  `width` int(2) DEFAULT NULL COMMENT '列宽: ',
+  `height` int(2) DEFAULT NULL COMMENT '列高 ',
+  `hidde` int(2) DEFAULT NULL COMMENT '是否隐藏: 0=隐藏 1=显示',
+
+
+  `like_search_is` int(2) DEFAULT NULL COMMENT '是否模糊查询',
+  `like_search_type` int(2) DEFAULT NULL COMMENT '是否是模糊查询: 1=匹配开头 ，2=匹配中间 3=匹配结尾',
+  `frozen` int(2) DEFAULT NULL,
+  `allow_sort` int(2) DEFAULT NULL,
+  `db_type_length` varchar(10) DEFAULT NULL COMMENT 'DB字段长度,如decimal保留两位小数，填 10,2',
+  `import_required` int(2) DEFAULT NULL,
+  `coordinate` varchar(20) DEFAULT NULL,
+  `allow_export` int(2) DEFAULT '1' COMMENT '是否允许导出(到excel):0=不允许 1=允许',
+  `allow_import` int(2) DEFAULT '0' COMMENT '是否允许导入(到excel):0=不允许 1=允许',
+
+  `sn` int(4) DEFAULT '0',
   `version` varchar(100) DEFAULT NULL COMMENT '表字段的版本号',
   `opt_log` varchar(100) DEFAULT NULL COMMENT '用户操作备注',
   `remark` varchar(100) DEFAULT NULL COMMENT '用户备注',
   `app_code` varchar(40) DEFAULT NULL,
-
   `gid` varchar(40) DEFAULT NULL,
   `create_time` datetime NOT NULL COMMENT '创建日期',
   `update_time` datetime DEFAULT NULL,
-  
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='表字段管理';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='数据表(或视图、SQL结果集) 列名定义';
 
 
 
