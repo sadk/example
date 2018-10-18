@@ -21,6 +21,11 @@ import org.lsqt.sys.service.DictionaryService;
 public class DictionaryController {
 	@Inject private DictionaryService dictionaryService; 
 	
+	@RequestMapping(mapping = { "/get_by_id", "/m/get_by_id" })
+	public Dictionary getById(Long id) throws IOException {
+		return dictionaryService.getById(id);
+	}
+	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<Dictionary> queryForPage(DictionaryQuery query) throws IOException {
 		return dictionaryService.queryForPage(query);

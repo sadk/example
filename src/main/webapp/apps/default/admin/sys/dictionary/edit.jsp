@@ -20,8 +20,7 @@
 	</head>
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
-			<input name="id" class="mini-hidden" />
-			<input name="pid" id="pid" class="mini-hidden" />
+			<input id="id" name="id" class="mini-hidden" />
 			<div style="padding-left:11px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
 		            <legend>类别信息</legend>
@@ -62,6 +61,12 @@
 								<td>
 								 	<input id="enable" name="enable" class="mini-combobox" style="width:150px"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
 								</td>
+								<td>上级：</td>
+								<td>
+								 	<input id="pid" name="pid" class="mini-buttonedit" onbuttonclick="onButtonEditParent" />    
+								</td>
+							</tr>
+							<tr>
 								<td>备注：</td>
 								<td> 
 								 	<input id="remark" name="remark" class="mini-textbox"/>
@@ -80,6 +85,7 @@
 			mini.parse();
 
 			var form = new mini.Form("edit-form1");
+		
 		
 	        function onButtonEdit(e) {
 	            var btnEdit = this;
@@ -103,6 +109,36 @@
 	                }
 	            });
 	        }
+	        
+			function onButtonEditParent() { //字典上级选择器
+				var btnEdit = this;
+	            mini.open({
+	                url: "${pageContext.request.contextPath}/apps/default/admin/sys/dictionary/seletor_dictionary.jsp",
+	                title: "选择列表",
+	                width: 650,
+	                height: 380,
+	                ondestroy: function (action) {
+	                    //if (action == "close") return false;
+	                    if (action == "ok") {
+	                        var iframe = this.getIFrameEl();
+	                        var data = iframe.contentWindow.GetData();
+	                        data = mini.clone(data);    //必须
+	                        if (data) {
+	                        	
+	                        	/*上级不能是自己,会造成死循环
+	                        	var idCtl = mini.get("id");
+	                        	if(data.id == idCtl.value) {
+	                        		mini.alert("上级ID不能是自己");
+	                        		return ;
+	                        	}*/
+	                            btnEdit.setValue(data.id);
+	                            btnEdit.setText(data.name);
+	                        }
+	                    }
+
+	                }
+	            });
+			}
 			
 			function SaveData() {
 				var o = form.getData();
@@ -151,6 +187,8 @@
 							}
 							
 							loadCategroyName(o.categoryCode);
+							
+							loadParentName(o.pid);
 						}
 					});
 				}
@@ -166,6 +204,20 @@
 						if(o!=null && o.data!=null && o.data.length>0) {
 							o = o.data[0];
 							mini.get("categoryCode").setText(o.name);
+						}
+					}
+				});
+			}
+			
+			function loadParentName(id){
+				$.ajax({
+					url : "${pageContext.request.contextPath}/dictionary/get_by_id?id="+id,
+					dataType: 'json',
+					cache : false,
+					success : function(text) {
+						if(text) {
+							var o = mini.decode(text);
+							mini.get("pid").setText(o.name);
 						}
 					}
 				});

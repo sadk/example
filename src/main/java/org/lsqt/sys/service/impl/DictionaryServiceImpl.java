@@ -21,6 +21,10 @@ public class DictionaryServiceImpl implements DictionaryService{
 	
 	@Inject private Db db;
 	
+	public Dictionary getById(Long id) {
+		return db.getById(Dictionary.class, id);
+	}
+	
 	public Page<Dictionary>  queryForPage(DictionaryQuery query) {
 		return db.queryForPage("queryForPage", query.getPageIndex(), query.getPageSize(), Dictionary.class, query);
 	}

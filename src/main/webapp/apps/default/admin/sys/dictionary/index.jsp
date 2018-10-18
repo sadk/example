@@ -271,18 +271,18 @@
 		}
 		
 		function add() {
-			var row = grid.getSelected();
-			if(row) {
+			//var row = grid.getSelected();
+			//if(row) {
 				mini.open({
 					url : "${pageContext.request.contextPath}/apps/default/admin/sys/dictionary/edit.jsp",
-					title : "添加分类",
+					title : "添加字典",
 					width : 500,
-					height : 250,
+					height : 280,
 					onload : function() {
 						var iframe = this.getIFrameEl();
 						var data = {
-							action : "add",
-							pid : row.id
+							action : "add"
+							//pid : row.id
 						};
 						iframe.contentWindow.SetData(data);
 					},
@@ -290,9 +290,9 @@
 						grid.reload();
 					}
 				});
-			} else {
-				mini.alert("请选中一条记录");
-			}
+			//} else {
+			//	mini.alert("请选中一条记录");
+			//}
 		}
 		
 

@@ -9,6 +9,8 @@ import org.lsqt.sys.model.DictionaryQuery;
 
 public interface DictionaryService {
 	
+	Dictionary getById(Long id);
+	
 	Page<Dictionary> queryForPage(DictionaryQuery query);
 
 	Dictionary saveOrUpdate(Dictionary model);
