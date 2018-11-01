@@ -31,7 +31,7 @@ public class ConfigInitialization implements Initialization  {
 	
 	@Override
 	public void init() throws Exception {
-		
+		Initialization bannerConfigInit = new BannerConfigInit(); 
 		Initialization globalConstConfigInit = new GlobalConstConfigInit();
 		Initialization webXmlConfigInit = new WebXmlConfigInit(filterConfig);
 		Initialization configPropetiesInit = new ConfigPropertiesInit("/framework.cfg.properties");
@@ -40,7 +40,7 @@ public class ConfigInitialization implements Initialization  {
 		Initialization internalConstConfigInit = new InternalConstConfigInit(filterConfig);
 		Initialization internalContainerInit = new InternalContainerInit();
 		
-		
+		macroList.add(bannerConfigInit);
 		macroList.add(globalConstConfigInit);
 		macroList.add(webXmlConfigInit);
 		macroList.add(configPropetiesInit);
