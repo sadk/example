@@ -144,7 +144,7 @@
 							<#list columnList as column>
 								<#if (column.columnCodegenType?? && column.columnCodegenType == 2)>
 									<div type="comboboxcolumn" field="${column.propertyName}" width="${column.width}" headerAlign="center" visible="<#if (column.hidde?? && column.hidde == 1)>false<#else>true</#if>" align="<#if (column.alignType?? && column.alignType == 1)>left</#if><#if (column.alignType?? && column.alignType == 2)>center</#if><#if (column.alignType?? &&column.alignType == 3)>right</#if>" <#if (column.allowSort?? && column.allowSort == 1)>allowSort="true"</#if>>${column.name}
-											<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="${column.selectorTextCols}" valueField="${column.selectorValueCols }" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
+											<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="${column.selectorTextCols}" valueField="${column.selectorValueCols }" url="<#noparse>${pageContext.request.contextPath}</#noparse>/dictionary/option?code=${column.selectorDataFrom}" />
 									</div>
 								<#elseif (column.columnCodegenType?? && column.columnCodegenType == 9)>
 									<div type="comboboxcolumn" field="${column.propertyName}" width="${column.width}" headerAlign="center" visible="<#if (column.hidde?? && column.hidde == 1)>false<#else>false</#if>" align="<#if (column.alignType?? && column.alignType == 1)>left</#if><#if (column.alignType?? && column.alignType == 2)>center</#if><#if (column.alignType?? &&column.alignType == 3)>right</#if>" <#if (column.allowSort?? && column.allowSort == 1)>allowSort="true"</#if>>${column.name}
