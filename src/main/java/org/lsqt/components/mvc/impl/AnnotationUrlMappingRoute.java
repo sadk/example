@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
-import org.lsqt.components.context.impl.bean.resolve.AnnotationBeanMetaResolveImpl;
+import org.lsqt.components.context.resolve.AnnotationBeanMetaResolveImpl;
 import org.lsqt.components.context.bean.BeanDefinition;
 import org.lsqt.components.context.bean.BeanMetaResolve;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;

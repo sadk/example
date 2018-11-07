@@ -691,6 +691,63 @@ CREATE TABLE `sys_machine` (
 
 
 
+drop table if exists sys_log;
+CREATE TABLE `sys_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  
+  `tenant_code` varchar(100) DEFAULT NULL COMMENT '租户编码',
+  `tenant_name` varchar(200) DEFAULT NULL,
+  `app_code` varchar(40) DEFAULT NULL comment '系统编码',
+  `app_name` varchar(40) DEFAULT NULL comment '系统名称',
+ 
+  
+  `handle_user` varchar(50) DEFAULT NULL COMMENT '操作用户',
+  `handle_time` datetime NOT NULL COMMENT '操作日期',
+  `handle_ip` varchar(15) COMMENT '操作IP',
+  `handle_action` varchar(50) COMMENT '操作行为',
+  `handlers` varchar(200) COMMENT '被操作者',
+  `handle_result` int(2) COMMENT '操作结果 1=成功 0=失败',
+
+  `module_code` varchar(40) DEFAULT NULL comment '模块码',
+  `module_name` varchar(40) DEFAULT NULL comment '模块名',
+  
+  `resource_name` varchar(40) DEFAULT NULL comment '操作日志：访问的资源名称(菜单、URL)',
+  `resource_code` varchar(40) DEFAULT NULL comment '操作日志：访问的资源编码(菜单、URL)',
+  
+  `query_field` varchar(10) DEFAULT NULL comment '操作日志：查询字段',
+  `query_value` varchar(2000) DEFAULT NULL COMMENT '操作日志：查询值',
+  `query_count` bigint(20) DEFAULT NULL COMMENT '操作日志：查询返回数',
+  
+  `remark` varchar(256) DEFAULT NULL ,
+
+  `data_type` varchar(2) comment '1=登陆日志(记录用户登录日志;包含登录成功、失败的各条记录) 2=系统管理日志(记录管理员操作;包括创建、删除账号、启用、禁用账号) 3=用户操作日志(记录用户敏感查询操作、导出操作;包含操作人、查询模块、查询值、查询结果、条数)' 
+  
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime  NOT NULL  COMMENT '更新日期',
+ 
+  PRIMARY KEY (`id`)
+ 
+) ENGINE=myisam AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='系统日志表,如果达到阀值表名跟据日期自动创建';
+
+
+-- 系统日志明系:涉及一个http请求到结束,记录请求资源、请求参数、SQL语句、返回响应的耗时
+drop table  if exists sys_log_detail;
+CREATE TABLE `sys_log_detail` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `log_id` bigint(20) NOT NULL COMMENT '日志ID',
+  `execute_type` int(2) DEFAULT NULL COMMENT '1=http 2=SQL',
+  `execute_content` text DEFAULT NULL COMMENT '执行的请求内容,如果是http就是url; 如果是SQL语句就是语句',
+  `execute_param` text DEFAULT NULL COMMENT '执行的内容参数值',  
+  `execute_sn` int(4) default 0  COMMENT '执行的堆栈序号',
+  
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL,
+  `update_time` datetime DEFAULT NULL,
+  
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_cms_content_code` (`code`) USING BTREE
+) ENGINE=myisam AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='日志明细';
 
 
 

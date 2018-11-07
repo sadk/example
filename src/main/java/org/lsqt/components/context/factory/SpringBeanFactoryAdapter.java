@@ -1,4 +1,4 @@
-package org.lsqt.components.context.impl.bean.factory;
+package org.lsqt.components.context.factory;
 
 import org.lsqt.components.context.bean.BeanException;
 import org.lsqt.components.context.bean.BeanFactory;

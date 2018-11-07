@@ -1,5 +1,8 @@
 package org.lsqt.components.mvc;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +23,7 @@ public class BannerConfigInit implements Order,Initialization{
 " | |___>  < (_| | | | | | | |_) | |  __/ | | | | | (_| | | | | | |  __/\\ V  V / (_) | |  |   < " + "\n" +
 " \\____/_/\\_\\__,_|_| |_| |_| .__/|_|\\___| \\_| |_|  \\__,_|_| |_| |_|\\___| \\_/\\_/ \\___/|_|  |_|\\_\\" + "\n" +
 "                          | |                                                                  " + "\n" +
-"                          |_|                                                                  " ;
+"                          |_|                                                                  " + "\n";
 
 	private static final String buddha =  
 	"            ////////////////////////////////////////////////////////////////////" 		+ "\n" +
@@ -57,9 +60,9 @@ public class BannerConfigInit implements Order,Initialization{
 		this.order = order;
 	}
 
-	public void init() {
-		System.out.println(buddha+banner);
-		
+	public void init() throws InterruptedException {
+		System.out.println(banner + buddha);
+		//Thread.sleep(1500L);
 	}
 
 }

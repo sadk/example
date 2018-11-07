@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.lsqt.components.context.CacheReflectUtil;
 import org.lsqt.components.context.Result;
 import org.lsqt.components.context.annotation.Component;
 import org.lsqt.components.context.annotation.Controller;
@@ -16,7 +17,6 @@ import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.context.annotation.mvc.Before;
 import org.lsqt.components.context.annotation.mvc.Match;
 import org.lsqt.components.context.bean.BeanFactory;
-import org.lsqt.components.context.impl.util.CacheMethodUtil;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.mvc.impl.UrlMappingRoute;
@@ -141,7 +141,7 @@ public class BeforeHandleChain implements Chain{
 		if (before != null) {
 			Class<?> processClass = before.clazz();
 
-			List<Method> processMethodList = CacheMethodUtil.getMethodList(processClass);
+			List<Method> processMethodList = CacheReflectUtil.getMethodList(processClass);
 
 			if (ArrayUtil.isNotBlank(processMethodList)) {
 				 

@@ -5,6 +5,7 @@ package org.lsqt.components.context;
  * @author Sky
  *
  */
+@Deprecated
 public interface LifeCycle {
 	
 	//配置启动：~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,4 +1,4 @@
-package org.lsqt.components.context.impl.bean.factory;
+package org.lsqt.components.context.factory;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -10,16 +10,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.lsqt.components.context.CacheReflectUtil;
 import org.lsqt.components.context.annotation.Component;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Dao;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Scope;
 import org.lsqt.components.context.annotation.Service;
-import org.lsqt.components.context.impl.bean.meta.AnnotationBeanDefinition;
-import org.lsqt.components.context.impl.bean.meta.BeanWrapper;
-import org.lsqt.components.context.impl.bean.resolve.AnnotationBeanMetaResolveImpl;
-import org.lsqt.components.context.impl.util.CacheReflect;
+import org.lsqt.components.context.meta.AnnotationBeanDefinition;
+import org.lsqt.components.context.meta.BeanWrapper;
+import org.lsqt.components.context.resolve.AnnotationBeanMetaResolveImpl;
 import org.lsqt.components.context.bean.BeanDefinition;
 import org.lsqt.components.context.bean.BeanException;
 import org.lsqt.components.context.bean.BeanFactory;
@@ -129,7 +129,7 @@ public class AnnotationBeanFactory implements BeanFactory{
 		for(BeanWrapper obj:singletonObjectList) {
 			
 			//处理域注解
-			List<Field> fields = CacheReflect.getBeanField(obj.getBeanDefinition().getBeanClass());
+			List<Field> fields = CacheReflectUtil.getBeanField(obj.getBeanDefinition().getBeanClass());
 			for(Field e: fields){
 				processInjectForField(obj,e,fieldInfo,singletonCompleted);
 			}
@@ -204,7 +204,7 @@ public class AnnotationBeanFactory implements BeanFactory{
 		
 		BeanWrapper beanWapper = new BeanWrapper(def, bean,false) ;
 		final Map<Field, Integer> fieldInfo = new ConcurrentHashMap<Field, Integer>();
-		List<Field> fields = CacheReflect.getBeanField(requiredType);
+		List<Field> fields = CacheReflectUtil.getBeanField(requiredType);
 		for(Field e: fields){
 			
 			processInjectForField(beanWapper,e,fieldInfo,new LinkedHashSet<BeanWrapper>(singletonObjectList));
@@ -238,7 +238,7 @@ public class AnnotationBeanFactory implements BeanFactory{
 		
 			BeanWrapper beanWapper = new BeanWrapper(def, bean,true) ;
 			final Map<Field, Integer> fieldInfo = new ConcurrentHashMap<Field, Integer>();
-			List<Field> fields = CacheReflect.getBeanField(requiredType);
+			List<Field> fields = CacheReflectUtil.getBeanField(requiredType);
 			for(Field e: fields){
 				processInjectForField(beanWapper,e,fieldInfo,new LinkedHashSet<BeanWrapper>(singletonObjectList));
 			}
@@ -289,7 +289,7 @@ public class AnnotationBeanFactory implements BeanFactory{
 		if (currObject == currObject.getOriginalBean()) return ;
 
 		
-		List<Field> fds = CacheReflect.getBeanField(currObject.getOriginalBean().getClass());
+		List<Field> fds = CacheReflectUtil.getBeanField(currObject.getOriginalBean().getClass());
 		
 		if(fds == null || fds.size() == 0) return ;
 		
@@ -321,7 +321,7 @@ public class AnnotationBeanFactory implements BeanFactory{
 		//级联处理子对象(注意处理循环依赖!!!)
 		if (fieldValue != null) {
 			if (rootDef!=null) { // 定义在spring的xml里的bean在自己的IOC容器框架中是没有bean的元信息定义的
-				List<Field> list = CacheReflect.getBeanField(rootDef.getBeanClass());
+				List<Field> list = CacheReflectUtil.getBeanField(rootDef.getBeanClass());
 				if (list == null || list.size() == 0) return;
 				
 				for (Field e : list) {

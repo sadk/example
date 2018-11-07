@@ -67,7 +67,7 @@ public class FreemarkViewHandler implements ViewHandler{
 		String fileName = tmpl.substring(tmpl.lastIndexOf("/")+1, tmpl.length());
 		String fileDir = tmpl.substring(0,tmpl.lastIndexOf("/"));
 		
-		String root = ViewResolveFtlUtil.class.getResource("/").getPath();
+		String root = FreemarkViewHandler.class.getResource("/").getPath();
 		File templateFile = new File(root+fileDir);
 		
 		log.debug("loading freemark template path: {}",templateFile.getPath());

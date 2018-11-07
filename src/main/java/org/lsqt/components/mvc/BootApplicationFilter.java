@@ -35,6 +35,8 @@ public class BootApplicationFilter implements Filter{
 			e.printStackTrace();
 			System.exit(-1);
 		}
+		
+		// machine.startup();
 	}
 
 	

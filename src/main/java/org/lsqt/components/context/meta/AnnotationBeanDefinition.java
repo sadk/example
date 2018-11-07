@@ -1,4 +1,4 @@
-package org.lsqt.components.context.impl.bean.meta;
+package org.lsqt.components.context.meta;
 
 import org.lsqt.components.context.bean.BeanDefinition;
 

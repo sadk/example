@@ -1,4 +1,4 @@
-package org.lsqt.components.context.impl.util;
+package org.lsqt.components.context;
 
 import java.io.Closeable;
 import java.io.File;
@@ -10,7 +10,7 @@ import java.util.Properties;
 import org.lsqt.components.context.bean.BeanException;
 
 
-
+@Deprecated
 final public class MetaInfoUtil {
 	
 	public static final String FILE_NAME_IN_META_INFO="framework-default.properties";

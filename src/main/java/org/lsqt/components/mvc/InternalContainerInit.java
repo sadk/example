@@ -1,11 +1,18 @@
 package org.lsqt.components.mvc;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.lsqt.components.context.annotation.OnStarted;
+import org.lsqt.components.context.bean.BeanDefinition;
 import org.lsqt.components.context.bean.BeanFactory;
-import org.lsqt.components.context.impl.bean.factory.AnnotationBeanFactory;
-import org.lsqt.components.context.impl.bean.factory.SpringBeanFactoryAdapter;
+import org.lsqt.components.context.factory.AnnotationBeanFactory;
+import org.lsqt.components.context.factory.SpringBeanFactoryAdapter;
 import org.lsqt.components.mvc.impl.AnnotationUrlMappingRoute;
 import org.lsqt.components.mvc.impl.UrlMappingRoute;
 import org.slf4j.Logger;
@@ -50,9 +57,31 @@ public class InternalContainerInit implements Order,Initialization {
 	public void init() {
 		EXECUTOR.execute(() -> {
 			initAsynchronous();
+			onStarted();
 			finished();
 			log.info("Application startup successful.");
 		});
+	}
+	
+	/**
+	 * 容器启动事件响应
+	 */
+	private void onStarted() {
+		AnnotationBeanFactory annotationFactory = (AnnotationBeanFactory)beanFactory;
+		List<BeanDefinition> list = annotationFactory.getBeanDefinitions();
+		for (BeanDefinition e: list) {
+			Class<?> clazz = e.getBeanClass();
+			if (clazz.isAnnotationPresent(OnStarted.class)) {
+				Set<Method> methodSet = new HashSet<>();
+				
+				methodSet.addAll(Arrays.asList(clazz.getDeclaredMethods()));
+				methodSet.addAll(Arrays.asList(clazz.getMethods()));
+				
+				for (Method m: methodSet) {
+					
+				}
+			}
+		}
 	}
 	
 	/**
@@ -75,9 +104,11 @@ public class InternalContainerInit implements Order,Initialization {
 		log.info("Spring Container initially successful");
 		
 		
-		//MVC
+		// MVC
 		urlMappingRoute = new AnnotationUrlMappingRoute(factory.getBeanDefinitions()).buildUrlMapping();
 		log.info("Internal MVC Component initially successful");
+		
+		
 		
 	}
 	

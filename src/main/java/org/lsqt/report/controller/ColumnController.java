@@ -68,6 +68,7 @@ public class ColumnController {
 			for(Column e: list) {
 				db.update(e);
 			}
+			return list;
 		}
 		return ArrayUtil.EMPTY_LIST;
 	}

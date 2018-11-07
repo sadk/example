@@ -1,4 +1,4 @@
-package org.lsqt.components.context.impl.bean.factory;
+package org.lsqt.components.context.factory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,12 +17,12 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.lsqt.components.context.impl.bean.meta.BeanWrapper;
-import org.lsqt.components.context.impl.bean.resolve.XmlBeanMetaResolveImpl;
 import org.lsqt.components.context.bean.BeanDefinition;
 import org.lsqt.components.context.bean.BeanException;
 import org.lsqt.components.context.bean.BeanFactory;
 import org.lsqt.components.context.bean.BeanMetaResolve;
+import org.lsqt.components.context.meta.BeanWrapper;
+import org.lsqt.components.context.resolve.XmlBeanMetaResolveImpl;
 import org.lsqt.components.util.lang.StringUtil;
 
 /**

@@ -9,7 +9,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -34,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.lsqt.components.context.CacheReflectUtil;
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.Result;
 import org.lsqt.components.context.annotation.Component;
@@ -47,9 +47,8 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.context.annotation.mvc.RequestPayload;
 import org.lsqt.components.context.bean.BeanFactory;
-import org.lsqt.components.context.impl.bean.factory.AnnotationBeanFactory;
-import org.lsqt.components.context.impl.bean.factory.SpringBeanFactoryAdapter;
-import org.lsqt.components.context.impl.util.CacheMethodUtil;
+import org.lsqt.components.context.factory.AnnotationBeanFactory;
+import org.lsqt.components.context.factory.SpringBeanFactoryAdapter;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.mvc.impl.AnnotationUrlMappingRoute;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;
@@ -636,7 +635,7 @@ public class ApplicationFilter implements Filter{
 		if (before != null) {
 			Class<?> processClass = before.clazz();
 
-			List<Method> processMethodList = CacheMethodUtil.getMethodList(processClass);
+			List<Method> processMethodList = CacheReflectUtil.getMethodList(processClass);
 
 			if (ArrayUtil.isNotBlank(processMethodList)) {
 				 
@@ -771,7 +770,7 @@ public class ApplicationFilter implements Filter{
 		if (after != null) {
 			Class<?> processClass = after.clazz();
 
-			List<Method> methodList = CacheMethodUtil.getMethodList(processClass);
+			List<Method> methodList = CacheReflectUtil.getMethodList(processClass);
 
 			if (ArrayUtil.isNotBlank(methodList)) {
 				Method processMethod = null;

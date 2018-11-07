@@ -1,4 +1,4 @@
-package org.lsqt.components.context.impl.bean.resolve;
+package org.lsqt.components.context.resolve;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -8,10 +8,10 @@ import org.lsqt.components.context.annotation.Component;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Dao;
 import org.lsqt.components.context.annotation.Service;
-import org.lsqt.components.context.impl.bean.meta.AnnotationBeanDefinition;
 import org.lsqt.components.context.bean.BeanDefinition;
 import org.lsqt.components.context.bean.BeanException;
 import org.lsqt.components.context.bean.BeanMetaResolve;
+import org.lsqt.components.context.meta.AnnotationBeanDefinition;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.components.util.reflect.ClassLoaderUtil;

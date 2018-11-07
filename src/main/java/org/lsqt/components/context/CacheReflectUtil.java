@@ -1,4 +1,4 @@
-package org.lsqt.components.context.impl.util;
+package org.lsqt.components.context;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -18,7 +18,7 @@ import org.lsqt.components.util.bean.BeanUtil;
  * @author Sky
  *
  */
-public abstract class CacheReflect{
+public class CacheReflectUtil{
 	/**Bean的getter和setter方法**/
 	private static final Map<Class<?>,List<Method>> BEAN_METHODS_GETTER_AND_SETTER = new ConcurrentHashMap<Class<?>,List<Method>>();
 	private static final Map<Class<?>,List<Method>> BEAN_METHODS_SETTER = new ConcurrentHashMap<Class<?>,List<Method>>();
@@ -26,6 +26,10 @@ public abstract class CacheReflect{
 	
 	private static final Map<Class<?>,List<Field>> BEAN_FIELDS = new ConcurrentHashMap<Class<?>,List<Field>>();
 	private static final Map<Class<?>,Map<Field,Method>> BEAN_FIELD_METHOD_MAPPING = new ConcurrentHashMap<Class<?>,Map<Field,Method>>();
+	
+	/** 整个类的所有方法，包含继承的、接口、私有的、保护的等等，所有方法 **/
+	public static final Map<Class<?>, List<Method>> CLASS_METHODS = new ConcurrentHashMap<Class<?>, List<Method>>();
+	
 	
 	public static List<Method> getBeanSetterGetterMethod(Class<?> clazz) {
 		if (BEAN_METHODS_GETTER_AND_SETTER.containsKey(clazz)) {
@@ -155,6 +159,29 @@ public abstract class CacheReflect{
 
 		return rs;
 	}
+	
+	/**
+	 * 获取一个类的所有方法（包含继承的、接口、私有的、保护的等等，所有方法）
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public static List<Method> getMethodList(Class<?> clazz) {
+		if (CLASS_METHODS.containsKey(clazz)) {
+			return CLASS_METHODS.get(clazz);
+		}
+
+		List<Method> methodList = new ArrayList<>();
+
+		for (Class<?> superClass = clazz; superClass != Object.class; superClass = superClass.getSuperclass()) {
+			for (Method f : superClass.getDeclaredMethods()) {
+				methodList.add(f);
+			}
+		}
+
+		return methodList;
+	}
+	
 	
 	/**
 	 * @param args

@@ -7,10 +7,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.lsqt.components.context.CacheReflectUtil;
 import org.lsqt.components.context.annotation.model.Pattern;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
-import org.lsqt.components.context.impl.util.CacheReflect;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.util.lang.StringUtil;
 import org.slf4j.LoggerFactory;
@@ -70,7 +70,7 @@ public class ViewResolveJSONUtil {
 		}
 		
 		private String getDateField(Object object ,String name) {
-			List<Field> list = CacheReflect.getBeanField(object.getClass());
+			List<Field> list = CacheReflectUtil.getBeanField(object.getClass());
 			if(list == null || list.size() == 0) return null;
 			for (Field f : list) {
 				if(name.equals(f.getName()) && Date.class.isAssignableFrom(f.getType())){

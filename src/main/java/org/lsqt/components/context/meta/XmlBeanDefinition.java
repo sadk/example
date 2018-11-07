@@ -1,4 +1,4 @@
-package org.lsqt.components.context.impl.bean.meta;
+package org.lsqt.components.context.meta;
 
 import java.util.ArrayList;
 import java.util.List;

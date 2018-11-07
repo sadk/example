@@ -1,4 +1,4 @@
-package org.lsqt.components.context.impl.bean.resolve;
+package org.lsqt.components.context.resolve;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -11,8 +11,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.lsqt.components.context.annotation.Scope;
-import org.lsqt.components.context.impl.bean.meta.XmlBeanDefinition;
-import org.lsqt.components.context.impl.bean.meta.XmlBeanDefinition.ProperyItem;
+import org.lsqt.components.context.meta.XmlBeanDefinition;
+import org.lsqt.components.context.meta.XmlBeanDefinition.ProperyItem;
 import org.lsqt.components.context.bean.BeanDefinition;
 import org.lsqt.components.context.bean.BeanException;
 import org.lsqt.components.context.bean.XmlConfig.AttrFactoryConfig;

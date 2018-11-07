@@ -86,7 +86,7 @@
 	    <version>1.27-SNAPSHOT</version>
 	</dependency>
 	
-<!-- 堆外内存数据库 , 一般不如堆内的ConccurntHashMap 
+<!-- 堆外内存数据库 , 一般不如堆内的ConccurntHashMap
  <dependency>
     <groupId>org.mapdb</groupId>
     <artifactId>mapdb</artifactId>

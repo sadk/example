@@ -9,19 +9,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lsqt.components.context.CacheReflectUtil;
 import org.lsqt.components.context.annotation.model.Pattern;
-import org.lsqt.components.context.impl.util.CacheReflect;
-import org.lsqt.components.db.orm.ftl.FtlDbExecute;
 import org.lsqt.components.util.bean.BeanUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.alibaba.fastjson.JSON;
 
 
 @SuppressWarnings("unused")
@@ -47,7 +43,7 @@ public final class ActionFormUtil {
 		}
 		
 		
-		List<Field> list = CacheReflect.getBeanField(bean.getClass());
+		List<Field> list = CacheReflectUtil.getBeanField(bean.getClass());
 		for(Field e : list) {
 			
 				if(isCanBeBaseType(e.getType())){
@@ -79,7 +75,7 @@ public final class ActionFormUtil {
 		if (key.split("\\.").length > maxLevel) return;
 		
 		Class<?> type = beanField.getType();
-		List<Field> list = CacheReflect.getBeanField(type);
+		List<Field> list = CacheReflectUtil.getBeanField(type);
 		
 		Object beanFiledValue = null;
 		boolean isCreateSub = false;

@@ -1,7 +1,7 @@
 package org.lsqt.components.mvc;
 
 import org.lsqt.components.context.bean.BeanFactory;
-import org.lsqt.components.context.impl.bean.factory.AnnotationBeanFactory;
+import org.lsqt.components.context.factory.AnnotationBeanFactory;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.mvc.impl.AnnotationUrlMappingRoute;
 import org.slf4j.Logger;

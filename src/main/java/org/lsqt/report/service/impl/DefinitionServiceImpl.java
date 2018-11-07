@@ -244,7 +244,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 		try {
 			Connection switchConn = ds.getConnection();
 			db.setCurrentConnection(switchConn); //切换到报表数据源!!!!
-			db.executePlan(false,() -> {//查询不开启事务!!
+			db.executePlan(false,() -> { //查询不需要开启事务!!
 				try {
 					rs.data = queryData(db,model,formMap); //queryData方法体中所有方法已切换到报表数据源，如果中间方法有调用db.xxx方法的将不是当前系统数据库
 				} catch (Exception e) {

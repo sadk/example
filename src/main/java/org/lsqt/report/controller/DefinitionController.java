@@ -140,7 +140,7 @@ public class DefinitionController {
 	}
 
 	
-	@RequestMapping(mapping = { "/search", "/m/search" }, text = "通用报表查询",isTransaction = false)
+	@RequestMapping(mapping = { "/search", "/m/search" }, text = "通用报表查询",isTransaction = false) //查询不需要开启事务
 	public Object search(Long reportDefinitionId) throws Exception {
 		if(reportDefinitionId == null) {
 			return new Page.PageModel<>();

@@ -5,11 +5,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.lsqt.components.context.CacheReflectUtil;
 import org.lsqt.components.context.Result;
 import org.lsqt.components.context.annotation.mvc.After;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.bean.BeanFactory;
-import org.lsqt.components.context.impl.util.CacheMethodUtil;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.mvc.impl.UrlMappingRoute;
@@ -138,7 +138,7 @@ public class ControllerInvokeChain implements Chain{
 		if (after != null) {
 			Class<?> processClass = after.clazz();
 
-			List<Method> methodList = CacheMethodUtil.getMethodList(processClass);
+			List<Method> methodList = CacheReflectUtil.getMethodList(processClass);
 			if (ArrayUtil.isBlank(methodList)) {
 				log.warn("类 {} 没有定义方法", processClass);
 				return ;
