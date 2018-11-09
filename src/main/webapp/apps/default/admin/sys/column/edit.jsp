@@ -51,7 +51,7 @@
 								<td>字段注释：</td>
 								<td>
 								 	<input name="comment" id="comment" class="mini-textbox" />
-								</td>
+								</td> 
 							</tr> 
 				        </table>
 				    </div>
