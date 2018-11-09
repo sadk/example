@@ -119,7 +119,9 @@
 										
 										<div field="url" width="260" headerAlign="center" allowSort="true"  align="left">数据链接地址</div>	
 										<div field="loginName" width="80" headerAlign="center" allowSort="true">登陆名</div>
+										<!-- 
 										<div field="loginPassword" width="80" headerAlign="center" allowSort="true">登陆密码</div>
+										 -->
 										<div field="driverClassName" width="160" headerAlign="center" allowSort="true">数据库动</div>	
 																					
 										

@@ -53,7 +53,7 @@
 								</td>
 								<td>登陆密码：</td>
 								<td>
-									<input name="loginPassword" id="loginPassword" class="mini-textbox" />
+									<input name="loginPassword" id="loginPassword" class="mini-password" />
 								</td>
 							</tr>
 							<tr>
