@@ -77,7 +77,7 @@ public class TableServiceImpl implements TableService{
 			Table table = db.getById(Table.class, id);
 			if(table!=null) {
 				// 删除表对应的“字段定义”
-				int temp =db.executeUpdate("delete from "+db.getFullTable(Column.class)+" where db_name=? and table_name=? and version=?", table.getDbName(),table.getTableName(),table.getVersion());
+				int temp =db.executeUpdate("delete from "+db.getFullTable(Column.class)+" where db_name=? and definition_name=? and version=?", table.getDbName(),table.getTableName(),table.getVersion());
 				cnt += temp;
 			}
 		}

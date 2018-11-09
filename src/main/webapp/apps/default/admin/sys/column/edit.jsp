@@ -44,7 +44,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td>是否是键：</td>
+								<td>是否是主键：</td>
 								<td>
 								 	<input id="primaryKey" name="primaryKey"   onvaluechanged="onPrimaryKeyChanged" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
 								</td>

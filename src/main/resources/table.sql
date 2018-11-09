@@ -2457,4 +2457,87 @@ CREATE TABLE `api_request_mock` (
 
 
 
+-- ##################################################### 演示使用的表 ##################################################
+
+drop table  IF EXISTS  demo_user ;
+CREATE TABLE `demo_user` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT comment 'ID值 Long',
+
+  `code` varchar(50) DEFAULT NULL COMMENT '编码 String',
+  `name` varchar(100) DEFAULT NULL COMMENT '技能名称 String',
+  
+  
+  `user_babies` int(2) DEFAULT NULL COMMENT '用户的小孩数 Byte',
+  `user_house_count` integer(2) DEFAULT NULL COMMENT '用户的房子数 Integer',
+  `month_salary` double(10,2) DEFAULT NULL COMMENT '月薪 double',
+  `day_salary` float(10,2) DEFAULT NULL COMMENT '月薪 float',
+  
+  `is_boss` bit DEFAULT NULL COMMENT '是否是老板 Boolean',
+  `employee_count` decimal(10,0) DEFAULT NULL COMMENT '拥有的员工数 BigInteger',
+  `year_salary` decimal(10,4) DEFAULT NULL COMMENT '年薪 BigDecimal',
+
+
+  `birthday` datetime DEFAULT NULL COMMENT '生日 Date(起始值)',
+  `leave_date` datetime DEFAULT NULL COMMENT '毕业日期（单值)',
+  
+  
+  `head_img` varchar(1000) DEFAULT NULL COMMENT '用户头像(File)',
+  `sex` bigint(2) DEFAULT NULL comment '性别(字典)' ,
+  `department` varchar(50) DEFAULT NULL COMMENT '用户主部门(选择器-单选)',
+  `department_list` varchar(50) DEFAULT NULL COMMENT '用户部门(选择器-多选)',
+  
+  `eable` int(1) DEFAULT NULL COMMENT '是否启用(字典)',
+  `remark` varchar(256) DEFAULT NULL,
+  `app_code` varchar(40) DEFAULT NULL,
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  `sn` int(4) DEFAULT NULL,
+
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户信息表 - 代码生成测试用';
+
+
+drop table  IF EXISTS  demo_address ;
+CREATE TABLE `demo_address` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT comment '地址ID Long',
+  `user_id` bigint(2) DEFAULT NULL comment '用户ID Long' ,
+  `code` varchar(50) DEFAULT NULL COMMENT '编码 String',
+  `name` varchar(100) DEFAULT NULL COMMENT '地址名称 String',
+  
+
+  `building_height` decimal(10,4) DEFAULT NULL COMMENT '地址楼高 BigDecimal',
+  `building_box` decimal(10,0) DEFAULT NULL COMMENT '建筑的砖头数 BigInteger',
+  
+  `building_house_desk` int(2) DEFAULT NULL COMMENT '建筑的桌子数 Byte',
+  `building_human_count` int(8) DEFAULT NULL COMMENT '建筑容纳的人数 Integer',
+  `building_length` float(10,2) DEFAULT NULL COMMENT '地址楼长 Float',
+  `building_width` double(10,2) DEFAULT NULL COMMENT '地址楼宽 Double',
+  
+
+  `regist_date` datetime DEFAULT NULL COMMENT '注册日期 Date(起始值)',
+  `come_in_date` datetime DEFAULT NULL COMMENT '入住日期 Date(单值)',
+  
+  
+  `building_img` varchar(1000) DEFAULT NULL COMMENT '地址图片(File)',
+  
+  `building_province` varchar(50) DEFAULT NULL COMMENT '建筑所在省份(选择器-单选)',
+  `duilding_dev` varchar(50) DEFAULT NULL COMMENT '建筑开发商(选择器-多选)',
+  
+  `eable` int(1) DEFAULT NULL COMMENT '是否启用(字典)',
+  `remark` varchar(256) DEFAULT NULL,
+  `app_code` varchar(40) DEFAULT NULL,
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  `sn` int(4) DEFAULT NULL,
+
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户表子表,联系地址';
+
+
+
+
+
+
 commit;
