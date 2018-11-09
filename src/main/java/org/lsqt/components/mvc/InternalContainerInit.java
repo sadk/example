@@ -1,9 +1,7 @@
 package org.lsqt.components.mvc;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -162,7 +160,7 @@ public class InternalContainerInit implements Order,Initialization {
 				for (MethodWrap mw : toDoList) {
 					Object instance = beanFactory.getBean(mw.clazz);
 					mw.method.invoke(instance,MethodWrap.fillNullParam(mw.method));
-					log.info("The method \"{}\" has been invoked has been invoked after application startup, and the signature of the method is: {}", mw.method.getName(),mw.method);
+					log.info("The method \"{}\" has been invoked after application startup, and the signature of the method is: {}", mw.method.getName(),mw.method);
 				}
 			}
 		}
@@ -215,7 +213,7 @@ public class InternalContainerInit implements Order,Initialization {
 						
 						Object instance = beanFactory.getBean(c.clazz);
 						currMethod.invoke(instance,MethodWrap.fillNullParam(currMethod));
-						log.info("The method \"{}\" has been invoked has been invoked after application startup, and the signature of the method is: {}",currMethod.getName(),currMethod);
+						log.info("The method \"{}\" has been invoked after application startup, and the signature of the method is: {}",currMethod.getName(),currMethod);
 					} else {
 						MethodWrap.invokeOnStartMethodList(beanFactory, methodList);
 					}

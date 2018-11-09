@@ -35,12 +35,13 @@ public class Machine {
 	/** 端口 */
 	private String port;
 	
+	/** 服务器类型: 1=数据库服务器  2=redis服务器 3=rabitMQ服务器 */
 	private String type; 
-	/** 数据源管理属性 */public static final String TYPE_DATASOURCE="datasource";
-	/** redis连接属性 */public static final String TYPE_REDIS="redis";
+	public static final String TYPE_DATASOURCE="1";
+	public static final String TYPE_REDIS="2";
+	public static final String TYPE_RABIT_MQ = "3";
 
 	/** 排序 */
-
 	private Integer sn;
 
 	/** 备注 */
@@ -50,11 +51,9 @@ public class Machine {
 	private String gid;
 
 	/** 创建日期 */
-
 	private java.util.Date createTime;
 
 	/***/
-
 	private java.util.Date updateTime;
 
 	// getter、setter

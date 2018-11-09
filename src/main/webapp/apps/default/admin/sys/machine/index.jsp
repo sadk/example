@@ -158,7 +158,7 @@
 	        
 			grid.on("rowclick", function(e){
 				var record = e.record;
-				propertyGrid.load({parentCode:record.code,type:'matchine'});
+				propertyGrid.load({parentCode:record.code});
 			});
 			function refresh() {
 				grid.load({});
@@ -243,19 +243,27 @@
 					array.push(rows[i].id)
 				}
 				data.ids = array.join(",")
-				$.ajax({
-					url : "${pageContext.request.contextPath}/property/delete",
-					type : 'post', cache : false,
-					data: data,
-					success : function(text) {
-						mini.alert("删除成功!");
-						propertyGrid.reload();
-					},
-					error : function(data) {
-				  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
-				  		mini.alert("连接失败!"+data.statusText);
-					}
-				});
+				
+		        mini.confirm("确定删除记录？", "确定？",
+		            function (action) {
+		                if (action == "ok") {
+		    				$.ajax({
+		    					url : "${pageContext.request.contextPath}/property/delete",
+		    					type : 'post', cache : false,
+		    					data: data,
+		    					success : function(text) {
+		    						mini.alert("删除成功!");
+		    						propertyGrid.reload();
+		    					},
+		    					error : function(data) {
+		    				  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
+		    				  		mini.alert("删除失败!"+data.statusText);
+		    					}
+		    				});
+		                }  
+		            }
+		        );
+
 			}
 			
 			
