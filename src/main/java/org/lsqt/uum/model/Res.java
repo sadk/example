@@ -33,6 +33,9 @@ public class Res {
 	
 	/**1=启用 0=禁用 -1=已删除**/
 	private Integer status;
+	public static int STATUS_启用=1;
+	public static int STATUS_禁用=0;
+	public static int STATUS_已删除=1;
 	
 	private String url;
 	

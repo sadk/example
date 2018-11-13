@@ -15,6 +15,8 @@ import org.lsqt.uum.util.CodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSON;
+
 /**
  * 主要用来判断是否启用登陆、是否已登陆
  * @author mm
@@ -77,8 +79,11 @@ public class AuthenticationChain implements Chain{
 	 * @return
 	 */
 	private boolean isLogined() {
+		String uri = request.getRequestURI();
+		System.out.println(uri);
+		
 		List<String> uidList = null;
-
+		
 		// 获取第一个cookie
 		Cookie[] cookies = request.getCookies();
 		if(cookies == null) {

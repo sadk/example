@@ -18,6 +18,8 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.mvc.AuthenticationNode;
+import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.uum.model.Group;
 import org.lsqt.uum.model.GroupQuery;
@@ -134,10 +136,24 @@ public class UserController {
 		return Result.ok("已退出");
 	}
 	
-	
+	private static List<AuthenticationNode> toResNodeList(List<Res> list) {
+		List<AuthenticationNode> data = new ArrayList<>();
+		if (ArrayUtil.isBlank(list)) {
+			return data;
+		}
+		for (Res r: list) {
+			AuthenticationNode node = new AuthenticationNode();
+			node.id = r.getId();
+			node.pid = r.getPid();
+			node.name = r.getName();
+			node.code = r.getCode();
+			data.add(node);
+		}
+		return data;
+	}	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(mapping = { "/login", "/m/login"},text="cooke的key是(登陆账号明文-->对称加密-->16进制串表示)后的散列值，value是（密码明文+盐分 的16进制串表示）后的散列值")
-	public Result<User> login(String username,String password) {
+	public Result<User> login(String username,String password) throws Exception {
 		if (StringUtil.isBlank(username)) {
 			return Result.fail("登陆账号不能为空");
 		}
@@ -162,7 +178,13 @@ public class UserController {
 				return Result.fail("密码错误");
 			}
 			
-			writeCookie(user.getId().toString(),user.getName(),username,password);
+			ResQuery resQuery = new ResQuery();
+			resQuery.setStatus(Res.STATUS_启用);
+			resQuery.setType(Res.TYPE_页面元素);
+			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_ACCOUNT_OBJECT, user.getLoginName());
+			List<Res> resList = getPermissionList(resQuery);
+			
+			writeCookie(user.getId().toString(),user.getName(),username,password,toResNodeList(resList));
 			return Result.ok(user);
 		}
 		
@@ -217,7 +239,13 @@ public class UserController {
 		}
 		
 		
-		writeCookie(dbUser.getId().toString(),dbUser.getName(),username, password);
+		ResQuery resQuery = new ResQuery();//status=1&type=100
+		resQuery.setStatus(Res.STATUS_启用);
+		resQuery.setType(Res.TYPE_页面元素);
+		ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_ACCOUNT_OBJECT, dbUser.getLoginName());
+		List<Res> resList = getPermissionList(resQuery);
+		
+		writeCookie(dbUser.getId().toString(),dbUser.getName(),username, password,toResNodeList(resList));
 		
 	 
 		return Result.ok(dbUser,"登陆成功");
@@ -231,14 +259,17 @@ public class UserController {
 	 * @param name 用户姓名
 	 * @param loginName 用户登陆账号
 	 * @param password 明文密码
+	 * @param data 资源权限数据(写到cookie)
+	 * @throws Exception 
 	 */
-	private void writeCookie(String id,String name,String loginName, String password) {
+	private void writeCookie(String id,String name,String loginName, String password,List<AuthenticationNode> data) throws Exception {
 		HttpServletResponse response = ContextUtil.getResponse();
+		
 
 		String passwodEncrypted = CodeUtil.passwodEncrypt(password + User.PWD_SALT);
-		long currTime = System.currentTimeMillis();
+		String currTime = System.currentTimeMillis()+"";
 		// 第一个cookie存（uid）<==>（账号，密码，时间戳,id,姓名）
-		List<String> uidValue = Arrays.asList(loginName, passwodEncrypted, currTime + "", id , name);
+		List<String> uidValue = Arrays.asList(loginName, passwodEncrypted, currTime , id , name);
 		Cookie uid = new Cookie("uid", CodeUtil.simpleEncode(StringUtil.join(uidValue)));
 		uid.setPath("/");
 		uid.setMaxAge(-1);
@@ -250,6 +281,20 @@ public class UserController {
 		userCookie.setPath("/");
 		userCookie.setMaxAge(-1);// 关闭即消失
 		response.addCookie(userCookie);
+		
+		// 第三个cookie存放页面资源
+		List<String> permissionList = new ArrayList<>();
+		for(AuthenticationNode e: data) {
+			permissionList.add(e.code);
+		}
+		String resText = CodeUtil.byte2hex(JSON.toJSONString(permissionList).getBytes());
+		Cookie permission = new Cookie("uauth",resText);
+		permission.setPath("/");
+		permission.setMaxAge(-1);
+		response.addCookie(permission);
+		
+		
+		
 	}
 	@RequestMapping(mapping = { "/get_all_user_by_orgid", "/m/get_all_user_by_orgid" },text="获取部门下的用户(多层)")
 	public Page<User> getAllUserByOrgId(UserQuery query){
@@ -335,6 +380,10 @@ public class UserController {
 				
 			} else {
 				String loginName = ContextUtil.getLoginAccount();
+				if (StringUtil.isBlank(loginName)) {
+					throw new NullPointerException("登陆账号为空");
+				}
+				
 				if("admin".equals(loginName)) { // 写死如果是超级管理员admin,显示全部菜单，
 					query.setUserId(null);
 					return db.queryForList("queryForPage", Res.class,query);
