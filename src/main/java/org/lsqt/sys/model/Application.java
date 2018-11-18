@@ -7,6 +7,7 @@ import org.lsqt.components.context.annotation.model.Pattern;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+
 /**
  * 应用系统模型
  * @author yuanmm
