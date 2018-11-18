@@ -56,6 +56,7 @@ public class DataSourceFactory{
 		
 		// 获取数据源其它连接属性
 		PropertyQuery pQuery = new PropertyQuery();
+		pQuery.setParentCode(code);
 		List<Property> list = baseDb.queryForList("queryForPage", Property.class, pQuery);
 		
 		Map<String,Object> props = new HashMap<>();

@@ -10,12 +10,8 @@ public class File {
 	private Long id;
 	private Long pid;
 	
-	/**对象ID,如：一个流程表单里，上传几个文件**/
-	private String objId; 
-	
 	/** 显示的名称 */
 	private String name;
-	
 	
 	/** 原始文件名称 */
 	private String originalName;
@@ -28,6 +24,8 @@ public class File {
 	public static final String FILE_OR_DIR_FILE="1";
 	public static final String FILE_OR_DIR_DIR="2";
 	
+	/**业务数据类型（从字典引用值）,1=企业logo 2=职位封面 3=职位视频s*/
+	private Integer dataType;
 	
 	private Integer sn;
 	
@@ -180,13 +178,7 @@ public class File {
 		this.sn = sn;
 	}
 
-	public String getObjId() {
-		return objId;
-	}
 
-	public void setObjId(String objId) {
-		this.objId = objId;
-	}
 
 	public String getNodePath() {
 		return nodePath;
@@ -226,6 +218,14 @@ public class File {
 
 	public void setPathMedium(String pathMedium) {
 		this.pathMedium = pathMedium;
+	}
+
+	public Integer getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(Integer dataType) {
+		this.dataType = dataType;
 	}
 
 }

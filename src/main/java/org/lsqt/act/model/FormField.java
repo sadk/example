@@ -22,10 +22,11 @@ public class FormField {
 	public static int COLUMN_CODEGEN_TYPE_文本=Column.COLUMN_CODEGEN_TYPE_文本;
 	public static int COLUMN_CODEGEN_TYPE_数字整型=Column.COLUMN_CODEGEN_TYPE_数字整型;
 	public static int COLUMN_CODEGEN_TYPE_数字精度型=Column.COLUMN_CODEGEN_TYPE_数字精度型;
-	public static int COLUMN_CODEGEN_TYPE_日期=Column.COLUMN_CODEGEN_TYPE_日期;
+	public static int COLUMN_CODEGEN_TYPE_日期_起始框=Column.COLUMN_CODEGEN_TYPE_日期_超始框;
 	public static int COLUMN_CODEGEN_TYPE_文件上传=Column.COLUMN_CODEGEN_TYPE_文件上传;
 	public static int COLUMN_CODEGEN_TYPE_下拉框_常量JSON = Column.COLUMN_CODEGEN_TYPE_下拉框_常量JSON;
 	public static int COLUMN_CODEGEN_TYPE_未知 = Column.COLUMN_CODEGEN_TYPE_未知;
+	public static int COLUMN_CODEGEN_TYPE_日期_单个框=Column.COLUMN_CODEGEN_TYPE_日期_单个框;
 	
 	
 	// 是否是主键、是否作为查询条件、是否是外键、是否是大字段
@@ -143,7 +144,7 @@ public class FormField {
 	
 	//private String largeFiled; // 是否是大字段,blob=二进制大字段,clob=字符大字段
 	
-	private Integer columnCodegenType ; // 字段的代码生成器类型 1=选择器 2=下拉框(字典) 3=外键    4=text 5=long 6=double 7=date 8=file 9=下拉框(常量JSON)
+	private Integer columnCodegenType ; // 字段的代码生成器类型 1=选择器 2=下拉框(字典) 3=外键    4=text 5=long 6=double 7=date 8=file 9=下拉框(常量JSON) 10=日期（单个值框）
 	private String columnCodegenFormat; // 默认：double型的为两个小数点， date 为 "yyyy-MM-dd HH:mm:ss" 
 	private String columnCodegenGroupCode ; // 字段组:用于生成html的fieldset框
 
@@ -167,8 +168,11 @@ public class FormField {
 			else if(COLUMN_CODEGEN_TYPE_数字精度型 == this.columnCodegenType) {
 				return "小数框";
 			}
-			else if(COLUMN_CODEGEN_TYPE_日期 == this.columnCodegenType) {
-				return "日期框";
+			else if(COLUMN_CODEGEN_TYPE_日期_起始框 == this.columnCodegenType) {
+				return "日期框(起始框)";
+			}
+			else if(COLUMN_CODEGEN_TYPE_日期_单个框 == this.columnCodegenType) {
+				return "日期框(单个值框)";
 			}
 			else if(COLUMN_CODEGEN_TYPE_文件上传 == this.columnCodegenType) {
 				return "文件框";

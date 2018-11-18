@@ -76,7 +76,15 @@
 										</td>
 									</tr>
 								</#if>
-								
+
+								<#if column.columnCodegenType == 10>
+									<tr>
+										<td>${column.name}：</td>
+										<td>
+											<input id="${column.propertyName}" name="${column.propertyName}" class="mini-datepicker" style="width:140px;" nullValue="null" <#if column.columnCodegenFormat??> format="${column.columnCodegenFormat}" timeFormat="HH:mm:ss"</#if>  showTime="true" showOkButton="true" showClearButton="false"  emptyText="请输入" <#if (column.searchRequired?? && column.searchRequired ==1)>required="true"</#if> />
+										</td>
+									</tr>
+								</#if>
 								
 								<#if column.columnCodegenType == 9>
 									<tr>
@@ -137,7 +145,31 @@
 					</table>
 		        </div>
 		        <div class="mini-fit" >
-					<div id="${definition.code}" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" <#if (definition.showPager?? && definition.showPager==1)>showPager="true"  <#if definition.pageSizeList?? >sizeList="[${definition.pageSizeList}]" <#else>sizeList="[20,50,100,200,500]"</#if> <#if definition.pageSize??>pageSize="${definition.pageSize}"<#else>pageSize="20"</#if> <#else>showPager="false"</#if>
+					<div id="${definition.code}" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" 
+						<#-- 常规分页显示默认算total值  -->
+						<#if (definition.showPager?? && definition.showPager == 1)>
+							showPager="true"  
+							
+							<#if definition.pageSizeList?? >
+									sizeList="[${definition.pageSizeList}]" 
+							<#else>
+									sizeList="[20,50,100,200,500]"
+							</#if>
+							
+							<#if definition.pageSize??>
+								pageSize="${definition.pageSize}"
+							<#else>
+								pageSize="20"
+							</#if>
+						<#else>
+							showPager="false"
+						</#if>
+						
+						<#-- 非常规分页显示,不计算total值  -->
+						<#if (definition.showPager?? && definition.showPager == 1) && (definition.countRequired?? && definition.countRequired == 0) >
+							showPageInfo="false" showPageIndex="false" showPagerButtonText="true" sizeText="&lt;span id='pageIndexSpan'&gt;第1页&lt;/span&gt;&nbsp;"
+						</#if>
+						
 						url="<#noparse>${pageContext.request.contextPath}</#noparse>/report/definition/search"  idField="id" >
 						<div property="columns">
 							<div type="checkcolumn" ></div>
@@ -386,14 +418,37 @@
 		    			data.${column.propertyName}Begin =  mini.get('${column.propertyName}Begin').text;
 		    			data.${column.propertyName}End =  mini.get('${column.propertyName}End').text;
 		    		</#if>
+		    		<#if column.columnCodegenType == 10>
+		    			data.${column.propertyName} =  mini.get('${column.propertyName}').text;
+	    			</#if>
 		    	</#if>
 		    </#if>
     	</#list>
     	
     	data.reportDefinitionId=${definition.id};
-    	grid.load(data);
+    	grid.load(data,function(e){
+    		if(e && e.text) {
+    			var data = mini.decode(e.text).hook;
+    			if (data) {
+	    	        mini.showTips({
+	    	            content: data,
+	    	            state: "danger",
+	    	            x: "center",
+	    	            y: "bottom",
+	    	            timeout: 25000
+	    	        });
+    			}
+    		}
+    	});
     	
-		grid.on("drawcell", function (e) { //如果有日期类型，转换为人工可讯形式
+    	<#-- 非常规则分页，（不计算总记录数)，底部分页显示页码 -->
+    	<#if (definition.showPager?? && definition.showPager==1) && (definition.countRequired?? && definition.countRequired == 0) >
+	        grid.on("load", function (e) {
+	        	document.getElementById("pageIndexSpan").innerHTML="<span class='mini-button-text'>第"+(e.pageIndex+1)+"页</span>";
+	        });		
+    	</#if>
+    	
+		grid.on("drawcell", function (e) {// 如果有日期类型，转换为人工可讯形式
 		   var record = e.record,
 		   column = e.column,
 		   field = e.field,
@@ -421,8 +476,6 @@
 		    	</#if>
 	    	</#list>
 	     	-->
- 
-
 		})
     }
     
@@ -454,6 +507,9 @@
     function loadingClose(){
     	 mini.unmask(document.body);
     }
+    
+    // -------------------------------- 报表自定义函数 -------------------------------------
+    ${definition.reportScript}
     </script>
 
 </body>

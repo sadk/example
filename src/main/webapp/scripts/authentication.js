@@ -3,7 +3,7 @@ function hexCharCodeToStr(hexCharCodeStr) {
 	　　var rawStr =  　trimedStr.substr(0,2).toLowerCase() === "0x" ?  trimedStr.substr(2) :  trimedStr;
 	　　var len = rawStr.length;
 	　　if(len % 2 !== 0) {
-	　　　　console.log("Illegal Format ASCII Code!");
+	　　　　//alert("Illegal Format ASCII Code!");
 	　　　　return "";
 	　　}
 	　　var curCharCode;
@@ -26,7 +26,7 @@ $(document).ready(function(){
 		authList = JSON.parse(authList);
 		//console.log(authList)
 	}catch(e) {
-		console.log(e);
+		//console.log(e);
 		
 		$("[code]").each(function(index){
 			$(this).remove();

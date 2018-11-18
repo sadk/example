@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * 框架启动后执行的(一次性)方法
+ * 注：如果有用到DB，请注意手动关闭事务
  * @author mm
  *
  */

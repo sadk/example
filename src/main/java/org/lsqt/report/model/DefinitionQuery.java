@@ -55,7 +55,10 @@ public class DefinitionQuery {
 
 	/** 租户编码 */
 	private String appCode;
-
+	
+	/**分页是否统计总记录数**/
+	private Integer countRequired;
+	
 	/** 排序 */
 	private Integer sn;
 
@@ -246,6 +249,14 @@ public class DefinitionQuery {
 
 	public void setDataReplicaStroePrecision(Integer dataReplicaStroePrecision) {
 		this.dataReplicaStroePrecision = dataReplicaStroePrecision;
+	}
+
+	public Integer getCountRequired() {
+		return countRequired;
+	}
+
+	public void setCountRequired(Integer countRequired) {
+		this.countRequired = countRequired;
 	}
 
 }

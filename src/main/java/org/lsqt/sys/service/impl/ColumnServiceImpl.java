@@ -244,7 +244,7 @@ public class ColumnServiceImpl implements ColumnService{
 						e.setColumnCodegenType(Column.COLUMN_CODEGEN_TYPE_数字精度型);
 					}
 					else if("java.util.Date".equals(javaType)) {
-						e.setColumnCodegenType(Column.COLUMN_CODEGEN_TYPE_日期);
+						e.setColumnCodegenType(Column.COLUMN_CODEGEN_TYPE_日期_超始框);
 						e.setColumnCodegenFormat("yyyy-MM-dd HH:mm:ss");
 					}
 					else if("java.lang.byte[]".equals(javaType)) {
@@ -255,7 +255,6 @@ public class ColumnServiceImpl implements ColumnService{
 					}
 				}
 			}
-			
 		}
 		
 	}

@@ -47,9 +47,10 @@ public class Column {
 	public static int COLUMN_CODEGEN_TYPE_文本=4;
 	public static int COLUMN_CODEGEN_TYPE_数字整型=5;
 	public static int COLUMN_CODEGEN_TYPE_数字精度型=6;
-	public static int COLUMN_CODEGEN_TYPE_日期=7;
+	public static int COLUMN_CODEGEN_TYPE_日期_超始框=7;
 	public static int COLUMN_CODEGEN_TYPE_文件上传=8;
 	public static int COLUMN_CODEGEN_TYPE_下拉框_常量JSON = 9;
+	public static int COLUMN_CODEGEN_TYPE_日期_单个框 = 10;
 	public static int COLUMN_CODEGEN_TYPE_未知 = 100;
 	
 	
@@ -155,7 +156,7 @@ public class Column {
 	
 	
 	/**
-	 * 字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键  4=文本框 5=整型框 6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)
+	 * 字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键  4=文本框 5=整型框 6=精度型框 7=日期(起始框) 8=文件  9=下拉框(常量JSON) 10=日期（单个框）
 	 */
 	private Integer columnCodegenType;
 	
@@ -179,8 +180,11 @@ public class Column {
 			else if(COLUMN_CODEGEN_TYPE_数字精度型 == this.columnCodegenType) {
 				return "小数框";
 			}
-			else if(COLUMN_CODEGEN_TYPE_日期 == this.columnCodegenType) {
-				return "日期框";
+			else if(COLUMN_CODEGEN_TYPE_日期_超始框 == this.columnCodegenType) {
+				return "日期框(起始框)";
+			}
+			else if(COLUMN_CODEGEN_TYPE_日期_单个框 == this.columnCodegenType) {
+				return "日期框(单个框)";
 			}
 			else if(COLUMN_CODEGEN_TYPE_文件上传 == this.columnCodegenType) {
 				return "文件框";

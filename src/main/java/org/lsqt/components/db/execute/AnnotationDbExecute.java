@@ -197,7 +197,12 @@ public class AnnotationDbExecute implements Db{
 		return queryForObject(sql, requiredType, args);
 	}
 	
-	public Page<Map<String, Object>> executeQueryForPage(String sql,Integer pageIndex,Integer pageSize, Object... args) {
+	
+	public Page<Map<String, Object>> executeQueryForPage(String sql, Integer pageIndex,Integer pageSize, Object... args) {
+		return executeQueryForPage(sql,true,pageIndex,pageSize,args);
+	}
+	
+	public Page<Map<String, Object>> executeQueryForPage(String sql,boolean requiredCount, Integer pageIndex,Integer pageSize, Object... args) {
 		
 		if (pageIndex == null || pageIndex < 0) {
 			pageIndex = 0;
@@ -208,18 +213,21 @@ public class AnnotationDbExecute implements Db{
 		
 		
 		long total = 0;
-		String totalSqlFmt = "select count(1) from (%s) _t0_amount";
-		String totalSql = String.format(totalSqlFmt,sql);
-		
-		List<Map<String, Object>> totalMapList = exe.executeQuery(totalSql);
-		if (totalMapList != null && totalMapList.size() > 0) {
-			Object cnt = totalMapList.get(0).values().iterator().next();
-			if (cnt != null) {
-				total = Long.valueOf(cnt.toString());
+		long pageCount = 0;
+		if (requiredCount) {
+			String totalSqlFmt = "select count(1) from (%s) _t0_amount";
+			String totalSql = String.format(totalSqlFmt,sql);
+			
+			List<Map<String, Object>> totalMapList = exe.executeQuery(totalSql);
+			if (totalMapList != null && totalMapList.size() > 0) {
+				Object cnt = totalMapList.get(0).values().iterator().next();
+				if (cnt != null) {
+					total = Long.valueOf(cnt.toString());
+				}
 			}
+			
+			pageCount = Double.valueOf(Math.ceil(total * 1.000 / pageSize)).longValue();
 		}
-		
-		final long pageCount = Double.valueOf(Math.ceil(total * 1.000 / pageSize)).longValue();
 		
 		//封装分页对象
 		Page<Map<String, Object>> page = new Page.PageModel<>();
@@ -227,9 +235,13 @@ public class AnnotationDbExecute implements Db{
 		page.setPageCount(pageCount);
 		page.setPageIndex(pageIndex);
 		page.setPageSize(pageSize);
-		page.setHasNext(pageIndex + 1 < pageCount);
-		page.setHasPrevious(pageIndex > 0 && pageIndex < pageCount - 1);
-		
+		if (requiredCount) {
+			page.setHasNext(pageIndex + 1 < pageCount);
+			page.setHasPrevious(pageIndex > 0 && pageIndex < pageCount - 1);
+		}else {
+			page.setHasNext(true);
+			page.setHasPrevious(pageIndex <= 0);
+		}
 		
 		String pageSql = sql.concat(" limit ?,? ");
 		List<Object> params = new ArrayList<>();
@@ -358,26 +370,30 @@ public class AnnotationDbExecute implements Db{
 	}
 	
 	public void executePlan(boolean isTransaction ,Plan plan) throws DbException {
+		executePlan(isTransaction, TRANSACTION_READ_COMMITTED, plan);
+	}
+
+	public void executePlan(boolean isTransaction, int transactionIsolation, Plan plan) {
 		Connection con = null;
-		try{
+		try {
 			con = exe.prepareConnection();
 			con.setAutoCommit(!isTransaction);
 			if (isTransaction) {
-				con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+				con.setTransactionIsolation(transactionIsolation);
 			}
 			plan.doExecutePlan();
 
 			if (isTransaction) {
 				con.commit();
 			}
-		}catch(Exception ex){
-			if(con!=null) {
+		} catch (Exception ex) {
+			if (con != null) {
 				try {
-					if(isTransaction) {
+					if (isTransaction) {
 						con.rollback();
 					}
 				} catch (SQLException e) {
-					
+
 					if (isTransaction) {
 						String info = String.format(formatStr, "rollback error~!", e.getMessage());
 						log.info(info);
@@ -385,11 +401,10 @@ public class AnnotationDbExecute implements Db{
 					throw new DbException(e);
 				}
 			}
-			throw new DbException(ex.getMessage(),ex);
-		}finally{
+			throw new DbException(ex.getMessage(), ex);
+		} finally {
 			exe.close(null, null, con);
 		}
-		
 	}
 
 	public <T> Page<T> getEmptyPage() {
@@ -405,8 +420,8 @@ public class AnnotationDbExecute implements Db{
 	}
 
 
-	public void cascade(Object model, String... props) throws DbException {
-		 
+	public void cascade(Object model, String... props) {
+		 throw new UnsupportedOperationException("暂不支持此方法");
 	}
 
 	public List<Map<String, Object>> executeQuery(String sql, Object... args) throws DbException {
@@ -467,8 +482,7 @@ public class AnnotationDbExecute implements Db{
 
 
 	@Override
-	public <T> T queryForObject(String nameSpace, String sqlID_or_SQL, Class<T> requiredType, Object... args)
-			throws DbException {
+	public <T> T queryForObject(String nameSpace, String sqlID_or_SQL, Class<T> requiredType, Object... args) {
 		
 		return null;
 	}
@@ -484,6 +498,20 @@ public class AnnotationDbExecute implements Db{
 
 	@Override
 	public List<org.lsqt.components.db.Column> getMetaDataColumn(String sql, Object... args) {
+		
+		return null;
+	}
+
+
+	@Override
+	public <T> Page<T> queryForPage(String sqlID_or_SQL, boolean requiredCount, int pageIndex, int pageSize, Class<T> requiredType, Object... args) {
+		
+		return null;
+	}
+
+
+	@Override
+	public <T> Page<T> queryForPage(String nameSpace, String sqlID, int pageIndex, int pageSize, Class<T> requiredType, Object... args) {
 		
 		return null;
 	}

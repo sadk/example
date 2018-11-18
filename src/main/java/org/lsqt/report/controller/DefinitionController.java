@@ -103,9 +103,14 @@ public class DefinitionController {
 		return definitionService.deleteById(list.toArray(new Long[list.size()]));
 	}
 	
-	@RequestMapping(mapping = { "/import_column", "/m/import_column" },text="导入报表的列")
-	public void importColumn(Long id,Integer dataType) {
-		definitionService.importColumn(id,dataType);
+	/**
+	 * @param id 报表定义Id
+	 * @param dataType 数据类型 1=报表展示列 2=数据导入列
+	 * @param isIncremental 是否是增量导入
+	 */
+	@RequestMapping(mapping = { "/import_column", "/m/import_column" }, text = "导入报表的列")
+	public void importColumn(Long id, Integer dataType, Boolean isIncremental) {
+		definitionService.importColumn(id, dataType, isIncremental);
 	}
 	
 	
@@ -150,8 +155,13 @@ public class DefinitionController {
 			Map<String, Object> formData = ContextUtil.getFormMap();
 			return definitionService.search(reportDefinitionId, formData);
 		}catch(Exception e) {
-			e.printStackTrace();
-			return e.getMessage();
+			String msg = ExceptionUtil.getStackTrace(e);
+			log.error(msg);
+			
+			Page<?> page = new Page.PageModel<>();
+			page.setHook("出错啦："+msg);
+			
+			return page;
 		}
 	}
 	
@@ -314,8 +324,8 @@ public class DefinitionController {
 								
 								createTable.append(e.getCode() + " " + e.getDbType());
 								
-								if (def.getDataReplicaStroePrecision()!=null 
-										&& Definition.DATA_REPLICA_STROE_PRECISION_ALL_STRING == def.getDataReplicaStroePrecision()) {
+								if (def.getDataReplicaStoragePrecision()!=null 
+										&& Definition.DATA_REPLICA_STROE_PRECISION_ALL_STRING == def.getDataReplicaStoragePrecision()) {
 									//createTable.append(" varchar(200) ");
 								} else {
 									if (StringUtil.isNotBlank(e.getDbTypeLength())) {

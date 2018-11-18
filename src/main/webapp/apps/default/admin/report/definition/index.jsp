@@ -143,6 +143,10 @@
 												<span class="separator"></span>
 												<a class="mini-button" iconCls="icon-reload" onclick="refreshColumn()">刷新</a>
 											</td>
+											<td style="white-space:nowrap;">
+						                        <input id="key1" name="key1" class="mini-textbox" emptyText="请输入字段中文或DB字段" style="width:150px;" onenter="search"/>   
+						                        <a class="mini-button" onclick="search(1)">查询</a>
+						                    </td>
 										</tr>
 									</table>
 								</div>
@@ -150,7 +154,7 @@
 								<div class="mini-fit">
 									<div id="columnGrid" class="mini-datagrid" style="width:100%;height:100%;" idField="id" multiSelect="true" allowResize="false"
 										showEmptyText="true" emptyText="查无数据"  allowCellEdit="true" allowCellSelect="true" editNextOnEnterKey="true"  editNextRowCell="true"
-										sizeList="[5,10,20,50]" pageSize="20" allowAlternating="false" sortMode="client" showPager="true"
+										sizeList="[5,10,20,50]" pageSize="50" allowAlternating="false" sortMode="client" showPager="true"
 										 url="${pageContext.request.contextPath}/report/column/page" >
 										<div property="columns">
 											<div type="checkcolumn" ></div>
@@ -256,6 +260,10 @@
 												<span class="separator"></span>
 												<a class="mini-button" iconCls="icon-reload" onclick="refreshColumn()">刷新</a>
 											</td>
+											<td style="white-space:nowrap;">
+						                        <input id="key2" name="key2" class="mini-textbox" emptyText="请输入字段中文或DB字段" style="width:150px;" onenter="search"/>   
+						                        <a class="mini-button" onclick="search(2)">查询</a>
+						                    </td>
 										</tr>
 									</table>
 								</div>
@@ -263,7 +271,7 @@
 								<div class="mini-fit">
 									<div id="columnGrid2" class="mini-datagrid" style="width:100%;height:100%;" idField="id" multiSelect="true" allowResize="false"
 										showEmptyText="true" emptyText="查无数据"  allowCellEdit="true" allowCellSelect="true" editNextOnEnterKey="true"  editNextRowCell="true"
-										sizeList="[5,10,20,50]" pageSize="20" allowAlternating="false" sortMode="client" showPager="true"
+										sizeList="[5,10,20,50]" pageSize="50" allowAlternating="false" sortMode="client" showPager="true"
 										 url="${pageContext.request.contextPath}/report/column/page" >
 										<div property="columns">
 											<div type="checkcolumn" ></div>
@@ -552,25 +560,52 @@
 					mini.alert("请选择一个报表");
 					return ;
 				}
-				
-				$.ajax({
-					'url': "${pageContext.request.contextPath}/report/definition/import_column?id="+row.id+"&dataType="+dataType,
-					type: 'post', dataType:'JSON',
-					success: function (json) {
-						mini.alert("导入成功");
-						if(dataType == 1) {
-							columnGrid.load({definitionId: row.id,dataType: dataType});
+		        
+				var isIncremental = true; //默认增量导入 
+		        var ajaxRequest = function() {
+					$.ajax({
+						'url': "${pageContext.request.contextPath}/report/definition/import_column?id="+row.id+"&dataType="+dataType+"&isIncremental="+isIncremental,
+						type: 'post', dataType:'JSON',
+						success: function (json) {
+							mini.alert("导入成功");
+							if(dataType == 1) {
+								columnGrid.load({definitionId: row.id,dataType: dataType});
+							}
+							if(dataType == 2) {
+								columnGrid2.load({definitionId: row.id,dataType: dataType});
+							}
+							importType.select(0);
+						},
+						error : function(data) {
+					  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
+					  		mini.alert(data.responseText);
 						}
-						if(dataType == 2) {
-							columnGrid2.load({definitionId: row.id,dataType: dataType});
-						}
-						importType.select(0);
-					},
-					error : function(data) {
-				  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
-				  		mini.alert(data.responseText);
-					}
-				});
+					});
+		        }
+		        
+		        mini.showMessageBox({
+		            title: "是否删除？",
+		            iconCls: "mini-messagebox-question",
+		            buttons: ["ok", "no", "cancel"],
+		            message: "确定删除已有数据并重新导入? (点击否将会进行增量导入)",
+		            callback: function (action) {
+		            	if ("ok" == action) {
+		            		isIncremental = false;
+		            		ajaxRequest();
+		            	} else if ("no" == action) {
+		            		isIncremental = true;
+		                    mini.confirm("系统将执行增量导入", "请确定",
+	                            function (action) {
+	                                if (action == "ok") {
+	                                	ajaxRequest();
+	                                }
+	                    		}
+		                    );
+		            	} else if ("cancel" == action) {
+		            		mini.alert("您没有导入任何数据");
+		            	}
+		            }
+		        });
 			}
 			
 			function removeColumn(flag) {

@@ -10,15 +10,16 @@ drop table  IF EXISTS  sys_file ;
 CREATE TABLE `sys_file` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
   `pid` bigint(20)  NULL COMMENT '当文件为目录时，有层级关系',
-  `name` varchar(500) NOT NULL COMMENT '文件名称',
+  `name` varchar(500) NOT NULL COMMENT '新文件名称',
   `original_name` varchar(500) NOT NULL COMMENT '原始文件名称',
   `type_code` varchar(50) NULL COMMENT '文件或目录类型编码，引用字典值',
-  `file_or_dir` varchar(4) NOT NULL COMMENT '文件或目录： 1=文件 2=目录',
+  `file_or_dir` varchar(2) NOT NULL COMMENT '文件或目录： 1=文件 2=目录',
+  `data_type` int(4) NULL comment '业务数据类型（从字典引用值）,1=企业logo 2=职位封面 3=职位视频',
   
-  `path` varchar(1000) DEFAULT NULL COMMENT '(FastDFS文件)路径或自定义路径',
-  `path_large` varchar(1000) DEFAULT NULL COMMENT '文件缩略图（大）',
-  `path_medium` varchar(1000) DEFAULT NULL COMMENT '文件缩略图（中）',
-  `path_small` varchar(2000) DEFAULT NULL COMMENT '文件缩略图（小）',
+  `path` varchar(1024) DEFAULT NULL COMMENT '(FastDFS文件)路径或自定义路径',
+  `path_large` varchar(1024) DEFAULT NULL COMMENT '文件缩略图（大）',
+  `path_medium` varchar(1024) DEFAULT NULL COMMENT '文件缩略图（中）',
+  `path_small` varchar(1024) DEFAULT NULL COMMENT '文件缩略图（小）',
   
   `sn` int(11) DEFAULT '0' COMMENT '排序',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
@@ -30,7 +31,7 @@ CREATE TABLE `sys_file` (
   
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='文件目录表';
 
-ALTER TABLE `sys_file` ADD COLUMN `obj_id` VARCHAR(50) NULL COMMENT '对象ID,如：一个流程表单里，上传几个文件' AFTER `update_time`;
+-- ALTER TABLE `sys_file` ADD COLUMN `obj_id` VARCHAR(50) NULL COMMENT '对象ID,如：一个流程表单里，上传几个文件' AFTER `update_time`;
 
 
 -- 国、省、市、地区表
@@ -61,9 +62,14 @@ CREATE TABLE `sys_region` (
 drop table  IF EXISTS sys_tenant ;  
 CREATE TABLE `sys_tenant` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL COMMENT '租户名称',
-  `value` varchar(45) DEFAULT NULL,
+  `name` varchar(256) NOT NULL COMMENT '租户名称',
+  `value` varchar(46) DEFAULT NULL COMMENT '租户值',
   `code` varchar(100) NOT NULL COMMENT '租户编码',
+
+  `full_name` varchar(256) NOT NULL COMMENT '租户全称',
+  `nick_name` varchar(256) NOT NULL COMMENT '租户昵称',
+  `introduction` varchar(1024) NOT NULL COMMENT '租户介绍',
+  
   
   `sn` int(10) DEFAULT '0' COMMENT '排序',
   `remark` varchar(256) DEFAULT NULL,
@@ -664,6 +670,9 @@ INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`
 INSERT INTO `sys_dictionary` (id,`pid`, `name`, `value`, `code`, `category_code`, `app_code`, `sn`, `node_path`, `remark`, `gid`, `create_time`, `update_time`) VALUES (306,'182', 'RabitMQ服务器', '3', 'rabitmq', 'dictionary', '1000', '0', '182,306', 'RabitMQ服务器', 'rabitmq', '2017-05-12 10:28:39', '2017-05-12 10:28:39');
 
 
+-- 单码生成器字段控件类型（补）
+insert into sys_dictionary(id,pid,name,value,code,category_code,app_code,sn,node_path,remark,gid,create_time,update_time)  values (307,58, '日期（单个框）','10','datePickerSingle', 'dictionary','1000',0,'58,307','日期框(单个框)', 'datePickerSingle',now(),now()) ;
+
 
 drop table  if exists sys_machine;
 CREATE TABLE `sys_machine` (
@@ -671,8 +680,8 @@ CREATE TABLE `sys_machine` (
   `code` varchar(40) DEFAULT NULL COMMENT '服务器编码',
   `app_code` varchar(40) DEFAULT NULL,
   `name` varchar(255) NOT NULL COMMENT '服务器名称',
-  `user_name` varchar(255) NOT NULL COMMENT '登陆名称',
-  `user_password` varchar(255) NOT NULL COMMENT '登陆密码',
+  `user_name` varchar(255)  NULL COMMENT '登陆名称',
+  `user_password` varchar(255)  NULL COMMENT '登陆密码',
   `url` varchar(500) DEFAULT NULL COMMENT '链接url',
   `type` varchar(40) DEFAULT NULL COMMENT 'datasource=数据库服务器 、redis = redis服务器',
  
@@ -2457,6 +2466,93 @@ CREATE TABLE `api_request_mock` (
 
 
 
+-- ##################################################### 简历系统 ####################################################
+
+
+drop table  IF EXISTS  res_job_tag ;
+CREATE TABLE `res_job_tag` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL COMMENT '名称',
+  `code` varchar(50) NOT NULL unique COMMENT '编码',
+  `value` varchar(50) DEFAULT NULL COMMENT '标签值',
+  `sn` int(11) DEFAULT '0' COMMENT '排序',
+  `remark` varchar(256) DEFAULT NULL COMMENT '备注',
+  
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='简历系统岗位标签定义:质检员、销售员等';
+
+drop table  IF EXISTS  res_job_info ;
+CREATE TABLE `res_job_info` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `code` varchar(20) NOT NULL unique COMMENT '职位编码',
+  `name` varchar(48) NOT NULL COMMENT '职位名称',
+  
+  `tenant_code` varchar(20) NOT NULL COMMENT '公司编码',
+  `tenant_short_name` varchar(48) DEFAULT NULL COMMENT '公司简称',
+
+  `publish_platfrom` int(1) DEFAULT '0' COMMENT '发布平台(0:全平台，1：公众号，2：小程序)',
+  `intermediary_name` varchar(56) DEFAULT NULL COMMENT '中介姓名',
+  `intermediary_mobile` varchar(20) DEFAULT NULL COMMENT '中介手机号',
+  `pub_user_code` varchar(32) DEFAULT NULL COMMENT '发布者编码',
+  `pub_time` datetime DEFAULT NULL COMMENT '发布时间',
+  `salary_composited` varchar(80) DEFAULT NULL COMMENT '综合工资',
+  `work_time_desc` varchar(80) DEFAULT NULL COMMENT '作息时间描述:早9晚5',
+  `requirement_sex` varchar(10) DEFAULT NULL COMMENT '性别要求',
+  `requirement_age` varchar(20) DEFAULT NULL COMMENT '年龄要求',
+  `requirement_edu` varchar(25) DEFAULT NULL COMMENT '学历要求',
+  `work_years` varchar(25) DEFAULT NULL COMMENT '工作年限',
+  `welfare` varchar(120) DEFAULT NULL COMMENT '岗位福利',
+  `status` int(4) NOT NULL COMMENT '状态(0:未发布，1：已发布)',
+  
+
+--  `work_addr_id` varchar(20) DEFAULT NULL COMMENT '工作地址ID',
+--  `picture_url` varchar(128) DEFAULT NULL COMMENT '图片路径',
+--  `cover_url` varchar(128) DEFAULT NULL COMMENT '岗位封面图片路径',
+  `category_id` bigint(20) DEFAULT NULL COMMENT '职位分类',
+  `is_top` int(1) DEFAULT NULL COMMENT '是否置顶（0：不置顶，1：置顶）',
+  `offline_time` datetime DEFAULT NULL COMMENT '下线时间',
+  
+  `is_need_resume` varchar(1) DEFAULT '0' COMMENT '是否需要简历',
+  `interview_address` varchar(255) DEFAULT '0' COMMENT '面试地址',
+  
+  
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `create_user` varchar(32) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_user` varchar(32) DEFAULT NULL,
+  
+  PRIMARY KEY (`id`),
+  KEY `bu_job_info_company_id_index` (`code`),
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='职位表';
+
+
+
+
+drop table  IF EXISTS  res_address_attach ;
+CREATE TABLE `res_address_attach` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `code` varchar(50) NOT NULL unique COMMENT '地址编码',
+  
+  `status` int(4) NOT NULL COMMENT '状态(0=审核不通过，1=通过)',
+  
+  `object_id` varchar(50) NOT NULL unique COMMENT '引用的对象ID',
+  `biz_type` int(2) NOT NULL COMMENT '(注100内的为企业实体、200的为职位实体)100=公司地址 101=企业图片    200=职位的企业logo 201=职位封面    202=职位视频   203=职位的工作地址',
+  `address` varchar(1024) NOT NULL COMMENT '地址值',
+ 
+  `sn` int(11) DEFAULT '0' COMMENT '排序',
+  `remark` varchar(256) DEFAULT NULL COMMENT '备注',
+  
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='企业地址、图片、视频地址、职位工作地址';
+
+
+
 -- ##################################################### 演示使用的表 ##################################################
 
 drop table  IF EXISTS  demo_user ;
@@ -2538,6 +2634,67 @@ CREATE TABLE `demo_address` (
 
 
 
+-- ---------------------------------------  核查平台 (用户的犯罪记录、默名单啥的) ----------------------------------------
+
+drop table  IF EXISTS  chk_user_crime ;
+CREATE TABLE `chk_user_crime` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) DEFAULT NULL COMMENT '引用系统用户id',
+  `batch_no` varchar(32) DEFAULT NULL comment '上传的批次号，一般以年月日小时分钟秒钟来',
+  
+  `name` varchar(50) NOT NULL COMMENT '用户姓名',
+  `idcard` varchar(50) NOT NULL COMMENT '身份证号',
+  `sex` varchar(4) DEFAULT NULL COMMENT '性别',
+  `photo` varchar(2000) DEFAULT NULL COMMENT '用户头像或照片',
+  `police_address` varchar(500) DEFAULT NULL COMMENT '签证机关',
+  
+  -- 匹配说明
+  `match_res_code` varchar(32)  DEFAULT NULL comment '匹配响应码',
+  `match_res_desc` varchar(32)  DEFAULT NULL comment '系统响应说明',
+  
+  `match_biz_code` varchar(32)  DEFAULT NULL COMMENT '匹配业务响应码',
+  `match_biz_desc` varchar(50)  DEFAULT NULL COMMENT '身份证匹配说明',
+  
+ 
+  -- 犯罪核查说明
+  `res_code` varchar(20) DEFAULT NULL COMMENT '犯罪记录核查响应码',
+  `res_msg` varchar(50) DEFAULT NULL COMMENT '系统响应描述|犯罪记录核查响应描述',
+  
+  
+  `sn` bigint(20) DEFAULT NULL,
+  `remark` varchar(256) DEFAULT NULL,
+  `app_code` varchar(40) DEFAULT NULL,
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  `code` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户表刑事案底核查表(北京优分数据科技接口)';
+
+
+
+drop table  IF EXISTS  chk_crime_detail ;
+CREATE TABLE `chk_crime_detail` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `uc_id` bigint(20) NOT NULL COMMENT '引用chk_user_crime.id',
+ 
+  
+  `crime_type` varchar(20) DEFAULT NULL COMMENT '案件类型',
+  `count` varchar(10) DEFAULT NULL COMMENT '案件数量',
+  `case_type` varchar(20) DEFAULT NULL COMMENT '案件类型',
+  `case_source` varchar(20) DEFAULT NULL COMMENT '案件来源',
+  `case_period` varchar(20) DEFAULT NULL COMMENT '案件时间段',
+  `case_level` varchar(20) DEFAULT NULL COMMENT '案件级别',
+ 
+ 
+  `sn` bigint(20) DEFAULT NULL,
+  `remark` varchar(256) DEFAULT NULL,
+  `app_code` varchar(40) DEFAULT NULL,
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='犯罪记录详情表';
 
 
 commit;

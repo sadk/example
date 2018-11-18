@@ -20,9 +20,6 @@ public class FileQuery {
 
 	/** 名称 */
 	private String name;
-
-	/**对象ID,如：一个流程表单里，上传几个文件**/
-	private String objId;
 	
 	/** 路径 */
 	private String path;
@@ -30,6 +27,9 @@ public class FileQuery {
 	/** 备注 */
 	private String remark;
  
+	/**业务数据类型（从字典引用值）,1=企业logo 2=职位封面 3=职位视频s*/
+	private Integer dataType;
+	
 
 	// getter、setter
 	public void setId(Long id) {
@@ -114,12 +114,11 @@ public class FileQuery {
 		this.pageIndex = pageIndex;
 	}
 
-	public String getObjId() {
-		return objId;
+	public Integer getDataType() {
+		return dataType;
 	}
 
-	public void setObjId(String objId) {
-		this.objId = objId;
+	public void setDataType(Integer dataType) {
+		this.dataType = dataType;
 	}
-
 }
