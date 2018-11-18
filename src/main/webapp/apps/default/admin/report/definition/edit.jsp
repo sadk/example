@@ -158,11 +158,17 @@
 								</td>
 							</tr>
 							<tr>
+								<td>计算总记录：</td>
+								<td>
+									<input id="countRequired" name="countRequired" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" required="true"/>
+								</td>
 								
 								<td>分页大小项：</td>
 								<td>
 									<input id="pageSizeList" name="pageSizeList" class="mini-textbox" value="20,50,100,500" emptyText="逗号分割,如:20,50,100"  />
 								</td>
+							</tr>
+							<tr>
 								<td>报表排序模式：</td>
 								<td>
 									<input id="sortMode" name="sortMode" class="mini-combobox" value="1" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_sort_mode" required="true"/>
@@ -217,7 +223,7 @@
 								</td>
 								<td>副本存储模式：</td>
 								<td>
-									<input name="dataReplicaStroePrecision" id="dataReplicaStroePrecision" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rpt_imported_data_store_precision" />
+									<input name="dataReplicaStoragePrecision" id="dataReplicaStoragePrecision" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rpt_imported_data_store_precision" />
 								</td>
 							</tr>
 							<tr id="importExportTemplateTR">
@@ -244,6 +250,13 @@
 		            	<input id="reportSql" name="reportSql" class="mini-textarea" style="height: 100px;width:100%" required="true"/>
 		            </div>
 		        </fieldset>
+
+				<fieldset style="border:solid 1px #aaa;padding:2px; margin-bottom:2px;height: 130px">
+		            <legend>报表自定义javascript<font color="red">(用于自定义js函数，自行控制调用)</font></legend>
+		            <div style="padding:5px;">
+		            	<input id="reportScript" name="reportScript" class="mini-textarea" style="height: 100px;width:100%"/>
+		            </div>
+		        </fieldset>
 		        
 			</div>
 			<div id="subbtn" style="text-align:center;padding:10px;">
@@ -268,7 +281,7 @@
 			
 			var dataReplicaDataSourceId = mini.get("dataReplicaDataSourceId");
 			var dataReplicaDataSourceName = mini.get("dataReplicaDataSourceName");
-			var dataReplicaStroePrecision = mini.get("dataReplicaStroePrecision");
+			var dataReplicaStoragePrecision = mini.get("dataReplicaStoragePrecision");
 			
 			var exportMode = mini.get("exportMode");
 			var importMode = mini.get("importMode");
@@ -327,8 +340,8 @@
 						
 						dataReplicaDataSourceName.setValue(null);
 						
-						dataReplicaStroePrecision.setValue(null);
-						dataReplicaStroePrecision.setText(null);
+						dataReplicaStoragePrecision.setValue(null);
+						dataReplicaStoragePrecision.setText(null);
 					}
 				}
 			}

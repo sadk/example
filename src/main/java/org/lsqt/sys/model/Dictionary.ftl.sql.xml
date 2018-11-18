@@ -112,7 +112,11 @@
 	<statement id="getOptionByCode" parameterName="param" >
 		<![CDATA[
 			select * from sys_dictionary where 1=1 
-					and pid in (select id from  sys_dictionary where code = '${StringUtil.escapeSql(param[0])}' and app_code='${StringUtil.escapeSql(param[1])}' and category_code='dictionary') 
+					and pid in (select id from  sys_dictionary where 1=1 and code = '${StringUtil.escapeSql(param[0])}' and category_code='dictionary') 
+				<#if param[1]??>	
+					and app_code='${StringUtil.escapeSql(param[1])}'
+				</#if> 	
+				
 				<#if param[2]??>
 				 	and enable='${param[2]}' 
 				</#if> 

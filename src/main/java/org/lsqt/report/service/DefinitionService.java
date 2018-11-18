@@ -23,8 +23,9 @@ public interface DefinitionService {
 	 * 导入报表字段
 	 * @param id 报表定义Id
 	 * @param dataType 数据类型： 1=报表展示用， 2=报表导入用
+	 * @param isIncremental 是否是增量导入
 	 */
-	void importColumn(Long id,Integer dataType);
+	void importColumn(Long id,Integer dataType,boolean isIncremental);
 	
 	/**
 	 * 生成报表文件（一般为jsp文件）

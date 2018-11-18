@@ -11,7 +11,21 @@
 		<spring>5.0.8.RELEASE</spring>
 	</properties>
   <dependencies>
-  
+	
+	<dependency>
+	    <groupId>com.rabbitmq</groupId>
+	    <artifactId>amqp-client</artifactId>
+	    <version>5.4.0</version>
+	</dependency>
+	
+<!-- redis客户端 -->
+<dependency>
+    <groupId>biz.paluch.redis</groupId>
+    <artifactId>lettuce</artifactId>
+    <version>4.5.0.Final</version>
+</dependency>
+
+
 <dependency>
     <groupId>com.vdurmont</groupId>
     <artifactId>emoji-java</artifactId>

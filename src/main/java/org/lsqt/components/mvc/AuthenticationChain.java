@@ -79,8 +79,8 @@ public class AuthenticationChain implements Chain{
 	 * @return
 	 */
 	private boolean isLogined() {
-		String uri = request.getRequestURI();
-		System.out.println(uri);
+		//String uri = request.getRequestURI();
+		//System.out.println(uri);
 		
 		List<String> uidList = null;
 		

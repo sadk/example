@@ -20,25 +20,24 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
+import org.lsqt.components.db.Column;
+import org.lsqt.components.db.Db;
 import org.lsqt.components.db.DbException;
 import org.lsqt.components.db.IdGenerator;
 import org.lsqt.components.db.JDBCExecutor;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.db.Plan;
-import org.lsqt.components.db.orm.ORMappingDb;
+import org.lsqt.components.db.Table;
 import org.lsqt.components.db.orm.ORMappingIdGenerator;
 import org.lsqt.components.db.orm.SqlStatement;
 import org.lsqt.components.db.orm.SqlStatementArgs;
 import org.lsqt.components.db.orm.SqlStatementBuilder;
-import org.lsqt.components.db.Table;
-import org.lsqt.components.db.Column;
 import org.lsqt.components.db.orm.util.ModelUtil;
 import org.lsqt.components.util.bean.BeanUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import freemarker.cache.StringTemplateLoader;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -52,7 +51,7 @@ import freemarker.template.TemplateModelException;
  *
  */
 
-public class FtlDbExecute implements ORMappingDb{
+public class FtlDbExecute implements Db{
 
 	private static final String formatStr = " --- %s -- ===> %s";
 
@@ -327,7 +326,6 @@ public class FtlDbExecute implements ORMappingDb{
 	 
 	
 	public Serializable save(Object model, String... prop)  {
-		
 		Table table = getModelMappedTable(model);
 		
 		Map<String, Object> columnValues = getModelMappedInsertColumnSqlAndValues(model,table,prop);
@@ -1004,7 +1002,8 @@ public class FtlDbExecute implements ORMappingDb{
 		return total;
 	}
 */	
-	public <T> Page<T> queryForPage(String nameSpace,String sqlID, int pageIndex, int pageSize, Class<T> requiredType, Object... args) {
+	
+	public <T> Page<T> queryForPage(String nameSpace,String sqlID,boolean requiredCount,int pageIndex, int pageSize, Class<T> requiredType, Object... args) {
 		SqlStatement stmt = getSqlStatement(nameSpace, sqlID);
 		if (stmt == null) {
 			throw new DbException("没有在映射文件件里找到指定的sql编号：" + sqlID + " , namespace:" + requiredType.getName());
@@ -1019,27 +1018,35 @@ public class FtlDbExecute implements ORMappingDb{
 		
 		
 		long total = 0;
-		String totalSqlFmt = "select count(1) from (%s) _t0_amount";
-		String totalSql = String.format(totalSqlFmt,sqlMaped);
-		
-		List<Map<String, Object>> totalMapList = exe.executeQuery(totalSql);
-		if (totalMapList != null && totalMapList.size() > 0) {
-			Object cnt = totalMapList.get(0).values().iterator().next();
-			if (cnt != null) {
-				total = Long.valueOf(cnt.toString());
+		long pageCount = 0;
+		if (requiredCount) {
+			String totalSqlFmt = "select count(1) from (%s) _t0_amount";
+			String totalSql = String.format(totalSqlFmt,sqlMaped);
+			
+			List<Map<String, Object>> totalMapList = exe.executeQuery(totalSql);
+			if (totalMapList != null && totalMapList.size() > 0) {
+				Object cnt = totalMapList.get(0).values().iterator().next();
+				if (cnt != null) {
+					total = Long.valueOf(cnt.toString());
+				}
 			}
+			
+			pageCount = Double.valueOf(Math.ceil(total * 1.000 / pageSize)).longValue();
 		}
-		
-		final long pageCount = Double.valueOf(Math.ceil(total * 1.000 / pageSize)).longValue();
-		
 		//封装分页对象
 		Page<T> page = new Page.PageModel<>();
 		page.setTotal(total);
 		page.setPageCount(pageCount);
 		page.setPageIndex(pageIndex);
 		page.setPageSize(pageSize);
-		page.setHasNext(pageIndex + 1 < pageCount);
-		page.setHasPrevious(pageIndex > 0 && pageIndex < pageCount - 1);
+		if (requiredCount) {
+			page.setHasNext(pageIndex + 1 < pageCount);
+			page.setHasPrevious(pageIndex > 0 && pageIndex < pageCount - 1);
+		} else {
+			page.setHasNext(true);
+			page.setHasPrevious(pageIndex >= 1);
+		}
+		
 		
 		
 		String pageSql = sqlMaped.concat(" limit ?,? ");
@@ -1061,24 +1068,29 @@ public class FtlDbExecute implements ORMappingDb{
 		
 	}
 	
-	public <T> Page<T> queryForPage(String sqlID, int pageIndex, int pageSize, Class<T> requiredType, Object... args)
-			 {
+	public <T> Page<T> queryForPage(String sqlID, int pageIndex, int pageSize, Class<T> requiredType, Object... args) {
 		return queryForPage(requiredType.getName(),sqlID,pageIndex,pageSize, requiredType, args);
 	}
-
-	public <T> Page<T> getEmptyPage() {
-		Page<T> page = new Page.PageModel<>();
-		page.setData(new ArrayList<>(0));
-		page.setHasNext(false);
-		page.setHasPrevious(false);
-		page.setPageCount(0L);
-		page.setPageIndex(0);
-		page.setPageSize(20);
-		page.setTotal(0L);
-		return page;
+	
+	public <T> Page<T> queryForPage(String nameSpace,String sqlID,int pageIndex, int pageSize, Class<T> requiredType, Object... args) {
+		return queryForPage(nameSpace,sqlID,true,pageIndex,pageSize,requiredType,args);
+	}
+	
+	public <T> Page<T> queryForPage(String sqlID_or_SQL, boolean requiredCount, int pageIndex, int pageSize, Class<T> requiredType, Object... args) {
+		return queryForPage(requiredType.getName(),sqlID_or_SQL,requiredCount,pageIndex,pageSize,requiredType,args);
 	}
 
+
+	
+	public void executePlan(Plan plan)  {
+		executePlan(true,plan);
+	}
+	
 	public void executePlan(boolean isTransaction,Plan plan)  {
+		executePlan(isTransaction, TRANSACTION_READ_COMMITTED, plan);
+	}
+
+	public void executePlan(boolean isTransaction,int transactionIsolation, Plan plan)  {
 		Connection con = null;
 		try{
 			con = exe.prepareConnection();
@@ -1086,7 +1098,7 @@ public class FtlDbExecute implements ORMappingDb{
 
 			if(isTransaction) {
 				log.debug(" --- >>>>>>>>>>>>> Transaction Begin !!! (Thead-id:"+Thread.currentThread().getId()+")");
-				con.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+				con.setTransactionIsolation(transactionIsolation);
 			}
 			
 			plan.doExecutePlan();
@@ -1111,21 +1123,21 @@ public class FtlDbExecute implements ORMappingDb{
 					}
 				}
 			}
-			throw new DbException(ex);
+			throw new DbException(ex == null ? ex : ex.getCause());
 		}finally{
 			exe.close(null, null, con);
 		}
 	}
 	
-	public void executePlan(Plan plan)  {
-		executePlan(true,plan);
-	}
-	 
 	public List<Map<String, Object>> executeQuery(String sql, Object... args) {
 		return exe.executeQuery(sql, args);
 	}
 	
 	public Page<Map<String, Object>> executeQueryForPage(String sql,Integer pageIndex,Integer pageSize, Object... args) {
+		return executeQueryForPage(sql,true,pageIndex,pageSize,args);
+	}
+	
+	public Page<Map<String, Object>> executeQueryForPage(String sql,boolean requiredCount,Integer pageIndex,Integer pageSize, Object... args) {
 		
 		if (pageIndex == null || pageIndex < 0) {
 			pageIndex = 0;
@@ -1136,18 +1148,21 @@ public class FtlDbExecute implements ORMappingDb{
 		
 		
 		long total = 0;
-		String totalSqlFmt = "select count(0) from (%s) _t0_amount";
-		String totalSql = String.format(totalSqlFmt,sql);
-		
-		List<Map<String, Object>> totalMapList = exe.executeQuery(totalSql);
-		if (totalMapList != null && totalMapList.size() > 0) {
-			Object cnt = totalMapList.get(0).values().iterator().next();
-			if (cnt != null) {
-				total = Long.valueOf(cnt.toString());
+		long pageCount = 0;
+		if (requiredCount) {
+			String totalSqlFmt = "select count(0) from (%s) _t0_amount";
+			String totalSql = String.format(totalSqlFmt, sql);
+
+			List<Map<String, Object>> totalMapList = exe.executeQuery(totalSql);
+			if (totalMapList != null && totalMapList.size() > 0) {
+				Object cnt = totalMapList.get(0).values().iterator().next();
+				if (cnt != null) {
+					total = Long.valueOf(cnt.toString());
+				}
 			}
+
+			pageCount = Double.valueOf(Math.ceil(total * 1.000 / pageSize)).longValue();
 		}
-		
-		final long pageCount = Double.valueOf(Math.ceil(total * 1.000 / pageSize)).longValue();
 		
 		//封装分页对象
 		Page<Map<String, Object>> page = new Page.PageModel<>();
@@ -1155,9 +1170,15 @@ public class FtlDbExecute implements ORMappingDb{
 		page.setPageCount(pageCount);
 		page.setPageIndex(pageIndex);
 		page.setPageSize(pageSize);
-		page.setHasNext(pageIndex + 1 < pageCount);
-		page.setHasPrevious(pageIndex > 0 && pageIndex < pageCount - 1);
 		
+		if (requiredCount) {
+			page.setHasNext(pageIndex + 1 < pageCount);
+			page.setHasPrevious(pageIndex > 0 && pageIndex < pageCount - 1);
+		} else {
+			page.setHasNext(true);
+			page.setHasPrevious(pageIndex <= 0);
+			page.setTotal(Integer.MAX_VALUE);
+		}
 		
 		String pageSql = sql.concat(" limit ?,? ");
 		List<Object> params = new ArrayList<>();
@@ -1179,7 +1200,8 @@ public class FtlDbExecute implements ORMappingDb{
 
 
 	public void cascade(Object model, String... props)  {
-		if (props == null || props.length == 0) return ;
+		throw new UnsupportedOperationException("暂不支持此方法");
+		// if (props == null || props.length == 0) return ;
 	}
 
 	/**
@@ -1243,6 +1265,7 @@ public class FtlDbExecute implements ORMappingDb{
 	
 	
 	public static void main(String[] args) {
+		System.out.println(Integer.MAX_VALUE);
 		//db.executeSqlQueryForList
 		//db.executeSqlQueryForObject
 		//db.executeSqlQueryForPage

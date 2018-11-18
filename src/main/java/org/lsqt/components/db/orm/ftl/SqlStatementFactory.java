@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.StringReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,14 +14,14 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.lsqt.components.db.Column;
+import org.lsqt.components.db.Db;
 import org.lsqt.components.db.DbException;
 import org.lsqt.components.db.IdGenerator;
 import org.lsqt.components.db.Page;
-import org.lsqt.components.db.orm.ORMappingDb;
+import org.lsqt.components.db.Table;
 import org.lsqt.components.db.orm.SqlStatement;
 import org.lsqt.components.db.orm.SqlStatementBuilder;
-import org.lsqt.components.db.Table;
-import org.lsqt.components.db.Column;
 import org.lsqt.components.util.file.FileUtil;
 import org.lsqt.components.util.file.IOUtil;
 import org.lsqt.components.util.file.PathUtil;
@@ -39,9 +38,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
-import freemarker.cache.StringTemplateLoader;
-import freemarker.template.Configuration;
 
 /**
  * 如果没有显示配置ORM文件路径，默认从应用跟目录
@@ -286,7 +282,7 @@ public class SqlStatementFactory implements SqlStatementBuilder {
 		SqlStatementBuilder builder =new SqlStatementFactory().build();
 		
 		
-		ORMappingDb db = new FtlDbExecute(builder);
+		Db db = new FtlDbExecute(builder);
 		db.setConfigDataSource(ds);
 		System.out.println(db.getFullTable(Dictionary.class));
 		System.out.println(db.getColumn(Dictionary.class,"updateTime"));

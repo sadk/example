@@ -82,9 +82,9 @@ public class DictionaryServiceImpl implements DictionaryService{
 	
 	@SuppressWarnings("unchecked")
 	public List<Dictionary> getOptionByCode(String code,String appCode,Integer enable ) {
-		if(StringUtil.isBlank(appCode)) {
+		/*if(StringUtil.isBlank(appCode)) {
 			appCode = Application.APP_CODE_DEFAULT;
-		}
+		}*/
 		
 		if(StringUtil.isBlank(code)) {
 			return ArrayUtil.EMPTY_LIST;

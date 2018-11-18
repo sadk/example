@@ -1,0 +1,117 @@
+-- 分份证匹配的
+{
+    "code": "0000", 
+    "desc": "受理成功。", 
+    "result": {
+        "uniquenum": "1", 
+        "resultCode": "R000", 
+        "resultMsg": "请求（匹配）成功。", 
+        "name": "袁明敏", 
+        "certno": "430408198410203011", 
+        "policeadd": "北京市石景山区", 
+        "photo": "http://10.83.36.90:8080/2018/11/18/16/430408198410203011.jpg", 
+        "sex": "男", 
+        "channel": "IFC"
+    }
+}
+
+-- 身份证不匹配的
+{
+    "code": "0000", 
+    "desc": "受理成功。", 
+    "result": {
+        "uniquenum": "1", 
+        "resultCode": "R102", 
+        "resultMsg": "身份证号码错误。", 
+        "name": "袁明敏", 
+        "certno": "430408198410203012"
+    }
+}
+
+-- 异常数据的
+{
+    "code": "0000", 
+    "desc": "受理成功。", 
+    "result": {
+        "uniquenum": "11111111111111111111111", 
+        "resultCode": "R101", 
+        "resultMsg": "请求数据超长。", 
+        "name": "袁明敏", 
+        "certno": "430408198410203012"
+    }
+}
+
+-- 系统级异常情况返回
+{
+  "code":"1002",
+  "desc":"接入系统没有权限访问IFC。"
+}
+#############################################################################
+
+
+
+
+
+
+
+--  异常数据的
+{
+    "msg": "身份证无效，不是合法的身份证号码", 
+    "cur_business": "UNIFORM", 
+    "business_id": "2", 
+    "ret_code": "1111"
+}
+
+-- 查不到数据的
+{
+    "data": {
+        "id_no": "430408198410203011", 
+        "statusMsg": "本数据库中未查得",  // 2.查询描述
+        "resCode": "0000", 
+        "lastdealdate": "2018-11-18 18:34:50", 
+        "channel_type": "JLKJ", 
+        "resMsg": "提交成功", // 1.操作描述
+        "request_id": "20181118183450452427283800000951", 
+        "business_id": "2", 
+        "statusCode": "2007"
+    }, 
+    "sub_business": "YF_XS", 
+    "cur_business": "YF_XS", 
+    "business_id": "2", 
+    "ret_code": "0000"
+}
+
+-- 有犯罪记录的
+{
+    "data": {
+        "id_no": "321183199007030038", 
+        "statusMsg": "查询成功", 
+        "resCode": "0000", 
+        "lastdealdate": "2018-11-18 18:37:13", 
+        "channel_type": "JLKJ", 
+        "resMsg": "提交成功", 
+        "request_id": "20181118183712555274307300000954", 
+        "business_id": "1", 
+        "case": [
+            {
+                "count": "3", 
+                "casePeriod": "5-10年（不含）以内", 
+                "detail_id": "20181118183713134402107300840073", 
+                "caseSource": "前科", 
+                "crimeType": "比中前科", 
+                "caseType": "侵犯财产案", 
+                "id_no": "321183199007030038", 
+                "caseLevel": "严重", 
+                "lastdealdate": "2018-11-18 18:37:13", 
+                "channel_type": "JLKJ", 
+                "request_id": "20181118183712555274307300000954", 
+                "business_id": "1"
+            }
+        ], 
+        "statusCode": "2012"
+    }, 
+    "sub_business": "YF_XS", 
+    "cur_business": "YF_XS", 
+    "business_id": "1", 
+    "ret_code": "0000"
+}

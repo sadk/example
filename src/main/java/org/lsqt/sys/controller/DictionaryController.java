@@ -74,10 +74,11 @@ public class DictionaryController {
 	
 	@RequestMapping(mapping = { "/option", "/m/option" })
 	public List<Dictionary> option(@Default("1000") String  appCode,String code,Integer enable) {
+		/*
 		if(StringUtil.isBlank(appCode)) {
 			appCode = Application.APP_CODE_DEFAULT;
 		}
-		
+		*/
 		return dictionaryService.getOptionByCode(code, appCode,enable);
 	}
 	

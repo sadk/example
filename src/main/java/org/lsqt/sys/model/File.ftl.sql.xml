@@ -49,23 +49,27 @@
 		        or A.original_name like '%${StringUtil.escapeSql(query.original_name)}%'
 		        or A.remark like '%${StringUtil.escapeSql(query.key)}%' )
 			</#if>
+			
 			<#if query.id??>
 				and A.id = ${query.id} 
-			</#if>
-			
-			<#if query.objId??>
-				and A.obj_id = ${query.objId} 
 			</#if>
 			
 			<#if query.name??>
 				and A.name like '%${query.name}%' 
 			</#if>
+			
+			<#if query.dataType??>
+				and A.data_type = '${query.dataType}' 
+			</#if>
+			
 			<#if query.originalName??>
 				and A.original_name like '%${query.originalName}%' 
 			</#if>
+			
 			<#if query.remark??>
 				and A.remark like '%${StringUtil.escapeSql(query.remark)}%' 
 			</#if>
+			
 			<#if query.appCode??>
 				and A.app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
 			</#if>

@@ -29,8 +29,20 @@ public class ConfigInitialization implements Initialization  {
 		this.filterConfig = filterConfig;
 	}
 	
+	private static String SERVLET_CONTEXT_REAL_PATH;
+	
+	/**
+	 * 获取(Web容器)虚拟目录路径
+	 * @return
+	 */
+	public static String getServletContextRealPath() {
+		return SERVLET_CONTEXT_REAL_PATH;
+	}
+	
 	@Override
 	public void init() throws Exception {
+		SERVLET_CONTEXT_REAL_PATH = filterConfig.getServletContext().getRealPath("/") ;
+		
 		Initialization bannerConfigInit = new BannerConfigInit(); 
 		Initialization globalConstConfigInit = new GlobalConstConfigInit();
 		Initialization webXmlConfigInit = new WebXmlConfigInit(filterConfig);

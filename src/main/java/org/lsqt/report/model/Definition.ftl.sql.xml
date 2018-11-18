@@ -13,7 +13,7 @@
 	 		<column name="import_datasource_name" property="importDatasourceName" text="报表志入数据的数据源名称"/>
 	 		<column name="import_table" property="importTable" text="报表志入数据的目标表名"/>
 	 		
-	 		<column name="data_replica_stroe_precision" property="dataReplicaStroePrecision" text="报表数据导入数据副本存储精度模式 1=全字段按字符存储  2=按导入定义字段类型存储"/>
+	 		<column name="data_replica_storage_precision" property="dataReplicaStoragePrecision" text="报表数据导入数据副本存储精度模式 1=全字段按字符存储  2=按导入定义字段类型存储"/>
 			<column name="data_replica_datasource_id" property="dataReplicaDataSourceId" text="数据副本用的数据源,导入数据时，本地会存量一分副本用于留证"/>
 			<column name="data_replica_datasource_name" property="dataReplicaDataSourceName" text=""/>
 			
@@ -28,6 +28,10 @@
 	 	
 	 		<column name="url" property="url" text="报表url"/>
 	 		
+	 		<column name="report_script" property="reportScript" text="报表自定义js脚 本"/>
+			
+			<column name="count_required" property="countRequired" text="分页是否统计总记录数"/>
+
 	 		<column name="column_sql" property="columnSql" text="据SQL用于导入字段用，可以直接执行"/>
 	 		
 	 		<column name="report_sql" property="reportSql" text="报表SQL，带参数的真实报表SQL"/>

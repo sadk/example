@@ -84,11 +84,13 @@ public class DefinitionServiceImpl implements DefinitionService{
 		return db.getById(Definition.class, id);
 	}
 
-	public void importColumn(Long id,Integer dataType) {
+	public void importColumn(Long id,Integer dataType,boolean isIncremental) {
 		Objects.requireNonNull(id);
 		Objects.requireNonNull(dataType);
 		
-		db.executeUpdate(String.format("delete from %s where definition_id=? and data_type = ? ",db.getFullTable(Column.class)), id,dataType);
+		if(!isIncremental) {// 增量导入不删除原有数据
+			db.executeUpdate(String.format("delete from %s where definition_id=? and data_type = ? ",db.getFullTable(Column.class)), id,dataType);
+		}
 		
 		Definition model = db.getById(Definition.class, id);
 		DataSource dsModel = db.getById(DataSource.class, model.getDatasourceId());
@@ -98,6 +100,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 		javax.sql.DataSource ds = dbfactory.getDataSouce(dsModel.getCode());
 
 		List<org.lsqt.report.model.Column> reportColumnList = new ArrayList<>();
+		
 		
 		Connection con = db.getCurrentConnection();
 		try {
@@ -110,36 +113,38 @@ public class DefinitionServiceImpl implements DefinitionService{
 				if(ArrayUtil.isNotBlank(list)) {
 					
 					for(org.lsqt.components.db.Column e: list) {
-						org.lsqt.report.model.Column rptColumn = new org.lsqt.report.model.Column();
-						if("id".equalsIgnoreCase(e.getPropertyName()) || "pk".equalsIgnoreCase(e.getPropertyName())) {
-							rptColumn.setPrimaryKey(org.lsqt.report.model.Column.YES);
-						} else {
-							rptColumn.setPrimaryKey(org.lsqt.report.model.Column.NO);
-						}
-						rptColumn.setDataType(dataType);
-						rptColumn.setDbType(e.getDbType());
-						rptColumn.setDefinitionId(model.getId());
-						rptColumn.setJavaType(e.getJavaType());
-						rptColumn.setName(e.getName());
-						rptColumn.setCode(e.getName());
-						rptColumn.setOptLog("自动解析导入报表列");
-						rptColumn.setPropertyName(e.getPropertyName());
-						rptColumn.setSearchType(org.lsqt.report.model.Column.NO);
-						rptColumn.setComment(e.getText()); // 取的是SQL字段的别名
-						rptColumn.setReportName(model.getName());
-						rptColumn.setAllowExport(org.lsqt.report.model.Column.YES); //默认允许导出
-						rptColumn.setAllowImport(org.lsqt.report.model.Column.NO); //不允许导入
-						rptColumn.setSn(0);
-						
-						
-						rptColumn.setWidth(120);
-						rptColumn.setAlignType(org.lsqt.report.model.Column.ALIGN_TYPE_MID);
-						rptColumn.setHidde(org.lsqt.report.model.Column.HIDE_NO);
-						rptColumn.setFrozen( org.lsqt.report.model.Column.FROZEN_NO);
-						rptColumn.setAllowSort(org.lsqt.report.model.Column.NO);
+						org.lsqt.report.model.Column rptColumn = toRptColumn(dataType, model, e);
 						reportColumnList.add(rptColumn);
 					}
 				}
+				
+				
+				List<org.lsqt.report.model.Column> temp = new ArrayList<>();
+				ColumnQuery cq = new ColumnQuery();
+				cq.setDefinitionId(id);
+				cq.setDataType(dataType);
+				List<org.lsqt.report.model.Column> dbColumnList = db.queryForList("queryForPage",org.lsqt.report.model.Column.class, cq);
+
+
+				if (isIncremental && ArrayUtil.isNotBlank(dbColumnList)) {
+					for (org.lsqt.report.model.Column e : reportColumnList) {
+						boolean isExists = false;
+						for (org.lsqt.report.model.Column c : dbColumnList) {
+							if (e.getCode().equals(c.getCode())) {
+								isExists = true;
+								break;
+							}
+						}
+
+						if (!isExists) {
+							temp.add(e);
+						}
+					}
+
+					reportColumnList.clear();
+					reportColumnList.addAll(temp);
+				}
+				
 			});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -150,6 +155,44 @@ public class DefinitionServiceImpl implements DefinitionService{
 		if (ArrayUtil.isNotBlank(reportColumnList)) {
 			db.batchSave(reportColumnList);
 		}
+	}
+
+	/**
+	 * 
+	 * @param dataType
+	 * @param model 报表定义模型
+	 * @param e 数据库列字段定义
+	 * @return 
+	 */
+	private org.lsqt.report.model.Column toRptColumn(Integer dataType, Definition model,org.lsqt.components.db.Column e) {
+		org.lsqt.report.model.Column rptColumn = new org.lsqt.report.model.Column();
+		if("id".equalsIgnoreCase(e.getPropertyName()) || "pk".equalsIgnoreCase(e.getPropertyName())) {
+			rptColumn.setPrimaryKey(org.lsqt.report.model.Column.YES);
+		} else {
+			rptColumn.setPrimaryKey(org.lsqt.report.model.Column.NO);
+		}
+		rptColumn.setDataType(dataType);
+		rptColumn.setDbType(e.getDbType());
+		rptColumn.setDefinitionId(model.getId());
+		rptColumn.setJavaType(e.getJavaType());
+		rptColumn.setName(e.getName());
+		rptColumn.setCode(e.getName());
+		rptColumn.setOptLog("自动解析导入报表列");
+		rptColumn.setPropertyName(e.getPropertyName());
+		rptColumn.setSearchType(org.lsqt.report.model.Column.NO);
+		rptColumn.setComment(e.getText()); // 取的是SQL字段的别名
+		rptColumn.setReportName(model.getName());
+		rptColumn.setAllowExport(org.lsqt.report.model.Column.YES); //默认允许导出
+		rptColumn.setAllowImport(org.lsqt.report.model.Column.NO); //不允许导入
+		rptColumn.setSn(0);
+		
+		
+		rptColumn.setWidth(120);
+		rptColumn.setAlignType(org.lsqt.report.model.Column.ALIGN_TYPE_MID);
+		rptColumn.setHidde(org.lsqt.report.model.Column.HIDE_NO);
+		rptColumn.setFrozen( org.lsqt.report.model.Column.FROZEN_NO);
+		rptColumn.setAllowSort(org.lsqt.report.model.Column.NO);
+		return rptColumn;
 	}
 	
 	public String generateReportFile(Long id) throws Exception {
@@ -216,7 +259,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 		return null;
 	}
 	
-	public Page<Map<String,Object>> search(Long id,Map<String,Object> formMap) {
+	public Page<Map<String,Object>> search(Long id,Map<String,Object> formMap) throws Exception{
 		
 		class Result { public Page<Map<String,Object>> data; }
 		Result rs = new Result();
@@ -248,11 +291,11 @@ public class DefinitionServiceImpl implements DefinitionService{
 				try {
 					rs.data = queryData(db,model,formMap); //queryData方法体中所有方法已切换到报表数据源，如果中间方法有调用db.xxx方法的将不是当前系统数据库
 				} catch (Exception e) {
-					throw new DbException(e);
+					throw new DbException((e.getCause() == null ? e : e.getCause()));
 				}
 			});
 		}catch(Exception ex) {
-			throw new DbException(ex);
+			throw ex;
 		}finally {
 			db.setCurrentConnection(con);
 		}
@@ -295,6 +338,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 			 
 			if (def != null) {
 				formMap = wrapFormMap(def, formMap);
+				boolean countRequired = (Column.YES == def.getCountRequired());
 				
 				if (String.valueOf(org.lsqt.sys.model.Column.YES).equals(def.getShowPager())) {
 					String pageIndexParam = "pageIndex";
@@ -330,11 +374,12 @@ public class DefinitionServiceImpl implements DefinitionService{
 					
 					if(String.valueOf(org.lsqt.sys.model.Column.YES).equals(def.getPreventSqlInjection())) { //防SQL注入启用
 						SqlStatementArgs sqlStmt = renderSQLPrvInjectSQL(formMap,def.getReportSql());
-						return reportDb.executeQueryForPage(sqlStmt.getSql(),pageIndex,  pageSize, sqlStmt.getArgs().toArray());
+						
+						return reportDb.executeQueryForPage(sqlStmt.getSql(),countRequired, pageIndex,  pageSize, sqlStmt.getArgs().toArray());
 						
 					} else {
 						String sql = renderSQL(formMap, def.getReportSql()); 
-						return reportDb.executeQueryForPage(sql, pageIndex,pageSize);
+						return reportDb.executeQueryForPage(sql,countRequired, pageIndex,pageSize);
 					}
 				} else {
 					List<Map<String,Object>> list = new ArrayList<>();

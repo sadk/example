@@ -1,7 +1,6 @@
 package org.lsqt.components.db;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +17,7 @@ import javax.sql.DataSource;
 
 import org.lsqt.components.cache.Cache;
 import org.lsqt.components.cache.SimpleCache;
-import org.lsqt.components.db.Db.DbDialect;
+import org.lsqt.components.db.Db.Dialect;
 import org.lsqt.components.db.support.ColumnUtil;
 import org.lsqt.components.db.support.MySQLTypeMapping;
 import org.lsqt.components.util.collection.ArrayUtil;
@@ -179,14 +178,14 @@ public class JDBCExecutor {
 		}
 	}
 	
-	private String getCachedKey(String sql,Object ...paramValues) {
+/*	private String getCachedKey(String sql,Object ...paramValues) {
 		StringBuilder sqlContent = new StringBuilder(sql);
 		for (Object e: paramValues) {
 			sqlContent.append(e+"_@@_");
 		}
 		return Md5Util.MD5Encode(sqlContent.toString(), "utf-8", false) ;
 		//return jdbcCache.get(sqlContent);
-	}
+	}*/
 	
 	public List<Column> getMetaDataColumn(String sql,Object ... paramValues) throws DbException {
 		Connection con = null;
@@ -373,8 +372,8 @@ public class JDBCExecutor {
 				int dialect = resovleDialect();
 
 				// 1.MySql数据库特有的批量插入
-				if (DbDialect.MySQLInnoDBDialect == dialect || DbDialect.MySQLDialect == dialect
-						|| DbDialect.MySQLMyISAMDialect == dialect) {
+				if (Dialect.MySQLInnoDBDialect == dialect || Dialect.MySQLDialect == dialect
+						|| Dialect.MySQLMyISAMDialect == dialect) {
 					sum += doBatchInsertForMysql(sqlOriginal, paramValues);
 				} else
 
@@ -523,9 +522,9 @@ public class JDBCExecutor {
 		Connection con = prepareConnection();
 		String prdName = con.getMetaData().getDatabaseProductName();
 		if (StringUtil.isNotBlank(prdName) && prdName.toLowerCase().indexOf("mysql") != -1) {
-			return DbDialect.MySQLInnoDBDialect;
+			return Dialect.MySQLInnoDBDialect;
 		}
-		return DbDialect.MySQLInnoDBDialect;
+		return Dialect.MySQLInnoDBDialect;
 	}
 
 	private boolean isBatchInsert(String sql) {

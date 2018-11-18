@@ -3,8 +3,13 @@
 	<table name="sys_tenant">
 			<column id="id" type="auto" property="id" text="主键" />
 	 		<column name="name" property="name" text="租户名称"/>
-	 		<column name="value" property="value" text=""/>
+	 		<column name="value" property="value" text="租户值"/>
 	 		<column name="code" property="code" text="租户编码"/>
+	 		
+	 		<column name="full_name" property="fullName" text="租户全称"/>
+	 		<column name="nick_name" property="nickName" text="租户编码"/>
+	 		<column name="introduction" property="introduction" text="租户介绍"/>
+	 		
 	 		<column name="sn" property="sn" text="排序"/>
 	 		<column name="remark" property="remark" text=""/>
 	 		<column name="enable" property="enable" text="启用状态 0=未起用，1=启用"/>
@@ -23,10 +28,9 @@
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
 							name like '%${key}%'  or 
-							value like '%${key}%'  or 
-							code like '%${key}%'  or 
-							remark like '%${key}%'  or 
-							enable like '%${key}%' 
+							value = '${key}'  or 
+							code = '${key}'  or 
+							remark like '%${key}%'
 					)
 				</#if>
 				
@@ -35,6 +39,10 @@
 	  						<#if query.id??> and id = ${query.id} </#if>
 					
 	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+	  						
+	  						<#if query.fullName??> and full_name = '${StringUtil.escapeSql(query.name)}' </#if>
+	  						<#if query.nickName??> and nick_name = '${StringUtil.escapeSql(query.name)}' </#if>
+	  						<#if query.introduction??> and introduction = '${StringUtil.escapeSql(query.name)}' </#if>
 					
 	  						<#if query.value??> and value = '${StringUtil.escapeSql(query.value)}' </#if>
 					

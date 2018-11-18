@@ -25,9 +25,17 @@ public class TenantQuery {
 
 	/** 租户编码 */
 	private String code;
-
+	
+	/**租户全称*/
+	private String fullName;
+	
+	/**租户昵称**/
+	private String nickName;
+	
+	/**租户介绍**/
+	private String introduction;
+	
 	/** 排序 */
-
 	private Integer sn;
 
 	/***/
@@ -140,6 +148,30 @@ public class TenantQuery {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public String getIntroduction() {
+		return introduction;
+	}
+
+	public void setIntroduction(String introduction) {
+		this.introduction = introduction;
 	}
  
 

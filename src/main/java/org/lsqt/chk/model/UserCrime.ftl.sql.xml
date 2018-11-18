@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.chk.model.UserCrime" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="chk_user_crime">
+			<column id="id" type="auto" property="id" text="主键" />
+	 	
+	 		<column name="user_id" property="userId" text="引用系统用户id"/>
+	 	
+	 		<column name="name" property="name" text="用户姓名"/>
+	 		<column name="idcard" property="idcard" text="身份证号"/>
+	 		<column name="sex" property="sex" text="性别"/>
+	 		<column name="photo" property="photo" text="头像或照片"/>
+	 		<column name="police_address" property="policeAddress" text="签证机关"/>
+	 		
+	 	
+	 		<column name="batch_no" property="batchNo" text="上传的批次号,一般是年月日小时分钟秒钟"/>
+	 		<column name="match_res_code" property="matchResCode" text="姓名与身份证匹配系统响应码"/>
+	 		<column name="match_res_desc" property="matchResDesc" text="姓名与身份证匹配系统响说明"/>
+	 		<column name="match_biz_code" property="matchBizCode" text="姓名与身份证匹配业务响应码"/>
+	 		<column name="match_biz_desc" property="matchBizDesc" text="姓名与身份证匹配业务响应说明"/>
+	 	
+	 
+	 		
+	 		<column name="res_code" property="resCode" text="系统响应码"/>
+	 		<column name="res_msg" property="resMsg" text="响应码描述"/>
+
+	 	
+	 	
+	 		<column name="code" property="code" text="用户编码"/>
+	 		<column name="sn" property="sn" text=""/>
+	 		<column name="remark" property="remark" text=""/>
+	 		<column name="app_code" property="appCode" text=""/>
+	 		
+	 	
+		
+		 
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	 		
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from chk_user_crime where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							name like '%${key}%'  or 
+							idcard like '%${key}%'  or 
+							batch_no like '${key}%'
+					)
+				</#if>
+							<#if query.id??> and id = ${query.id} </#if>
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+					
+	  						<#if query.userId??> and user_id = ${query.userId} </#if>
+					
+							<#if query.batchNo??> and batch_no = '${StringUtil.escapeSql(query.batchNo)}' </#if>
+	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+	  						<#if query.idcard??> and idcard = '${StringUtil.escapeSql(query.idcard)}' </#if>
+	  						
+	  						
+	  						
+	  						<#if query.matchResCode??> and match_res_code = '${StringUtil.escapeSql(query.matchResCode)}' </#if>
+	  						<#if query.matchResDesc??> and match_res_desc like '%${StringUtil.escapeSql(query.matchResDesc)}%' </#if>
+	  						<#if query.matchBizCode??> and match_biz_code = '${StringUtil.escapeSql(query.matchBizCode)}' </#if>
+	  						<#if query.matchBizDesc??> and match_biz_desc = '${StringUtil.escapeSql(query.matchBizDesc)}' </#if>
+	  						
+					
+	  						<#if query.resCode??> and res_code = '${StringUtil.escapeSql(query.resCode)}' </#if>
+	  						<#if query.resMsg??> and res_msg = '${StringUtil.escapeSql(query.resMsg)}' </#if>
+	  						<#if query.statusCode??> and status_code = '${StringUtil.escapeSql(query.statusCode)}' </#if>
+	  						<#if query.statusMsg??> and status_msg = '${StringUtil.escapeSql(query.statusMsg)}' </#if>
+						
+						
+						
+							<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+					
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from chk_user_crime ]]>
+	</statement>
+	
+</statements>

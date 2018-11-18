@@ -31,7 +31,7 @@ public class Definition {
 	private String dataReplicaDataSourceName;
 	
 	/** 报表数据导入数据副本存储精度模式 1=全字段按字符存储  2=按导入定义字段类型存储 **/
-	private Integer dataReplicaStroePrecision;
+	private Integer dataReplicaStoragePrecision;
 	public static final int DATA_REPLICA_STROE_PRECISION_ALL_STRING=1;
 	public static final int  DATA_REPLICA_STROE_PRECISION_BY_CONFIG=2;
 
@@ -61,6 +61,12 @@ public class Definition {
 	
 	/**是否开启防SQL注入**/
 	private String preventSqlInjection ;
+
+	/** 报表自定义脚本 */
+	private String reportScript;
+	
+	/**分页是否统计总记录数**/
+	private Integer countRequired;
 	
 	/** 启用状态: 0=禁用 1=启用   **/
 	private String status ;
@@ -449,12 +455,27 @@ public class Definition {
 		this.importTable = importTable;
 	}
 
-	public Integer getDataReplicaStroePrecision() {
-		return dataReplicaStroePrecision;
+	public Integer getDataReplicaStoragePrecision() {
+		return dataReplicaStoragePrecision;
 	}
 
-	public void setDataReplicaStroePrecision(Integer dataReplicaStroePrecision) {
-		this.dataReplicaStroePrecision = dataReplicaStroePrecision;
+	public void setDataReplicaStoragePrecision(Integer dataReplicaStoragePrecision) {
+		this.dataReplicaStoragePrecision = dataReplicaStoragePrecision;
 	}
 
+	public String getReportScript() {
+		return reportScript;
+	}
+
+	public void setReportScript(String reportScript) {
+		this.reportScript = reportScript;
+	}
+
+	public Integer getCountRequired() {
+		return countRequired;
+	}
+
+	public void setCountRequired(Integer countRequired) {
+		this.countRequired = countRequired;
+	}
 }

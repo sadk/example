@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.chk.model.CrimeDetail" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="chk_crime_detail">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 		<column name="uc_id" property="ucId" text="引用chk_user_crime.id"/>
+	 		<column name="crime_type" property="crimeType" text="案件类型"/>
+	 		<column name="count" property="count" text="案件数量"/>
+	 		<column name="case_type" property="caseType" text="案件类型"/>
+	 		<column name="case_source" property="caseSource" text="案件来源"/>
+	 		<column name="case_period" property="casePeriod" text="案件时间段"/>
+	 		<column name="case_level" property="caseLevel" text="案件级别"/>
+	 	
+	 		<column name="sn" property="sn" text=""/>
+	 		<column name="remark" property="remark" text=""/>
+	 		<column name="app_code" property="appCode" text=""/>
+	 	
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from chk_crime_detail where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+						remark like '%${key}%'  
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+						
+	  						<#if query.ucId??> and uc_id = ${query.ucId} </#if>
+					
+	  						<#if query.crimeType??> and crime_type = '${StringUtil.escapeSql(query.crimeType)}' </#if>
+					
+	  						<#if query.count??> and count = '${StringUtil.escapeSql(query.count)}' </#if>
+					
+	  						<#if query.caseType??> and case_type = '${StringUtil.escapeSql(query.caseType)}' </#if>
+					
+	  						<#if query.caseSource??> and case_source = '${StringUtil.escapeSql(query.caseSource)}' </#if>
+						
+	  						<#if query.casePeriod??> and case_period = '${StringUtil.escapeSql(query.casePeriod)}' </#if>
+					
+	  						<#if query.caseLevel??> and case_level = '${StringUtil.escapeSql(query.caseLevel)}' </#if>
+						
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+						
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from chk_crime_detail ]]>
+	</statement>
+	
+</statements>

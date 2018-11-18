@@ -10,8 +10,18 @@ public class Tenant {
 
 	/** 租户名称 */
 	private String name;
+	
+	/**租户全称*/
+	private String fullName;
+	
+	/**租户昵称**/
+	private String nickName;
+	
+	/**租户介绍**/
+	private String introduction;
+	
 
-	/***/
+	/**租户值*/
 	private String value;
 
 	/** 租户编码 */
@@ -116,6 +126,30 @@ public class Tenant {
 
 	public java.util.Date getUpdateTime() {
 		return this.updateTime;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public String getIntroduction() {
+		return introduction;
+	}
+
+	public void setIntroduction(String introduction) {
+		this.introduction = introduction;
 	}
 
 }

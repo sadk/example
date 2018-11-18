@@ -2,14 +2,37 @@ package org.lsqt.components.db;
 
 import java.io.Closeable;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
 public interface Db extends Closeable{
-
+	
+	int TRANSACTION_NONE = 0;
+	int TRANSACTION_READ_UNCOMMITTED = 1;
+	int TRANSACTION_READ_COMMITTED = 2;
+	int TRANSACTION_REPEATABLE_READ = 4;
+	int TRANSACTION_SERIALIZABLE = 8;
+	
 	void setConfigDataSource (DataSource ds) ;
+	
+	/**
+	 * 获取空的分页对象
+	 * @return page
+	 */
+	default <T> Page<T> getEmptyPage() {
+		Page<T> page = new Page.PageModel<>();
+		page.setData(new ArrayList<>(0));
+		page.setHasNext(false);
+		page.setHasPrevious(false);
+		page.setPageCount(0L);
+		page.setPageIndex(0);
+		page.setPageSize(20);
+		page.setTotal(0L);
+		return page;
+	}
 	
 	/**
 	 * 获取执行的SQL列名
@@ -122,7 +145,7 @@ public interface Db extends Closeable{
 	List<Map<String,Object>> executeQuery(String sql, Object ... args)  ;
 	
 	/**
-	 * 
+	 * 执行分页查询，默认统计总记录数
 	 * @param sql 需要执行的SQL
 	 * @param pageIndex 分页索引
 	 * @param pageSize 分页大小
@@ -130,6 +153,17 @@ public interface Db extends Closeable{
 	 * @return 
 	 */
 	Page<Map<String,Object>> executeQueryForPage(String sql,Integer pageIndex, Integer pageSize, Object ... args)  ;
+	
+	/**
+	 * 执行分页查询
+	 * @param sql
+	 * @param requiredCount 是否统计总记录数
+	 * @param pageIndex 分页索引
+	 * @param pageSize 分页大小
+	 * @param args SQL参数值
+	 * @return
+	 */
+	Page<Map<String, Object>> executeQueryForPage(String sql,boolean requiredCount,Integer pageIndex,Integer pageSize, Object... args);
 	
 	/**
 	 * 执行给定的SQL查询语句,返回单值Object
@@ -156,6 +190,7 @@ public interface Db extends Closeable{
 	 */
 	<T> T queryForObject(String nameSpace,String sqlID_or_SQL, Class<T> requiredType, Object... args) ;
 	
+	 
 	/**
 	 * 
 	 * @param sql_or_sqlID 如果用XML做表和POJO映射，则传入sqlID； 如果用注解做POJO映射，测传入SQL语句
@@ -165,11 +200,18 @@ public interface Db extends Closeable{
 	 */
 	<T> List<T> queryForList(String sqlID_or_SQL, Class<T> requiredType, Object... args) ;
 	
-	
+	/**
+	 * 
+	 * @param nameSpace 实体类名(空间)
+	 * @param sqlID SQL语句命名ID
+	 * @param requiredType 可以是基础类型、Map、POJO
+	 * @param args 
+	 * @return
+	 */
 	<T> List<T> queryForList(String nameSpace,String sqlID, Class<T> requiredType, Object... args) ;
 	
 	/**
-	 * 
+	 * 分页查询（默认统计总记录数）
 	 * @param sql_or_sqlID 如果用XML做表和POJO映射，则传入sqlID； 如果用注解做POJO映射，测传入SQL语句
 	 * @param pageIndex
 	 * @param pageSize
@@ -180,10 +222,28 @@ public interface Db extends Closeable{
 	<T> Page<T> queryForPage(String sqlID_or_SQL,int pageIndex,int pageSize,Class<T> requiredType,Object ... args) ;
 	
 	/**
-	 * 获取空的分页对象
-	 * @return page
+	 * 
+	 * @param sql_or_sqlID 如果用XML做表和POJO映射，则传入sqlID； 如果用注解做POJO映射，测传入SQL语句
+	 * @param requiredCount 是否需要统计总记录数(默认统计总记录数)
+	 * @param pageIndex
+	 * @param pageSize
+	 * @param requiredType 可以是基础类型、Map、POJO
+	 * @param args
+	 * @return
 	 */
-	<T> Page<T> getEmptyPage() ;
+	<T> Page<T> queryForPage(String sqlID_or_SQL,boolean requiredCount,int pageIndex,int pageSize,Class<T> requiredType,Object ... args) ;
+	
+	
+	/**
+	 * @param nameSpace 实体类名(空间)
+	 * @param sqlID SQL语句定义ID
+	 * @param requiredType 可以是基础类型、Map、POJO
+	 * @param args
+	 * @return
+	 * @
+	 */
+	<T> Page<T> queryForPage(String nameSpace,String sqlID,int pageIndex,int pageSize,Class<T> requiredType,Object ... args) ;
+	
 	
 	/**
 	 * 执行一个SQL计划
@@ -197,6 +257,14 @@ public interface Db extends Closeable{
 	 * @param isTransaction 是否开启事物
 	 */
 	void executePlan(boolean isTransaction,Plan plan) ;
+	
+	/**
+	 * 执行一个SQL计划，指定事务隔离级别
+	 * @param isTransaction 是否开启事务
+	 * @param transactionIsolation 见: DB.transactionIsolation
+	 * @param plan
+	 */
+	void executePlan(boolean isTransaction, int transactionIsolation , Plan plan) ;
 	
 	/**
 	 * 释放绑定到当前线程上的资源
@@ -231,7 +299,7 @@ public interface Db extends Closeable{
 	 * @author admin
 	 *
 	 */
-	interface DbDialect{
+	interface Dialect{
 		 
 		/**DB2**/
 		int DB2Dialect=0;
