@@ -5,7 +5,7 @@
 	<meta charset="UTF-8" />
 	<title>用户文件上传</title>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
-	<script src="${pageContext.request.contextPath}/scripts/upload/swfupload.js" type="text/javascript"></script>
+	<%-- <script src="${pageContext.request.contextPath}/scripts/upload/swfupload.js" type="text/javascript"></script> --%>
 	<style type="text/css">
     	body{ margin:0;padding:0;border:0;width:100%;height:100%;overflow:hidden;}
 	</style>
@@ -15,36 +15,33 @@
 		    <div size="30%" showCollapseButton="true">
 			   <div class="mini-fit">
 					<div style="padding-left:5px;padding-bottom:5px;">
-				            	<form id="edit-form1" method="post">
-									        <table>
-									         	<tr>
-									                <td>导入记要:</td>
-									            	<td colspan="3"> 
-									            		<input name="remark" id="remark" class="mini-textbox" width="320px" emptyText="请输入导入记要" required="true"/>
-									            	</td>
-									            	
-									            </tr>
-									         	<tr>
-									            	<td>文件上传:</td>
-									            	<td colspan="3">
-									            		<input id="importTemplateFile" class="mini-fileupload" style="width:224px;" name="upfile" limitType="*.xlsx;" 
-														    flashUrl="${pageContext.request.contextPath}/scripts/upload/swfupload.swf"
-														    uploadUrl="${pageContext.request.contextPath}/report/definition/upload"
-														    onuploadsuccess="onUploadSuccessImport" onuploaderror="onUploadError" />
-														 <a class="mini-button" onclick="startUpload('importTemplateFile')">上传</a>
-														 <a class="mini-button" onclick="viewData()">预览</a>
-									            	</td>
-									            </tr>
-									       		<tr>
-									            	<td>文件路径:</td>
-									            	<td colspan="3">
-									            		<input class="mini-textbox" width="270px" readonly="readonly" name="serverPath" id="serverPath"/>
-									            		<a class="mini-button" onclick="clearFileImport">清空</a>
-									            		
-									            	</td>
-									            </tr>
-									        </table>
-						        </form>
+					
+							    <form id="edit-form1" action="${pageContext.request.contextPath}/chk/user_crime/upload" method="post" enctype="multipart/form-data">
+							    	<table>
+						         	<tr>
+						                <td>导入记要:</td>
+						            	<td colspan="3"> 
+						            		<input name="remark" id="remark" class="mini-textbox" width="320px" emptyText="请输入导入记要" required="true" value="${remark }"/>
+						            	</td>
+						            </tr>    
+						         	<tr>
+						            	<td>文件上传:</td>
+						            	<td colspan="3">
+						            		<input class="mini-htmlfile" name="dataFile" limitType="*.xlsx" style="width:224px;" />
+											<a class="mini-button" onclick="startUpload()">上传</a>
+											<a class="mini-button" onclick="viewData()">预览</a>
+						            	</td>
+						            </tr>
+						       		<tr>
+						            	<td>文件路径:</td>
+						            	<td colspan="3">
+						            		<input class="mini-textbox" width="270px" readonly="readonly" name="serverPath" id="serverPath" value="${serverPath}"/>
+						            		<a class="mini-button" onclick="clearFileImport">清空</a>
+						            		
+						            	</td>
+						            </tr>
+						            </table>
+							    </form>
 					</div>
 				</div>
 		    </div>
@@ -66,15 +63,17 @@
 	    mini.parse();
 	    var form = new mini.Form("edit-form1");
 	   	var grid = mini.get("grid");
+	   	var serverPath = mini.get("serverPath");
+	   	var remark = mini.get("remark");
 	   	
-		var definitionId = null;
+		var definitionCode = "report_user_crime"; // 犯罪记录报表配置编码
 		
 		function viewData() {
 			var data = {};
-			data.definitionId = definitionId;
+			data.definitionCode = definitionCode; 
 			data.serverPath = mini.get("serverPath").value;
 			if(data.serverPath == null || data.serverPath== '') {
-				mini.alert("请选上传Excel数据文件");
+				mini.alert("请上传Excel数据文件");
 				return ;
 			}			
 			
@@ -83,7 +82,7 @@
 			grid.clearRows();
 			
 			$.ajax({
-				url : "${pageContext.request.contextPath}/report/definition/view_data",
+				url : "${pageContext.request.contextPath}/chk/user_crime/view_data",
 				dataType: 'json', type : 'post',
 				data: data,
 				success : function(data) {
@@ -120,18 +119,18 @@
  
 		
 		function clearFileImport() {
-			form.reset();
+			//form.reset();
+			serverPath.setValue("");
+			remark.setValue("");
 			grid.clearRows();
 		}
 		
 	    function startUpload(id) {
-	        var fileupload = mini.get(id);
-	        
-	        var paramObject = {};
-	        paramObject.definitionId = definitionId;
-	        
-	        fileupload.setPostParam (paramObject);
-	        fileupload.startUpload();
+			var data = form.getData();
+			form.validate();
+			if(form.isValid() == false) return;
+			
+	        $("#edit-form1").submit();
 	    }
 	    
 	    function onUploadSuccessImport(e) {
@@ -169,15 +168,14 @@
 				return ;
 			}
 			
-			console.log(definitionId)
-			data.definitionId = definitionId;
-
+			data.definitionCode = definitionCode;
+			
 			$.ajax({
-				url : "${pageContext.request.contextPath}/report/definition/execute_import",
+				url : "${pageContext.request.contextPath}/chk/user_crime/execute_import",
 				dataType: 'json', type : 'post',
 				data: data,
 				success : function(text) {
-					CloseWindow("save");
+					CloseWindow("ok");
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
 	                mini.showTips({
@@ -187,6 +185,7 @@
 	                });
 	            }
 			});
+			
 		}
 
 		////////////////////

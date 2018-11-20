@@ -59,8 +59,8 @@ CREATE TABLE `chk_user_crime` (
   `remark` varchar(256) DEFAULT NULL,
   `app_code` varchar(40) DEFAULT NULL,
   `gid` varchar(40) DEFAULT NULL,
-  `create_time` datetime NOT NULL COMMENT '创建日期',
-  `update_time` datetime DEFAULT NULL,
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日期',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `code` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户表刑事案底核查表(北京优分数据科技接口)';
