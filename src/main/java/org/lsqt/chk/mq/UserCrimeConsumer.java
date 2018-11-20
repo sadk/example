@@ -55,7 +55,7 @@ public class UserCrimeConsumer {
 		}
 		*/
 		
-		chan.queueBind(UserCrimeMQConfig.getQueueName(), UserCrimeMQConfig.getExchangeName(),UserCrimeMQConfig.getRoutingKey());
+		chan.queueBind(UserCrimeMQConfig.getQueueName(), UserCrimeMQConfig.getExchangeName(),UserCrimeMQConfig.getRoutingKeyConsumer());
 		chan.basicQos(1); //同一时刻服务器只会发一条消息给消费者
 		
 		log.info("waiting message ...");

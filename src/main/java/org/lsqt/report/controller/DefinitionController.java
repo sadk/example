@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -214,6 +215,7 @@ public class DefinitionController {
 			}
 		}
 	}
+	 
 	
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(mapping = { "/upload", "/m/upload" }, text="报表数据上传")
@@ -427,8 +429,16 @@ public class DefinitionController {
 		}
 	}
 	
+	/**
+	 * 按报表定义id或编码预览数据 (优先使用报表定义ID)
+	 * @param definitionId 报表定义Id
+	 * @param definitionCode 或报表定义编码
+	 * @param serverPath
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(mapping = { "/view_data", "/m/view_data" }, text = "报表数据预览")
-	public Page<Map<String, Object>> viewData(Long definitionId,String serverPath) throws Exception{
+	public Page<Map<String, Object>> viewData(Long definitionId,String definitionCode,String serverPath) throws Exception{
 		Page<Map<String, Object>> page = new Page.PageModel<>();
 		
 		HttpServletRequest request = ContextUtil.getRequest();
@@ -439,6 +449,14 @@ public class DefinitionController {
        
 		if (file.exists() &&  file.isFile()) {
 			try{
+				if (definitionId == null) {
+					DefinitionQuery defQuery = new DefinitionQuery();
+					defQuery.setCode(definitionCode);
+					Definition def = db.queryForObject("queryForPage", Definition.class, defQuery);
+					if (def!=null) {
+						definitionId = def.getId();
+					}
+				}
 				List<List<CellWrap>> data = resolveImportedFileData(definitionId,file.getAbsolutePath());
 				
 				// 解析头字段

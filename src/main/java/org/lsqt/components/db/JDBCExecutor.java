@@ -381,6 +381,9 @@ public class JDBCExecutor {
 				{
 					sum += doBatchInsertForNormal(sql, paramValues);
 				}
+				
+			} else { // 如果是批量更新
+				throw new UnsupportedOperationException("暂不支持批量更新");
 			}
 		} catch (Exception ex) {
 			throw new DbException(ex);

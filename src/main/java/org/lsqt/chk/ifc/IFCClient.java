@@ -68,7 +68,7 @@ public class IFCClient {
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         
         con.setRequestMethod("POST");// 设置POST方式
-        con.setConnectTimeout(2000);// 设置连接超时时间2秒
+        con.setConnectTimeout(5000);// 设置连接超时时间2秒
         con.setReadTimeout(10000);// 设置读取返回结果超时时间10秒
         con.setDoOutput(true);
         

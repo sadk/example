@@ -32,7 +32,8 @@ public class UserCrimeMQConfig {
 	private static String PASSWORD;
 	
 	private static String EXCHANGE_NAME;
-	private static String ROUTING_KEY;
+	private static String ROUTING_KEY; //发送的路由key
+	private static String ROUTING_KEY_CONSUMER; //消费端接收的路由key
 	
 	private static String QUEUE_NAME;
 	
@@ -61,6 +62,9 @@ public class UserCrimeMQConfig {
 		return QUEUE_NAME;
 	}
 	
+	public static String getRoutingKeyConsumer() {
+		return ROUTING_KEY_CONSUMER;
+	}
 	@OnStarted
 	public synchronized void initConfig()  {
 		log.info("Loading rabitmq config info from db, it's configuration for FongKong Platform!!!");
@@ -89,6 +93,9 @@ public class UserCrimeMQConfig {
 				}
 				if ("routing_key".equals(p.getName())) {
 					ROUTING_KEY = p.getValue();
+				}
+				if ("routing_key_consumer".equals(p.getName())) {
+					ROUTING_KEY_CONSUMER = p.getValue();
 				}
 				if ("queue_name".equals(p.getName())) {
 					QUEUE_NAME = p.getValue();
@@ -127,6 +134,8 @@ public class UserCrimeMQConfig {
 		log.info("# username: {}", USERNAME);
 		log.info("# password: {}",PASSWORD);
 		log.info("# exchange_name: {}",EXCHANGE_NAME);
+		log.info("# routing_key_produce: {}",ROUTING_KEY);
+		log.info("# routing_key_consumer: {}",ROUTING_KEY_CONSUMER);
 		log.info("#");
 		log.info("#################### RabitMQ的配置 ####################");
 	}

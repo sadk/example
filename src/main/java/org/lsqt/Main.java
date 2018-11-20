@@ -16,7 +16,7 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 	    long start = System.currentTimeMillis();
 		Server server = new Server(80);
-		WebAppContext webappHandler = new WebAppContext("src/main/webapp", "/");
+		WebAppContext webappHandler = new WebAppContext("src/main/webapp", "/qdp");
 		server.setHandler(webappHandler);
 		server.start();
 		long end = System.currentTimeMillis();

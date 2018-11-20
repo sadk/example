@@ -68,7 +68,7 @@
 										</td>
 										<td>密码：</td>
 										<td>
-											<input id="loginPwdReboot" name="loginPwdReboot"  class="mini-textbox"  emptyText="请输入密码"  />
+											<input id="loginPwdReboot" name="loginPwdReboot"  class="mini-password"  emptyText="请输入密码"  />
 											<input id="loginPwd" name="loginPwd" class="mini-hidden" />
 										</td>
 									</tr>
