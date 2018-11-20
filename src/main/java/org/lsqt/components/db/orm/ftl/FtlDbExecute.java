@@ -1123,7 +1123,7 @@ public class FtlDbExecute implements Db{
 					}
 				}
 			}
-			throw new DbException(ex == null ? ex : ex.getCause());
+			throw new DbException(ex.getMessage(),ex == null ? ex : ex.getCause());
 		}finally{
 			exe.close(null, null, con);
 		}
