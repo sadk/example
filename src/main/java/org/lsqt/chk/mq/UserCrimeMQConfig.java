@@ -7,6 +7,7 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.OnStarted;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.util.collection.ArrayUtil;
+import org.lsqt.sys.model.Dictionary;
 import org.lsqt.sys.model.Machine;
 import org.lsqt.sys.model.MachineQuery;
 import org.lsqt.sys.model.Property;
@@ -24,6 +25,7 @@ public class UserCrimeMQConfig {
 	private static final Logger log = LoggerFactory.getLogger(UserCrimeMQConfig.class);
 	
 	@Inject private Db db;
+	private static boolean IS_ENABLE;
 	
 	private static String VIRTUAL_HOST;
 	private static String IP;
@@ -37,6 +39,13 @@ public class UserCrimeMQConfig {
 	
 	private static String QUEUE_NAME;
 	
+	/**
+	 * 是否启用MQ
+	 * @return
+	 */
+	public static boolean isEnable() {
+		return IS_ENABLE;
+	}
 	public static String getVirtualHost() {
 		return VIRTUAL_HOST;
 	}
@@ -79,6 +88,10 @@ public class UserCrimeMQConfig {
 				throw new NullPointerException(errorMsg);
 			}
 
+			if (machine.getStatus() != null && Dictionary.ENABLE_启用 == machine.getStatus()) {
+				IS_ENABLE = true;
+			}
+			
 			PropertyQuery propQuery = new PropertyQuery();
 			propQuery.setParentCode(machine.getCode());
 			List<Property> list = db.queryForList("queryForPage", Property.class, propQuery);
@@ -128,6 +141,7 @@ public class UserCrimeMQConfig {
 	public static void printConfig () {
 		log.info("#################### RabitMQ的配置 ####################");
 		log.info("#");
+		log.info("# MQ是否启用: {}",IS_ENABLE);
 		log.info("# virtualHost: {}",VIRTUAL_HOST);
 		log.info("# ip: {}",IP);
 		log.info("# port: {}",PORT);

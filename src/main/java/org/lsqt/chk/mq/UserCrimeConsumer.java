@@ -36,6 +36,10 @@ public class UserCrimeConsumer {
 	@SuppressWarnings("unchecked")
 	@OnStarted(order = 1 , text="容器启动后：RabitMQ消费端启动，消费掉风控平台推送过来的数据")
 	public void consume() throws Exception {
+		if (!UserCrimeMQConfig.isEnable()) {
+			return;
+		}
+		
 		ConnectionFactory factory = new ConnectionFactory();
 		
 		factory.setVirtualHost(UserCrimeMQConfig.getVirtualHost());

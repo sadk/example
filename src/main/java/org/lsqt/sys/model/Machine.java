@@ -26,7 +26,7 @@ public class Machine {
 	/** 链接url */
 	private String url;
 
-	/** 数据源状态：1=可用 0=不可用 */
+	/** 启用状态：1=可用 0=不可用 */
 	private Integer status;
 
 	/** 地址,可以是ip也可以是域名 */

@@ -68,19 +68,22 @@
 							</tr>
 
 							<tr>
-								<td>排序号：</td>
+								<td>是否启用：</td>
 								<td>
-								 	<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
+									<input id="status" name="status" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
 								</td>
-								
 								<td>所属系统：</td>
 								<td>
 									<input id="appCode" name="appCode" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/application/all" />
 								</td>
 							</tr>
 							<tr>
+								<td>排序号：</td>
+								<td>
+								 	<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
+								</td>
 								<td>备注：</td>
-								<td colspan="3"><input id="remark" name="remark" class="mini-textbox"/></td>
+								<td ><input id="remark" name="remark" class="mini-textbox"/></td>
 							</tr>
 				        </table>
 				    </div>

@@ -21,6 +21,9 @@ public class Dictionary {
 	public static final String EXPORT_DATA_TYPE_全部数据="2";
 	
 	
+	public static final int ENABLE_启用=1;
+	public static final int ENABLE_禁用=0;
+	
 	private Long id;
 	private Long pid;
 	

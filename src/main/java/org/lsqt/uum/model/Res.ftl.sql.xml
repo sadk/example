@@ -92,11 +92,13 @@
 							<#if query.userId??> 
 								and A.id in(
 									select res_id from uum_role_res where role_id in (
+									<#--  
                                         -- 查找部门、组、称谓的角色
 										select role_id from uum_object_role where obj_id in(
 											select obj_id /* 角色、部门、组、称谓ID */ from uum_user_object where user_id=${query.userId} and obj_type in(1,2,3,4)
 										)
                                         union
+                                    -->
                                         -- 查找用户的角色
                                          select obj_id from uum_user_object where user_id=${query.userId} and obj_type=7 
 									)

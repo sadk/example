@@ -26,7 +26,7 @@
 		            <legend>用户信息</legend>
 		            <div style="padding:5px;">
 				        <table>
-							<tr>
+							<tr> 
 								<td style="width:100px;">姓名：</td>
 								<td style="width:150px;">
 								 	<input name="name" id="name" class="mini-textbox"  />

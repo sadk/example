@@ -2,7 +2,6 @@ package org.lsqt.chk.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,16 +44,13 @@ import org.lsqt.components.util.ExceptionUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.report.controller.PolicyReportFileRename;
-import org.lsqt.report.controller.DefinitionController.CellWrap;
 import org.lsqt.report.model.Column;
 import org.lsqt.report.model.ColumnQuery;
 import org.lsqt.report.model.Definition;
 import org.lsqt.report.model.DefinitionQuery;
 import org.lsqt.report.service.ColumnService;
 import org.lsqt.report.service.DefinitionService;
-import org.lsqt.sys.model.DataSource;
 import org.lsqt.sys.service.DataSourceService;
-import org.lsqt.sys.service.impl.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

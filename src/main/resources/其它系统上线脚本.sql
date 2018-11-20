@@ -97,3 +97,10 @@ ALTER TABLE  `sys_machine`
 CHANGE COLUMN `user_name` `user_name` VARCHAR(255) NULL COMMENT '登陆名称' ,
 CHANGE COLUMN `user_password` `user_password` VARCHAR(255) NULL COMMENT '登陆密码' ;
 
+
+-- 简历科技系统(已于2018-11-20发给勇波执行)
+-- update sys_machine set status = 1 where code = 'RabitMQ_FengKong' ;
+-- update sys_machine set status = 1 where code = 'IFC_HTTP_HOST' ;
+
+
+-- 
