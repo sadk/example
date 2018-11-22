@@ -26,6 +26,9 @@ public class Definition {
 	/**报表导入时的数据表**/
 	private String importTable;
 	
+	/**是否存储数据副本:1=是 0=否**/
+	private Integer storeReplicaData;
+	
 	/** 数据副本用的数据源,导入数据时，本地会存量一分副本用于留证  **/
 	private Long dataReplicaDataSourceId;
 	private String dataReplicaDataSourceName;
@@ -477,5 +480,13 @@ public class Definition {
 
 	public void setCountRequired(Integer countRequired) {
 		this.countRequired = countRequired;
+	}
+
+	public Integer getStoreReplicaData() {
+		return storeReplicaData;
+	}
+
+	public void setStoreReplicaData(Integer storeReplicaData) {
+		this.storeReplicaData = storeReplicaData;
 	}
 }

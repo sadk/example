@@ -31,7 +31,7 @@
 		            <div style="padding:5px;">
 				        <table>
 							<tr>
-								<td style="width:120px;">中文字段名：</td>
+								<td style="width:140px;">中文字段名：</td>
 								<td style="width:150px;">
 								 	<input id="name" name="name" class="mini-textbox" required="true"/>
 								</td>
@@ -75,7 +75,7 @@
 							</tr>
 							
 							<tr>
-								<td>单元格坐标：</td>
+								<td>表头单元格坐标：</td>
 								<td>
 								 	<input id="coordinate" name="coordinate"   class="mini-textbox" required="true"/>
 								</td>

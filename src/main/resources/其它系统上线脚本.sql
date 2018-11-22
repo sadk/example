@@ -1,3 +1,5 @@
+-- 截止目前为止，只有crm系统没有执行该脚本,生产环境下.by 袁mm 2018-11-22
+
 ALTER TABLE `sys_tenant` 
 CHANGE COLUMN `value` `value` VARCHAR(46) NULL DEFAULT NULL COMMENT '租户值' ,
 ADD COLUMN `full_name` VARCHAR(46) NULL   COMMENT '租户全称',
@@ -98,9 +100,21 @@ CHANGE COLUMN `user_name` `user_name` VARCHAR(255) NULL COMMENT '登陆名称' ,
 CHANGE COLUMN `user_password` `user_password` VARCHAR(255) NULL COMMENT '登陆密码' ;
 
 
--- 简历科技系统(已于2018-11-20发给勇波执行)
--- update sys_machine set status = 1 where code = 'RabitMQ_FengKong' ;
--- update sys_machine set status = 1 where code = 'IFC_HTTP_HOST' ;
+
+ALTER TABLE `rpt_definition`  ADD COLUMN `store_replica_data` INT(2) NULL COMMENT '是否存储数据副本:1=是 0=否' ;
 
 
--- 
+ALTER TABLE `sys_property`  CHANGE COLUMN `value` `value` VARCHAR(2000) NULL DEFAULT NULL COMMENT '属性值' ;
+
+
+ALTER TABLE `sys_property` CHANGE COLUMN `remark` `remark` VARCHAR(500) NULL DEFAULT NULL COMMENT '属性说明' ;
+
+
+ALTER TABLE `uum_res` CHANGE COLUMN `code` `code` VARCHAR(200) NULL DEFAULT NULL COMMENT '编码' ;
+
+-- 查检以下字段是否存在:
+-- ALTER TABLE  `uum_res`  ADD COLUMN `url` VARCHAR(2000) NULL ;
+-- ALTER TABLE  `uum_res` ADD COLUMN `icon` VARCHAR(200) NULL  ;
+
+
+

@@ -85,7 +85,9 @@ public class UserCrimeMQConfig {
 
 			String errorMsg = "请录入rabitMQ机器配置,编码为:" + query.getCode();
 			if (machine == null) {
-				throw new NullPointerException(errorMsg);
+				//throw new NullPointerException(errorMsg);
+				printConfig();
+				return ;
 			}
 
 			if (machine.getStatus() != null && Dictionary.ENABLE_启用 == machine.getStatus()) {

@@ -24,6 +24,9 @@ public class Dictionary {
 	public static final int ENABLE_启用=1;
 	public static final int ENABLE_禁用=0;
 	
+	public static final int YES=1;
+	public static final int NO=0;
+	
 	private Long id;
 	private Long pid;
 	

@@ -487,5 +487,4 @@ public class ColumnQuery {
 	public void setAllowExport(Integer allowExport) {
 		this.allowExport = allowExport;
 	}
-
 }

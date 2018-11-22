@@ -215,6 +215,12 @@
 								</td>
 								
 							</tr>
+							<tr>
+								<td>是否存储副本：</td>
+								<td>
+									<input id="storeReplicaData" name="storeReplicaData" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+								</td>
+							</tr>
 							<tr class="canImport">
 								<td>数据源副本：</td>
 								<td>

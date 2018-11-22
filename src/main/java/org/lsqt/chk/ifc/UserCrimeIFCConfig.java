@@ -47,7 +47,9 @@ public class UserCrimeIFCConfig {
 
 			String errorMsg = "请录入rabitMQ机器配置,编码为:" + query.getCode();
 			if (machine == null) {
-				throw new NullPointerException(errorMsg);
+				log.error(errorMsg);
+				return ;
+				//throw new NullPointerException(errorMsg);
 			}
 
 			PropertyQuery propQuery = new PropertyQuery();
@@ -55,7 +57,9 @@ public class UserCrimeIFCConfig {
 			List<Property> list = db.queryForList("queryForPage", Property.class, propQuery);
 
 			if (ArrayUtil.isBlank(list)) {
-				throw new NullPointerException(errorMsg);
+				//throw new NullPointerException(errorMsg);
+				printConfig();
+				return ;
 			}
 
 			for (Property p : list) {

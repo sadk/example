@@ -5,9 +5,6 @@ package org.lsqt.report.model;
  * 报表字段定义管理
  */
 public class Column {
-
-	public static final int YES=1;
-	public static final int NO=0;
 	
 	/***/
 	private Long id;
@@ -61,6 +58,7 @@ public class Column {
 
 	/**是否模糊查询**/
 	private Integer likeSearchIs;
+	
 	
 	/**是否是模糊查询: 1=匹配开头 ，2=匹配中间 3=匹配结尾**/
 	private Integer likeSearchType; 
@@ -574,4 +572,6 @@ public class Column {
 	public void setDbTypeLength(String dbTypeLength) {
 		this.dbTypeLength = dbTypeLength;
 	}
+
+ 
 }

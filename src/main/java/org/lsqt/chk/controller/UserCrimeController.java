@@ -50,6 +50,7 @@ import org.lsqt.report.model.Definition;
 import org.lsqt.report.model.DefinitionQuery;
 import org.lsqt.report.service.ColumnService;
 import org.lsqt.report.service.DefinitionService;
+import org.lsqt.sys.model.Dictionary;
 import org.lsqt.sys.service.DataSourceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,7 @@ import com.oreilly.servlet.MultipartRequest;
 public class UserCrimeController {
 	private static final Logger log = LoggerFactory.getLogger(UserCrimeController.class);
 	
-	private static ExecutorService  executor = Executors.newSingleThreadExecutor(); 
+	//private static ExecutorService  executor = Executors.newSingleThreadExecutor(); 
 	@Inject private UserCrimeService userCrimeService; 
 	@Inject private ColumnService columnService;
 	@Inject private DataSourceService dataSourceService;
@@ -428,7 +429,7 @@ public class UserCrimeController {
 		ColumnQuery query = new ColumnQuery();
 		query.setDefinitionId(definitionId);
 		query.setDataType(Column.DATA_TYPE_IMPORT);
-		query.setAllowImport(Column.YES);
+		query.setAllowImport(Dictionary.YES);
 		List<Column> list = columnService.queryForList(query);
 		if (ArrayUtil.isNotBlank(list)) {
 			List<Column> headList = new ArrayList<>();

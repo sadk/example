@@ -347,7 +347,7 @@ public class JDBCExecutor {
 	/**
 	 * 批量插入或更新
 	 * @param sql 标准的SQL语句（不像MySql的insert table (a,b,c) values(1,2,3),(4,5,6),(7,8,9)的特有语句)
-	 * @param paramValues 
+	 * @param paramValues 所有的参数值
 	 * @return
 	 * @throws Exception
 	 */
@@ -389,7 +389,7 @@ public class JDBCExecutor {
 			throw new DbException(ex);
 		}
 
-		jdbcCache.clear();
+		//jdbcCache.clear();
 		return sum;
 	}
 
@@ -570,12 +570,14 @@ public class JDBCExecutor {
 		int cnt = 0;
 		String temp = sql.replace("'?'", ""); // 去除问号字符串(，这里容易有bug,用户这样的insert tb values('xxx?yyy')容易出现问题，待优化！！！！！！）
 		for (char e : temp.toCharArray()) {
+			System.out.println(e);
 			if (e == '?') {
 				cnt++;
 			}
 		}
 		
 		if (cnt!=0 && paramValues.length % cnt != 0) {
+			log.error(sql);
 			throw new IllegalArgumentException("The parameter value does not match the number");
 		}
 		return cnt;

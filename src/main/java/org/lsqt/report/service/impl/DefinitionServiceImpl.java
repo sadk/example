@@ -41,6 +41,7 @@ import org.lsqt.report.model.ResourceQuery;
 import org.lsqt.report.service.DefinitionService;
 import org.lsqt.report.service.impl.support.FreemarkGenerateReportFile;
 import org.lsqt.sys.model.DataSource;
+import org.lsqt.sys.model.Dictionary;
 import org.lsqt.sys.service.impl.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,9 +168,9 @@ public class DefinitionServiceImpl implements DefinitionService{
 	private org.lsqt.report.model.Column toRptColumn(Integer dataType, Definition model,org.lsqt.components.db.Column e) {
 		org.lsqt.report.model.Column rptColumn = new org.lsqt.report.model.Column();
 		if("id".equalsIgnoreCase(e.getPropertyName()) || "pk".equalsIgnoreCase(e.getPropertyName())) {
-			rptColumn.setPrimaryKey(org.lsqt.report.model.Column.YES);
+			rptColumn.setPrimaryKey(Dictionary.YES);
 		} else {
-			rptColumn.setPrimaryKey(org.lsqt.report.model.Column.NO);
+			rptColumn.setPrimaryKey(Dictionary.NO);
 		}
 		rptColumn.setDataType(dataType);
 		rptColumn.setDbType(e.getDbType());
@@ -179,11 +180,11 @@ public class DefinitionServiceImpl implements DefinitionService{
 		rptColumn.setCode(e.getName());
 		rptColumn.setOptLog("自动解析导入报表列");
 		rptColumn.setPropertyName(e.getPropertyName());
-		rptColumn.setSearchType(org.lsqt.report.model.Column.NO);
+		rptColumn.setSearchType(Dictionary.NO);
 		rptColumn.setComment(e.getText()); // 取的是SQL字段的别名
 		rptColumn.setReportName(model.getName());
-		rptColumn.setAllowExport(org.lsqt.report.model.Column.YES); //默认允许导出
-		rptColumn.setAllowImport(org.lsqt.report.model.Column.NO); //不允许导入
+		rptColumn.setAllowExport(Dictionary.YES); //默认允许导出
+		rptColumn.setAllowImport(Dictionary.NO); //不允许导入
 		rptColumn.setSn(0);
 		
 		
@@ -191,7 +192,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 		rptColumn.setAlignType(org.lsqt.report.model.Column.ALIGN_TYPE_MID);
 		rptColumn.setHidde(org.lsqt.report.model.Column.HIDE_NO);
 		rptColumn.setFrozen( org.lsqt.report.model.Column.FROZEN_NO);
-		rptColumn.setAllowSort(org.lsqt.report.model.Column.NO);
+		rptColumn.setAllowSort(Dictionary.NO);
 		return rptColumn;
 	}
 	
@@ -338,7 +339,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 			 
 			if (def != null) {
 				formMap = wrapFormMap(def, formMap);
-				boolean countRequired = (Column.YES == def.getCountRequired());
+				boolean countRequired = (def.getCountRequired()!= null && (Dictionary.YES == def.getCountRequired()));
 				
 				if (String.valueOf(org.lsqt.sys.model.Column.YES).equals(def.getShowPager())) {
 					String pageIndexParam = "pageIndex";

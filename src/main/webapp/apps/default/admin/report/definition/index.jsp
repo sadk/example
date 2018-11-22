@@ -163,6 +163,23 @@
 												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
 											</div>
 											
+											<div type="comboboxcolumn" field="searchType" width="120" headerAlign="center" align="center" allowSort="true">是否作为查询条件
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+											</div>
+											
+											<div type="comboboxcolumn" field="columnCodegenType" width="140" headerAlign="center" align="left" allowSort="true">字段控件
+												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=column_codegen_type" />
+											</div>
+											
+											<div type="comboboxcolumn" field="searchRequired" width="120" headerAlign="center" align="center" allowSort="true">是否查询必填
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+											</div>
+											
+											<div type="comboboxcolumn" field="hidde" width="80" headerAlign="center" align="center" allowSort="true">是否隐藏列
+												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
+											</div>
+											
+											
 											<div field="code" width="100" headerAlign="center" allowSort="true">DB字段
 												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="100" />
 											</div>
@@ -183,16 +200,6 @@
 											</div>
 											
 											
-											<div type="comboboxcolumn" field="searchType" width="120" headerAlign="center" align="center" allowSort="true">是否作为查询条件
-												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
-											</div>
-											<div type="comboboxcolumn" field="searchRequired" width="120" headerAlign="center" align="center" allowSort="true">是否查询必填
-												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
-											</div>
-											
-											<div type="comboboxcolumn" field="columnCodegenType" width="140" headerAlign="center" align="left" allowSort="true">字段控件
-												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=column_codegen_type" />
-											</div>
 											
 											<div field="sn" width="50" headerAlign="center" allowSort="true"  align="center">排序号
 												<input property="editor" class="mini-spinner" style="width:100%;" minWidth="50" />
@@ -210,9 +217,6 @@
 												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_column_align_type" />
 											</div>
 											
-											<div type="comboboxcolumn" field="hidde" width="80" headerAlign="center" align="center" allowSort="true">是否隐藏列
-												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
-											</div>
 											
 											<div type="comboboxcolumn" field="allowSort" width="80" headerAlign="center" align="center" allowSort="true">是否允许排序
 												<input property="editor" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
@@ -704,7 +708,7 @@
 				mini.open({
 					url : "${pageContext.request.contextPath}/apps/default/admin/report/column/edit_import.jsp",
 					title : "新增字段",
-					width : 540,
+					width : 550,
 					height : 320,
 					onload : function() {
 						var iframe = this.getIFrameEl();
@@ -740,7 +744,7 @@
 				mini.open({
 					url : "${pageContext.request.contextPath}/apps/default/admin/report/column/edit_import.jsp",
 					title : "编辑字段",
-					width : 540,
+					width : 550,
 					height : 320,
 					onload : function() {
 						var iframe = this.getIFrameEl();

@@ -1051,8 +1051,8 @@ CREATE TABLE `sys_property` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `parent_code` varchar(40) DEFAULT NULL COMMENT '(外键)引用的编码' ,
   `name` varchar(200) DEFAULT NULL COMMENT '属性名称' ,
-  `value` varchar(40) DEFAULT NULL COMMENT '属性值' ,
-  `remark` varchar(40) DEFAULT NULL COMMENT '属性说明' ,
+  `value` varchar(2000) DEFAULT NULL COMMENT '属性值' ,
+  `remark` varchar(500) DEFAULT NULL COMMENT '属性说明' ,
   `app_code` varchar(40) DEFAULT NULL COMMENT '所属应用' ,
   `sn` int(4) DEFAULT '0' ,
 
@@ -2244,6 +2244,7 @@ CREATE TABLE `rpt_definition` (
   `import_table` varchar(80) DEFAULT NULL COMMENT '志入的目标表',
   
   
+  `store_replica_data` int(2) DEFAULT NULL COMMENT '是否存储数据副本:1=是 0=否',
   `import_data_stroe_precision` int(2) DEFAULT NULL COMMENT '数据副本存储精度模式 1=全字段按字符存储  2=按导入定义字段类型存储',
   `data_replica_datasource_id` bigint(20) DEFAULT NULL COMMENT '数据副本用的数据源,导入数据时，本地会存量一分副本用于留证',
   `data_replica_datasource_name` varchar(50) DEFAULT NULL,
@@ -2670,6 +2671,8 @@ CREATE TABLE `chk_user_crime` (
   `code` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户表刑事案底核查表(北京优分数据科技接口)';
+
+
 
 
 

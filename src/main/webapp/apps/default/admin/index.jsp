@@ -54,6 +54,7 @@
 <!--Layout-->
 <div id="layout1" class="mini-layout" style="width:100%;height:100%;">
     <div class="header app-header" region="north"  height="70" showSplit="false" showHeader="false">
+    		<!--  <h1 style="margin:0;padding:15px;cursor:default;font-family:微软雅黑,黑体,宋体;">后台管理  </h1> -->
           <img src="${pageContext.request.contextPath}/logo.png" style="margin-top: 15px;margin-left: 10px;"/> 
           <!-- <div style="margin-left:5px;line-height:15px;text-align:left;cursor:default;color: green">晴天集团 Copyright © 版权所有 </div> -->
         <div class="topNav">    

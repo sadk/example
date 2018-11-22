@@ -114,8 +114,8 @@
 					                sizeList="[5,10,20,50]" pageSize="20" showEmptyText="true" emptyText="暂无数据"  allowAlternating="true" sortMode="client">
 					                <div property="columns">
 										<div type="checkcolumn"></div>
-										<div field="name" width="120" headerAlign="center" align="center">数据源名称</div>
-										<div field="code" width="120" headerAlign="center" align="center">数据源编码</div>	
+										<div field="name" width="120" headerAlign="center" align="left">数据源名称</div>
+										<div field="code" width="120" headerAlign="center" align="left">数据源编码</div>	
 										
 										<div field="url" width="260" headerAlign="center" allowSort="true"  align="left">数据链接地址</div>	
 										<div field="loginName" width="80" headerAlign="center" allowSort="true">登陆名</div>

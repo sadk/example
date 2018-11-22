@@ -1,0 +1,26 @@
+[
+	{
+		"appCode":null,
+		"code":"1002",
+		"id":1,
+		"name":"港淇科技",
+		"nodeType":"1",
+		"pid":0
+	},
+	{
+		"appCode":null,
+		"code":"6001",
+		"id":-8,
+		"name":"港淇科技垂直招聘",
+		"nodeType":"1",
+		"pid":1
+	},
+	{
+		"appCode":null,
+		"code":"6002",
+		"id":-9,
+		"name":"港淇科技人力资源",
+		"nodeType":"1",
+		"pid":1
+	}
+]

@@ -3,6 +3,7 @@ package org.lsqt.report.controller;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -50,6 +51,7 @@ import org.lsqt.report.service.impl.support.SelectorDataFromUrlHtml;
 import org.lsqt.report.service.impl.support.SelectorDataFromUrlJson;
 import org.lsqt.report.service.impl.support.SelectorDataFromUrlXml;
 import org.lsqt.sys.model.DataSource;
+import org.lsqt.sys.model.Dictionary;
 import org.lsqt.sys.service.DataSourceService;
 import org.lsqt.sys.service.impl.DataSourceFactory;
 import org.slf4j.Logger;
@@ -180,7 +182,7 @@ public class DefinitionController {
 				ColumnQuery columnQuery = new ColumnQuery();
 				columnQuery.setDefinitionId(reportDefinitionId);
 				columnQuery.setDataType(Column.DATA_TYPE_REPORT_SHOW);
-				columnQuery.setAllowExport(Column.NO);
+				columnQuery.setAllowExport(Dictionary.NO);
 				List<Column> notAllowColumn = columnService.queryForList(columnQuery);
 				
 				HttpServletRequest request = ContextUtil.getRequest();
@@ -259,10 +261,11 @@ public class DefinitionController {
 	}
 	
 	@RequestMapping(mapping = { "/execute_import", "/m/execute_import" }, text = "执行导入报表数据，存储数据到本地库，作为副本")
-	public Object executeImport(Long definitionId, String serverPath) throws Exception {
+	public Object executeImport(Long definitionId, String serverPath,String remark) throws Exception {
 		if(definitionId==null || StringUtil.isBlank(serverPath)) {
 			return null;
 		}
+		log.info("扫表执行志入,登陆用户为: {},导入记要: {}",ContextUtil.getLoginAccount(),remark);
 		
 		HttpServletRequest request = ContextUtil.getRequest();
 
@@ -292,10 +295,13 @@ public class DefinitionController {
 			Definition def = definitionService.getById(definitionId);
 			final String tableName = "rtp_data_"+definitionId;
 			
-			if (def!=null && def.getDataReplicaDataSourceId() != null) {
+			if (def != null 
+					&& (def.getStoreReplicaData() != null && def.getStoreReplicaData() == Dictionary.YES)
+					&& def.getDataReplicaDataSourceId() != null) {
 				ColumnQuery query = new ColumnQuery();
 				query.setDataType(Column.DATA_TYPE_IMPORT);
 				query.setDefinitionId(definitionId);
+				query.setAllowImport(Dictionary.YES);
 				final List<Column> columnList = columnService.queryForList(query);
 				
 				if (ArrayUtil.isBlank(columnList)) return null;
@@ -388,10 +394,8 @@ public class DefinitionController {
 	/**
 	 * 保存数据到给定DB
 	 * 
-	 * @param db
-	 *            给定的DB实例
-	 * @param data
-	 *            Excel数据
+	 * @param db 给定的DB实例
+	 * @param data Excel数据
 	 */
 	private void batchSave(Db db, String tableName, List<List<CellWrap>> data) {
 		if (ArrayUtil.isNotBlank(data)) {
@@ -421,9 +425,15 @@ public class DefinitionController {
 
 			List<Object> paramValueList = new ArrayList<>();
 			for (List<CellWrap> r : data) {
+				List<Object> args = new ArrayList<>();
+				
 				for (CellWrap e : r) {
 					paramValueList.add(e.cellValue);
+
+					args.add(e.cellValue);
 				}
+				
+				System.out.println(args.toString());
 			}
 			db.batchUpdate(sql.toString(), paramValueList.toArray());
 		}
@@ -508,7 +518,7 @@ public class DefinitionController {
 		ColumnQuery query = new ColumnQuery();
 		query.setDefinitionId(definitionId);
 		query.setDataType(Column.DATA_TYPE_IMPORT);
-		query.setAllowImport(Column.YES);
+		query.setAllowImport(Dictionary.YES);
 		List<Column> list = columnService.queryForList(query);
 		if (ArrayUtil.isNotBlank(list)) {
 			List<Column> headList = new ArrayList<>();
@@ -592,7 +602,7 @@ public class DefinitionController {
 					} else {
 						throw new UnsupportedOperationException("不支持的单元格实例");
 					}
-				} else { //空值单元格不要遗漏!!!
+				} else { //数据块中间的空值单元格不要遗漏!!!
 					for (Column e : columnList) {
 						CellReference cr = new CellReference(e.getCoordinate());
 						
@@ -613,6 +623,31 @@ public class DefinitionController {
 			if (ArrayUtil.isNotBlank(rowData)) {
 				if (!isBlankExcelRow(rowData)) {
 					data.add(rowData);
+				}
+			}
+			
+			if (ArrayUtil.isNotBlank(rowData) && rowData.size() < columnList.size()) { // bug Fix: 补全，假有10列数据，前3列有数据，后7列是null的单元格(用于补全SQL参数)
+				for (int i = rowData.size(); i < columnList.size(); i++) {
+					CellWrap cellWrap = new CellWrap();
+					//cellWrap.cellCoordinate = null;
+					cellWrap.cellRowIndex = j;
+					cellWrap.cellColumnIndex = i;
+					cellWrap.cellValue = null;
+					//cellWrap.columnConfig = null;
+					
+					
+					for (Column e: columnList) {
+						CellReference cr = new CellReference(e.getCoordinate());
+						
+						if(cr.getCol() == i) {
+							cellWrap.columnConfig = e;
+							cellWrap.cellCoordinate = e.getCoordinate();
+							break;
+						}
+					}
+					if (cellWrap.columnConfig != null) {
+						rowData.add(cellWrap);
+					}
 				}
 			}
 		}

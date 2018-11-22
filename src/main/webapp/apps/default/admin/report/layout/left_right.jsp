@@ -115,14 +115,19 @@
 					<table style="width:100%;">
 						<tr>
 							<td style="width:100%;">
-								<#if btnList??>
-									<#list btnList as btn>
+								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
+								<#if buttonList??>
+									<#list buttonList as btn>
 										<#if btn.type?? && btn.type==1>
 											<a class="mini-button" iconCls="icon-node" <#if btn.eventName??>${btn.eventName}='<#if btn.eventFunction??>${btn.eventFunction}</#if>'</#if> >${btn.name}</a>
+											<#if btn.btnScript??>
+											<script type="text/javascript">
+												${btn.btnScript}
+											</script>
+											</#if>
 										</#if>
 									</#list>
 								</#if>
-								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
 								<span class="separator"></span>
 								<#if (definition.canExport?? && definition.canExport == 1)>
 									<a id="exportFile" class="mini-button" iconCls="icon-download" onclick="exportData()">导出</a>
@@ -131,16 +136,10 @@
 								<#if (definition.canImport?? && definition.canImport == 1)>
 									<a id="importData" class="mini-button" iconCls="icon-upload" onclick="importData()">导入</a>
 								</#if>
-								<!-- 
+								<#-- 志出txt、pdf、excel等
 									<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:74px" value="1" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_export_file_type&enable=1" />
 								 -->
 							</td>
-							<!-- 
-							<td style="white-space:nowrap;">
-		                        <input id="key2" name="key2" class="mini-textbox" emptyText="请输入关键字" style="width:150px;" onenter="search"/>   
-		                        <a class="mini-button" onclick="search()">查询</a>
-		                    </td>
-		                     -->
 						</tr>
 					</table>
 		        </div>

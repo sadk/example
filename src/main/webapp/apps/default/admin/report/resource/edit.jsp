@@ -49,6 +49,12 @@
 								 	<input name="eventName" id="eventName" class="mini-textbox" emptyText="如：onclick" />
 								</td>
 							</tr>
+							<tr>
+								<td>事件响应函数：</td>
+								<td colspan="3">
+								 	<input id="eventFunction" name="eventFunction" class="mini-textbox" style="width:100%"/>
+								</td>
+							</tr>
  							<tr>
  								<td>事件响应类型：</td>
 								<td>

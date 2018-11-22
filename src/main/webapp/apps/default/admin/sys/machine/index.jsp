@@ -70,7 +70,8 @@
 									    <div property="columns">
 									        <div type="checkcolumn"></div>
 									        <div name="id" field="id" width="35" headerAlign="center" align="center">ID</div>
-									        <div name="name" field="name" width="160" headerAlign="center">名称</div>
+									        <div name="code" field="code" width="120" headerAlign="center" align="left">编码</div>
+									        <div name="name" field="name" width="160" headerAlign="center" align="left">名称</div>
 									        
 									        <div name="userName" field="userName" width="100" headerAlign="center">登陆用户名</div>
 									        <div name="userPassword" field="userPassword" width="100" headerAlign="center">登陆密码</div>
@@ -120,10 +121,10 @@
 										sizeList="[5,10,20,50]" pageSize="20" allowAlternating="true" sortMode="client">
 										<div property="columns">
 											<div type="checkcolumn"></div>
-											<div field="name" width="170"  align="left" headerAlign="center" allowSort="true">属性名
+											<div field="name" width="150"  align="left" headerAlign="center" allowSort="true">属性名
 												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
 											</div>
-											<div field="value"width="60" headerAlign="center" allowSort="true">属性值
+											<div field="value"width="350" headerAlign="center" allowSort="true">属性值
 												<input property="editor" class="mini-textbox" style="width:100%;" minWidth="200" />
 											</div>
 																		
