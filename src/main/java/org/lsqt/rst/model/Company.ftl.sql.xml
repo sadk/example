@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.Company" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="bu_company_info">
+			<column id="id" type="auto" property="id" text="主键" />
+
+
+	 		<column name="company_id" property="code" text="企业编号"/>
+	 		<column name="company_full_name" property="fullName" text="企业名称"/>
+	 		<column name="company_short_name" property="shortName" text="企业简称"/>
+	 		<column name="actual_work_addr" property="actualWorkAddress" text="实际上班地点"/>
+	 		<column name="company_introduction" property="introduction" text="企业介绍"/>
+	 		<column name="status" property="status" text="状态(0:有效，1:无效)"/>
+	 		
+	 		<column name="create_user" property="createUser" text="创建人"/>
+	 		<column name="update_user" property="updateUser" text="更新人"/>
+	 	
+	 	
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from bu_company_info where 1=1
+		 	<#if query??>
+		 		
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							company_full_name like '%${key}%'  or 
+							company_short_name like '%${key}%'  or 
+							company_introduction like '%${key}%'   
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.code??> and company_id = '${StringUtil.escapeSql(query.code)}' </#if>
+					
+	  						<#if query.fullName??> and company_full_name = '${StringUtil.escapeSql(query.fullName)}' </#if>
+					
+	  						<#if query.shortName??> and company_short_name = '${StringUtil.escapeSql(query.shortName)}' </#if>
+					
+	  						<#if query.actualWorkAddress??> and actual_work_addr = '${StringUtil.escapeSql(query.actualWorkAddress)}' </#if>
+					
+	  						<#if query.introduction??> and company_introduction = '${StringUtil.escapeSql(query.introduction)}' </#if>
+						
+	  						<#if query.status??> and status = ${query.status} </#if>
+					
+	  						<#if query.createUser??> and create_user = '${StringUtil.escapeSql(query.createUser)}' </#if>
+					
+	  						<#if query.updateUser??> and update_user = '${StringUtil.escapeSql(query.updateUser)}' </#if>
+	  						
+	  						<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from bu_company_info ]]>
+	</statement>
+	
+</statements>

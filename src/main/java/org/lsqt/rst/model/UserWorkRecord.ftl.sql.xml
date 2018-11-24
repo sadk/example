@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.UserWorkRecord" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="bu_user_work_record">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 		<column name="user_code" property="userCode" text="用户编码"/>
+	 	
+	 		<column name="type" property="type" text="考勤类型 :100=正常上班 200=加班 300=请假"/>
+	 	
+	 		<column name="working_hours" property="workingHours" text="时长精确到小时，保留一个小数"/>
+	 	
+	 		<column name="shift_type" property="shiftType" text="班次类型:1=白班、2=中班、3=晚班、4=休息"/>
+	 	
+	 		<column name="leave_type" property="leaveType" text="请假类型:1=事假、2=病假、3=其他"/>
+	 	
+	 		<column name="remark" property="remark" text="（请假原因）备注"/>
+	 	
+	 		<column name="tenant_code" property="tenantCode" text="租户编码"/>
+	 	
+	 		<column name="app_code" property="appCode" text="系统编码"/>
+	 	
+	 		<column name="sn" property="sn" text="排序"/>
+	 	
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from bu_user_work_record where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 							 							 							 							 							 												
+							user_code = '${key}' 						
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.userCode??> and user_code = '${StringUtil.escapeSql(query.userCode)}' </#if>
+						
+	  						<#if query.type??> and type = ${query.type} </#if>
+					
+	  						<#if query.workingHours??> and working_hours = '${StringUtil.escapeSql(query.workingHours)}' </#if>
+						
+	  						<#if query.shiftType??> and shift_type = '${StringUtil.escapeSql(query.shiftType)}' </#if>
+					
+	  						<#if query.leaveType??> and leave_type = '${StringUtil.escapeSql(query.leaveType)}' </#if>
+						
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+	  						<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
+						
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+					
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+					
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from bu_user_work_record ]]>
+	</statement>
+	
+</statements>

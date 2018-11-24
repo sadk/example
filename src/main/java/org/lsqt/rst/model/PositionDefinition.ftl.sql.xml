@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.PositionDefinition" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="bu_job_info">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="job_id" property="code" text="职位ID"/>
+	 	
+	 		<column name="job_name" property="name" text="职位名称"/>
+	 	
+	 		<column name="company_id" property="companyCode" text="公司ID"/>
+	 	
+	 		<column name="company_short_name" property="companyShortName" text="公司简称"/>
+	 	
+	 		<column name="intermediary_name" property="intermediaryName" text="中介姓名"/>
+	 	
+	 		<column name="intermediary_phone" property="intermediaryPhone" text="中介手机号"/>
+	 	
+	 		<column name="announcer_id" property="publishUserCode" text="发布者编码"/>
+	 	
+	 		<column name="release_time" property="publishTime" text="发布时间"/>
+	 	
+	 		<column name="comprehensive_salary" property="comprehensiveSalary" text="综合工资"/>
+	 	
+	 		<column name="work_time" property="workTime" text="作息时间"/>
+	 	
+	 		<column name="sex_need" property="requiredSex" text="性别要求"/>
+	 	
+	 		<column name="age_need" property="requiredAge" text="年龄要求"/>
+	 	
+	 		<column name="education_need" property="requiredEducation" text="学历要求"/>
+	 	
+	 		<column name="work_years" property="requiredWorkYears" text="工作年限"/>
+	 	
+	 		<column name="job_welfare" property="welfare" text="岗位福利"/>
+	 	
+	 		<column name="status" property="status" text="状态(0:未发布，1：已发布)"/>
+	 	
+	 		<column name="work_addr_id" property="workAddressCode" text="工作地址ID"/>
+	 	
+	 		<column name="picture_url" property="urlCompanyLogo" text="企业logo图片路径"/>
+	 	
+	 		<column name="job_type" property="type" text="职位类型(暂时没用)"/>
+	 	
+	 		<column name="cover_url" property="urlPositionCover" text="岗位封面图片路径"/>
+	 	
+	 		<column name="is_top" property="top" text="是否置顶（0：不置顶，1：置顶）"/>
+	 	
+	 		<column name="offline_time" property="offlineTime" text="下线时间"/>
+	 	
+	 		<column name="publish_platfrom" property="publishPlatfrom" text="发布平台(0:全平台，1：公众号，2：小程序)"/>
+	 	
+	 		<column name="is_need_resume" property="requiredResume" text="是否需要简历"/>
+	 	
+	 		<column name="interview_address" property="interviewAddress" text="面试地址"/>
+	 	
+	 	
+	 	
+	 		<column name="create_user" property="createUser" text="创建用户"/>
+	 		<column name="update_user" property="updateUser" text="更新用户"/>
+	 		
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from bu_job_info where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							job_id like '%${key}%'  or 
+							job_name like '%${key}%'  or 
+							
+							company_id like '%${key}%'  or 
+							company_short_name like '%${key}%'
+					)
+				</#if>
+	
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.code??> and job_id = '${StringUtil.escapeSql(query.code)}' </#if>
+					
+	  						<#if query.name??> and job_name = '${StringUtil.escapeSql(query.name)}' </#if>
+					
+	  						<#if query.companyCode??> and company_id = '${StringUtil.escapeSql(query.companyCode)}' </#if>
+					
+	  						<#if query.companyShortName??> and company_short_name = '${StringUtil.escapeSql(query.companyShortName)}' </#if>
+						
+	  						<#if query.intermediaryName??> and intermediary_name = '${StringUtil.escapeSql(query.intermediaryName)}' </#if>
+						
+	  						<#if query.intermediaryPhone??> and intermediary_phone = '${StringUtil.escapeSql(query.intermediaryPhone)}' </#if>
+					
+	  						<#if query.publishUserCode??> and announcer_id = '${StringUtil.escapeSql(query.publishUserCode)}' </#if>
+					
+	  						<#if query.comprehensiveSalary??> and comprehensive_salary = '${StringUtil.escapeSql(query.comprehensiveSalary)}' </#if>
+					
+	  						<#if query.workTime??> and work_time = '${StringUtil.escapeSql(query.workTime)}' </#if>
+					
+	  						<#if query.requiredSex??> and sex_need = '${StringUtil.escapeSql(query.requiredSex)}' </#if>
+					
+	  						<#if query.requiredAge??> and age_need = '${StringUtil.escapeSql(query.requiredAge)}' </#if>
+						
+	  						<#if query.requiredEducation??> and education_need = '${StringUtil.escapeSql(query.requiredEducation)}' </#if>
+					
+	  						<#if query.requiredWorkYears??> and work_years = '${StringUtil.escapeSql(query.requiredWorkYears)}' </#if>
+						
+	  						<#if query.welfare??> and job_welfare = '${StringUtil.escapeSql(query.welfare)}' </#if>
+					
+	  						<#if query.createUser??> and create_user = '${StringUtil.escapeSql(query.createUser)}' </#if>
+					
+	  						<#if query.updateUser??> and update_user = '${StringUtil.escapeSql(query.updateUser)}' </#if>
+						
+	  						<#if query.status??> and status = ${query.status} </#if>
+					
+	  						<#if query.workAddressCode??> and work_addr_id = '${StringUtil.escapeSql(query.workAddressCode)}' </#if>
+					
+	  						<#if query.urlCompanyLogo??> and picture_url = '${StringUtil.escapeSql(query.urlCompanyLogo)}' </#if>
+					
+	  						<#if query.type??> and job_type = '${StringUtil.escapeSql(query.type)}' </#if>
+					
+	  						<#if query.urlPositionCover??> and cover_url = '${StringUtil.escapeSql(query.urlPositionCover)}' </#if>
+					
+	  						<#if query.top??> and is_top = '${StringUtil.escapeSql(query.top)}' </#if>
+						
+
+	  						
+	  						<#if query.publishPlatfrom??> and publish_platfrom = ${query.publishPlatfrom} </#if>
+					
+	  						<#if query.requiredResume??> and is_need_resume = '${StringUtil.escapeSql(query.requiredResume)}' </#if>
+						
+	  						<#if query.interviewAddress??> and interview_address = '${StringUtil.escapeSql(query.interviewAddress)}' </#if>
+							
+							<#if query.offlineTimeBegin?? && query.offlineTimeEnd??>
+	  							and date_format(offline_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.offlineTimeBegin)}' and '${StringUtil.escapeSql(query.offlineTimeEnd)}'
+	  						</#if>
+	  						
+							<#if query.publishTimeBegin?? && query.publishTimeEnd??>
+	  							and date_format(release_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.publishTimeBegin)}' and '${StringUtil.escapeSql(query.publishTimeEnd)}'
+	  						</#if>
+	  						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from bu_job_info ]]>
+	</statement>
+	
+</statements>

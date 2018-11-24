@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.PositionDeliveryRecord" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="bu_user_job_record">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="user_id" property="userCode" text="用户编码"/>
+	 	
+	 		<column name="user_name" property="userName" text="求职者名称"/>
+	 	
+	 		<column name="phone" property="userMobile" text="求职者手机号"/>
+	 	
+	 		<column name="wechat" property="userWechat" text="求职者微信号"/>
+	 	
+	 		<column name="video_id" property="videoCode" text="视频编码"/>
+	 	
+	 		<column name="job_id" property="positionCode" text="职位编码"/>
+	 	
+	 		<column name="publisher_id" property="positionPublishUserCode" text="职位发布者编码"/>
+	 	
+	 		<column name="job_name" property="positionName" text="职位名称"/>
+	 	
+	 		<column name="salary" property="salary" text="工资"/>
+	 	
+	 		<column name="welfare" property="welfare" text="基本福利"/>
+	 	
+	 		<column name="company_name" property="companyName" text="公司名称"/>
+	 	
+	 		<column name="interview_place" property="interviewPlace" text="面试地点"/>
+	 	
+	 		<column name="interview_time" property="interviewTime" text="面试时间"/>
+	 	
+	 		<column name="contact_name" property="interviewContactName" text="面试联系人名称"/>
+	 	
+	 		<column name="contact_phone" property="interviewContactMobile" text="面试联系人手机号"/>
+	 	
+	 		<column name="last_follow_id" property="lastFollowId" text="最后一次跟进的编码(待删除)"/>
+	 	
+	 		<column name="status" property="status" text="状态(待面试，未面试，面试通过，面试失败)"/>
+	 		
+	 		<column name="platfrom" property="platfrom" text="投递平台"/>
+		
+	  
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	 		
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from bu_user_job_record where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							user_id = '${key}'  or 
+							
+							user_name like '%${key}%'  or 
+							 
+							phone like '%${key}%'  or 
+							
+							wechat = '${key}'  or 
+							
+							job_id = '${key}'  or 
+							
+							publisher_id = '${key}'  or 
+							 
+							job_name like '%${key}%'  or 
+							 
+							company_name like '%${key}%'  or 
+							
+							 
+							interview_place like '%${key}%'  or 
+							
+							 
+							interview_time like '%${key}%'  or 
+							
+							 
+							contact_name like '%${key}%'  or 
+							
+							 
+							contact_phone like '%${key}%'  or 
+							
+							 
+							last_follow_id like '%${key}%'  or 
+							
+							 
+							status like '%${key}%'  or 
+							
+							 
+							platfrom like '%${key}%' 
+							
+					)
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+	
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  					<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.userCode??> and user_id = '${StringUtil.escapeSql(query.userCode)}' </#if>
+						
+					
+	  						<#if query.userName??> and user_name = '${StringUtil.escapeSql(query.userName)}' </#if>
+						
+					
+	  						<#if query.userMobile??> and phone = '${StringUtil.escapeSql(query.userMobile)}' </#if>
+						
+					
+	  						<#if query.userWechat??> and wechat = '${StringUtil.escapeSql(query.userWechat)}' </#if>
+						
+					
+	  						<#if query.videoCode??> and video_id = '${StringUtil.escapeSql(query.videoCode)}' </#if>
+						
+					
+	  						<#if query.positionCode??> and job_id = '${StringUtil.escapeSql(query.positionCode)}' </#if>
+						
+					
+	  						<#if query.positionPublishUserCode??> and publisher_id = '${StringUtil.escapeSql(query.positionPublishUserCode)}' </#if>
+						
+					
+	  						<#if query.positionName??> and job_name = '${StringUtil.escapeSql(query.positionName)}' </#if>
+						
+					
+	  						<#if query.salary??> and salary = '${StringUtil.escapeSql(query.salary)}' </#if>
+						
+					
+	  						<#if query.welfare??> and welfare = '${StringUtil.escapeSql(query.welfare)}' </#if>
+						
+					
+	  						<#if query.companyName??> and company_name = '${StringUtil.escapeSql(query.companyName)}' </#if>
+						
+					
+	  						<#if query.interviewPlace??> and interview_place = '${StringUtil.escapeSql(query.interviewPlace)}' </#if>
+						
+					
+	  						<#if query.interviewTime??> and interview_time = '${StringUtil.escapeSql(query.interviewTime)}' </#if>
+						
+					
+	  						<#if query.interviewContactName??> and contact_name = '${StringUtil.escapeSql(query.interviewContactName)}' </#if>
+						
+					
+	  						<#if query.interviewContactMobile??> and contact_phone = '${StringUtil.escapeSql(query.interviewContactMobile)}' </#if>
+						
+					
+	  						<#if query.lastFollowId??> and last_follow_id = '${StringUtil.escapeSql(query.lastFollowId)}' </#if>
+						
+					
+	  						<#if query.status??> and status = '${StringUtil.escapeSql(query.status)}' </#if>
+						
+					
+						
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+						
+					
+	  						<#if query.platfrom??> and platfrom = '${StringUtil.escapeSql(query.platfrom)}' </#if>
+						
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from bu_user_job_record ]]>
+	</statement>
+	
+</statements>

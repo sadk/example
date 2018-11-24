@@ -18,7 +18,7 @@ CHANGE COLUMN `value` `value` VARCHAR(45) NULL DEFAULT NULL COMMENT '租户值' 
 
 ALTER TABLE `sys_file`  DROP COLUMN `obj_id`;
 ALTER TABLE `sys_file`  ADD COLUMN `data_type` INT(4) NULL COMMENT '业务数据类型（从字典引用值）,1=企业logo 2=职位封面 3=职位视频' ;
-ALTER TABLE `sys_file` CHANGE COLUMN `data_type` `data_type` INT(4) NULL DEFAULT NULL COMMENT '业务数据类型（从字典引用值）,1=企业logo 2=职位封面 3=职位视频' AFTER `file_or_dir`;
+ALTER TABLE `sys_file` CHANGE COLUMN `data_type` `data_type` INT(4) NULL DEFAULT NULL COMMENT '业务数据类型（从字典引用值）,100=企业logo 200=职位封面 201=职位视频' ;
 
 
 ALTER TABLE `rpt_definition` 
@@ -115,6 +115,117 @@ ALTER TABLE `uum_res` CHANGE COLUMN `code` `code` VARCHAR(200) NULL DEFAULT NULL
 -- 查检以下字段是否存在:
 -- ALTER TABLE  `uum_res`  ADD COLUMN `url` VARCHAR(2000) NULL ;
 -- ALTER TABLE  `uum_res` ADD COLUMN `icon` VARCHAR(200) NULL  ;
+
+
+
+-- 简历科技脚本更新
+-- --------------------------------------------- (1)企业信息管理 ----------------------------------------------------------
+-- 公司信息表
+ALTER TABLE `bu_company_info` ADD UNIQUE INDEX `company_id_UNIQUE` (`company_id` ASC), DROP PRIMARY KEY;
+ALTER TABLE `bu_company_info` ADD COLUMN `id` BIGINT(20) NULL ;
+
+update bu_company_info A,(SELECT @rownum:=@rownum+1 AS rid, bu_company_info.*  FROM (SELECT @rownum:=0) r, bu_company_info  ) B set A.id= B.rid  where A.company_id = B.company_id ;
+ALTER TABLE `bu_company_info` CHANGE COLUMN `id` `id` BIGINT(20) NOT NULL , ADD PRIMARY KEY (`id`);
+ALTER TABLE `bu_company_info` CHANGE `id` `id` bigint(20)  NOT NULL AUTO_INCREMENT FIRST;
+
+
+-- 公司的地址表
+ALTER TABLE `bu_work_address` ADD UNIQUE INDEX `work_address_id_UNIQUE` (`addr_id` ASC), DROP PRIMARY KEY;
+ALTER TABLE `bu_work_address` ADD COLUMN `id` BIGINT(20) NULL ;
+
+update bu_work_address A,(SELECT @rownum:=@rownum+1 AS rid, bu_work_address.*  FROM (SELECT @rownum:=0) r, bu_work_address  ) B set A.id= B.rid  where A.addr_id = B.addr_id ;
+ALTER TABLE `bu_work_address` CHANGE COLUMN `id` `id` BIGINT(20) NOT NULL , ADD PRIMARY KEY (`id`);
+ALTER TABLE `bu_work_address` CHANGE `id` `id` bigint(20)  NOT NULL AUTO_INCREMENT;
+ALTER TABLE `bu_work_address` CHANGE COLUMN `id` `id` BIGINT(20) NOT NULL AUTO_INCREMENT FIRST;
+
+
+
+ -- --------------------------------------------- (2)岗位管理 ----------------------------------------------------------
+ALTER TABLE `bu_base_job_info` ADD UNIQUE INDEX `base_job_info_id_UNIQUE` (`base_job_id` ASC), DROP PRIMARY KEY;
+ALTER TABLE `bu_base_job_info` ADD COLUMN `id` BIGINT(20) NULL ;
+
+update bu_base_job_info A,(SELECT @rownum:=@rownum+1 AS rid, bu_base_job_info.*  FROM (SELECT @rownum:=0) r, bu_base_job_info  ) B set A.id= B.rid  where A.base_job_id = B.base_job_id ;
+ALTER TABLE `bu_base_job_info` CHANGE COLUMN `id` `id` BIGINT(20) NOT NULL , ADD PRIMARY KEY (`id`);
+ALTER TABLE `bu_base_job_info` CHANGE `id` `id` bigint(20)  NOT NULL AUTO_INCREMENT FIRST;
+
+
+
+
+ -- --------------------------------------------- (3)职位管理 ----------------------------------------------------------
+ALTER TABLE `bu_job_info` ADD UNIQUE INDEX `job_info_id_UNIQUE` (`job_id` ASC), DROP PRIMARY KEY;
+ALTER TABLE `bu_job_info` ADD COLUMN `id` BIGINT(20) NULL ;
+
+update bu_job_info A,(SELECT @rownum:=@rownum+1 AS rid, bu_job_info.*  FROM (SELECT @rownum:=0) r, bu_job_info  ) B set A.id= B.rid  where A.job_id = B.job_id ;
+ALTER TABLE `bu_job_info` CHANGE COLUMN `id` `id` BIGINT(20) NOT NULL , ADD PRIMARY KEY (`id`);
+ALTER TABLE `bu_job_info` CHANGE `id` `id` bigint(20)  NOT NULL AUTO_INCREMENT FIRST;
+
+-- 删除红包ID字段
+ALTER TABLE `bu_job_info` DROP COLUMN `red_packet_id`, DROP COLUMN `red_id`;
+
+
+
+
+ -- --------------------------------------------- (4)发布人管理  ----------------------------------------------------------
+ -- 实体用户
+ALTER TABLE `bu_user_info` ADD UNIQUE INDEX `user_info_id_UNIQUE` (`user_id` ASC), DROP PRIMARY KEY;
+ALTER TABLE `bu_user_info` ADD COLUMN `id` BIGINT(20) NULL ;
+
+update bu_user_info A,(SELECT @rownum:=@rownum+1 AS rid, bu_user_info.*  FROM (SELECT @rownum:=0) r, bu_user_info  ) B set A.id= B.rid  where A.user_id = B.user_id ;
+ALTER TABLE `bu_user_info` CHANGE COLUMN `id` `id` BIGINT(20) NOT NULL , ADD PRIMARY KEY (`id`);
+ALTER TABLE `bu_user_info` CHANGE `id` `id` bigint(20)  NOT NULL AUTO_INCREMENT FIRST;
+
+
+-- 用户账号
+update bu_account_info A,(SELECT @rownum:=@rownum+1 AS rid, bu_account_info.*  FROM (SELECT @rownum:=0) r, bu_account_info  ) B set A.id= B.rid  where A.id = B.id ;
+ALTER TABLE  `bu_account_info` CHANGE COLUMN `id` `id` BIGINT(20) NOT NULL ;
+ALTER TABLE `bu_account_info` CHANGE `id` `id` bigint(20)  NOT NULL AUTO_INCREMENT FIRST;
+
+
+-- --------------------------------------------- (5)职位投递记录 ----------------------------------------------------------
+-- 职位投递记录 
+update bu_user_job_record A,(SELECT @rownum:=@rownum+1 AS rid, bu_user_job_record.*  FROM (SELECT @rownum:=0) r, bu_user_job_record  ) B set A.id= B.rid  where A.id = B.id ;
+ALTER TABLE `bu_user_job_record` CHANGE `id` `id` bigint(20)  NOT NULL AUTO_INCREMENT FIRST;
+
+ALTER TABLE `bu_user_job_record` ADD COLUMN `company_id` VARCHAR(46) NULL ;
+
+ALTER TABLE  `bu_user_job_record` 
+CHANGE COLUMN `company_id` `company_id` VARCHAR(46) NULL DEFAULT NULL AFTER `publisher_id`,
+CHANGE COLUMN `company_name` `company_name` VARCHAR(32) NULL DEFAULT NULL COMMENT '公司名称' AFTER `company_id`;
+
+update bu_user_job_record A, bu_company_info B set A.company_id = B.company_id where A.company_name = B.company_short_name 
+
+
+
+-- --------------------------------------------- (5)考勤管理 ----------------------------------------------------------
+drop table  IF EXISTS  bu_user_work_record ;
+CREATE TABLE `bu_user_work_record` (
+  `id` bigint(20) NOT NULL ,
+  `user_code` varchar(40) DEFAULT NULL,
+  `type` int(4) NOT NULL COMMENT '考勤类型 :100=正常上班 200=加班 300=请假',
+  `working_hours` varchar(10) NOT NULL COMMENT '时长精确到小时，保留一个小数',
+  `shift_type` varchar(10) DEFAULT NULL COMMENT '班次类型:1=白班、2=中班、3=晚班、4=休息',  
+  `leave_type` varchar(10) DEFAULT NULL COMMENT '请假类型:1=事假、2=病假、3=其他',
+  `remark` varchar(256) DEFAULT NULL COMMENT '（请假原因）备注',
+  
+  `tenant_code` varchar(20) DEFAULT NULL,
+  `app_code` varchar(20) DEFAULT NULL,
+  `sn` int(11) DEFAULT '0' COMMENT '排序',
+  
+
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  AUTO_INCREMENT=1  DEFAULT CHARSET=utf8 COMMENT='工时记录';
+
+
+
+
+
+
+
+
 
 
 

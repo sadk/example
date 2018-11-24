@@ -20,7 +20,6 @@ public class Tenant {
 	/**租户介绍**/
 	private String introduction;
 	
-
 	/**租户值*/
 	private String value;
 

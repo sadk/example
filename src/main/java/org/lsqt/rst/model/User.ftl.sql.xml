@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.User" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="bu_user_info">
+				<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="user_id" property="code" text="用户ID"/>
+	 	
+	 		<column name="real_name" property="realName" text="真实姓名"/>
+	 	
+	 		<column name="nick_name" property="nickName" text="用户昵称"/>
+	 	
+	 		<column name="phone" property="mobile" text="手机号"/>
+	 	
+	 		<column name="wx_account" property="wxAccount" text="微信账号"/>
+	 	
+	 		<column name="sex" property="sex" text="性别"/>
+	 	
+	 		<column name="birthday" property="birthday" text="出生日期"/>
+	 	
+	 		<column name="education" property="education" text="学历"/>
+	 	
+	 		<column name="province" property="provinceName" text="省份"/>
+	 	
+	 		<column name="city" property="cityName" text="城市"/>
+	 	
+	 		<column name="country" property="countryName" text="国家"/>
+	 	
+	 		<column name="head_img_url" property="headImgUrl" text="用户头像"/>
+	 	
+	 		<column name="role_code" property="roleCode" text="角色编码(待删除)"/>
+	 	
+	 		<column name="role_name" property="roleName" text="角色名称(待删除)"/>
+	 	
+	 		<column name="registration_time" property="registrationTime" text="注册时间"/>
+	 	
+	 		<column name="registration_source" property="registrationSource" text="注册来源"/>
+	 	
+	 		<column name="referee_id" property="refereeUserCode" text="推荐人编码"/>
+	 	
+	 		<column name="is_agree_authoize" property="isAgreeAuthoize" text="用户是否同意授权用户信息被使用"/>
+	 	
+	 		<column name="expected_job" property="expectedJob" text="意向工作"/>
+	 	
+	 		<column name="lately_job_id" property="latelyPositionCode" text="最近工作的职位编码(待删除)"/>
+	 	
+	 		<column name="lately_job_name" property="latelyPositionName" text="最近工作的职位名称"/>
+	 	
+	 		<column name="user_password" property="userPassword" text="用户密码"/>
+	 	
+	 		<column name="lately_job_date" property="latelyJobEntryDate" text="最近一份工作的入职时间"/>
+	 	
+	 		<column name="subscribe" property="subscribe" text="公众号关注状态"/>
+	 	
+	 		<column name="union_id" property="unionId" text="微信唯一标识"/>
+	 	
+	 		<column name="seat_number" property="seatNumber" text="坐席电话"/>
+	 	
+	 		<column name="email" property="email" text="邮箱"/>
+	 	
+		
+		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from bu_user_info where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 					
+							 
+							user_id like '%${key}%'  or 
+							
+							 
+							real_name like '%${key}%'  or 
+							
+							 
+							nick_name like '%${key}%'  or 
+							
+							 
+							phone like '%${key}%'  or 
+							
+							 
+							wx_account like '%${key}%'  or 
+							
+							 
+							sex like '%${key}%'  or 
+							
+							 
+							education like '%${key}%'  or 
+							
+							 
+							province like '%${key}%'  or 
+							
+							 
+							city like '%${key}%'  or 
+							
+							 
+							country like '%${key}%'  or 
+							
+							 
+							head_img_url like '%${key}%'  or 
+							
+							 
+							role_code like '%${key}%'  or 
+							
+							 
+							role_name like '%${key}%'  or 
+							
+							 
+							registration_source like '%${key}%'  or 
+							
+							 
+							referee_id like '%${key}%'  or 
+							
+							 
+							is_agree_authoize like '%${key}%'  or 
+							
+							 
+							expected_job like '%${key}%'  or 
+							
+							 
+							lately_job_id like '%${key}%'  or 
+							
+							 
+							lately_job_name like '%${key}%'  or 
+							
+							 
+							user_password like '%${key}%'  or 
+							
+							 
+							subscribe like '%${key}%'  or 
+							
+							 
+							union_id like '%${key}%'  or 
+							
+							 
+							seat_number like '%${key}%'  or 
+							
+							 
+							email like '%${key}%' 
+							
+					)
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+	
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  					<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.code??> and user_id = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+					
+	  						<#if query.realName??> and real_name = '${StringUtil.escapeSql(query.realName)}' </#if>
+						
+					
+	  						<#if query.nickName??> and nick_name = '${StringUtil.escapeSql(query.nickName)}' </#if>
+						
+					
+	  						<#if query.mobile??> and phone = '${StringUtil.escapeSql(query.mobile)}' </#if>
+						
+					
+	  						<#if query.wxAccount??> and wx_account = '${StringUtil.escapeSql(query.wxAccount)}' </#if>
+						
+					
+	  						<#if query.sex??> and sex = '${StringUtil.escapeSql(query.sex)}' </#if>
+						
+					
+						
+					
+						
+							<#if query.birthdayBegin?? && query.birthdayEnd??>
+	  							and date_format(birthday,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.birthdayBegin)}' and '${StringUtil.escapeSql(query.birthdayEnd)}'
+	  						</#if>
+	  						
+	  						<#if query.education??> and education = '${StringUtil.escapeSql(query.education)}' </#if>
+						
+					
+	  						<#if query.provinceName??> and province = '${StringUtil.escapeSql(query.provinceName)}' </#if>
+						
+					
+	  						<#if query.cityName??> and city = '${StringUtil.escapeSql(query.cityName)}' </#if>
+						
+					
+	  						<#if query.countryName??> and country = '${StringUtil.escapeSql(query.countryName)}' </#if>
+						
+					
+	  						<#if query.headImgUrl??> and head_img_url = '${StringUtil.escapeSql(query.headImgUrl)}' </#if>
+						
+					
+	  						<#if query.roleCode??> and role_code = '${StringUtil.escapeSql(query.roleCode)}' </#if>
+						
+					
+	  						<#if query.roleName??> and role_name = '${StringUtil.escapeSql(query.roleName)}' </#if>
+						
+					
+						
+					
+						
+							<#if query.registrationTimeBegin?? && query.registrationTimeEnd??>
+	  							and date_format(registration_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.registrationTimeBegin)}' and '${StringUtil.escapeSql(query.registrationTimeEnd)}'
+	  						</#if>
+	  						
+	  						<#if query.registrationSource??> and registration_source = '${StringUtil.escapeSql(query.registrationSource)}' </#if>
+						
+					
+	  						<#if query.refereeUserCode??> and referee_id = '${StringUtil.escapeSql(query.refereeUserCode)}' </#if>
+						
+					
+	  						<#if query.isAgreeAuthoize??> and is_agree_authoize = '${StringUtil.escapeSql(query.isAgreeAuthoize)}' </#if>
+						
+					
+	  						<#if query.expectedJob??> and expected_job = '${StringUtil.escapeSql(query.expectedJob)}' </#if>
+						
+					
+	  						<#if query.latelyPositionCode??> and lately_job_id = '${StringUtil.escapeSql(query.latelyPositionCode)}' </#if>
+						
+					
+	  						<#if query.latelyPositionName??> and lately_job_name = '${StringUtil.escapeSql(query.latelyPositionName)}' </#if>
+						
+					
+	  						<#if query.userPassword??> and user_password = '${StringUtil.escapeSql(query.userPassword)}' </#if>
+						
+					
+						
+					
+						
+							<#if query.latelyJobEntryDateBegin?? && query.latelyJobEntryDateEnd??>
+	  							and date_format(lately_job_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.latelyJobEntryDateBegin)}' and '${StringUtil.escapeSql(query.latelyJobEntryDateEnd)}'
+	  						</#if>
+	  						
+	  						<#if query.subscribe??> and subscribe = '${StringUtil.escapeSql(query.subscribe)}' </#if>
+						
+					
+	  						<#if query.unionId??> and union_id = '${StringUtil.escapeSql(query.unionId)}' </#if>
+						
+					
+	  						<#if query.seatNumber??> and seat_number = '${StringUtil.escapeSql(query.seatNumber)}' </#if>
+						
+					
+	  						<#if query.email??> and email = '${StringUtil.escapeSql(query.email)}' </#if>
+						
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from bu_user_info ]]>
+	</statement>
+	
+</statements>
