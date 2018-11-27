@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>审核</title>
+		<title>编辑门店信息</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
@@ -20,30 +20,29 @@
 	</head>
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
-			<input name="id" id="id" class="mini-hidden" />
-			<div style="padding-left:11px;padding-bottom:5px;">
+			<input name="id" class="mini-hidden" />
+			<div style="padding:4px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
-		            <legend>审核</legend>
+		            <legend>门店信息</legend>
 		            <div style="padding:5px;">
 				        <table>
 							<tr>
-								<td>视频编码：</td>
-								<td>
-									<input id="userCode" name="userCode"  style="width:140px" class="mini-textbox"  emptyText=""  onenter="search" />
+								<td style="width:100px;">名称：</td>
+								<td style="width:150px;">
+								 	<input name="name" id="name" class="mini-textbox" required="true"/>
 								</td>
-								<td>审核结果：</td>
-								<td>
-									<input id="status" name="status" class="mini-combobox"  style="width:140px" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_video_status" />
+								<td style="width:100px;">编码：</td>
+								<td style="width:150px;">
+									<input name="code" id="code" class="mini-textbox" required="true"/>
 								</td>
 							</tr>
-							
 							<tr>
-								<td>原因:</td>
+								<td>所属区域：</td>
 								<td colspan="3">
-									<input id="reason" name="reason"  style="width:100%" class="mini-textarea"  emptyText="请输入不通过原因"  onenter="search"/>
+								 	<input name="belongRegion" id="belongRegion" class="mini-textbox" />
 								</td>
-							</tr>
-							
+							</tr> 
+
 				        </table>
 				    </div>
 				</fieldset>
@@ -57,15 +56,16 @@
 			mini.parse();
 
 			var form = new mini.Form("edit-form1");
-		
+			
+	      
 			function SaveData() {
 				var o = form.getData();
 				form.validate();
 				if(form.isValid() == false) return;
+				
 				$.ajax({
-					url : "${pageContext.request.contextPath}/rst/personal_video_info/save_or_update_short",
-					dataType: 'json', type : 'post',
-					data: form.getData(),
+					url : "${pageContext.request.contextPath}/rst/store_info/save_or_update",
+					dataType: 'json', data: form.getData(),
 					success : function(text) {
 						CloseWindow("save");
 					}
@@ -76,15 +76,21 @@
 			//标准方法接口定义
 			function SetData(data) {
 				data = mini.clone(data); //跨页面传递的数据对象，克隆后才可以安全使用
-				//console.log(data)
-			 	form.setData(data)
+				
+				 if(data.action == "edit" || data.action=='view') {
+					$.ajax({
+						url : "${pageContext.request.contextPath}/rst/job_definition/get_by_id?id=" + data.id,
+						dataType: 'json',
+						success : function(text) {
+							var o = mini.decode(text);
+							 
+							form.setData(o);
+							  
+						}
+					});
+				}
 			}
-
-			function GetData() {
-				var o = form.getData();
-				return o;
-			}
-
+ 
 			function CloseWindow(action) {
 				if(action == "close" && form.isChanged()) {
 					if(confirm("数据被修改了，是否先保存？")) {

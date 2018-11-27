@@ -15,7 +15,7 @@
 </head>
 <body>
    
-    
+
 <div class="mini-splitter" style="width:100%;height:100%;">
     <div size="250" showCollapseButton="true">
 				<div id="form1"  style="padding:8px;">
@@ -67,7 +67,7 @@
 					<table style="width:100%;">
 						<tr>
 							<td style="width:100%;">
-								<a class="mini-button" iconCls="icon-edit" onclick="edit('edit')">编辑</a>
+								<a class="mini-button" iconCls="icon-edit" onclick="edit()">审核</a>
 								<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
 								<span class="separator"></span>
 								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
@@ -76,12 +76,13 @@
 					</table>
 		        </div>
 		        <div class="mini-fit" >
-					<div id="" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" showPager="false"
+					<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" showPager="false"
 						url="${pageContext.request.contextPath}/rst/personal_video_info/page"  idField="id" autoLoad="true">
 						<div property="columns">
 							<div type="checkcolumn" ></div>
-									<div field="code" headerAlign="center" align="left" width="150">视频编码</div>
-									<div field="nickName" headerAlign="center" align="center" >昵称</div>
+									<div field="id" headerAlign="center" align="center" width="80">ID</div>
+									<div field="code" headerAlign="center" align="center" width="150">视频编码</div>
+									<div field="nickName" headerAlign="center" align="left" >昵称</div>
 									<div field="realName" headerAlign="center" align="center" >姓名</div>
 									<!-- 
 									<div field="userCode" headerAlign="center" align="" >用户编码</div> 
@@ -109,203 +110,72 @@
     
     <script type="text/javascript">
     mini.parse();
-	var grid = mini.get("");
+	var grid = mini.get("datagrid1");
 	var form = new mini.Form("form1");
 	
-
-	function ajaxGetTemplateExists(type,callback) {
+	function remove() {
+		var rows = grid.getSelecteds();
+		if(rows.length == 0) {
+			mini.alert("请勾选删除视频");
+			return ;
+		}
+		
+		var idList = new Array();
+		for (var i=0;i<rows.length; i++) {
+			idList.push(rows[i].id);
+		}
+		
 		var data = {};
-		data.definitionId= '';
-		data.type = type; //100=导入模板 200=导出模板
-        $.ajax({ 
-            url: "${pageContext.request.contextPath}/report/export_template/list",
-            data: data,
-            type: "post",
-            success: function (text) {
-             	 callback(text);
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                mini.alert("请求错误："+jqXHR.responseText);
-            }
-        }); 
+		data.ids = idList.join(",");
+		
+		mini.confirm("确定删除？", "确定？",
+			function (action) {
+				if (action == "ok") {
+					$.ajax({
+						url : "${pageContext.request.contextPath}/rst/personal_video_info/delete",
+						dataType: 'json', type : 'post',
+						data: data,
+						success : function(text) {
+							grid.reload();
+						}
+					});					
+				}
+		});
+		
+		
+
 	}
 	
-	function importData() {
-        mini.open({
-            url: "${pageContext.request.contextPath}/apps/default/admin/report/definition/upload.jsp",
-            title: "选择数据文件",
-            width: 650,
-            height: 400,
+ 	function edit() {
+ 		var row = grid.getSelected();
+ 		if (!row) {
+ 			mini.alert("请选择一条记录");
+ 			return ;
+ 		}
+ 		
+		mini.open({
+			url : "${pageContext.request.contextPath}/apps/default/admin/rst/personal_video_info/edit.jsp",
+			title : "审核",
+			width : 490,
+			height : 220,
 			onload : function() {
 				var iframe = this.getIFrameEl();
-				var data = {
-					action : "importData",
-					definitionId: ''
-				};
+				var data = row;
 				iframe.contentWindow.SetData(data);
 			},
-            ondestroy: function (action) {
-                if (action == "ok") {
-                    var iframe = this.getIFrameEl();
-                    var data = iframe.contentWindow.GetData();
-                    data = mini.clone(data);
-                    if (data) {
-                        
-                    }  
-                }
-            }
-        });
-	}
-	
-	function checkCanBeExportFile() { //检查是否有上传导出模板,如果有，则显示导出按钮
-		var callback = function (text) {
-			if(typeof(text) == 'undefined' || text == null || text.length == 0) {
-        		 $("#exportFile").hide();
-        		 $("#exportFileType").hide();
-        	 } else if(text.length ==1 ){ 
-        		 $("#exportFile").show();
-        		 $("#exportFileType").show();
-        	 } else {
-        		 $("#exportFile").hide();
-        		 $("#exportFileType").hide();
-        	 }
-		}
-		ajaxGetTemplateExists(200,callback); //100=导入模板 200=导出模板
-	}
-	
-	function checkCanBeImportFile() { //检查是否有上传导入模板,如果有，则显示导入按钮
-		var callback = function (text) {
-			if(typeof(text) == 'undefined' || text == null || text.length == 0) {
-        		 $("#importData").hide();
-        	 } else if(text.length ==1 ){ 
-        		 $("#importData").show();
-        	 } else {
-        		 $("#importData").hide();
-        	 }
-		}
-		ajaxGetTemplateExists(100,callback); //100=导入模板 200=导出模板
-	}
-	
-	$(function(){
-		checkCanBeExportFile();
-		checkCanBeImportFile();
-	})
-
-	
-	function refresh() {
-		var messageid = mini.loading("Loading, Please wait ...", "Loading");
-        setTimeout(function () {
-            mini.hideMessageBox(messageid);
-        }, 1000);
-        grid.reload();
-	}
-	
-	function exportData() {
-    	var data = form.getData();
-    	form.validate();
-		if(form.isValid() == false) return;
-		
-		
-		data.reportDefinitionId=;
-		
-		download(data);
-
-	}
-	
-    function download(data) {
- 	   loading();
- 	   var url = '${pageContext.request.contextPath}/report/definition/export?1=1';
-   		
- 	   var params = new Array();
- 	    for (var i in data) {	// 获取对象属性
- 	         if (data.hasOwnProperty(i) && typeof data[i] != "function") {
- 	        	params.push("&"+i+"="+data[i])
- 	          }
- 	     }
- 	   url = url + params.join("");
- 	   var xhr = new XMLHttpRequest();
- 	   xhr.open('POST', url, true);        // 也可以使用POST方式，根据接口
- 	   xhr.responseType = "blob";    // 返回类型blob
- 	   // 定义请求完成的处理函数，请求前也可以增加加载框/禁用下载按钮逻辑
- 	   xhr.onload = function () {
- 	       // 请求完成
- 	       if (this.status === 200) {
- 	    	   
- 	    	   loadingClose()
- 	    	   
- 	           // 返回200
- 	           var blob = this.response;
- 	           var reader = new FileReader();
- 	           reader.readAsDataURL(blob);    // 转换为base64，可以直接放入a表情href
- 	           reader.onload = function (e) {
- 	        	   
- 	               // 转换完成，创建一个a标签用于下载
- 	               var a = document.createElement('a');
- 	               a.download = '.xlsx';
- 	               a.href = e.target.result;
- 	               $("body").append(a);    // 修复firefox中无法触发click
- 	               a.click();
- 	               $(a).remove();
- 	           }
- 	       }
- 	   };
- 	   // 发送ajax请求
- 	   xhr.send()
+			ondestroy : function(action) {
+				grid.reload();
+			}
+		});
  	}
 	
-	/*
-    function onButtonEdit(e) {
-        var btnEdit = this;
-        mini.open({
-            url: "${pageContext.request.contextPath}/apps/default/admin/sys/tenant/selector_tenant.jsp",
-            title: "选择租户",
-            width: 650,
-            height: 380,
-            ondestroy: function (action) {
-                
-                if (action == "ok") {
-                    var iframe = this.getIFrameEl();
-                    var data = iframe.contentWindow.GetData();
-                    data = mini.clone(data);    //必须
-                    if (data) {
-                        btnEdit.setValue(data.code);
-                        btnEdit.setText(data.name);
-                        
-                       //	console.log(data.code)
-                        folderTree.load({tenantCode:data.code})
-                    } else {
-                    	btnEdit.setValue(null);
-                        btnEdit.setText(null);
-                        folderTree.load()
-                    }
-                }
-
-            }
-        });
-    }
-     */
+	function refresh() {
+        grid.reload();
+	}
+   
     function search() {
     	var data = form.getData();
-    	form.validate();
-		if(form.isValid() == false) return;
-		
-    	
-    	data.reportDefinitionId=;
     	grid.load(data);
-    	
-		grid.on("drawcell", function (e) { //如果有日期类型，转换为人工可讯形式
-		   var record = e.record,
-		   column = e.column,
-		   field = e.field,
-		   value = e.value;
-		   
-		   if (mini.isDate(value)) {
-	    		e.cellHtml = mini.formatDate(value, "yyyy-MM-dd HH:mm:ss");
-		   }
-		   
- 
-
-		})
     }
     
     function clear() {

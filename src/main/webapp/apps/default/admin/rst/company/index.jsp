@@ -228,10 +228,18 @@
 			}
 			
 			function editAddress(action) {
-				var row = addressGrid.getSelected();
-				if('edit' == action) {
+				var row = grid.getSelected();
+				if('add' == action) {
 					if(!row) {
-						mini.alert("请至少选择一条记录");
+						mini.alert("请选择一个企业");
+						return ;
+					}
+				}
+				
+				var rowAddr = addressGrid.getSelected();
+				if('edit' == action) {
+					if(!rowAddr) {
+						mini.alert("请选择一个地址信息");
 						return ;
 					}
 				}
@@ -248,6 +256,10 @@
 						
 						if('edit' == action) {
 							data.id = row.id;
+						}
+						
+						if('add' == action) {
+							data.companyCode = row.code;
 						}
 						iframe.contentWindow.SetData(data);
 					},

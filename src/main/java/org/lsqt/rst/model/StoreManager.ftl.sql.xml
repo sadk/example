@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.StoreManager" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="bu_store_with_manager">
+			<column id="id" type="uuid58" property="id" text="主键" />
+		
+	 	
+	 		<column name="store_id" property="storeCode" text="门店id"/>
+	 	
+	 		<column name="store_name" property="storeName" text="门店名称"/>
+	 	
+	 		<column name="manager_id" property="managerCode" text="管理者id"/>
+	 	
+	 		<column name="manager_name" property="managerName" text="管理者姓名"/>
+	 	
+	 		<column name="create_date" property="createDate" text="创建时间"/>
+	 	
+	 		<column name="update_date" property="updateDate" text="修改时间"/>
+	 	
+	 		<column name="tenant_code" property="tenantCode" text="租户编码"/>
+	 	
+		
+		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from bu_store_with_manager where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 							 							 							 							 					
+							 
+							id like '%${key}%'  or 
+							
+							 
+							store_id like '%${key}%'  or 
+							
+							 
+							store_name like '%${key}%'  or 
+							
+							 
+							manager_id like '%${key}%'  or 
+							
+							 
+							manager_name like '%${key}%'  or 
+							
+							 
+							tenant_code like '%${key}%' 
+							
+					)
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+	
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+	  						<#if query.id??> and id = '${StringUtil.escapeSql(query.id)}' </#if>
+						
+					
+	  						<#if query.storeCode??> and store_id = '${StringUtil.escapeSql(query.storeCode)}' </#if>
+						
+					
+	  						<#if query.storeName??> and store_name = '${StringUtil.escapeSql(query.storeName)}' </#if>
+						
+					
+	  						<#if query.managerCode??> and manager_id = '${StringUtil.escapeSql(query.managerCode)}' </#if>
+						
+					
+	  						<#if query.managerName??> and manager_name = '${StringUtil.escapeSql(query.managerName)}' </#if>
+						
+					
+						
+					
+						
+							<#if query.createDateBegin?? && query.createDateEnd??>
+	  							and date_format(create_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createDateBegin)}' and '${StringUtil.escapeSql(query.createDateEnd)}'
+	  						</#if>
+	  						
+						
+					
+						
+							<#if query.updateDateBegin?? && query.updateDateEnd??>
+	  							and date_format(update_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.updateDateBegin)}' and '${StringUtil.escapeSql(query.updateDateEnd)}'
+	  						</#if>
+	  						
+	  						<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
+						
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from bu_store_with_manager ]]>
+	</statement>
+	
+</statements>

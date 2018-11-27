@@ -37,6 +37,18 @@ public class CompanyServiceImpl implements CompanyService{
 	}
 
 	public int deleteById(Long ... ids) {
-		return db.deleteById(Company.class, Arrays.asList(ids).toArray());
+		if (ids != null && ids.length > 0) {
+			for (Long id : ids) {
+				Company model = getById(id);
+				if (model != null) {
+					String sql = "delete from bu_work_address where company_id=?";
+					String sql2 = "delete from bu_company_picture where company_id=?";
+					db.executeUpdate(sql, model.getCode());
+					db.executeUpdate(sql2, model.getCode());
+				}
+			}
+			return db.deleteById(Company.class, Arrays.asList(ids).toArray());
+		}
+		return 0;
 	}
 }

@@ -8,6 +8,7 @@ import org.lsqt.components.context.Result;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
+import org.lsqt.components.context.annotation.mvc.RequestPayload;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
@@ -38,6 +39,7 @@ public class UserWorkRecordController {
 	}
 	
 	@RequestMapping(mapping = { "/wx/save_or_update"})
+	@RequestPayload
 	public Result<UserWorkRecord> saveOrUpdate4WX(UserWorkRecord form) {
 		if (form.getType() == null) {
 			return Result.fail("考勤类型不能为空");

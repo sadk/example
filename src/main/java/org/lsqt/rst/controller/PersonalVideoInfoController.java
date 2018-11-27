@@ -46,6 +46,14 @@ public class PersonalVideoInfoController {
 		return personalVideoInfoService.saveOrUpdate(form);
 	}
 	
+	@RequestMapping(mapping = { "/save_or_update_short", "/m/save_or_update_short" })
+	public PersonalVideoInfo check(PersonalVideoInfo form) {
+		if (form.getId() != null) {
+			db.update(form, "reason","status");
+		}
+		return form;
+	}
+	
 	@RequestMapping(mapping = { "/delete", "/m/delete" })
 	public int delete(String ids) {
 		List<Long> list = StringUtil.split(Long.class, ids, ",");

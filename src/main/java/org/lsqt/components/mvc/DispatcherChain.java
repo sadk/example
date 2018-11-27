@@ -65,7 +65,11 @@ public class DispatcherChain implements Chain{
 		Chain anonymousAccessChain = new AnonymousAccessChain(configuration,request); //是否是静态资源访问
 		Chain characterEncodingChain = new CharacterEncodingChain(request, response); //设置请求编码格式
 		Chain contextMapBindingChain = new ContextMapBindingChain(request, response); //绑定上下文对象（如request\response对象)
-		Chain formMapBindingChain = new FormMapBindingChain(request, response); //绑定表单数据
+		
+		Chain formMapBindingChain = new FormMapBindingChain(request, response); //绑定表单数据:Form URL
+		Chain formMapBindingPayloadChain = new FormMapBindingPayloadChain(configuration,request, response); //绑定表单数据:equest Payload格式：ContentType: application/json
+		
+		
 		Chain verificationCodeChain = new VerificationCodeChain(request, response); //是否验证码验证通过（默认无验证码）
 		Chain authenticationChain = new AuthenticationChain(configuration,request,response);//用户是否登陆
 		Chain globalBeforeRequestChain = new GlobalBeforeRequestChain(request, response);//全局请求处理
@@ -78,6 +82,7 @@ public class DispatcherChain implements Chain{
 		chainList.add(characterEncodingChain);
 		chainList.add(contextMapBindingChain);
 		chainList.add(formMapBindingChain);
+		chainList.add(formMapBindingPayloadChain);
 		chainList.add(verificationCodeChain);
 		chainList.add(authenticationChain);
 		chainList.add(globalBeforeRequestChain);

@@ -34,23 +34,23 @@
 									</tr>
 						
 									<tr>
-										<td>编码：</td>
+										<td>门店编码：</td>
 										<td>
-											<input id="code" name="code"   class="mini-textbox"  emptyText="请输入组名称"  onenter="search"/>
+											<input id="code" name="code"   class="mini-textbox"  emptyText="请输入门店编码"  onenter="search"/>
 										</td>
 									</tr>
 								  
 									<tr>
-										<td>简称：</td>
+										<td>门店名称：</td>
 										<td>
-											<input id="shortName" name="shortName"   class="mini-textbox"  emptyText="请输入备注"  onenter="search"/>
+											<input id="name" name="name"   class="mini-textbox"  emptyText="请输入门店名称"  onenter="search"/>
 										</td>
 									</tr>
 									
 									<tr>
-										<td>全称：</td>
+										<td>区域：</td>
 										<td>
-											<input id="fullName" name="fullName"   class="mini-textbox"  emptyText="请输入备注"  onenter="search"/>
+											<input id="belongRegion" name="belongRegion"   class="mini-textbox"  emptyText="请输入区域"  onenter="search"/>
 										</td>
 									</tr>
 							</table>
@@ -83,20 +83,16 @@
 						
 						        <div class="mini-fit">
 									<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" autoLoad="true"
-										url="${pageContext.request.contextPath}/rst/company/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
+										url="${pageContext.request.contextPath}/rst/store_info/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
 									    <div property="columns">
 									        <div type="checkcolumn"></div>
-									        <div field="shortName" width="120" headerAlign="center">简称</div>
-									        <div field="fullName" width="160" headerAlign="center">全称</div>
-									        <div field="code" width="100" headerAlign="center">公司编码</div>
-									        <div type="comboboxcolumn" field="status" width="50" headerAlign="center" align="center" allowSort="true">状态
-												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_active_status" />
-											</div>
-									        <div field="introduction" width="200" headerAlign="center" align="left" >介绍</div>
-									        <!-- 
+									        <div field="code" width="120" headerAlign="center">门店编码</div>
+									        <div field="name" width="160" headerAlign="center">门店名称</div>
+									        <div field="belongRegion" width="100" headerAlign="center">区域</div>
+									         
 									        <div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
 									        <div field="updateTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>     
-									         -->
+									         
 									    </div>
 									</div>
 						        </div>
@@ -111,26 +107,24 @@
 									<table style="width:100%;">
 										<tr>
 											<td style="width:100%;">
-												<a class="mini-button" iconCls="icon-add" onclick="editAddress('add')">添加</a>
-												<a class="mini-button" iconCls="icon-edit" onclick="editAddress('edit')">修改</a>
-												<a class="mini-button" iconCls="icon-remove" onclick="removeAddress()">删除</a>
+												<a class="mini-button" iconCls="icon-add" onclick="editManager('add')">添加</a>
+												<a class="mini-button" iconCls="icon-remove" onclick="removeManager()">删除</a>
 												<span class="separator"></span>  
-												<a class="mini-button" iconCls="icon-reload" onclick="refreshAddress()">刷新</a>
+												<a class="mini-button" iconCls="icon-reload" onclick="refreshManager()">刷新</a>
 											</td>
 										</tr>
 									</table>
 								</div>
 								<div class="mini-fit">
 									<div id="datagrid2" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" autoLoad="false"
-										url="${pageContext.request.contextPath}/rst/work_address/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
+										url="${pageContext.request.contextPath}/rst/store_manager/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
 										<div property="columns">
 											<div type="checkcolumn"></div>
-											<!-- <div field="id" width="60" headerAlign="center">ID</div> -->
-									        <div field="code" width="120" headerAlign="center">地址编码</div>
-									        <div field="provinceName" width="80" align="center" headerAlign="center">省份</div>
-									        <div field="cityName" width="80" align="center" headerAlign="center">城市</div>
-									        <div field="areaName" width="80" align="center" headerAlign="center">区域</div>
-									        <div field="address" width="250" align="left" headerAlign="center">详细地址</div>
+									        <div field="managerCode" width="120" headerAlign="center">用户编码</div>
+									        <div field="managerName" width="120" headerAlign="center">用户名称</div>
+									        
+									        <div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
+									        <div field="updateTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>     
 										</div>
 									</div>
 								</div>
@@ -145,85 +139,87 @@
 			mini.parse();
 			
 			var form = new mini.Form("#form1");
-			function clear() {
-				 form.clear();
-			}
-			
-			
-			var grid = mini.get("datagrid1"); // 称谓列表
-			var addressGrid = mini.get("datagrid2");// 用户列表
-			var pictureGrid = mini.get("dataGrid3");
-			
+			var grid = mini.get("datagrid1"); 
+			var managerGrid = mini.get("datagrid2");
 		 
-			function search() {
-				var data = form.getData();
-				grid.load(data);
-			}
-			
 			grid.on("rowclick", function(e){
 				var record = e.record;
-				addressGrid.load({companyCode:record.code}); 
-				pictureGrid.load({companyCode:record.code});
+				managerGrid.load({storeCode:record.code});
 			});
 	
-			function removeAddress() {
-				var row = addressGrid.getSelecteds();
-				if (!row) {
-					mini.alert("请选至少勾选一个地址记录");
-				}
-				var ids = [];
-				for(var i=0;i<row.length;i++) {
-					ids.push(row[i].id);
-				}
-				mini.confirm("确定删除？", "确定？",
-					function (action) {
-						if (action == "ok") {
-							$.ajax({
-								'url': "${pageContext.request.contextPath}/rst/work_address/delete?ids="+ids.join(","),
-								type: 'post', dataType:'JSON',
-								success: function (json) {
-									mini.alert("删除成功");
-									addressGrid.reload();
-								},
-								error : function(data) {
-							  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
-							  		mini.alert(data.responseText);
-								}
-							});
-						}
-					}
-				);
+			function refreshManager() {
+				managerGrid.reload();
 			}
 			
-			function editAddress(action) {
-				var row = addressGrid.getSelected();
-				if('edit' == action) {
-					if(!row) {
-						mini.alert("请至少选择一条记录");
-						return ;
-					}
+			function editManager() {
+				var row = grid.getSelected();
+				if (!row) {
+					mini.alert("请选择一个门店");
+					return ;
 				}
-				
 				mini.open({
-					url : "${pageContext.request.contextPath}/apps/default/admin/rst/company/edit_address.jsp",
-					title : "编辑地址",
-					width : 480,
-					height : 300,
+					url : "${pageContext.request.contextPath}/apps/default/admin/rst/store/selector_user.jsp?multiSelect=false",
+					title : "添加管理员",
+					width : 680,
+					height : 400,
 					onload : function() {
 						var iframe = this.getIFrameEl();
 						var data = {};
-						data.action = action;
+						data.storeCode = row.code;
 						
-						if('edit' == action) {
-							data.id = row.id;
-						}
 						iframe.contentWindow.SetData(data);
 					},
 					ondestroy : function(action) {
-						addressGrid.reload();
+						if ('ok' == action) {
+							managerGrid.reload();
+						}
 					}
 				});
-			 
+			}
+			
+			function removeManager() {
+				var row = grid.getSelected();
+				var row2 = managerGrid.getSelecteds();
+				
+				if(!row) {
+					mini.alert("请选择门店");
+					return ;
+				}
+		    	 
+		    	if (row2.length == 0) {
+		    		mini.alert("请至少选择一个管理员用户");
+		    		return ;
+		    	}
+		    	
+		    	var userCodes = new Array();
+		    	for(var i=0;i<row2.length;i++) {
+		    		userCodes.push(row2[i].managerCode);
+		    	}
+		    	
+		    	var data = {};
+		    	data.storeCode = row.code;
+		    	data.userCodes = userCodes.join(",");
+
+				mini.confirm("确定删除？", "确定？",
+					function (action) {
+						if (action == "ok") {
+							deleteManager();
+						}
+					});
+				
+				var deleteManager = function() {
+			    	$.ajax({
+						'url': "${pageContext.request.contextPath}/rst/store_info/delete_manager",
+						type: 'post', dataType:'JSON',
+						data : data,
+						success: function (json) {
+							managerGrid.reload();
+						},
+						error : function(data) {
+					  		mini.alert(data.responseText);
+						}
+					});
+				}
 			}
 			
 			function edit(action) {
@@ -236,8 +232,8 @@
 				}
 				
 				mini.open({
-					url : "${pageContext.request.contextPath}/apps/default/admin/rst/company/edit.jsp",
-					title : "编辑信息",
+					url : "${pageContext.request.contextPath}/apps/default/admin/rst/store/edit.jsp",
+					title : "编辑",
 					width : 480,
 					height : 300,
 					onload : function() {
@@ -259,9 +255,11 @@
 			
 			function remove() {
 				var row = grid.getSelecteds();
-				if (!row) {
+				if (row.length == 0) {
 					mini.alert("请选中一条以上的记录");
+					return;
 				}
+				
 				var ids = [];
 				for(var i=0;i<row.length;i++) {
 					ids.push(row[i].id);
@@ -270,7 +268,7 @@
 					function (action) {
 						if (action == "ok") {
 							$.ajax({
-								'url': "${pageContext.request.contextPath}/rst/company/delete?ids="+ids.join(","),
+								'url': "${pageContext.request.contextPath}/rst/store_info/delete?ids="+ids.join(","),
 								type: 'post', dataType:'JSON',
 								success: function (json) {
 									mini.alert("删除成功");
@@ -285,7 +283,17 @@
 					}
 				);
 			}
+
 			
+			
+			function clear() {
+				 form.clear();
+			}
+		 
+			function search() {
+				var data = form.getData();
+				grid.load(data);
+			}
 		</script>
 	</body>
 </html>

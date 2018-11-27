@@ -28,29 +28,46 @@
 											<input id="key" name="key"  class="mini-textbox" emptyText="请输入关键字搜索" style="width: 150px;" onenter="search"/>
 										</td>
 									</tr>
-						
+									<tr>
+										<td>编码：</td>
+										<td>
+											<input id="code" name="code"   class="mini-textbox"  emptyText="请输入用户编码"  onenter="search"/>
+										</td>
+									</tr>
 									<tr>
 										<td>姓名：</td>
 										<td>
-											<input id="name" name="name"   class="mini-textbox"  emptyText="请输入姓名"  onenter="search"/>
+											<input id="realName" name="realName"   class="mini-textbox"  emptyText="请输入姓名"  onenter="search"/>
 										</td>
 									</tr>
 									
 									<tr>
-										<td>帐号：</td>
+										<td>昵称：</td>
 										<td>
-											<input id="loginName" name="loginName"   class="mini-textbox"  emptyText="请输入帐号"  onenter="search"/>
+											<input id="nickName" name="nickName"   class="mini-textbox"  emptyText="请输入昵称"  onenter="search"/>
+										</td>
+									</tr>
+									<tr>
+										<td>手机号：</td>
+										<td>
+											<input id="mobile" name="mobile"   class="mini-textbox"  emptyText="请输入手机号"  onenter="search"/>
+										</td>
+									</tr>
+									<tr>
+										<td>微信账号：</td>
+										<td>
+											<input id="wxAccount" name="wxAccount"   class="mini-textbox"  emptyText="请输入手机号"  onenter="search"/>
 										</td>
 									</tr>
 									
-								
-									
+									<%-- 
 									<tr>
 										<td>状态 </td>
 										<td>
 											<input id="status" name="status" value="1" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=user_status" />
 										</td>
-									</tr>
+									</tr> 
+									--%>
 									
 									<tr>
 										<td>邮箱：</td>
@@ -74,72 +91,12 @@
 										</td>
 									</tr>
 									
-									<!-- 
-									
-									<tr>
-										<td>QQ：</td>
-										<td>
-											<input id="numQq" name="numQq"   class="mini-textbox"  emptyText="请输入QQ"  onenter="search"/>
-										</td>
-									</tr>
-									
-									
-									<tr>
-										<td>微信：</td>
-										<td>
-											<input id="numWx" name="numWx"   class="mini-textbox"  emptyText="请输入微信"  onenter="search"/>
-										</td>
-									</tr>
-									
-									
-								
-									
-									<tr>
-										<td>办公地点：</td>
-										<td>
-											<input id="addressOffice" name="addressOffice"   class="mini-textbox"  emptyText="请输入办公地点（多个地址用@@分割）"  onenter="search"/>
-										</td>
-									</tr>
-									
-									
-									
-									<tr>
-										<td>家庭地址：</td>
-										<td>
-											<input id="addressHome" name="addressHome"   class="mini-textbox"  emptyText="请输入家庭地址（多个地址用@@分割）"  onenter="search"/>
-										</td>
-									</tr>
-									 -->
-									
-									
 									<tr>
 										<td>性别</td>
 										<td>
 											<input id="sex" name="sex" value="1" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sex"  />
 										</td>
 									</tr>
-									
-									
-									<tr>
-										<td>备注：</td>
-										<td>
-											<input id="remark" name="remark"   class="mini-textbox"  emptyText="请输入"  onenter="search"/>
-										</td>
-									</tr>
-									
-									<!-- <tr>
-										<td>创建日期(开始)：</td>
-										<td>
-											<input id="createTimeBegin" name="createTimeBegin" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入创建日期(开始)" />
-										</td>
-									</tr>
-									<tr>
-										<td>创建日期(结束)：</td>
-										<td>
-											<input id="createTimeEnd" name="createTimeEnd" format="yyyy-MM-dd" class="mini-datepicker"  emptyText="请输入创建日期(结束)" />
-										</td>
-									</tr> -->
-									
 					</table>
 					<div style="text-align:center;padding:10px;">
 						<a class="mini-button" onclick="search()" iconCls="icon-search" style="width:60px;margin-right:20px;">查询</a>
@@ -152,15 +109,11 @@
 					<table style="width:100%;">
 						<tr>
 							<td style="width:100%;">
-								<a class="mini-button" iconCls="icon-add" onclick="add()">添加</a>
+								<a class="mini-button" iconCls="icon-add" onclick="edit('add')">添加</a>
+								<a class="mini-button" iconCls="icon-edit" onclick="edit('edit')">修改</a>
 								<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
-								<a class="mini-button" iconCls="icon-edit" onclick="edit()">编辑</a>
-								<a class="mini-button" iconCls="icon-node" onclick="edit('view')">查看</a>
 								<span class="separator"></span>  
-								<a class="mini-button" iconCls="icon-download" onclick="exportData()">导出</a>
-								<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:60px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"excel"},{id:"1",text:"word"},{id:"2",text:"pdf"},{id:"3",text:"txt"}]' />
-								<input id="exportDataType" name="exportDataType" class="mini-combobox" style="width:64px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"当前页"},{id:"1",text:"选中行"},{id:"2",text:"全部数据"}]' />
-								
+								 <a class="mini-button" iconCls="icon-reload" onclick="refresh()">删除</a>
 							</td>
 							<td style="white-space:nowrap;">
 		                        <input id="key2" name="key2" class="mini-textbox" emptyText="请输入关键字" style="width:150px;" onenter="search"/>   
@@ -171,29 +124,33 @@
 				</div>
 				<div class="mini-fit">
 					<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" 
-					url="${pageContext.request.contextPath}/user/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
+					url="${pageContext.request.contextPath}/rst/user/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
 					<div property="columns">
 						<div type="checkcolumn" ></div>
-						<div field="name" width="160" headerAlign="center" allowSort="true" align="center">姓名</div>
-						<div field="loginName" width="160" headerAlign="center" allowSort="true" align="center">帐号</div>
-						<!-- <div field="loginPwd" width="160" headerAlign="center" allowSort="true" align="center">密码</div> -->
-						<div field="statusDesc" width="160" headerAlign="center" allowSort="true" align="center">状态</div>
-						<div field="email" width="160" headerAlign="center" allowSort="true" align="center">邮箱</div>
+						<div field="code" width="160" headerAlign="center" allowSort="true" align="center">编号</div>
+						<div field="realName" width="160" headerAlign="center" allowSort="true" align="center">姓名</div>
+						<div field="nickName" width="160" headerAlign="center" allowSort="true" align="center">昵称</div>
 						<div field="mobile" width="160" headerAlign="center" allowSort="true" align="center">手机</div>
-						<div field="tel" width="160" headerAlign="center" allowSort="true" align="center">电话</div>
-						<div field="numQq" width="160" headerAlign="center" allowSort="true" align="center">QQ</div>
-						<div field="numWx" width="160" headerAlign="center" allowSort="true" align="center">微信</div>
-						<div field="birthday" width="160" headerAlign="center" allowSort="true" align="center">生日</div>
-						<div field="addressOffice" width="160" headerAlign="center" allowSort="true" align="center">办公地点</div>
-						<div field="addressHome" width="160" headerAlign="center" allowSort="true" align="center">家庭地址</div>
-						<div field="sexDesc" width="160" headerAlign="center" allowSort="true" align="center">性别</div>
-						<div field="sn" width="160" headerAlign="center" allowSort="true" align="center">序号</div>
-						<div field="remark" width="160" headerAlign="center" allowSort="true" align="center">备注</div>
-						<div field="appCode" width="160" headerAlign="center" allowSort="true" align="center">系统编码</div>
-						<div field="gid" width="160" headerAlign="center" allowSort="true" align="center">全局编码</div>
-						<div field="createTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">创建日期</div>
-						<div field="updateTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">更新日期</div>
-					
+						<div field="wxAccount" width="160" headerAlign="center" allowSort="true" align="center">微信号</div>
+						
+						<div field="sex" width="160" headerAlign="center" allowSort="true" align="center">性别</div>
+						<div field="birthday" dateFormat="yyyy-MM-dd" width="160" headerAlign="center" allowSort="true" align="center">生日</div>
+						
+						<div field="education" width="160" headerAlign="center" allowSort="true" align="center">学历</div>
+						
+						<div field="countryName" width="160" headerAlign="center" allowSort="true" align="center">国家</div>
+						<div field="provinceName" width="160" headerAlign="center" allowSort="true" align="center">省份</div>
+						<div field="cityName" width="160" headerAlign="center" allowSort="true" align="center">城市</div>
+						
+						<!-- 
+							<div field="headImgUrl" width="160" headerAlign="center" allowSort="true" align="center">家庭地址</div> 
+						-->
+						
+						<div field="registrationTime" dateFormat="yyyy-MM-dd" width="160" headerAlign="center" allowSort="true" align="center">注册时间</div>
+						<div field="registrationSource" width="160" headerAlign="center" allowSort="true" align="center">注册来源</div>
+						<div field="refereeUserCode" width="160" headerAlign="center" allowSort="true" align="center">邀请码</div>
+						<div field="seatNumber" width="160" headerAlign="center" allowSort="true" align="center">坐席电话</div>
+						<div field="email" width="160" headerAlign="center" allowSort="true" align="center">邮箱</div>
 					</div>
 					</div>
 				</div>

@@ -247,3 +247,9 @@ ALTER TABLE  `bu_personal_video_info` ADD COLUMN `id` BIGINT(20) NULL  first;
 ALTER TABLE  `bu_personal_video_info` DROP PRIMARY KEY;
 update bu_personal_video_info A,(SELECT @rownum:=@rownum+1 AS rid, bu_personal_video_info.*  FROM (SELECT @rownum:=0) r, bu_personal_video_info  ) B set A.id= B.rid  where A.video_id = B.video_id ;
 
+
+
+ALTER TABLE `bu_area_info` ADD COLUMN `id` BIGINT(20) NULL first;
+update bu_area_info A,(SELECT @rownum:=@rownum+1 AS rid, bu_area_info.*  FROM (SELECT @rownum:=0) r, bu_area_info  ) B set A.id= B.rid  where A.code = B.code ;
+ALTER TABLE  `bu_area_info`  ADD UNIQUE INDEX `code_UNIQUE` (`code` ASC), DROP PRIMARY KEY;
+ALTER TABLE `bu_area_info` CHANGE `id` `id` bigint(20) primary key NOT NULL AUTO_INCREMENT FIRST;

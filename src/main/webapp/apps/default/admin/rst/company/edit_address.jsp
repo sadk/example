@@ -30,7 +30,7 @@
 									<tr>
 										<td>公司名称：</td>
 										<td>
-											<input id="companyName" name="companyName" class="mini-text"   style="width:140px"  readonly="readonly"/>
+											<input id="companyName" name="companyName" class="mini-textbox" style="width:140px"  />
 										</td>
 										<td>省：</td>
 										<td>
@@ -41,12 +41,12 @@
 									<tr>
 										<td>市：</td>
 										<td>
-											<input id="cityCode" name="cityCode" class="mini-combobox"  style="width:140px"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_active_status" required="true" />
+											<input id="cityCode" name="cityCode" class="mini-combobox"  style="width:140px"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_active_status"/>
 										    
 										</td>
 										<td>区：</td>
 										<td>
-											<input id="areaCode" name="areaCode" class="mini-combobox"  style="width:140px"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_active_status" required="true" />
+											<input id="areaCode" name="areaCode" class="mini-combobox"  style="width:140px"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_active_status"/>
 										</td>
 									</tr>
 									
@@ -67,9 +67,11 @@
 		</form>
 		<script type="text/javascript">
 			mini.parse();
-
 			var form = new mini.Form("edit-form1");
-		
+			
+			
+			
+			
 			function SaveData() {
 				var o = form.getData();
 				form.validate();
@@ -85,12 +87,27 @@
 				});
 			}
 
+			function loadCompanyName(code) {
+				$.ajax({
+					url : "${pageContext.request.contextPath}/rst/company/list?code="+code,
+					dataType: 'json', type : 'post',
+					success : function(text) {
+						if(text && text.length == 1) {
+							var row = text[0];
+							//console.log(row)
+							var companyName = mini.get("companyName")
+							companyName.setValue(row.shortName);
+						}
+					}
+				});
+			}
+			
 			////////////////////
 			//标准方法接口定义
 			function SetData(data) {
 				data = mini.clone(data); //跨页面传递的数据对象，克隆后才可以安全使用
 				
-				 if(data.action == "edit" || data.action=='view') {
+				 if(data.action == "edit") {
 					$.ajax({
 						url : "${pageContext.request.contextPath}/rst/work_address/get_by_id?id=" + data.id,
 						dataType: 'json',
@@ -99,9 +116,15 @@
 							if (text) {
 								var o = mini.decode(text);
 								form.setData(o);
+								
+								loadCompanyName(o.companyCode);
 							}
 						}
 					});
+				}
+				
+				if (data.action == 'add') {
+					loadCompanyName(data.companyCode);
 				}
 			}
 
