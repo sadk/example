@@ -4,6 +4,8 @@
 			<column id="id" type="auto" property="id" text="主键" />
 		
 	 		<column name="user_code" property="userCode" text="用户编码"/>
+	 		
+	 		<column name="user_name" property="userName" text="用户名称"/>
 	 	
 	 		<column name="type" property="type" text="考勤类型 :100=正常上班 200=加班 300=请假"/>
 	 	
@@ -34,8 +36,8 @@
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
-							 							 							 							 							 							 							 												
-							user_code = '${key}' 						
+							user_code = '${key}' ,
+							user_name = '${key}'				
 					)
 				</#if>
 				
@@ -44,7 +46,9 @@
 	  						<#if query.id??> and id = ${query.id} </#if>
 					
 	  						<#if query.userCode??> and user_code = '${StringUtil.escapeSql(query.userCode)}' </#if>
-						
+							
+							<#if query.userName??> and user_name = '${StringUtil.escapeSql(query.userName)}' </#if>
+							
 	  						<#if query.type??> and type = ${query.type} </#if>
 					
 	  						<#if query.workingHours??> and working_hours = '${StringUtil.escapeSql(query.workingHours)}' </#if>

@@ -72,7 +72,8 @@
       <param-value>
           /login.jsp.*,
 	      /user/login.*,
-	      /user/save_or_update.*
+	      /user/save_or_update.*,
+	      /rst/work_address/wx/.*
       </param-value>
     </init-param>
   </filter>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.PersonalVideoInfo" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="bu_personal_video_info">
+			<column id="id" type="auto" property="code" text="主键" />
+			
+			<column name="video_id" property="code" text="编码" />
+	 	
+	 		<column name="user_id" property="userCode" text="用户ID"/>
+	 	
+	 		<column name="activity_id" property="activityId" text="活动ID"/>
+	 	
+	 		<column name="picture_url" property="pictureUrl" text="图片Url"/>
+	 	
+	 		<column name="video_url" property="videoUrl" text="视频ID"/>
+	 	
+	 		<column name="status" property="status" text="视频状态（0:隐藏， 1展示）"/>
+	 	
+	 		<column name="upload_time" property="uploadTime" text="上传时间"/>
+	 	
+	 		<column name="review_time" property="reviewTime" text="更新时间"/>
+	 	
+	 		<column name="job_id" property="positionCode" text="职位ID"/>
+	 	
+	 		<column name="reason" property="reason" text="审核原因"/>
+	 	
+	 		<column name="tenant_code" property="tenantCode" text="租户编码"/>
+	 		
+	 		<column name="nick_name" property="nickName" isVirtual = "true" text="租户编码"/>
+	 		<column name="real_name" property="realName" isVirtual = "true" text="租户编码"/>
+	 		<column name="phone" property="phone" isVirtual = "true" text="租户编码"/>
+	 	
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+	 			SELECT
+					u.nick_name,
+					u.real_name,
+					u.phone,
+					v.* 
+				FROM
+					bu_personal_video_info v
+				LEFT JOIN bu_user_info u ON v.user_id = u.user_id
+				where 1=1
+					
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+						u.nick_name like '%${key}%'	or
+						u.real_name like '%${key}%' or
+						u.phone like '%${key}%'
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+							
+	  						<#if query.code??> and video_id = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+	  						<#if query.userCode??> and user_id = '${StringUtil.escapeSql(query.userCode)}' </#if>
+						
+	  						<#if query.activityId??> and activity_id = '${StringUtil.escapeSql(query.activityId)}' </#if>
+					
+	  						<#if query.pictureUrl??> and picture_url = '${StringUtil.escapeSql(query.pictureUrl)}' </#if>
+					
+	  						<#if query.videoUrl??> and video_url = '${StringUtil.escapeSql(query.videoUrl)}' </#if>
+					
+	  						<#if query.status??> and status = '${StringUtil.escapeSql(query.status)}' </#if>
+					
+						
+							<#if query.uploadTimeBegin?? && query.uploadTimeEnd??>
+	  							and date_format(upload_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.uploadTimeBegin)}' and '${StringUtil.escapeSql(query.uploadTimeEnd)}'
+	  						</#if>
+	  						
+							<#if query.reviewTimeBegin?? && query.reviewTimeEnd??>
+	  							and date_format(review_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.reviewTimeBegin)}' and '${StringUtil.escapeSql(query.reviewTimeEnd)}'
+	  						</#if>
+	  						
+	  						<#if query.positionCode??> and job_id = '${StringUtil.escapeSql(query.positionCode)}' </#if>
+						
+	  						<#if query.reason??> and reason = '${StringUtil.escapeSql(query.reason)}' </#if>
+					
+	  						<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
+						
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from bu_personal_video_info ]]>
+	</statement>
+	
+</statements>

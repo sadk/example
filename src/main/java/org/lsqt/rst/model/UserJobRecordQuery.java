@@ -5,7 +5,7 @@ import org.lsqt.components.db.Page;
 /**
  * 用户求职记录
  */
-public class PositionDeliveryRecordQuery {
+public class UserJobRecordQuery {
 	private Integer pageIndex = Page.DEFAULT_PAGE_INDEX;
 	private Integer pageSize = Page.DEFAULT_PAGE_SIZE;
 
@@ -13,8 +13,8 @@ public class PositionDeliveryRecordQuery {
 	private String sortField;
 
 	private String key; // 关键字
-	private String ids; // 用逗号分割的id字符
-	private Long id;
+	
+	private String id;
 	
 	/** 用户编码 */
 	private String userCode;
@@ -256,20 +256,11 @@ public class PositionDeliveryRecordQuery {
 		this.key = key;
 	}
 
-	public String getIds() {
-		return ids;
-	}
-
-	public void setIds(String ids) {
-		this.ids = ids;
-	}
-
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
-
 }

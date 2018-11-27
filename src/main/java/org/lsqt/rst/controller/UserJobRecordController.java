@@ -10,46 +10,44 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
-import org.lsqt.rst.model.JobDefinition;
-import org.lsqt.rst.model.JobDefinitionQuery;
-import org.lsqt.rst.service.JobDefinitionService;
+import org.lsqt.rst.model.UserJobRecord;
+import org.lsqt.rst.model.UserJobRecordQuery;
+import org.lsqt.rst.service.UserJobRecordService;
 
 
 
 
-@Controller(mapping={"/rst/job_definition"})
-public class JobDefinitionController {
+@Controller(mapping={"/rst/user_job_record"})
+public class UserJobRecordController {
 	
-	@Inject private JobDefinitionService jobDefinitionService; 
+	@Inject private UserJobRecordService userJobRecordService; 
 	
 	@Inject private Db db;
 	
 	@RequestMapping(mapping = { "/get_by_id", "/m/get_by_id" })
-	public JobDefinition getById(Long id) throws IOException {
-		return jobDefinitionService.getById(id);
+	public UserJobRecord getById(Long id) throws IOException {
+		return userJobRecordService.getById(id);
 	}
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
-	public Page<JobDefinition> queryForPage(JobDefinitionQuery query) throws IOException {
-		return jobDefinitionService.queryForPage(query); //  
+	public Page<UserJobRecord> queryForPage(UserJobRecordQuery query) throws IOException {
+		return userJobRecordService.queryForPage(query); //  
 	}
 	
 	@RequestMapping(mapping = { "/all", "/m/all" })
-	public Collection<JobDefinition> getAll() {
-		return jobDefinitionService.getAll();
+	public Collection<UserJobRecord> getAll() {
+		return userJobRecordService.getAll();
 	}
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
-	public JobDefinition saveOrUpdate(JobDefinition form) {
-		return jobDefinitionService.saveOrUpdate(form);
+	public UserJobRecord saveOrUpdate(UserJobRecord form) {
+		return userJobRecordService.saveOrUpdate(form);
 	}
 	
 	@RequestMapping(mapping = { "/delete", "/m/delete" })
 	public int delete(String ids) {
 		List<Long> list = StringUtil.split(Long.class, ids, ",");
-		return jobDefinitionService.deleteById(list.toArray(new Long[list.size()]));
+		return userJobRecordService.deleteById(list.toArray(new Long[list.size()]));
 	}
-	
-
 	
 }

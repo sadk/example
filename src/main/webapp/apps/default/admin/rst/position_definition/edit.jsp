@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>普通服务商管理</title>
+		<title>职位信息</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
@@ -23,40 +23,60 @@
 			<input name="id" class="mini-hidden" />
 			<div style="padding:4px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
-		            <legend>系统信息</legend>
+		            <legend>职位信息</legend>
 		            <div style="padding:5px;">
 				        <table>
 							<tr>
-								<td style="width:100px;">名称：</td>
+								<td style="width:100px;">发布平台：</td>
 								<td style="width:150px;">
-								 	<input name="name" id="name" class="mini-textbox"  />
+								 	<input name="publishPlatfrom" id="publishPlatfrom" class="mini-textbox"  />
 								</td>
-								<td style="width:100px;">系统编码：</td>
+								<td style="width:100px;">公司简称：</td>
 								<td style="width:150px;">
-									<input name="code" id="code" class="mini-textbox" />
+									<input name="companyShortName" id="companyShortName" class="mini-textbox" />
 								</td>
 							</tr>
 							<tr>
+								<td>中介姓名：</td>
+								<td>
+									<input name="intermediaryName" id="intermediaryName" class="mini-textbox" />
+								</td>
+								<td>中介手机号：</td>
+								<td>
+									<input name="intermediaryPhone" id="intermediaryPhone" class="mini-textbox" />
+								</td>
+							</tr>
+							<tr>
+								<td>综合工资：</td>
+								<td>
+									<input name="comprehensiveSalary" id="comprehensiveSalary" class="mini-textbox" />
+								</td>
+								<td>作息时间：</td>
+								<td>
+									<input name="workTime" id="workTime" class="mini-textbox" />
+								</td>
+							</tr>
+							<tr>
+								<td>岗位名称：</td>
+								<td>
+									<input name="name" id="name" class="mini-textbox" />
+								</td>
+								<td>面试地址：</td>
+								<td>
+									<input name="interviewAddress" id="interviewAddress" class="mini-textbox" />
+								</td>
+							</tr>
+							<tr>
+								<td>发布状态：</td>
+								<td>
+								 	<input id="status" name="status" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" data='[{id:"1",text:"启用"},{id:"0",text:"禁用"}]' />
+								</td>
 								<td>排序号：</td>
 								<td>
 								 	<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
 								</td>
-								<td>是否启用：</td>
-								<td>
-								 	<input id="enable" name="enable" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" data='[{id:"1",text:"启用"},{id:"0",text:"禁用"}]' />
-								</td>
 							</tr> 
-							<tr>
-								<td>所属租户:</td>
-								<td>
-									<input id="tenantCode" name="tenantCode" class="mini-buttonedit" onbuttonclick="onButtonEdit" />   
-									<input id="tenantName" name="tenantName"  class="mini-hidden" />
-								</td>
-								<td>备注：</td>
-								<td>
-								 	<input id="remark" name="remark" class="mini-textbox"/>
-								</td>
-							</tr>
+
 				        </table>
 				    </div>
 				</fieldset>

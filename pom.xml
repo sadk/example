@@ -11,7 +11,13 @@
 		<spring>5.0.8.RELEASE</spring>
 	</properties>
   <dependencies>
-	
+
+        <dependency>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+        
 	<dependency>
 	    <groupId>com.rabbitmq</groupId>
 	    <artifactId>amqp-client</artifactId>

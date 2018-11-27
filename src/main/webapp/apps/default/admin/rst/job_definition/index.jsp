@@ -3,7 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>应用管理</title>
+		<title>岗位定义</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
 		<style>
@@ -29,34 +29,21 @@
 							</td>
 						</tr>
 						<tr>
-							<td>名称：</td>
+							<td>岗位编码：</td>
 							<td>
-								<input id="name" name="name"  style="width:140px" class="mini-textbox"  emptyText="请输入系统名称"  onenter="search"/>
+								<input id="code" name="code"  style="width:140px" class="mini-textbox"  emptyText="请输入岗位编码"  onenter="search"/>
+							</td>
+						</tr>
+						<tr>
+							<td>岗位名称：</td>
+							<td>
+								<input id="name" name="name"  style="width:140px" class="mini-textbox"  emptyText="请输入岗位名称"  onenter="search"/>
 							</td>
 						</tr>
 						<tr>
 							<td>是否启用：</td>
 							<td>
-								<input id="enable" name="enable" class="mini-combobox" style="width:140px" valueField="value" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择"  url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
-							</td>
-						</tr>
-						<tr>
-							<td>备注：</td>
-							<td>
-								<input id="remark" name="remark" class="mini-textbox" style="width:140px" emptyText="请输入备注" onenter="search"/>
-							</td>
-						</tr>
-						 
-						<tr>
-							<td>创建时间(开始)：</td>
-							<td>
-								<input id="createTimeBegin" name="createTimeBegin" class="mini-datepicker" style="width:140px" emptyText="请输入"/>
-							</td>
-						</tr>
-						<tr>
-							<td>创建时间(结束)：</td>
-							<td>
-								<input id="createTimeEnd" name="createTimeEnd" class="mini-datepicker" style="width:140px"  emptyText="请输入"/>
+								<input id="enable" name="enable" class="mini-combobox" style="width:140px" valueField="value" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择"  url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
 							</td>
 						</tr>
 					</table>
@@ -71,39 +58,32 @@
 					<table style="width:100%;">
 						<tr>
 							<td style="width:100%;">
-								<a class="mini-button" iconCls="icon-add" onclick="add()">添加</a>
+								<a class="mini-button" iconCls="icon-add" onclick="edit('add')">新增</a>
+								<a class="mini-button" iconCls="icon-edit" onclick="edit('edit')">编辑</a>
 								<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
-								<a class="mini-button" iconCls="icon-edit" onclick="edit()">编辑</a>
-								<a class="mini-button" iconCls="icon-node" onclick="edit('view')">查看</a>
-								<span class="separator"></span>  
-								<a class="mini-button" iconCls="icon-download" onclick="exportData()">导出</a>
-								<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:60px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"excel"},{id:"1",text:"word"},{id:"2",text:"pdf"},{id:"3",text:"txt"}]' />
-								<input id="exportDataType" name="exportDataType" class="mini-combobox" style="width:64px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"当前页"},{id:"1",text:"选中行"},{id:"2",text:"全部数据"}]' />
 								
+								<span class="separator"></span>  
+								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
+								 
 							</td>
-							<td style="white-space:nowrap;">
-		                        <input id="key2" name="key2" class="mini-textbox" emptyText="请输入关键字" style="width:150px;" onenter="search"/>   
-		                        <a class="mini-button" onclick="search()">查询</a>
-		                    </td>
 						</tr>
 					</table>
 				</div>
 				<div class="mini-fit">
-					<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" 
-					url="${pageContext.request.contextPath}/application/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
+					<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" autoLoad="true"
+					url="${pageContext.request.contextPath}/rst/job_definition/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
 					<div property="columns">
 						<div type="checkcolumn" ></div>
+						<div field="id" width="60" headerAlign="center" allowSort="true" align="center" >ID</div>
+						<div field="name" width="140" headerAlign="center" allowSort="true" align="left" >名称</div>
+						<div field="code" width="140" headerAlign="center" allowSort="true" align="left">编码</div>
+						<div field="sn" width="80" headerAlign="center" allowSort="true" align="center">排序号</div>
+						<div field="enable" width="80" headerAlign="center" allowSort="true" align="center">是否启用</div>
 						
-						<div field="tenantName" width="80" headerAlign="center" allowSort="true" align="left" >租户</div>
-						<div field="name" width="160" headerAlign="center" allowSort="true" align="left" >系统名称</div>
-						<div field="code" width="80" headerAlign="center" allowSort="true" align="left">系统编码</div>
-						<div field="sn" width="60" headerAlign="center" allowSort="true" align="right">排序号</div>
-						<div field="remark" width="160" headerAlign="center" allowSort="true" align="left">备注</div>
-						<div field="enableDesc" width="60" headerAlign="center" allowSort="true" align="center">是否启用</div>
-						
-						<div field="gid" width="160" headerAlign="center" allowSort="true" align="left">全局编码</div>
-						<div field="createTimeDesc" width="100" headerAlign="center" allowSort="true" align="center" >创建时间</div>
-						<div field="updateTimeDesc" width="100" headerAlign="center" allowSort="true" align="center">更新时间</div>
+						<!-- <div field="gid" width="160" headerAlign="center" allowSort="true" align="left">全局编码</div> -->
+						<div field="createTime" width="150" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
+						<div field="updateTime" width="150" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>     
+									        
 					</div>
 					</div>
 				</div>
@@ -111,38 +91,16 @@
 		</div>
 		<script type="text/javascript">
 		mini.parse();
-
+		var grid = mini.get("datagrid1");
 		var form = new mini.Form("#form1");
+		
+		
 		function clear() {
 			 form.clear();
 		}
-		
-		var grid = mini.get("datagrid1");
-		grid.load();
-		grid.on("drawcell", function(e){
-			var record = e.record;
-			var field = e.field;
-			var value = e.value;
-			var row = e.row;
-			if(typeof(row.name) != 'undefined' && row && field == "name" && row.id){
-				e.cellHtml = '<a href="javascript:void(0)" onclick="view('+row.id+')">' + row.name + '</a>'; // style="text-decoration:none;"
-			}
-		});
-		
+
 		function search() {
 			var data = form.getData();
-			
-			var createTimeBegin = mini.get('createTimeBegin').text;
-			var createTimeEnd = mini.get('createTimeEnd').text;
-			
-			data.createTimeBegin = createTimeBegin;
-			data.createTimeEnd = createTimeEnd;
-			
-			var key2 = mini.get("key2").value;
-			if( (data.key==null || data.key=="") && (key2!=null && key2!="")){
-				data.key = key2;
-			}
-			
 			grid.load(data);
 		}
 
@@ -159,7 +117,7 @@
 				function (action) {
 					if (action == "ok") {
 						$.ajax({
-							'url': "${pageContext.request.contextPath}/application/delete?ids="+ids.join(","),
+							'url': "${pageContext.request.contextPath}/rst/job_definition/delete?ids="+ids.join(","),
 							type: 'post',
 							dataType:'JSON',
 							cache: false,
@@ -177,54 +135,36 @@
 				}
 			);
 		}
-		
-		function add() {
+
+		function edit(action) {
+			var row = grid.getSelected();
+			if ('edit' == action) {
+				if(!row) {
+					mini.alert("请选择一条记录");
+					return ;
+				}
+			}
+			
 			mini.open({
-				url : "${pageContext.request.contextPath}/apps/default/admin/sys/application/edit.jsp",
-				title : "添加系统",
+				url : "${pageContext.request.contextPath}/apps/default/admin/rst/job_definition/edit.jsp",
+				title : "编辑岗位",
 				width : 490,
 				height : 220,
 				onload : function() {
 					var iframe = this.getIFrameEl();
-					var data = {
-						action : "add"
-					};
+					
+					var data = {};
+					data.action = action
+					if ('edit' == action) {
+						data.id = row.id
+					}
+					
 					iframe.contentWindow.SetData(data);
 				},
 				ondestroy : function(action) {
 					grid.reload();
 				}
 			});
-		}
-		
-
-		function edit(action) {
-			var row = grid.getSelected();
-			if(typeof(action) == 'undefined') {
-				action = "edit";
-			}
-			
-			if (row) {
-				mini.open({
-					url : "${pageContext.request.contextPath}/apps/default/admin/sys/application/edit.jsp",
-					title : "编辑系统信息",
-					width : 490,
-					height : 220,
-					onload : function() {
-						var iframe = this.getIFrameEl();
-						var data = {
-							action : action,
-							id : row.id
-						};
-						iframe.contentWindow.SetData(data);
-					},
-					ondestroy : function(action) {
-						grid.reload();
-					}
-				});
-			} else {
-				mini.alert("请选中一条记录");
-			}
 		}
 		
 		function exportData() {

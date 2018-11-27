@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>新闻评论表</title>
+		<title>个人视频表</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
@@ -22,23 +22,83 @@
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
 			<div style="padding-left:11px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
-		            <legend>评论信息</legend>
+		            <legend>XXX信息</legend>
 		            <div style="padding:5px;">
 				        <table>
-				        	<tr>
-				        		<td>评论用户:</td>
-				        		<td>
-				        			<input name="id" id="id" class="mini-hidden" />
-				        			<input name="newsId" id="newsId" class="mini-hidden" />
-				        			<input name="commentUserName" id="commentUserName" class="mini-textbox" style="width: 100%;" />
-				        		</td>
-				        	</tr>
-				        	<tr>
-				        		<td>评论内容:</td>
-				        		<td>
-				        			<input name="content" id="content" class="mini-textarea" style="width: 100%;" required="true" />
-				        		</td>
-				        	</tr>
+				        
+									<tr>
+										<td>用户ID：</td>
+										<td>
+											<input id="userCode" name="userCode"  style="width:140px" class="mini-textbox"  emptyText="请输入用户ID"  onenter="search"/>
+										</td>
+									</tr>
+									
+									
+									
+									<tr>
+										<td>活动ID：</td>
+										<td>
+											<input id="activityId" name="activityId"  style="width:140px" class="mini-textbox"  emptyText="请输入活动ID"  onenter="search"/>
+										</td>
+									</tr>
+									
+									
+									
+									<tr>
+										<td>图片Url：</td>
+										<td>
+											<input id="pictureUrl" name="pictureUrl"  style="width:140px" class="mini-textbox"  emptyText="请输入图片Url"  onenter="search"/>
+										</td>
+									</tr>
+									
+									
+									
+									<tr>
+										<td>视频ID：</td>
+										<td>
+											<input id="videoUrl" name="videoUrl"  style="width:140px" class="mini-textbox"  emptyText="请输入视频ID"  onenter="search"/>
+										</td>
+									</tr>
+									
+									
+									
+									<tr>
+										<td>视频状态（0:隐藏， 1展示）：</td>
+										<td>
+											<input id="status" name="status"  style="width:140px" class="mini-textbox"  emptyText="请输入视频状态（0:隐藏， 1展示）"  onenter="search"/>
+										</td>
+									</tr>
+									
+									
+									
+									<tr>
+										<td>职位ID：</td>
+										<td>
+											<input id="positionCode" name="positionCode"  style="width:140px" class="mini-textbox"  emptyText="请输入职位ID"  onenter="search"/>
+										</td>
+									</tr>
+									
+									
+									
+									<tr>
+										<td>审核原因：</td>
+										<td>
+											<input id="reason" name="reason"  style="width:140px" class="mini-textbox"  emptyText="请输入审核原因"  onenter="search"/>
+										</td>
+									</tr>
+									
+									
+									
+									<tr>
+										<td>租户编码：</td>
+										<td>
+											<input id="tenantCode" name="tenantCode"  style="width:140px" class="mini-textbox"  emptyText="请输入租户编码"  onenter="search"/>
+										</td>
+									</tr>
+									
+									
+									
+						
 				        </table>
 				    </div>
 				</fieldset>
@@ -54,16 +114,15 @@
 			var form = new mini.Form("edit-form1");
 		
 			function SaveData() {
-				var data = form.getData();
+				var o = form.getData();
 				form.validate();
 				if(form.isValid() == false) return;
-				console.log(data)
 				$.ajax({
-					url : "${pageContext.request.contextPath}/news_comment/save_or_update",
+					url : "${pageContext.request.contextPath}/rst/personalVideoInfo/save_or_update",
 					dataType: 'json',
 					type : 'post',
 					cache : false,
-					data: data,
+					data: form.getData(),
 					success : function(text) {
 						CloseWindow("save");
 					}
@@ -77,7 +136,7 @@
 				
 				 if(data.action == "edit" || data.action=='view') {
 					$.ajax({
-						url : "${pageContext.request.contextPath}/news_comment/page?id=" + data.id,
+						url : "${pageContext.request.contextPath}/rst/personalVideoInfo/page?id=" + data.id,
 						dataType: 'json',
 						cache : false,
 						success : function(text) {
@@ -93,10 +152,6 @@
 							}
 						}
 					});
-				}
-				
-				if(data.action == 'add') {
-					mini.get("newsId").setValue(data.newsId);
 				}
 			}
 

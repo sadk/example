@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>普通服务商管理</title>
+		<title>公司信息</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
@@ -21,32 +21,43 @@
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
 			<input name="id" class="mini-hidden" />
-			<div style="padding:4px;padding-bottom:5px;">
+			<div style="padding-left:11px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
-		            <legend>岗位定义</legend>
+		            <legend>企业信息</legend>
 		            <div style="padding:5px;">
 				        <table>
-							<tr>
-								<td style="width:100px;">名称：</td>
-								<td style="width:150px;">
-								 	<input name="name" id="name" class="mini-textbox"  />
-								</td>
-								<td style="width:100px;">编码：</td>
-								<td style="width:150px;">
-									<input name="code" id="code" class="mini-textbox" />
-								</td>
-							</tr>
-							<tr>
-								<td>是否启用：</td>
-								<td>
-								 	<input id="enable" name="enable" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" data='[{id:"1",text:"启用"},{id:"0",text:"禁用"}]' />
-								</td>
-								<td>排序号：</td>
-								<td>
-								 	<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
-								</td>
-							</tr> 
-
+									
+									<tr>
+										<td>企业简称：</td>
+										<td>
+											<input id="shortName" name="shortName"  style="width:140px" class="mini-textbox"  emptyText="请输入企业简称"  required="true"/>
+										</td>
+										<td>企业全称：</td>
+										<td>
+											<input id="fullName" name="fullName"  style="width:140px" class="mini-textbox"  emptyText="请输入企业名称"  required="true"/>
+										</td>
+									</tr>
+									
+									
+									<tr>
+										<td>企业编号：</td>
+										<td>
+											<input id="code" name="code"  style="width:140px" class="mini-textbox"  emptyText="请输入企业编号"  />
+										</td>
+										<td>有效状态：</td>
+										<td>
+											<input id="status" name="status" class="mini-combobox"  style="width:140px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_active_status" required="true" />
+										</td>
+									</tr>
+									
+									
+									
+									<tr>
+										<td>企业介绍：</td>
+										<td colspan="3">
+											<input id="introduction" name="introduction"  style="width:100%;height:100px;" class="mini-textarea"  emptyText="请输入企业介绍" />
+										</td>
+									</tr>
 				        </table>
 				    </div>
 				</fieldset>
@@ -60,15 +71,17 @@
 			mini.parse();
 
 			var form = new mini.Form("edit-form1");
-			
-	      
+		
 			function SaveData() {
 				var o = form.getData();
 				form.validate();
 				if(form.isValid() == false) return;
 				$.ajax({
-					url : "${pageContext.request.contextPath}/rst/job_definition/save_or_update",
-					dataType: 'json', data: form.getData(),
+					url : "${pageContext.request.contextPath}/rst/company/save_or_update",
+					dataType: 'json',
+					type : 'post',
+					cache : false,
+					data: form.getData(),
 					success : function(text) {
 						CloseWindow("save");
 					}
@@ -82,18 +95,30 @@
 				
 				 if(data.action == "edit" || data.action=='view') {
 					$.ajax({
-						url : "${pageContext.request.contextPath}/rst/job_definition/get_by_id?id=" + data.id,
+						url : "${pageContext.request.contextPath}/rst/company/page?id=" + data.id,
 						dataType: 'json',
+						cache : false,
 						success : function(text) {
 							var o = mini.decode(text);
-							 
+							if(o!=null && o.data!=null && o.data.length>0) {
+								o = o.data[0];
+							}
 							form.setData(o);
-							  
+							form.setChanged(false);
+							
+							if (data.action == 'view') {
+								form.setEnabled(false);
+							}
 						}
 					});
 				}
 			}
- 
+
+			function GetData() {
+				var o = form.getData();
+				return o;
+			}
+
 			function CloseWindow(action) {
 				if(action == "close" && form.isChanged()) {
 					if(confirm("数据被修改了，是否先保存？")) {

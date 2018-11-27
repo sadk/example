@@ -76,6 +76,12 @@
 							<#if query.createTimeBegin?? && query.createTimeEnd??>
 	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 	  						</#if>
+	  						
+	  						<#if query.positionCode??> 
+		  						and addr_id in (select addr_id from bu_job_address_relationship where job_id='${StringUtil.escapeSql(query.positionCode)}')
+	  						</#if>
+	  						
+	  						
         	</#if>
         	
 		]]>

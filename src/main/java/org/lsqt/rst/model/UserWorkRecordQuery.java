@@ -18,6 +18,8 @@ public class UserWorkRecordQuery {
 
 	/** 用户编码 */
 	private String userCode;
+	
+	private String userName;
 
 	/** 考勤类型 :100=正常上班 200=加班 300=请假 */
 	private Integer type;
@@ -172,6 +174,14 @@ public class UserWorkRecordQuery {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 }

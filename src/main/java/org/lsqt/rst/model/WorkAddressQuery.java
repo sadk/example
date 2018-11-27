@@ -16,6 +16,9 @@ public class WorkAddressQuery {
 	private String ids; // 用逗号分割的id字符
 	private Long id;
 
+	/**职位地址：用于获取职位的地址**/
+	private String positionCode;
+	
 	/** 地址编码 */
 	private String code;
 
@@ -193,6 +196,14 @@ public class WorkAddressQuery {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getPositionCode() {
+		return positionCode;
+	}
+
+	public void setPositionCode(String positionCode) {
+		this.positionCode = positionCode;
 	}
 
 }

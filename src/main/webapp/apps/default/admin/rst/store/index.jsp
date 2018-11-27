@@ -3,7 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>企业信息管理</title>
+		<title>门店管理</title>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pagertree.js" ></script>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
@@ -20,7 +20,7 @@
 	</head>
 	<body>
 		<div class="mini-splitter" style="width:100%;height:100%; overflow:auto;">
-			<div size="280" showCollapseButton="true">
+			<div size="250" showCollapseButton="true">
 			    <div class="mini-panel" showToolbar="true" showHeader="false" style="width:100%;height:100%;">
 				     
 				    <div style="padding-left:3px;padding-bottom:5px;">
@@ -67,8 +67,8 @@
 			<div showCollapseButton="true">
 				<div class="mini-splitter" vertical="true" style="width:100%;height:100%;">
 					<div size="50%" showCollapseButton="true">
-						<div id="tabs1" contextMenu="#refreshTabMenu"  class="mini-tabs" activeIndex="0" style="width:100%;height:100%;" bodyStyle="padding:0;border:0;">
-						    <div title="企业信息" refreshOnClick="true">
+						<div id="tabs1" contextMenu="#refreshTabMenu" class="mini-tabs" activeIndex="0" style="width:100%;height:100%;" bodyStyle="padding:0;border:0;">
+						    <div title="门店信息" refreshOnClick="true">
 						        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
 									<table style="width:100%;">
 										<tr>
@@ -106,7 +106,7 @@
 					<div showCollapseButton="true">
 						<div id="tabs2" contextMenu="#refreshTabMenu" class="mini-tabs" activeIndex="0" style="width:100%;height:100%;" bodyStyle="padding:0;border:0;">
 							
-							<div title="公司地址" refreshOnClick="true" name="tabReses">
+							<div title="门店管理员" refreshOnClick="true" name="tabReses">
 								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
 									<table style="width:100%;">
 										<tr>
@@ -136,38 +136,6 @@
 								</div>
 							</div>
 							
-
-
-
-
-							<div title="企业图片" refreshOnClick="true" name="tabUserReses">
-								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
-									<table style="width:100%;">
-										<tr>
-											<td style="width:100%;">
-												<a class="mini-button" iconCls="icon-add" onclick="editPicture('add')">添加</a>
-												<a class="mini-button" iconCls="icon-edit" onclick="editPicture('edit')">修改</a>
-												<a class="mini-button" iconCls="icon-remove" onclick="removePicture()">删除</a>
-												<span class="separator"></span>  
-												<a class="mini-button" iconCls="icon-reload" onclick="refreshPicture()">刷新</a>
-											</td>
-										</tr>
-									</table>
-								</div>
-								<div class="mini-fit">
-									<div id="dataGrid3" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" multiSelect="true" 
-										url="${pageContext.request.contextPath}/rst/company_picture/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
-										<div property="columns">
-											<div type="checkcolumn" ></div>
-											<div field="id" width="40" headerAlign="center" allowSort="true" align="center">ID</div>
-											<div field="url" width="660" headerAlign="center" allowSort="true" align="left">图片地址</div>
-											 
-										</div>
-									</div>
-								</div>
-							</div>
-
-
 						</div>
 					</div>
 				</div>

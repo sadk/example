@@ -10,6 +10,9 @@ public class UserWorkRecord {
 
 	/** 用户编码 */
 	private String userCode;
+	
+	/** 用户名称 */
+	private String userName;
 
 	/** 考勤类型 :100=正常上班 200=加班 300=请假 */
 	private Integer type;
@@ -154,6 +157,14 @@ public class UserWorkRecord {
 
 	public java.util.Date getUpdateTime() {
 		return this.updateTime;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 }

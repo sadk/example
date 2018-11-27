@@ -139,6 +139,16 @@ ALTER TABLE `bu_work_address` CHANGE `id` `id` bigint(20)  NOT NULL AUTO_INCREME
 ALTER TABLE `bu_work_address` CHANGE COLUMN `id` `id` BIGINT(20) NOT NULL AUTO_INCREMENT FIRST;
 
 
+-- 公司的图片
+update bu_company_picture A,(SELECT @rownum:=@rownum+1 AS rid, bu_company_picture.*  FROM (SELECT @rownum:=0) r, bu_company_picture  ) B set A.id= B.rid  where A.id = B.id ;
+ALTER TABLE `bu_company_picture` CHANGE `id` `id` bigint(20)  NOT NULL AUTO_INCREMENT FIRST;
+
+
+
+
+
+
+
 
  -- --------------------------------------------- (2)岗位管理 ----------------------------------------------------------
 ALTER TABLE `bu_base_job_info` ADD UNIQUE INDEX `base_job_info_id_UNIQUE` (`base_job_id` ASC), DROP PRIMARY KEY;
@@ -199,8 +209,9 @@ update bu_user_job_record A, bu_company_info B set A.company_id = B.company_id w
 -- --------------------------------------------- (5)考勤管理 ----------------------------------------------------------
 drop table  IF EXISTS  bu_user_work_record ;
 CREATE TABLE `bu_user_work_record` (
-  `id` bigint(20) NOT NULL ,
+  `id` bigint(20) NOT NULL  AUTO_INCREMENT,
   `user_code` varchar(40) DEFAULT NULL,
+  `user_name` varchar(80) DEFAULT NULL,
   `type` int(4) NOT NULL COMMENT '考勤类型 :100=正常上班 200=加班 300=请假',
   `working_hours` varchar(10) NOT NULL COMMENT '时长精确到小时，保留一个小数',
   `shift_type` varchar(10) DEFAULT NULL COMMENT '班次类型:1=白班、2=中班、3=晚班、4=休息',  
@@ -221,11 +232,18 @@ CREATE TABLE `bu_user_work_record` (
 
 
 
+ALTER TABLE  `bu_store_info` 
+ADD COLUMN `id` BIGINT(20) NOT NULL ,
+ADD UNIQUE INDEX `store_id_UNIQUE` (`store_id` ASC),
+DROP PRIMARY KEY, ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `bu_store_info`  CHANGE COLUMN `id` `id` BIGINT(20) NOT NULL FIRST;
+ALTER TABLE `bu_store_info` CHANGE `id` `id` bigint(20)  NOT NULL AUTO_INCREMENT FIRST;
 
 
 
 
-
-
-
+ALTER TABLE  `bu_personal_video_info` ADD COLUMN `id` BIGINT(20) NULL  first;
+ALTER TABLE  `bu_personal_video_info` DROP PRIMARY KEY;
+update bu_personal_video_info A,(SELECT @rownum:=@rownum+1 AS rid, bu_personal_video_info.*  FROM (SELECT @rownum:=0) r, bu_personal_video_info  ) B set A.id= B.rid  where A.video_id = B.video_id ;
 

@@ -3,10 +3,10 @@ package org.lsqt.rst.model;
 /**
  * 用户求职记录
  */
-public class PositionDeliveryRecord {
+public class UserJobRecord {
 
 	/***/
-	private Long id;
+	private String id;
 
 	/** 用户编码 */
 	private String userCode;
@@ -71,13 +71,6 @@ public class PositionDeliveryRecord {
 	private String platfrom;
 
 	// getter、setter
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Long getId() {
-		return this.id;
-	}
 
 	public void setUserCode(String userCode) {
 		this.userCode = userCode;
@@ -237,6 +230,14 @@ public class PositionDeliveryRecord {
 
 	public String getPlatfrom() {
 		return this.platfrom;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }
