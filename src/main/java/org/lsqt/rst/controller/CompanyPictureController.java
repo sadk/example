@@ -48,8 +48,11 @@ public class CompanyPictureController {
 	
 	@RequestMapping(mapping = { "/delete", "/m/delete" })
 	public int delete(String ids) {
-		List<Long> list = StringUtil.split(Long.class, ids, ",");
-		return companyPictureService.deleteById(list.toArray(new Long[list.size()]));
+		if (StringUtil.isNotBlank(ids)) {
+			List<Long> list = StringUtil.split(Long.class, ids, ",");
+			return companyPictureService.deleteById(list.toArray(new Long[list.size()]));
+		}
+		return 0;
 	}
 	
 }

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.CodeLibrary" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="bu_code_library">
+		
+	 		<column name="code_no" property="codeNo" text="编码"/>
+	 	
+	 		<column name="item_no" property="itemNo" text="项目编号"/>
+	 	
+	 		<column name="item_name" property="itemName" text="项目名称"/>
+	 	
+	 	
+	 		<column name="create_user" property="createUser" text="创建人"/>
+	 	
+	 	
+	 		<column name="update_user" property="updateUser" text="更新人"/>
+	 	
+	 		<column name="status" property="status" text="状态(0:有效,1:无效)"/>
+	 	
+		
+		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	 		
+	 		
+	 		
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from bu_code_library where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 							 							 							 					
+							 
+							code_no like '%${key}%'  or 
+							
+							 
+							item_no like '%${key}%'  or 
+							
+							 
+							item_name like '%${key}%'  or 
+							
+							 
+							create_user like '%${key}%'  or 
+							
+							 
+							update_user like '%${key}%' 
+							
+					)
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+	
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+	  						<#if query.codeNo??> and code_no = '${StringUtil.escapeSql(query.codeNo)}' </#if>
+						
+					
+	  						<#if query.itemNo??> and item_no = '${StringUtil.escapeSql(query.itemNo)}' </#if>
+						
+					
+	  						<#if query.itemName??> and item_name = '${StringUtil.escapeSql(query.itemName)}' </#if>
+						
+					
+						
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+	  						<#if query.createUser??> and create_user = '${StringUtil.escapeSql(query.createUser)}' </#if>
+						
+					
+						
+					
+	  						<#if query.updateUser??> and update_user = '${StringUtil.escapeSql(query.updateUser)}' </#if>
+						
+					
+						
+	  					<#if query.status??> and status = ${query.status} </#if>
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from bu_code_library ]]>
+	</statement>
+	
+</statements>

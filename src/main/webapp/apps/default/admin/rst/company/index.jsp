@@ -20,7 +20,7 @@
 	</head>
 	<body>
 		<div class="mini-splitter" style="width:100%;height:100%; overflow:auto;">
-			<div size="280" showCollapseButton="true">
+			<div size="250" showCollapseButton="true">
 			    <div class="mini-panel" showToolbar="true" showHeader="false" style="width:100%;height:100%;">
 				     
 				    <div style="padding-left:3px;padding-bottom:5px;">
@@ -125,11 +125,11 @@
 										url="${pageContext.request.contextPath}/rst/work_address/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
 										<div property="columns">
 											<div type="checkcolumn"></div>
-											<!-- <div field="id" width="60" headerAlign="center">ID</div> -->
-									        <div field="code" width="120" headerAlign="center">地址编码</div>
-									        <div field="provinceName" width="80" align="center" headerAlign="center">省份</div>
-									        <div field="cityName" width="80" align="center" headerAlign="center">城市</div>
-									        <div field="areaName" width="80" align="center" headerAlign="center">区域</div>
+											<div field="id" width="60" headerAlign="center" align="center">ID</div>
+									        <div field="code" width="180" headerAlign="center">地址编码</div>
+									        <div field="provinceName" width="100" align="center" headerAlign="center">省份</div>
+									        <div field="cityName" width="120" align="center" headerAlign="center">城市</div>
+									        <div field="areaName" width="180" align="center" headerAlign="center">区域</div>
 									        <div field="address" width="250" align="left" headerAlign="center">详细地址</div>
 										</div>
 									</div>
@@ -146,9 +146,8 @@
 										<tr>
 											<td style="width:100%;">
 												<a class="mini-button" iconCls="icon-add" onclick="editPicture('add')">添加</a>
-												<a class="mini-button" iconCls="icon-edit" onclick="editPicture('edit')">修改</a>
 												<a class="mini-button" iconCls="icon-remove" onclick="removePicture()">删除</a>
-												<span class="separator"></span>  
+												<span class="separator"></span>
 												<a class="mini-button" iconCls="icon-reload" onclick="refreshPicture()">刷新</a>
 											</td>
 										</tr>
@@ -168,6 +167,33 @@
 							</div>
 
 
+							<div title="驻场管理员" refreshOnClick="true" name="tabUserReses">
+								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+									<table style="width:100%;">
+										<tr>
+											<td style="width:100%;">
+												<a class="mini-button" iconCls="icon-add" onclick="editComAdmin('add')">添加</a>
+												<a class="mini-button" iconCls="icon-remove" onclick="removeComAdmin()">删除</a>
+												<span class="separator"></span>
+												<a class="mini-button" iconCls="icon-reload" onclick="refreshComAdmin()">刷新</a>
+											</td>
+										</tr>
+									</table>
+								</div>
+								<div class="mini-fit">
+									<div id="dataGrid4" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" multiSelect="true" 
+										url="${pageContext.request.contextPath}/rst/company_admin/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
+										<div property="columns">
+											<div type="checkcolumn"></div>
+											<div field="userCode" width="80" headerAlign="center" allowSort="true" align="center">用户编码</div>
+											<div field="userName" width="160" headerAlign="center" allowSort="true" align="center">用户名称</div>
+											<div field="createDate" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
+									        <div field="updateDate" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>     
+										</div>
+									</div>
+								</div>
+							</div>
+
 						</div>
 					</div>
 				</div>
@@ -181,12 +207,122 @@
 				 form.clear();
 			}
 			
-			
-			var grid = mini.get("datagrid1"); // 称谓列表
+			var grid = mini.get("datagrid1");  
 			var addressGrid = mini.get("datagrid2");// 用户列表
 			var pictureGrid = mini.get("dataGrid3");
+			var adminGrid = mini.get("dataGrid4");
 			
-		 
+			function removePicture() {
+				var rows = pictureGrid.getSelecteds();
+				if (rows.length ==0) {
+					mini.alert("请至少选择一张图片");
+					return ;
+				}
+				var idArr = new Array();
+				for(var i=0;i<rows.length;i++) {
+					idArr.push(rows[i].id); 
+				}
+				
+				var data = {};
+				data.ids = idArr.join(",");
+				mini.confirm("确定删除？", "确定？",
+						function (action) {
+							if (action == "ok") {
+								deletePicture();
+							}
+						});
+					
+					var deletePicture = function() {
+				    	$.ajax({
+							'url': "${pageContext.request.contextPath}/rst/company_picture/delete",
+							type: 'post', dataType:'JSON',
+							data : data,
+							success: function (json) {
+								pictureGrid.reload();
+							},
+							error : function(data) {
+						  		mini.alert(data.responseText);
+							}
+						});
+					}
+			}
+			
+			function refreshComAdmin() {
+				adminGrid.reload();
+			}
+			
+			function removeComAdmin() {
+				var row = grid.getSelected();
+				var row2 = adminGrid.getSelecteds();
+				
+				if(!row) {
+					mini.alert("请选择企业");
+					return ;
+				}
+		    	 
+		    	if (row2.length == 0) {
+		    		mini.alert("请至少选择一个驻场管理员");
+		    		return ;
+		    	}
+		    	
+		    	var userCodes = new Array();
+		    	for(var i=0;i<row2.length;i++) {
+		    		userCodes.push(row2[i].userCode);
+		    	}
+		    	
+		    	var data = {};
+		    	data.companyCode = row.code;
+		    	data.userCodes = userCodes.join(",");
+
+				mini.confirm("确定删除？", "确定？",
+					function (action) {
+						if (action == "ok") {
+							deleteManager();
+						}
+					});
+				
+				var deleteManager = function() {
+			    	$.ajax({
+						'url': "${pageContext.request.contextPath}/rst/company_admin/delete_manager",
+						type: 'post', dataType:'JSON',
+						data : data,
+						success: function (json) {
+							adminGrid.reload();
+						},
+						error : function(data) {
+					  		mini.alert(data.responseText);
+						}
+					});
+				}
+			}
+			
+			function editComAdmin() { //添加驻场管理员
+				var row = grid.getSelected();
+				if (!row) {
+					mini.alert("请选择一个厂区");
+					return ;
+				}
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/rst/company/selector_user.jsp",
+					title : "添加驻场管理员",
+					width : 680,
+					height : 400,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {};
+						data.companyCode = row.code;
+						data.companyName = row.shortName
+						
+						iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						if ('ok' == action) {
+							adminGrid.reload();
+						}
+					}
+				});
+			}	
+			
 			function search() {
 				var data = form.getData();
 				grid.load(data);
@@ -196,12 +332,42 @@
 				var record = e.record;
 				addressGrid.load({companyCode:record.code}); 
 				pictureGrid.load({companyCode:record.code});
+				adminGrid.load({companyCode:record.code});
 			});
 	
+			function editPicture(action) { //添加企业图片
+				var row = grid.getSelected();
+				if(!row) {
+					mini.alert("请选择一个企业");
+					return ;
+				}
+				
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/rst/company/upload_img_htmlfile.jsp",
+					title : "编辑图片",
+					width : 380,
+					height : 300,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {};
+						data.action = action;
+						
+						if('add' == action) {
+							data.companyCode = row.code;
+						}
+						iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						addressGrid.reload();
+					}
+				});
+			}
+			
 			function removeAddress() {
 				var row = addressGrid.getSelecteds();
-				if (!row) {
+				if (row.length == 0) {
 					mini.alert("请选至少勾选一个地址记录");
+					return ;
 				}
 				var ids = [];
 				for(var i=0;i<row.length;i++) {
@@ -255,7 +421,7 @@
 						data.action = action;
 						
 						if('edit' == action) {
-							data.id = row.id;
+							data.id = rowAddr.id;
 						}
 						
 						if('add' == action) {

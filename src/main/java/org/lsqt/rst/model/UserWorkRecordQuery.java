@@ -24,11 +24,15 @@ public class UserWorkRecordQuery {
 	/** 考勤类型 :100=正常上班 200=加班 300=请假 */
 	private Integer type;
 
+	private Integer recordDate; //考勤记录的日期yyyyMMdd
+	private Integer recordDateYearMonth; // 用于查询 recordDate like '201811%'记录
+	
 	/** 时长精确到小时，保留一个小数 */
 	private String workingHours;
 
 	/** 班次类型:1=白班、2=中班、3=晚班、4=休息 */
-	private String shiftType;
+	private String extraShiftType;
+	private String leaveShiftType;
 
 	/** 请假类型:1=事假、2=病假、3=其他 */
 	private String leaveType;
@@ -43,9 +47,11 @@ public class UserWorkRecordQuery {
 	private String appCode;
 
 	/** 排序 */
-
 	private Integer sn;
 
+	/**1=星期一， 2=星期二， 7=星期天**/
+	private Integer weekday;
+	
 	// getter、setter
 
 	public void setUserCode(String userCode) {
@@ -70,14 +76,6 @@ public class UserWorkRecordQuery {
 
 	public String getWorkingHours() {
 		return this.workingHours;
-	}
-
-	public void setShiftType(String shiftType) {
-		this.shiftType = shiftType;
-	}
-
-	public String getShiftType() {
-		return this.shiftType;
 	}
 
 	public void setLeaveType(String leaveType) {
@@ -182,6 +180,46 @@ public class UserWorkRecordQuery {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public Integer getWeekday() {
+		return weekday;
+	}
+
+	public void setWeekday(Integer weekday) {
+		this.weekday = weekday;
+	}
+
+	public String getExtraShiftType() {
+		return extraShiftType;
+	}
+
+	public void setExtraShiftType(String extraShiftType) {
+		this.extraShiftType = extraShiftType;
+	}
+
+	public String getLeaveShiftType() {
+		return leaveShiftType;
+	}
+
+	public void setLeaveShiftType(String leaveShiftType) {
+		this.leaveShiftType = leaveShiftType;
+	}
+
+	public Integer getRecordDate() {
+		return recordDate;
+	}
+
+	public void setRecordDate(Integer recordDate) {
+		this.recordDate = recordDate;
+	}
+
+	public Integer getRecordDateYearMonth() {
+		return recordDateYearMonth;
+	}
+
+	public void setRecordDateYearMonth(Integer recordDateYearMonth) {
+		this.recordDateYearMonth = recordDateYearMonth;
 	}
 
 }

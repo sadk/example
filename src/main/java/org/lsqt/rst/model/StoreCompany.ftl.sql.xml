@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.StoreCompany" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="bu_company_store_relationship">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="company_id" property="companyCode" text="厂区id"/>
+	 	
+	 		<column name="company_name" property="companyName" text="厂区名称"/>
+	 	
+	 		<column name="store_id" property="storeCode" text="门店id"/>
+	 	
+	 		<column name="store_name" property="storeName" text="门店名称"/>
+	 	
+	 		<column name="create_date" property="createTime" text="创建时间"/>
+	 	
+	 		<column name="update_date" property="updateTime" text="修改时间"/>
+	 	
+	 		<column name="tenant_code" property="tenantCode" text="租户编码"/>
+	 	
+		
+		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from bu_company_store_relationship where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 							 							 							 					
+							 
+							company_id like '%${key}%'  or 
+							
+							 
+							company_name like '%${key}%'  or 
+							
+							 
+							store_id like '%${key}%'  or 
+							
+							 
+							store_name like '%${key}%'  or 
+							
+							 
+							tenant_code like '%${key}%' 
+							
+					)
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+	
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  					<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.companyCode??> and company_id = '${StringUtil.escapeSql(query.companyCode)}' </#if>
+						
+					
+	  						<#if query.companyName??> and company_name = '${StringUtil.escapeSql(query.companyName)}' </#if>
+						
+					
+	  						<#if query.storeCode??> and store_id = '${StringUtil.escapeSql(query.storeCode)}' </#if>
+						
+					
+	  						<#if query.storeName??> and store_name = '${StringUtil.escapeSql(query.storeName)}' </#if>
+						
+					
+						
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+						
+					
+						
+							<#if query.updateTimeBegin?? && query.updateTimeEnd??>
+	  							and date_format(update_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.updateTimeBegin)}' and '${StringUtil.escapeSql(query.updateTimeEnd)}'
+	  						</#if>
+	  						
+	  						<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
+						
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from bu_company_store_relationship ]]>
+	</statement>
+	
+</statements>

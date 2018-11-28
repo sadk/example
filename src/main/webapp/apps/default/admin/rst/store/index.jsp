@@ -120,8 +120,8 @@
 										url="${pageContext.request.contextPath}/rst/store_manager/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
 										<div property="columns">
 											<div type="checkcolumn"></div>
+											<div field="managerName" width="120" headerAlign="center">用户名称</div>
 									        <div field="managerCode" width="120" headerAlign="center">用户编码</div>
-									        <div field="managerName" width="120" headerAlign="center">用户名称</div>
 									        
 									        <div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
 									        <div field="updateTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>     
@@ -129,6 +129,39 @@
 									</div>
 								</div>
 							</div>
+							
+							
+							
+							
+							<div title="门店管辖厂区" refreshOnClick="true" name="tabReses">
+								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+									<table style="width:100%;">
+										<tr>
+											<td style="width:100%;">
+												<a class="mini-button" iconCls="icon-add" onclick="editManagerCompany()">添加</a>
+												<a class="mini-button" iconCls="icon-remove" onclick="removeManagerCompany()">删除</a>
+												<span class="separator"></span>  
+												<a class="mini-button" iconCls="icon-reload" onclick="refreshManagerCompany()">刷新</a>
+											</td>
+										</tr>
+									</table>
+								</div>
+								<div class="mini-fit">
+									<div id="datagrid3" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" autoLoad="false"
+										url="${pageContext.request.contextPath}/rst/store_company/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
+										<div property="columns">
+											<div type="checkcolumn"></div>
+											<div field="companyName" width="120" headerAlign="center">厂区名称</div>
+									        <div field="companyCode" width="120" headerAlign="center">厂区编码</div>
+									        <div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
+									        <div field="updateTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>     
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							
+							
 							
 						</div>
 					</div>
@@ -141,12 +174,81 @@
 			var form = new mini.Form("#form1");
 			var grid = mini.get("datagrid1"); 
 			var managerGrid = mini.get("datagrid2");
+			var companyGuanXiaGrid = mini.get("datagrid3"); 
 		 
 			grid.on("rowclick", function(e){
 				var record = e.record;
 				managerGrid.load({storeCode:record.code});
+				companyGuanXiaGrid.load({storeCode:record.code});
 			});
 	
+			function removeManagerCompany() { //删除门店管理的厂区
+				var rows = companyGuanXiaGrid.getSelecteds();
+				if (rows.length ==0) {
+					mini.alert("请选择至少一个厂区");
+					return ;
+				}
+				
+				var ids = new Array();
+				
+				for (var i=0;i<rows.length; i++) {
+					ids.push(rows[i].id);
+				}
+				
+				var data = {};
+				data.ids = ids.join(",");
+				mini.confirm("确定删除？", "确定？",
+						function (action) {
+							if (action == "ok") {
+								deleteCompany();
+							}
+						});
+					
+					var deleteCompany = function() {
+				    	$.ajax({
+							'url': "${pageContext.request.contextPath}/rst/store_company/delete",
+							type: 'post', dataType:'JSON',
+							data : data,
+							success: function (json) {
+								companyGuanXiaGrid.reload();
+							},
+							error : function(data) {
+						  		mini.alert(data.responseText);
+							}
+						});
+					}
+			} 
+			
+			function refreshManagerCompany() {
+				companyGuanXiaGrid.reload();
+			}
+			
+			function editManagerCompany() { //门店管理的厂区
+				var row = grid.getSelected();
+				if (!row) {
+					mini.alert("请选择一个门店");
+					return ;
+				}
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/rst/store/selector_company.jsp",
+					title : "添加厂区",
+					width : 680,
+					height : 400,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {};
+						data.storeCode = row.code;
+						
+						iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						if ('ok' == action) {
+							companyGuanXiaGrid.reload();
+						}
+					}
+				});
+			}
+			
 			function refreshManager() {
 				managerGrid.reload();
 			}

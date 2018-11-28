@@ -6,7 +6,10 @@ import java.util.List;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.db.Db;
+import org.lsqt.components.db.IdGenerator;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.db.orm.ORMappingIdGenerator;
+import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.rst.model.Company;
 import org.lsqt.rst.model.CompanyQuery;
 import org.lsqt.rst.service.CompanyService;
@@ -33,6 +36,10 @@ public class CompanyServiceImpl implements CompanyService{
 	}
 	
 	public Company saveOrUpdate(Company model) {
+		if (StringUtil.isBlank(model.getCode())) {
+			IdGenerator idgen = new ORMappingIdGenerator();
+			model.setCode(idgen.getUUID58().toString());
+		}
 		return db.saveOrUpdate(model);
 	}
 

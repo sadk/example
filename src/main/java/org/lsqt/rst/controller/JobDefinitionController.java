@@ -34,6 +34,12 @@ public class JobDefinitionController {
 		return jobDefinitionService.queryForPage(query); //  
 	}
 	
+	@RequestMapping(mapping = { "/list", "/m/list" })
+	public List<JobDefinition> queryForList(JobDefinitionQuery query) throws IOException {
+		return jobDefinitionService.queryForList(query); //  
+	}
+	
+	
 	@RequestMapping(mapping = { "/all", "/m/all" })
 	public Collection<JobDefinition> getAll() {
 		return jobDefinitionService.getAll();

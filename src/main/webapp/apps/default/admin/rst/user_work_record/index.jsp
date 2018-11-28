@@ -54,7 +54,7 @@
 					<table style="width:100%;">
 						<tr>
 							<td style="width:100%;">
-								<!-- <a class="mini-button" iconCls="icon-add" onclick="edit('add')">新增</a> -->
+								<a class="mini-button" iconCls="icon-add" onclick="edit('add')">新增</a> 
 								<a class="mini-button" iconCls="icon-edit" onclick="edit('edit')">修改</a>
 								<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
 								<span class="separator"></span>
@@ -68,23 +68,33 @@
 						url="${pageContext.request.contextPath}/rst/user_work_record/page"  idField="id" autoLoad="true">
 						<div property="columns">
 							<div type="checkcolumn" ></div>
-							<div field="id" width="60" headerAlign="center">ID</div>
-							<div field="userCode"  headerAlign="center"   >用户编码</div>
-							<div field="userName"  headerAlign="center"   >用户姓名</div>
+							<!-- <div field="id" width="60" headerAlign="center">ID</div> -->
+							<div field="recordDate"  headerAlign="center"  align="center">考勤日期</div>
+							<div field="userName"  headerAlign="center">用户姓名</div>
+							<div field="userCode"  headerAlign="center">用户编码</div>
 							
+							
+							<!--
 							<div type="comboboxcolumn" field="type" width="80" headerAlign="center" align="center" allowSort="true">考勤类型
 								<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_kaoqin_type" />
 							</div>
 							
-							<div field="workingHours" headerAlign="center"   >工时（小时）</div>
+							 <div field="workingHours" headerAlign="center">工时（小时）</div> -->
 							
-							<div type="comboboxcolumn" field="shiftType" width="80" headerAlign="center" align="center" allowSort="true">班次
+							<div field="extraHours" headerAlign="center">加班时长</div>
+							<div type="comboboxcolumn" field="extraShiftType" width="80" headerAlign="center" align="center" allowSort="true">加班班班次
 								<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_shift_type_bc" />
 							</div>
 							
+							<div field="leaveHours" headerAlign="center">请假时长</div>
+							<div type="comboboxcolumn" field="leaveShiftType" width="80" headerAlign="center" align="center" allowSort="true">请假班次
+								<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_shift_type_bc" />
+							</div>
 							<div type="comboboxcolumn" field="leaveType" width="80" headerAlign="center" align="center" allowSort="true">请假类型
 								<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_leave_type" />
 							</div>
+							
+							
 							<div field="remark"  headerAlign="center">请假原因</div>
 							<div field="createTime" width="150" dateFormat="yyyy-MM-dd HH:m:ss" align="center" headerAlign="center">创建日期</div>
 							<div field="updateTime" width="150" dateFormat="yyyy-MM-dd HH:m:ss" align="center" headerAlign="center">更新日期</div>  
@@ -144,7 +154,7 @@
 			url : "${pageContext.request.contextPath}/apps/default/admin/rst/user_work_record/edit.jsp",
 			title : "编辑",
 			width : 490,
-			height : 280,
+			height : 450,
 			onload : function() {
 				var iframe = this.getIFrameEl();
 				var data = {

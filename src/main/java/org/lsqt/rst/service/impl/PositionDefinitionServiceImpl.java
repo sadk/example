@@ -7,6 +7,7 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.rst.model.PositionDefinition;
 import org.lsqt.rst.model.PositionDefinitionQuery;
 import org.lsqt.rst.service.PositionDefinitionService;
@@ -33,6 +34,15 @@ public class PositionDefinitionServiceImpl implements PositionDefinitionService{
 	}
 	
 	public PositionDefinition saveOrUpdate(PositionDefinition model) {
+		if (StringUtil.isNotBlank(model.getWelfareItemNos(), model.getCode())) {
+			db.executeUpdate("delete from bu_job_welfare_relationship where job_id=?", model.getCode());
+
+			List<String> itemNos = StringUtil.split(model.getWelfareItemNos(), ",");
+			for (String itemNo : itemNos) {
+				String sql = "insert into bu_job_welfare_relationship (job_id,welfare_id) values(?,?)";
+				db.executeUpdate(sql, model.getCode(), itemNo);
+			}
+		}
 		return db.saveOrUpdate(model);
 	}
 

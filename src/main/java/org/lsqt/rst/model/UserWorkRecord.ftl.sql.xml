@@ -9,10 +9,15 @@
 	 	
 	 		<column name="type" property="type" text="考勤类型 :100=正常上班 200=加班 300=请假"/>
 	 	
-	 		<column name="working_hours" property="workingHours" text="时长精确到小时，保留一个小数"/>
+	 		<column name="working_hours" property="workingHours" text="(工作日)正常工时"/>
+	 		<column name="leave_hours" property="leaveHours" text="(工作日)请假工时"/>
+	 		<column name="extra_hours" property="extraHours" text="加班工时"/>
 	 	
-	 		<column name="shift_type" property="shiftType" text="班次类型:1=白班、2=中班、3=晚班、4=休息"/>
-	 	
+	 		<column name="record_date" property="recordDate" text="考勤日期:yyyyMMdd"/>
+	 		
+	 		<column name="extra_shift_type" property="extraShiftType" text="加班班次类型:1=白班、2=中班、3=晚班、4=休息"/>
+	 		<column name="leave_shift_type" property="leaveShiftType" text="请假班次类型:1=白班、2=中班、3=晚班、4=休息"/>
+	 		
 	 		<column name="leave_type" property="leaveType" text="请假类型:1=事假、2=病假、3=其他"/>
 	 	
 	 		<column name="remark" property="remark" text="（请假原因）备注"/>
@@ -21,6 +26,8 @@
 	 	
 	 		<column name="app_code" property="appCode" text="系统编码"/>
 	 	
+	 		<column name="weekday" property="weekday" text="1=星期一 2=星期二  3=星期三 等"/>
+	 		
 	 		<column name="sn" property="sn" text="排序"/>
 	 	
 	 	
@@ -44,6 +51,13 @@
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						
+	  						
+	  						<#if query.recordDate??> and record_date = ${query.recordDate} </#if>
+	  						<#if query.recordDateYearMonth??> and record_date like '${query.recordDateYearMonth}%' </#if>
+					
+					
 					
 	  						<#if query.userCode??> and user_code = '${StringUtil.escapeSql(query.userCode)}' </#if>
 							
@@ -53,7 +67,9 @@
 					
 	  						<#if query.workingHours??> and working_hours = '${StringUtil.escapeSql(query.workingHours)}' </#if>
 						
-	  						<#if query.shiftType??> and shift_type = '${StringUtil.escapeSql(query.shiftType)}' </#if>
+	  						<#if query.extraShiftType??> and extra_shift_type = '${StringUtil.escapeSql(query.extraShiftType)}' </#if>
+							<#if query.leaveShiftType??> and leave_shift_type = '${StringUtil.escapeSql(query.leaveShiftType)}' </#if>
+					
 					
 	  						<#if query.leaveType??> and leave_type = '${StringUtil.escapeSql(query.leaveType)}' </#if>
 						

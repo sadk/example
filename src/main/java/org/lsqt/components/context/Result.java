@@ -29,6 +29,11 @@ public class Result<T> {
 		return r;
 	}
 	
+	public Result<T> code(String value) {
+		this.code = value;
+		return this;
+	}
+	
 	public static <T> Result<T> ok(String msg) {
 		return ok(null, msg);
 	}

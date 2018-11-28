@@ -22,7 +22,14 @@ import org.lsqt.rst.service.StoreInfoService;
 
 
 
-
+/**
+ * <pre>
+ *	select * from bu_company_admin_relationship ; -- 一对多:一个厂区有多个驻场管理员  
+ *	select * from bu_company_store_relationship ; -- 一对多:一个门店管理多个厂区   另，门店管理多个厂区
+ * </pre>
+ * @author mm
+ *
+ */
 @Controller(mapping={"/rst/store_info"})
 public class StoreInfoController {
 	

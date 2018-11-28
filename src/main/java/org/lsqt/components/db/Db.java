@@ -256,7 +256,7 @@ public interface Db extends Closeable{
 	 * @param plan 
 	 * @param isTransaction 是否开启事物
 	 */
-	void executePlan(boolean isTransaction,Plan plan) ;
+	void executePlan(boolean isTransaction,Plan plan) throws Exception;
 	
 	/**
 	 * 执行一个SQL计划，指定事务隔离级别

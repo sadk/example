@@ -18,53 +18,84 @@
 	</head>
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
-			<input name="id" class="mini-hidden" />
+			<input id="id" name="id" class="mini-hidden" />
+			
 			<div style="padding-left:11px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
-		            <legend>工时信息</legend>
+		            <legend>考勤日期</legend>
+		            <div style="padding:5px;">
+				        <table>
+				        	<tr>
+				        		<td>考勤日期：</td>
+				        		<td>
+				        			<input id="recordDate" name="recordDate" class="mini-datepicker"   format="yyyyMMdd" />
+				        		</td>
+				        	</tr>
+				        </table>
+				    </div>
+				</fieldset>
+			
+				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
+		            <legend>加班工时</legend>
 		            <div style="padding:5px;">
 				        <table>
 							<tr>
 								<td>用户姓名:</td>
 								<td>
-									<input id="userName" name="userName"  style="width:140px" class="mini-textbox"  emptyText="请输入"   />
+									<input id="userName" name="userName" onclick="selectUser()"  style="width:140px" class="mini-textbox"  emptyText="请输入" />
 								</td>
 								<td>用户编码:</td>
 								<td>
-									<input id="userCode" name="userCode"  style="width:140px" class="mini-textbox"  emptyText="请输入"/>
+									<input id="userCode" name="userCode"  style="width:140px" class="mini-textbox"  emptyText="请输入"  readonly="readonly"/>
 								</td>
 							</tr>
+							
 							<tr>
-								<tr>
-									<td>考勤类型:</td>
+									<%-- 
+									<td>记录类型:</td>
 									<td>
-										<input id="type" name="type" style="width:140px" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_kaoqin_type" />
+										<input id="type" name="type" style="width:140px" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_kaoqin_type&enable=1" />
 									</td>
-									
-								</tr>
+									 --%>
+									<td>加班时长(h):</td>
+									<td>
+										<input id="extraHours" name="extraHours"  style="width:140px" class="mini-textbox"  emptyText="小时数,保留一个小数"/>
+									</td>
+									<td>上班类型:</td>
+									<td>
+										<input id="extraShiftType" name="extraShiftType" style="width:140px" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_shift_type_bc" />
+									</td>
 							</tr>
-							<tr>
-								<td>工时:</td>
+				        </table>
+				    </div>
+				</fieldset>
+				
+				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
+		            <legend>请假工时</legend>
+		            <div style="padding:5px;">
+				        <table>
+				        	<tr>
+				        		<td>请假时长(h):</td>
 								<td>
-									<input id="workingHours" name="workingHours"  style="width:140px" class="mini-textbox"  emptyText="小时数,保留一个小数" required="true"/>
+									<input id="leaveHours" name="leaveHours"  style="width:140px" class="mini-textbox"  emptyText="小时数,保留一个小数"/>
 								</td>
-								<td>班次类型:</td>
-								<td>
-									<input id="shiftType" name="shiftType" style="width:140px" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_shift_type_bc" />
-								</td>
-							</tr>
-							<tr>
 								<td>请假类型:</td>
 								<td>
 									<input id="leaveType" name="leaveType" style="width:140px" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_leave_type" />
+								</td>
+				        	</tr>
+							<tr>
+								<td>请假班次:</td>
+								<td>
+									<input id="leaveShiftType" name="leaveShiftType" style="width:140px" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_shift_type_bc" />
 								</td>
 								<td>请假原因:</td>
 								<td>
 									<input id="remark" name="remark"  style="width:140px" class="mini-textbox"  emptyText="请输入请假原因"  />
 								</td>
 							</tr>
-				        </table>
-				    </div>
+						</table>
+					</div>
 				</fieldset>
 			</div>
 			<div id="subbtn" style="text-align:center;padding:10px;">
@@ -77,11 +108,37 @@
 
 			var form = new mini.Form("edit-form1");
 		
+			function selectUser() {
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/rst/user/selector_user.jsp?multiSelect=false",
+					title : "编辑",
+					width : 490,
+					height : 450,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {};
+						
+						iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						var iframe = this.getIFrameEl();
+						var data = iframe.contentWindow.GetData();
+						if (data) {
+							data = mini.clone(data);
+							mini.get("userName").setValue(data.realName);
+							mini.get("userCode").setValue(data.code);
+						}
+					}
+				});
+			}
+			
 			function SaveData() {
 				var o = form.getData();
 				form.validate();
 				if(form.isValid() == false) return;
-				console.log(o)
+				
+				o.recordDate = mini.get("recordDate").text  ;
+				//console.log(o)
 				$.ajax({
 					url : "${pageContext.request.contextPath}/rst/user_work_record/save_or_update",
 					dataType: 'json', type : 'post',
@@ -105,6 +162,8 @@
 							if(text) {
 								var o = mini.decode(text);
 								form.setData(o);
+								
+								mini.get("recordDate").setText(o.recordDate);
 							}
 						}
 					});

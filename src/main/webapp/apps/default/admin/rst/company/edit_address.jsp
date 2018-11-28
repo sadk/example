@@ -20,7 +20,8 @@
 	</head>
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
-			<input name="id" class="mini-hidden" />
+			<input name="id" name="id" class="mini-hidden" />
+			<input name="code" id="code" class="mini-hidden" />
 			<div style="padding-left:11px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
 		            <legend>地址信息</legend>
@@ -30,23 +31,27 @@
 									<tr>
 										<td>公司名称：</td>
 										<td>
-											<input id="companyName" name="companyName" class="mini-textbox" style="width:140px"  />
+											<input id="companyCode" name="companyCode" class="mini-hidden" />
+											<input id="companyName" name="companyName" class="mini-textbox" style="width:150px"  />
 										</td>
 										<td>省：</td>
 										<td>
-											<input id="provinceCode" name="provinceCode" class="mini-combobox"   style="width:140px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_active_status" required="true" />
+											<input id="provinceName" name="provinceName" class="mini-hidden" />
+											<input id="provinceCode" name="provinceCode"   onvaluechanged="onChangedProvince"  class="mini-combobox"   style="width:150px" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code" url="${pageContext.request.contextPath}/rst/area/list?parentCodeIsNull=true" required="true" />
 										</td>
 									</tr>
 
 									<tr>
 										<td>市：</td>
 										<td>
-											<input id="cityCode" name="cityCode" class="mini-combobox"  style="width:140px"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_active_status"/>
+											<input id="cityName" name="cityName" class="mini-hidden" />
+											<input id="cityCode" name="cityCode" onvaluechanged="onChangedCity"  class="mini-combobox"    style="width:150px"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code"  />
 										    
 										</td>
 										<td>区：</td>
 										<td>
-											<input id="areaCode" name="areaCode" class="mini-combobox"  style="width:140px"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_active_status"/>
+											<input id="areaName" name="areaName" class="mini-hidden" />
+											<input id="areaCode" name="areaCode" class="mini-combobox" onvaluechanged="onChangedArea"  style="width:150px"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="code"/>
 										</td>
 									</tr>
 									
@@ -69,8 +74,33 @@
 			mini.parse();
 			var form = new mini.Form("edit-form1");
 			
+			var provinceCode = mini.get("provinceCode");
+			var provinceName = mini.get("provinceName");
 			
+			var cityCode = mini.get("cityCode");
+			var cityName = mini.get("cityName");
 			
+			var areaName = mini.get("areaName");
+			var areaCode = mini.get("areaCode");
+			
+			function onChangedProvince(e) {
+				cityCode.setValue("");
+				areaCode.setValue("");
+				
+				cityCode.setUrl("${pageContext.request.contextPath}/rst/area/list?parentCode="+e.sender.value);
+				provinceName.setValue(e.sender.text);
+			}
+			
+			function onChangedCity(e) {
+				areaCode.setValue("");
+				areaCode.setUrl("${pageContext.request.contextPath}/rst/area/list?parentCode="+e.sender.value);
+				cityName.setValue(e.sender.text);
+				
+			}
+
+			function onChangedArea(e) {
+				areaName.setValue(e.sender.text);
+			}
 			
 			function SaveData() {
 				var o = form.getData();
@@ -117,6 +147,14 @@
 								var o = mini.decode(text);
 								form.setData(o);
 								
+								//provinceCode.setUrl("${pageContext.request.contextPath}/rst/area/list?parentCodeIsNull=true");
+								cityCode.setUrl("${pageContext.request.contextPath}/rst/area/list?parentCode="+o.provinceCode);
+								areaCode.setUrl("${pageContext.request.contextPath}/rst/area/list?parentCode="+o.cityCode);
+								
+								
+								cityCode.setText(o.cityName);
+								areaCode.setText(o.areaName);
+								
 								loadCompanyName(o.companyCode);
 							}
 						}
@@ -124,6 +162,7 @@
 				}
 				
 				if (data.action == 'add') {
+					form.setData(data);
 					loadCompanyName(data.companyCode);
 				}
 			}

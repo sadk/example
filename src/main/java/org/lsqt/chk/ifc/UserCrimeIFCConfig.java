@@ -39,7 +39,7 @@ public class UserCrimeIFCConfig {
 	}
 	
 	@OnStarted
-	public synchronized void initConfig()  {
+	public synchronized void initConfig() throws Exception  {
 		db.executePlan(false, () -> {
 			MachineQuery query = new MachineQuery();
 			query.setCode("IFC_HTTP_HOST");

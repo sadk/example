@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <statements namespace="org.lsqt.rst.model.Area" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
 	<table name="bu_area_info">
-				<column id="id" type="auto" property="id" text="主键" />
-		
+			<column id="id" type="auto" property="id" text="主键" />
 	 	
 	 		<column name="code" property="code" text="城市编码"/>
 	 	
@@ -13,20 +12,6 @@
 	 		<column name="update_date" property="updateDate" text="数据更新日期"/>
 	 	
 	 		<column name="tenant_code" property="tenantCode" text="租户编码"/>
-	 	
-		
-		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
 	 		
 	</table>
 	
@@ -34,53 +19,31 @@
 	 	<![CDATA[
 		 	select * from bu_area_info where 1=1
 		 	<#if query??>
-		 		<#-- -------------------关键字查询开始 --------------- -->
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
-							 							 							 							 					
-							 
 							code like '%${key}%'  or 
-							
-							 
-							name like '%${key}%'  or 
-							
-							 
-							parent_code like '%${key}%'  or 
-							
-							 
-							tenant_code like '%${key}%' 
-							
+							name like '%${key}%'  
 					)
 				</#if>
-				<#-- -------------------关键字查询结束 --------------- -->
-	
-				<#-- -------------------综合查询开始 --------------- -->
 				
-				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
-	  					<#if query.id??> and id = ${query.id} </#if>
+	  						<#if query.id??> and id = ${query.id} </#if>
 					
 	  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
 						
-					
 	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
-						
 					
 	  						<#if query.parentCode??> and parent_code = '${StringUtil.escapeSql(query.parentCode)}' </#if>
-						
-					
-						
-					
 						
 							<#if query.updateDateBegin?? && query.updateDateEnd??>
 	  							and date_format(update_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.updateDateBegin)}' and '${StringUtil.escapeSql(query.updateDateEnd)}'
 	  						</#if>
 	  						
 	  						<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
-						
-					
-				<#-- -------------------综合查询结束 --------------- -->
+							
+							<#if (query.parentCodeIsNull?? && query.parentCodeIsNull)> and parent_code is null </#if>
         	</#if>
         	
 		]]>

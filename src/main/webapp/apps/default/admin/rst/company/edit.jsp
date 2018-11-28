@@ -20,7 +20,8 @@
 	</head>
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
-			<input name="id" class="mini-hidden" />
+			<input name="id" id="id" class="mini-hidden" />
+			<input name="code" id="code" class="mini-hidden" />
 			<div style="padding-left:11px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
 		            <legend>企业信息</legend>
@@ -40,10 +41,10 @@
 									
 									
 									<tr>
-										<td>企业编号：</td>
+										<!-- <td>企业编号：</td>
 										<td>
 											<input id="code" name="code"  style="width:140px" class="mini-textbox"  emptyText="请输入企业编号"  />
-										</td>
+										</td> -->
 										<td>有效状态：</td>
 										<td>
 											<input id="status" name="status" class="mini-combobox"  style="width:140px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_active_status" required="true" />

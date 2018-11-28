@@ -48,6 +48,9 @@ public class WorkAddress {
 	/** 更新人 */
 	private String updateUser;
 
+	/****/
+	private String addressDesc;
+	
 	// getter、setter
 	public void setId(Long id) {
 		this.id = id;
@@ -159,6 +162,21 @@ public class WorkAddress {
 
 	public String getUpdateUser() {
 		return this.updateUser;
+	}
+
+	public String getAddressDesc() {
+		String r = "";
+		if (this.areaName!=null) {
+			r += this.areaName;
+		}
+		if (this.address!=null) {
+			r += this.address;
+		}
+		return r;
+	}
+
+	public void setAddressDesc(String addressDesc) {
+		this.addressDesc = addressDesc;
 	}
 
 }
