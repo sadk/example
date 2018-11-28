@@ -34,6 +34,11 @@ public class AreaController {
 		return areaService.queryForPage(query); //  
 	}
 	
+	@RequestMapping(mapping = { "/list", "/m/list" })
+	public List<Area> queryForList(AreaQuery query) throws IOException {
+		return areaService.queryForList(query); //  
+	}
+	
 	@RequestMapping(mapping = { "/all", "/m/all" })
 	public Collection<Area> getAll() {
 		return areaService.getAll();

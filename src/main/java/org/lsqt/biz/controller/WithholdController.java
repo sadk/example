@@ -34,7 +34,7 @@ public class WithholdController {
 	private static String API_WITHHOLD;
 	
 	@OnStarted
-	public void initConfig () {
+	public void initConfig () throws Exception {
 		db.executePlan(false, ()->{
 			MachineQuery query = new MachineQuery();
 			query.setCode("csp_withhold");

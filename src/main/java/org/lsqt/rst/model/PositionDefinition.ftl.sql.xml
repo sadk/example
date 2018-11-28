@@ -16,11 +16,15 @@
 	 	
 	 		<column name="intermediary_phone" property="intermediaryPhone" text="中介手机号"/>
 	 	
-	 		<column name="announcer_id" property="publishUserCode" text="发布者编码"/>
+	 		<column name="announcer_id" property="publishUserCode" text="发布者编码(就是中介的用户编码)"/>
 	 	
 	 		<column name="release_time" property="publishTime" text="发布时间"/>
 	 	
 	 		<column name="comprehensive_salary" property="comprehensiveSalary" text="综合工资"/>
+	 		
+	 		<column name="responsibility" property="responsibility" text="职位职责"/>
+	 		
+	 		<column name="salary_details" property="salaryDetails" text="工资详情"/>
 	 	
 	 		<column name="work_time" property="workTime" text="作息时间"/>
 	 	

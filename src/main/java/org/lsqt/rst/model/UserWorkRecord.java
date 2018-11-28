@@ -20,13 +20,17 @@ public class UserWorkRecord {
 	public static final int TYPE_加班=200;
 	public static final int TYPE_请假=300;
 	
+	private Integer recordDate; //考勤记录的日期yyyyMMdd
 
-	/** 时长精确到小时，保留一个小数 */
-	private String workingHours;
+	private String workingHours; //正常工时(时长精确到小时，保留一个小数) 
+	private String leaveHours; //请假如工时
+	private String extraHours; //加班工时
+	
 
-	/** 班次类型:1=白班、2=中班、3=晚班、4=休息 */
-	private String shiftType;
-
+	/**加班 班次类型:1=白班、2=中班、3=晚班、4=休息 */
+	private String extraShiftType;
+	private String leaveShiftType;
+	
 	/** 请假类型:1=事假、2=病假、3=其他 */
 	private String leaveType;
 
@@ -53,6 +57,9 @@ public class UserWorkRecord {
 	/** 更新时间 */
 
 	private java.util.Date updateTime;
+	
+	/**1=星期一， 2=星期二， 7=星期天**/
+	private Integer weekday;
 
 	// getter、setter
 	public void setId(Long id) {
@@ -87,13 +94,6 @@ public class UserWorkRecord {
 		return this.workingHours;
 	}
 
-	public void setShiftType(String shiftType) {
-		this.shiftType = shiftType;
-	}
-
-	public String getShiftType() {
-		return this.shiftType;
-	}
 
 	public void setLeaveType(String leaveType) {
 		this.leaveType = leaveType;
@@ -165,6 +165,54 @@ public class UserWorkRecord {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public Integer getWeekday() {
+		return weekday;
+	}
+
+	public void setWeekday(Integer weekday) {
+		this.weekday = weekday;
+	}
+
+	public String getLeaveHours() {
+		return leaveHours;
+	}
+
+	public void setLeaveHours(String leaveHours) {
+		this.leaveHours = leaveHours;
+	}
+
+	public String getExtraHours() {
+		return extraHours;
+	}
+
+	public void setExtraHours(String extraHours) {
+		this.extraHours = extraHours;
+	}
+
+	public String getExtraShiftType() {
+		return extraShiftType;
+	}
+
+	public void setExtraShiftType(String extraShiftType) {
+		this.extraShiftType = extraShiftType;
+	}
+
+	public String getLeaveShiftType() {
+		return leaveShiftType;
+	}
+
+	public void setLeaveShiftType(String leaveShiftType) {
+		this.leaveShiftType = leaveShiftType;
+	}
+
+	public Integer getRecordDate() {
+		return recordDate;
+	}
+
+	public void setRecordDate(Integer recordDate) {
+		this.recordDate = recordDate;
 	}
 
 }

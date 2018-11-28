@@ -81,8 +81,8 @@
 									<table style="width:100%;">
 										<tr>
 											<td style="width:100%;">
-												<a class="mini-button" iconCls="icon-add" onclick="add()">新增</a>
-												<a class="mini-button" iconCls="icon-edit" onclick="edit()">编辑</a>
+												<a class="mini-button" iconCls="icon-add" onclick="edit('add')">新增</a>
+												<a class="mini-button" iconCls="icon-edit" onclick="edit('edit')">编辑</a>
 												<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
 												<span class="separator"></span>  
 												<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
@@ -127,13 +127,13 @@
 						<div id="tabs2" contextMenu="#refreshTabMenu" class="mini-tabs" activeIndex="0" style="width:100%;height:100%;" bodyStyle="padding:0;border:0;">
 							
 
-							<div title="职位地址" refreshOnClick="true" name="tabReses">
+							<div title="工作地址" refreshOnClick="true" name="tabReses">
 								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
 									<table style="width:100%;">
 										<tr>
 											<td style="width:100%;">
-												<a class="mini-button" iconCls="icon-add" onclick="editAddress('add')">添加</a>
-												<a class="mini-button" iconCls="icon-edit" onclick="editAddress('edit')">编辑</a>
+												<a class="mini-button" iconCls="icon-add" onclick="addAddress()">添加</a>
+												 
 												<a class="mini-button" iconCls="icon-remove" onclick="removeAddress()">删除</a>
 												<span class="separator"></span>
 												<a class="mini-button" iconCls="icon-reload" onclick="refreshAddress()">刷新</a>
@@ -146,66 +146,16 @@
 										url="${pageContext.request.contextPath}/rst/work_address/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
 										<div property="columns">
 											<div type="checkcolumn"></div>
-									        <div field="code" width="120" headerAlign="center">地址编码</div>
+									       <!--  <div field="code" width="120" headerAlign="center">地址编码</div> -->
 									        <div field="provinceName" width="80" align="center" headerAlign="center">省份</div>
-									        <div field="cityName" width="80" align="center" headerAlign="center">城市</div>
-									        <div field="areaName" width="80" align="center" headerAlign="center">区域</div>
+									        <div field="cityName" width="80" align="left" headerAlign="center">城市</div>
+									        <div field="areaName" width="120" align="left" headerAlign="center">区域</div>
 									        <div field="address" width="250" align="left" headerAlign="center">详细地址</div>
 										</div>
 									</div>
 								</div>
 							</div>
 							
-
-
-
-
-							<div title="职位福利" refreshOnClick="true" name="tabUserReses">
-								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
-									<table style="width:100%;">
-										<tr>
-											<td style="width:100%;">
-												<a class="mini-button" iconCls="icon-add" onclick="editWelfare('add')">添加</a>
-												<a class="mini-button" iconCls="icon-edit" onclick="editWelfare('edit')">编辑</a>
-												<a class="mini-button" iconCls="icon-remove" onclick="removeWelfare()">删除</a>
-												<span class="separator"></span>
-												<a class="mini-button" iconCls="icon-reload" onclick="refreshWelfare()">刷新</a>
-											</td>
-										</tr>
-									</table>
-								</div>
-								<div class="mini-fit">
-									<div id="datagrid3" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" autoLoad="false"
-										url="${pageContext.request.contextPath}/rst/position_definition/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
-										<div property="columns">
-											<div type="checkcolumn" ></div>
-											<div field="name" width="160" headerAlign="center" allowSort="true" align="center">姓名</div>
-											<div field="loginName" width="160" headerAlign="center" allowSort="true" align="center">帐号</div>
-											<div field="loginPwd" width="160" headerAlign="center" allowSort="true" align="center">密码</div>
-											<div field="statusDesc" width="160" headerAlign="center" allowSort="true" align="center">状态</div>
-											<div field="email" width="160" headerAlign="center" allowSort="true" align="center">邮箱</div>
-											<div field="mobile" width="160" headerAlign="center" allowSort="true" align="center">手机</div>
-											<div field="tel" width="160" headerAlign="center" allowSort="true" align="center">电话</div>
-											<div field="numQq" width="160" headerAlign="center" allowSort="true" align="center">QQ</div>
-											<div field="numWx" width="160" headerAlign="center" allowSort="true" align="center">微信</div>
-											<div field="birthday" width="160" headerAlign="center" allowSort="true" align="center">生日</div>
-											<div field="addressOffice" width="160" headerAlign="center" allowSort="true" align="center">办公地点</div>
-											<div field="addressHome" width="160" headerAlign="center" allowSort="true" align="center">家庭地址</div>
-											<div field="sexDesc" width="160" headerAlign="center" allowSort="true" align="center">性别</div>
-											<div field="sn" width="160" headerAlign="center" allowSort="true" align="center">序号</div>
-											<div field="remark" width="160" headerAlign="center" allowSort="true" align="center">备注</div>
-											<div field="appCode" width="160" headerAlign="center" allowSort="true" align="center">系统编码</div>
-											<div field="gid" width="160" headerAlign="center" allowSort="true" align="center">全局编码</div>
-											<div field="createTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">创建日期</div>
-											<div field="updateTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">更新日期</div>
-										
-										</div>
-									</div>
-								</div>
-							</div>
-
-
-
 
 							<div title="职位视频" refreshOnClick="true" name="tabUserRoles">
 								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
@@ -298,7 +248,6 @@
 			
 			var grid = mini.get("datagrid1"); 
 			var gridAdress = mini.get("datagrid2"); 
-			var gridWelfare = mini.get("datagrid3"); 
 			var gridVideo = mini.get("datagrid4"); 
 			var gridRecord = mini.get("datagrid5");
 			
@@ -306,11 +255,111 @@
 				var record = e.record;
 				
 				gridAdress.load({positionCode: record.code})
-				gridWelfare.load({positionCode: record.code})
 				gridVideo.load({positionCode: record.code})
 				gridRecord.load({positionCode: record.code})
 			});
 	
+			function removeAddress() {
+				var row = grid.getSelected();
+				if(!row) {
+					mini.alert("请选择一个职位");
+					return ;
+				}
+				
+				var rows = gridAdress.getSelecteds();
+				if (rows.length == 0) {
+					mini.alert("请至少选择一个工作地址");
+					return ;
+				}
+				var temp = new Array();
+				for (var i=0;i<rows.length;i++) {
+					temp.push(rows[i].code);
+				}
+				
+				var data = {};
+				data.positionCode = row.code;
+				data.wordAddressCodes = temp.join(",");
+				
+				mini.confirm("确定删除？", "确定？",
+						function (action) {
+							if (action == "ok") {
+								deletePositionAddress();
+							}
+				});
+				
+				var deletePositionAddress = function () {
+					$.ajax({
+						'url': "${pageContext.request.contextPath}/rst/position_definition/delete_position_addresses",
+						type: 'post', dataType:'JSON',
+						data: data,
+						success: function (json) {
+							gridAdress.reload();
+						},
+						error : function(data) {
+					  		mini.alert(data.responseText);
+						}
+					});
+				}
+			}
+			
+			
+			
+			function addAddress() {
+				var row = grid.getSelected();
+				if(!row) {
+					mini.alert("请选择一个职位");
+					return ;
+				}
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/rst/position_definition/selector_address.jsp?multiSelect=true",
+					title : "地址",
+					width : 650,
+					height : 550,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {
+							 companyCode: row.companyCode
+						};
+						 
+						iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						//alert(action);
+						if ('ok' == action) {
+							var iframe = this.getIFrameEl();
+							var rows = iframe.contentWindow.GetDatas();
+							rows = mini.clone(rows);
+							//console.log(rows);
+							
+							if (rows.length == 0) {
+								mini.alert("没有选择地址");
+								return ;
+							}
+							var temp = new Array();
+							for (var i=0;i<rows.length;i++) {
+								temp.push(rows[i].code);
+							}
+							
+							var data = {};
+							data.positionCode = row.code;
+							data.workAddressCodes = temp.join(",");
+							
+							$.ajax({
+								'url': "${pageContext.request.contextPath}/rst/position_definition/save_position_addresses",
+								type: 'post', dataType:'JSON',
+								data: data,
+								success: function (json) {
+									gridAdress.reload();
+								},
+								error : function(data) {
+							  		mini.alert(data.responseText);
+								}
+							});
+							
+						}
+					}
+				});
+			}
 			
 			function remove() {
 				var row = grid.getSelecteds();
@@ -354,10 +403,10 @@
 				}
 				
 				mini.open({
-					url : "${pageContext.request.contextPath}/apps/default/admin/uum/title/edit.jsp",
-					title : "编辑称谓信息",
-					width : 490,
-					height : 250,
+					url : "${pageContext.request.contextPath}/apps/default/admin/rst/position_definition/edit.jsp",
+					title : "编辑信息",
+					width : 650,
+					height : 550,
 					onload : function() {
 						var iframe = this.getIFrameEl();
 						var data = {

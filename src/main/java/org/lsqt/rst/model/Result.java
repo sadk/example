@@ -1,4 +1,4 @@
-package org.lsqt.components.context;
+package org.lsqt.rst.model;
 
 /**
  * 数据包装器，可用于客户端统一数据格式
@@ -9,7 +9,7 @@ package org.lsqt.components.context;
 public class Result<T> {
 	/**用于标记Controller层调用底层service是否成功**/
 	private boolean isSuccess = false;
-	private String code;
+	private Integer code;
 	private String message;
 	private String status;
 	
@@ -21,6 +21,7 @@ public class Result<T> {
 		Result<T> r = new Result<>();
 		r.setIsSuccess(true);
 		r.setData(data);
+		r.setCode(200);
 		if (msg != null && msg.length > 0) {
 			r.setMessage(msg[0]);
 		} else {
@@ -28,11 +29,7 @@ public class Result<T> {
 		}
 		return r;
 	}
-	
-	public Result<T> code(String value) {
-		this.code = value;
-		return this;
-	}
+ 
 	
 	public static <T> Result<T> ok(String msg) {
 		return ok(null, msg);
@@ -47,6 +44,7 @@ public class Result<T> {
 		Result<T> r = new Result<>();
 		r.setIsSuccess(false);
 		r.setData(data);
+		r.setCode(500);
 		if (msg != null && msg.length > 0) {
 			r.setMessage(msg[0]);
 		} else {
@@ -63,10 +61,10 @@ public class Result<T> {
 		return fail(null, "");
 	}
 	
-	public String getCode() {
+	public Integer getCode() {
 		return code;
 	}
-	public void setCode(String code) {
+	public void setCode(Integer code) {
 		this.code = code;
 	}
 	

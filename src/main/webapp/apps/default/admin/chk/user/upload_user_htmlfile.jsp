@@ -134,7 +134,7 @@
 	    }
 	    
 	    function onUploadSuccessImport(e) {
-	    	console.log(e.serverData);
+	    	//console.log(e.serverData);
 	    	//mini.alert(typeof e.serverData);
 	        mini.alert("上传成功!");
 	        mini.get("serverPath").setValue(mini.decode(e.serverData));

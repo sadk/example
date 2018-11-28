@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import org.lsqt.components.context.Result;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -12,6 +11,7 @@ import org.lsqt.components.context.annotation.mvc.RequestPayload;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
+import org.lsqt.rst.model.Result;
 import org.lsqt.rst.model.UserWorkRecord;
 import org.lsqt.rst.model.UserWorkRecordQuery;
 import org.lsqt.rst.service.UserWorkRecordService;
@@ -20,7 +20,12 @@ import org.lsqt.sys.service.DictionaryService;
 
 
 
-
+/**
+ * 正常工时=工作日的时间之和（周一到周五*8 - 请假时间)
+ * 
+ * @author mm
+ *
+ */
 @Controller(mapping={"/rst/user_work_record"})
 public class UserWorkRecordController {
 	
@@ -45,27 +50,27 @@ public class UserWorkRecordController {
 			return Result.fail("考勤类型不能为空");
 		}
 		
-		if (StringUtil.isBlank(form.getShiftType())) {
-			return Result.fail("班次类型不能为空");
+		try {
+			return Result.ok(userWorkRecordService.saveOrUpdate(form));
+		} catch (Exception ex) {
+			return Result.fail(ex.getMessage());
 		}
-		
-		return Result.ok(userWorkRecordService.saveOrUpdate(form));
 	}
 	
 	@RequestMapping(mapping = { "/wx/get_by_id"})
-	public Result<UserWorkRecord> getById4WX(Long id) throws IOException {
+	public Result<UserWorkRecord> getById4WX(Long id)  {
 		if (id == null) {
 			return Result.fail("id不能为空");
 		}
 		return Result.ok(userWorkRecordService.getById(id));
 	}
-	
-	@RequestMapping(mapping = { "/wx/page"})
-	public Result<Page<UserWorkRecord>> queryForPage4WX(UserWorkRecordQuery query) throws IOException {
+
+	@RequestMapping(mapping = { "/wx/page" })
+	public Result<Page<UserWorkRecord>> queryForPage4WX(UserWorkRecordQuery query) {
 		if (StringUtil.isBlank(query.getUserCode())) {
 			return Result.fail("用户编码不能为空");
 		}
-		return Result.ok( userWorkRecordService.queryForPage(query)); 
+		return Result.ok(userWorkRecordService.queryForPage(query));
 	}
 	
 	@RequestMapping(mapping = { "/wx/list"})

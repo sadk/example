@@ -75,7 +75,7 @@ public class UserCrimeMQConfig {
 		return ROUTING_KEY_CONSUMER;
 	}
 	@OnStarted
-	public synchronized void initConfig()  {
+	public synchronized void initConfig() throws Exception  {
 		log.info("Loading rabitmq config info from db, it's configuration for FongKong Platform!!!");
 		
 		db.executePlan(false, () -> {

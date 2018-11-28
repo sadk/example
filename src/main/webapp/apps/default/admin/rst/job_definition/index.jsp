@@ -72,19 +72,19 @@
 				<div class="mini-fit">
 					<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" autoLoad="true"
 					url="${pageContext.request.contextPath}/rst/job_definition/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
-					<div property="columns">
-						<div type="checkcolumn" ></div>
-						<div field="id" width="60" headerAlign="center" allowSort="true" align="center" >ID</div>
-						<div field="name" width="140" headerAlign="center" allowSort="true" align="left" >名称</div>
-						<div field="code" width="140" headerAlign="center" allowSort="true" align="left">编码</div>
-						<div field="sn" width="80" headerAlign="center" allowSort="true" align="center">排序号</div>
-						<div field="enable" width="80" headerAlign="center" allowSort="true" align="center">是否启用</div>
-						
-						<!-- <div field="gid" width="160" headerAlign="center" allowSort="true" align="left">全局编码</div> -->
-						<div field="createTime" width="150" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
-						<div field="updateTime" width="150" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>     
-									        
-					</div>
+						<div property="columns">
+							<div type="checkcolumn" ></div>
+							<div field="id" width="60" headerAlign="center" allowSort="true" align="center" >ID</div>
+							<div field="name" width="140" headerAlign="center" allowSort="true" align="left" >名称</div>
+							<div field="code" width="140" headerAlign="center" allowSort="true" align="left">编码</div>
+							<div field="sn" width="80" headerAlign="center" allowSort="true" align="center">排序号</div>
+							<div field="enable" width="80" headerAlign="center" allowSort="true" align="center">是否启用</div>
+							
+							<!-- <div field="gid" width="160" headerAlign="center" allowSort="true" align="left">全局编码</div> -->
+							<div field="createTime" width="150" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
+							<div field="updateTime" width="150" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>     
+					
+						</div>
 					</div>
 				</div>
 			</div>

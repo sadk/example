@@ -99,8 +99,10 @@ public class ControllerInvokeChain implements Chain{
 					//后置处理，一定纳入到当前事务中
 					invokeAfter(urlMappingDefinition,result);
 				} catch (Exception e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 					this.state = STATE_EXE_EXCEPTION;
+					
+					throw new RuntimeException(e.getMessage(),e.getCause() == null ? e:e.getCause());
 				}
 			});
 		}

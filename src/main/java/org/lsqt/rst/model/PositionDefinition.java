@@ -94,7 +94,16 @@ public class PositionDefinition {
 
 	/** 面试地址 */
 	private String interviewAddress;
+	
+	/**职位职责**/
+	private String responsibility;
+	
+	/**工资详情**/
+	private String salaryDetails;
 
+	// ----------------- 辅助字段， 用于获取岗位的福利 (多个福利逗号分割)
+	private String welfareItemNos;
+	
 	// getter、setter
 	public void setId(Long id) {
 		this.id = id;
@@ -334,6 +343,30 @@ public class PositionDefinition {
 
 	public String getInterviewAddress() {
 		return this.interviewAddress;
+	}
+
+	public String getResponsibility() {
+		return responsibility;
+	}
+
+	public void setResponsibility(String responsibility) {
+		this.responsibility = responsibility;
+	}
+
+	public String getSalaryDetails() {
+		return salaryDetails;
+	}
+
+	public void setSalaryDetails(String salaryDetails) {
+		this.salaryDetails = salaryDetails;
+	}
+
+	public String getWelfareItemNos() {
+		return welfareItemNos;
+	}
+
+	public void setWelfareItemNos(String welfareItemNos) {
+		this.welfareItemNos = welfareItemNos;
 	}
 
 }
