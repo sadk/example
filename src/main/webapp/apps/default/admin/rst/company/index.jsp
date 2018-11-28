@@ -250,7 +250,7 @@
 			function refreshComAdmin() {
 				adminGrid.reload();
 			}
-			
+
 			function removeComAdmin() {
 				var row = grid.getSelected();
 				var row2 = adminGrid.getSelecteds();

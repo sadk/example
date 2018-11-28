@@ -250,6 +250,7 @@ public class UserWorkRecordController {
 		}
 	}
 	
+
 	@RequestMapping(mapping = { "/wx/get_by_id"},isTransaction = false)
 	public Result<UserWorkRecord> getById4WX(Long id)  {
 		if (id == null) {
@@ -257,6 +258,7 @@ public class UserWorkRecordController {
 		}
 		return Result.ok(userWorkRecordService.getById(id));
 	}
+
 
 	@RequestMapping(mapping = { "/wx/page" },isTransaction = false)
 	public Result<Page<UserWorkRecord>> queryForPage4WX(UserWorkRecordQuery query) {

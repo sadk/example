@@ -58,7 +58,7 @@
 	  						<#if query.recordDateYearMonth??> and record_date like '${query.recordDateYearMonth}%' </#if>
 					
 					
-					
+
 	  						<#if query.userCode??> and user_code = '${StringUtil.escapeSql(query.userCode)}' </#if>
 							
 							<#if query.userName??> and user_name = '${StringUtil.escapeSql(query.userName)}' </#if>

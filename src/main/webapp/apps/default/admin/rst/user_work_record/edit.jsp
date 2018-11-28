@@ -19,7 +19,7 @@
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
 			<input id="id" name="id" class="mini-hidden" />
-			
+
 			<div style="padding-left:11px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
 		            <legend>考勤日期</legend>

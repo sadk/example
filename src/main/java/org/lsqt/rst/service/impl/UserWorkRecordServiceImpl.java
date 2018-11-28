@@ -1,6 +1,8 @@
 package org.lsqt.rst.service.impl;
 
+
 import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -59,10 +61,13 @@ public class UserWorkRecordServiceImpl implements UserWorkRecordService{
 		return null;
 	}
 	
+
 	public UserWorkRecord saveOrUpdate(UserWorkRecord model) {
 		if (model.getWeekday() == null) {
 			SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
+
 			String xq = dateFm.format(convertDate(model.getRecordDate().toString()));
+
 			model.setWeekday(WEEKDAY_MAP.get(xq));
 		}
 

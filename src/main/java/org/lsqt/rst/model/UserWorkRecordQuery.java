@@ -25,8 +25,9 @@ public class UserWorkRecordQuery {
 	private Integer type;
 
 	private Integer recordDate; //考勤记录的日期yyyyMMdd
+
 	private Integer recordDateYearMonth; // 用于查询 recordDate like '201811%'记录
-	
+
 	/** 时长精确到小时，保留一个小数 */
 	private String workingHours;
 
@@ -221,5 +222,4 @@ public class UserWorkRecordQuery {
 	public void setRecordDateYearMonth(Integer recordDateYearMonth) {
 		this.recordDateYearMonth = recordDateYearMonth;
 	}
-
 }

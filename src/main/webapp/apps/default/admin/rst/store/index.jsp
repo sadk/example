@@ -163,6 +163,40 @@
 							
 							
 							
+							
+							
+							
+							<div title="门店管辖厂区" refreshOnClick="true" name="tabReses">
+								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+									<table style="width:100%;">
+										<tr>
+											<td style="width:100%;">
+												<a class="mini-button" iconCls="icon-add" onclick="editManagerCompany()">添加</a>
+												<a class="mini-button" iconCls="icon-remove" onclick="removeManagerCompany()">删除</a>
+												<span class="separator"></span>  
+												<a class="mini-button" iconCls="icon-reload" onclick="refreshManagerCompany()">刷新</a>
+											</td>
+										</tr>
+									</table>
+								</div>
+								<div class="mini-fit">
+									<div id="datagrid3" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" autoLoad="false"
+										url="${pageContext.request.contextPath}/rst/store_company/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
+										<div property="columns">
+											<div type="checkcolumn"></div>
+									        <div field="companyCode" width="120" headerAlign="center">厂区编码</div>
+									        <div field="companyName" width="120" headerAlign="center">厂区名称</div>
+									        
+									        <div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
+									        <div field="updateTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>     
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							
+							
+							
 						</div>
 					</div>
 				</div>
@@ -248,6 +282,7 @@
 					}
 				});
 			}
+ 
 			
 			function refreshManager() {
 				managerGrid.reload();
