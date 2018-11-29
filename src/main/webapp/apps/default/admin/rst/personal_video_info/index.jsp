@@ -68,6 +68,7 @@
 						<tr>
 							<td style="width:100%;">
 								<a class="mini-button" iconCls="icon-edit" onclick="edit()">审核</a>
+								<a class="mini-button" iconCls="icon-node" onclick="view()">查看</a>
 								<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
 								<span class="separator"></span>
 								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
@@ -84,6 +85,8 @@
 									<div field="code" headerAlign="center" align="center" width="150">视频编码</div>
 									<div field="nickName" headerAlign="center" align="left" >昵称</div>
 									<div field="realName" headerAlign="center" align="center" >姓名</div>
+									<div field="phone" headerAlign="center" align="center" >手机号</div>
+									
 									<!-- 
 									<div field="userCode" headerAlign="center" align="" >用户编码</div> 
 									<div field="activityId" headerAlign="center" align="" >activity_id</div> 
@@ -112,6 +115,17 @@
     mini.parse();
 	var grid = mini.get("datagrid1");
 	var form = new mini.Form("form1");
+	
+	function view() {
+		var row = grid.getSelected();
+		if(!row) {
+			mini.alert("请选择一个视频记录");
+			return ;
+		}
+		window.open(row.videoUrl,"_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width="+screen.width+", height="+screen.height+"");
+		//window.open(row.videoUrl,"_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=600, height=500");
+		
+	}
 	
 	function remove() {
 		var rows = grid.getSelecteds();

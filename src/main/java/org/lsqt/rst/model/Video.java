@@ -6,7 +6,7 @@ package org.lsqt.rst.model;
 public class Video {
 
 	/***/
-	private String code;
+	private String id;
 
 	/** 视频地址 */
 	private String url;
@@ -67,12 +67,12 @@ public class Video {
 		return this.tenantCode;
 	}
 
-	public String getCode() {
-		return code;
+	public String getId() {
+		return id;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }

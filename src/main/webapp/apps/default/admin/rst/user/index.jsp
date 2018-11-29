@@ -60,15 +60,6 @@
 										</td>
 									</tr>
 									
-									<%-- 
-									<tr>
-										<td>状态 </td>
-										<td>
-											<input id="status" name="status" value="1" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=user_status" />
-										</td>
-									</tr> 
-									--%>
-									
 									<tr>
 										<td>邮箱：</td>
 										<td>
@@ -77,24 +68,16 @@
 									</tr>
 									
 									<tr>
-										<td>手机：</td>
-										<td>
-											<input id="mobile" name="mobile"   class="mini-textbox"  emptyText="请输入手机"  onenter="search"/>
-										</td>
-									</tr>
-									
-									
-									<tr>
 										<td>电话：</td>
 										<td>
-											<input id="tel" name="tel"   class="mini-textbox"  emptyText="请输入电话"  onenter="search"/>
+											<input id="seatNumber" name="seatNumber"   class="mini-textbox"  emptyText="请输入电话"  onenter="search"/>
 										</td>
 									</tr>
 									
 									<tr>
-										<td>性别</td>
+										<td>性别：</td>
 										<td>
-											<input id="sex" name="sex" value="1" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sex"  />
+											<input id="sex" name="sex" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sex"  />
 										</td>
 									</tr>
 					</table>

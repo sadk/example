@@ -175,8 +175,8 @@
 									<table style="width:100%;">
 										<tr>
 											<td style="width:100%;">
-												<a class="mini-button" iconCls="icon-add" onclick="editVideo('add')">添加</a>
-												<a class="mini-button" iconCls="icon-edit" onclick="editVideo('edit')">编辑</a>
+												<a class="mini-button" iconCls="icon-upload" onclick="addVideo()">上传</a>
+												<!-- <a class="mini-button" iconCls="icon-edit" onclick="editVideo('edit')">编辑</a> -->
 												<a class="mini-button" iconCls="icon-remove" onclick="removeVideo()">删除</a>
 												<span class="separator"></span>
 												<a class="mini-button" iconCls="icon-reload" onclick="refreshVideo()">刷新</a>
@@ -190,12 +190,12 @@
 										<div property="columns">
 											<div type="checkcolumn" ></div>
 											 
-											<div field="code" width="160" headerAlign="center" allowSort="true" align="center">编码</div>
+											<div field="id" width="160" headerAlign="center" allowSort="true" align="center">编码</div>
 											<div field="url" width="660" headerAlign="center" allowSort="true" align="left">视频地址</div>
 											
 											<div field="coverUrl" width="260" headerAlign="center" allowSort="true" align="left">视频封面</div>
-											<div field="createTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">创建日期</div>
-											<div field="updateTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">更新日期</div>
+											<div field="createDate" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">创建日期</div>
+											<div field="updateDate" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">更新日期</div>
 											
 										</div>
 									</div>
@@ -261,6 +261,70 @@
 			var gridAdress = mini.get("datagrid2"); 
 			var gridVideo = mini.get("datagrid4"); 
 			var gridRecord = mini.get("datagrid5");
+			
+			function refreshVideo() {
+				gridVideo.reload();
+			}
+			
+			function removeVideo() {
+				var row = grid.getSelected();
+				var rows = gridVideo.getSelecteds();
+				if (!row) {
+					mini.alert("请选择一个职位");
+					return ;
+				}
+				if (rows.length ==0) {
+					mini.alert("请至少选择一个职位视频");
+					return ;
+				}
+				var vIds = new Array();
+				for (var i=0;i<rows.length;i++) {
+					vIds.push(rows[i].id);
+				}
+				var data = {};
+				data.positionCode = row.code;
+				data.videoIds = vIds.join(",");
+				$.ajax({
+					'url': "${pageContext.request.contextPath}/rst/position_definition/delete_position_video",
+					type: 'post', dataType:'JSON',
+					data: data,
+					success: function (json) {
+						gridVideo.reload();
+					},
+					error : function(data) {
+				  		mini.alert(data.responseText);
+					}
+				});
+			}
+			
+			function addVideo() { //上传视频
+				var row = grid.getSelected();
+				if (!row) {
+					mini.alert("请选择一个职位");
+					return ;
+				}
+				
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/rst/position_definition/upload_video_htmlfile.jsp",
+					title : "上传职位视频",
+					width : 420,
+					height : 330,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {
+							 positionCode: row.code
+						};
+						 
+						iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						if ('ok' == action) { 
+							//mini.alert("上传成功");
+						}
+						gridVideo.reload();
+					}
+				});
+			}
 			
 			function search() {
 				var data = form.getData();
@@ -426,7 +490,7 @@
 					url : "${pageContext.request.contextPath}/apps/default/admin/rst/position_definition/edit.jsp",
 					title : "编辑信息",
 					width : 650,
-					height : 550,
+					height : 620,
 					onload : function() {
 						var iframe = this.getIFrameEl();
 						var data = {

@@ -7,6 +7,7 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.rst.model.WorkAddress;
 import org.lsqt.rst.model.WorkAddressQuery;
 import org.lsqt.rst.service.WorkAddressService;
@@ -33,6 +34,25 @@ public class WorkAddressServiceImpl implements WorkAddressService{
 	}
 	
 	public WorkAddress saveOrUpdate(WorkAddress model) {
+		String province = model.getProvinceName();
+		String city = null;
+		if (StringUtil.isNotBlank(model.getCityName())) {
+			city = model.getCityName().replace(province, "");
+		}
+
+		String area = null;
+		if (StringUtil.isNotBlank(model.getAreaName())) {
+			area = model.getAreaName().replace(model.getCityName(), "");
+		}
+		model.setProvinceName(province);
+
+		if (StringUtil.isNotBlank(city)) {
+			model.setCityName(city);
+		}
+
+		if (StringUtil.isNotBlank(area)) {
+			model.setAreaName(area);
+		}
 		return db.saveOrUpdate(model);
 	}
 

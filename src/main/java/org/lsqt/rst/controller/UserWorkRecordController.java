@@ -30,6 +30,8 @@ import org.lsqt.rst.service.UserWorkRecordService;
 import org.lsqt.sys.model.Dictionary;
 import org.lsqt.sys.service.DictionaryService;
 
+import com.alibaba.fastjson.JSON;
+
 
 
 /**
@@ -129,19 +131,20 @@ public class UserWorkRecordController {
 					} else {
 						n.extraHours = 0D;
 					}
-					
+					/*
 					if (e.getWeekday() == 6 || e.getWeekday() == 7) { // 周六、周天
 						n.leaveHours = 0D;
 						n.workHours = 0D;
 
 					} else { // 工作日周一到周五
+						*/
 						if (StringUtil.isNotBlank(e.getLeaveHours())) { // 有请假
 							n.leaveHours = Double.valueOf(e.getLeaveHours());
 						} else {
 							n.leaveHours = 0D;
 						}
 						n.workHours = DAY_WORK_HOUR_SETTING - Double.valueOf(n.leaveHours);
-					}
+					//}
 					
 					result.add(n);
 					
@@ -164,17 +167,17 @@ public class UserWorkRecordController {
 				
 				SimpleDateFormat dateFm = new SimpleDateFormat("EEEE",Locale.CHINESE);
 				String xq = dateFm.format(convertDate(n.recordDate.toString()));
-				System.out.println("------------xq:"+xq);
+				//System.out.println("------------xq:"+xq);
 				n.weekday = WEEKDAY_MAP.get(xq) ;
-				System.out.println(n.weekday);
+				//System.out.println(n.weekday);
 				
 				n.extraHours = 0D;
 				n.leaveHours = 0D;
-				if (n.weekday.intValue() == 6 || n.weekday.intValue() == 7) {
+				/*if (n.weekday.intValue() == 6 || n.weekday.intValue() == 7) {
 					n.workHours = 0D;
-				} else {
+				} else {*/
 					n.workHours = Double.valueOf(DAY_WORK_HOUR_SETTING);
-				}
+				//}
 				
 				result.add(n);
 			}
@@ -258,6 +261,8 @@ public class UserWorkRecordController {
 			return Result.fail("考勤类型不能为空");
 		}
 		*/
+		System.out.println(JSON.toJSONString(form, true));
+		
 		try {
 			return Result.ok(userWorkRecordService.saveOrUpdate(form));
 		} catch (Exception ex) {
@@ -265,14 +270,50 @@ public class UserWorkRecordController {
 		}
 	}
 	
-/*
-	@RequestMapping(mapping = { "/wx/get_by_id"},isTransaction = false)
-	public Result<UserWorkRecord> getById4WX(Long id)  {
-		if (id == null) {
-			return Result.fail("id不能为空");
+	@RequestMapping(mapping = { "/wx/get_by_date"},isTransaction = false)
+	public Result<UserWorkRecord> getById4WX(String userCode,Integer recordDate)  {
+		if (recordDate == null) {
+			return Result.fail("考勤日期不能为空(格式为yyyyMMdd)");
 		}
-		return Result.ok(userWorkRecordService.getById(id));
+		
+		if (StringUtil.isBlank(userCode)) {
+			return Result.fail("用户ID不能为空");
+		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String now = sdf.format(new Date());
+		if (recordDate > Integer.valueOf(now)) {
+			return Result.fail("没有当前工时记录");
+		}
+		
+		UserWorkRecordQuery query = new UserWorkRecordQuery();
+		query.setRecordDate(recordDate);
+		query.setUserCode(userCode);
+		UserWorkRecord dbModel = db.queryForObject("queryForPage", UserWorkRecord.class , query);
+		
+		if (dbModel == null) { //如果没有，默认正常上班
+			dbModel = new UserWorkRecord();
+			dbModel.setRecordDate(recordDate);
+			dbModel.setUserCode(userCode);
+			
+			SimpleDateFormat dateFm = new SimpleDateFormat("EEEE",Locale.CHINESE);
+			String xq = dateFm.format(convertDate(recordDate.toString()));
+			dbModel.setWeekday(WEEKDAY_MAP.get(xq)) ;
+			
+			dbModel.setLeaveHours("0");
+			dbModel.setExtraHours("0");
+			
+			/*if(dbModel.getWeekday() == 6 || dbModel.getWeekday() == 7) {
+				dbModel.setWorkingHours("0");
+			} else {*/
+				dbModel.setWorkingHours(DAY_WORK_HOUR_SETTING+"");
+			//}
+		}
+		return Result.ok(dbModel);
 	}
+	
+/*
+
 
 
 	@RequestMapping(mapping = { "/wx/page" },isTransaction = false)

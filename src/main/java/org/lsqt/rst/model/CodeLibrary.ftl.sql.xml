@@ -46,29 +46,16 @@
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
-							 							 							 							 							 					
-							 
 							code_no like '%${key}%'  or 
-							
-							 
 							item_no like '%${key}%'  or 
-							
-							 
 							item_name like '%${key}%'  or 
-							
-							 
 							create_user like '%${key}%'  or 
-							
-							 
 							update_user like '%${key}%' 
-							
 					)
 				</#if>
-				<#-- -------------------关键字查询结束 --------------- -->
 	
-				<#-- -------------------综合查询开始 --------------- -->
-				
-				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+							
 	  						<#if query.codeNo??> and code_no = '${StringUtil.escapeSql(query.codeNo)}' </#if>
 						
 					
@@ -93,10 +80,9 @@
 	  						<#if query.updateUser??> and update_user = '${StringUtil.escapeSql(query.updateUser)}' </#if>
 						
 					
-						
-	  					<#if query.status??> and status = ${query.status} </#if>
-					
-				<#-- -------------------综合查询结束 --------------- -->
+	  						<#if query.status??> and status = ${query.status} </#if>
+							
+							order by update_time desc
         	</#if>
         	
 		]]>

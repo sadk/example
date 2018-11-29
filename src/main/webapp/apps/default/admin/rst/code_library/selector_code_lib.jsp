@@ -10,10 +10,20 @@
     </style>
 </head>
 <body>
-    <div class="mini-toolbar" style="text-align:center;line-height:30px;" borderStyle="border:0;">
-          <label >关键字：</label>
-          <input id="key" class="mini-textbox" style="width:150px;" onenter="onKeyEnter"/>
-          <a class="mini-button" style="width:60px;" onclick="search()">查询</a>
+   <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+    
+			<table style="width:100%;">
+				<tr>
+					<td style="width:100%;">
+						<a class="mini-button" iconCls="icon-add" onclick="add()">新增福利</a>
+						<!-- <a class="mini-button" iconCls="icon-remove" onclick="remove()">删除福利</a> -->
+					</td>
+					<td style="white-space:nowrap;">
+                        <input id="key" name="key" class="mini-textbox" emptyText="请输入关键字" style="width:150px;" onenter="search"/>   
+                        <a class="mini-button" style="width:60px;" onclick="search()">查询</a>
+                    </td>
+				</tr>
+			</table>
     </div>
     <div class="mini-fit">
 		<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" autoLoad="true" showPager="false"
@@ -37,6 +47,23 @@
 	    mini.parse();
 	    
 	    var grid = mini.get("datagrid1");
+	    
+	    function add() {
+			mini.open({
+				url : "${pageContext.request.contextPath}/apps/default/admin/rst/code_library/edit.jsp",
+				title : "新增福利",
+				width : 490,
+				height : 220,
+				onload : function() {
+					var iframe = this.getIFrameEl();
+					var data = {};
+					iframe.contentWindow.SetData(data);
+				},
+				ondestroy : function(action) {
+					grid.reload();
+				}
+			});
+	    }
 	    
 	    function GetData() {
 	    	var row = grid.getSelected();

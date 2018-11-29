@@ -69,7 +69,7 @@ public class UserWorkRecordServiceImpl implements UserWorkRecordService{
 		query.setUserCode(model.getUserCode());
 		UserWorkRecord dbModel = db.queryForObject("queryForPage", UserWorkRecord.class , query);
 		
-		if (dbModel !=null) {
+		if (dbModel != null) {
 			model.setId(dbModel.getId());
 		}
 		

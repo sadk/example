@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
-import org.lsqt.components.context.annotation.OnStarted;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
@@ -25,11 +24,6 @@ import org.lsqt.rst.model.CompanyPicture;
 import org.lsqt.rst.model.CompanyQuery;
 import org.lsqt.rst.service.CompanyService;
 import org.lsqt.rst.util.AliyunOssUtils;
-import org.lsqt.sys.model.Dictionary;
-import org.lsqt.sys.model.Machine;
-import org.lsqt.sys.model.MachineQuery;
-import org.lsqt.sys.model.Property;
-import org.lsqt.sys.model.PropertyQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +100,7 @@ public class CompanyController {
 	
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(mapping = { "/upload", "/m/upload" }, view=View.JSP, path="/apps/default/admin/rst/company",excludeTransaction=true, text="上传公司图片")
-	public String uplodad() throws Exception{
+	public String upload() throws Exception{
 		String serverPath = "";
 		String uploadDir = FileUploadUtil.UPLOAD_DIR;
 		HttpServletRequest request = ContextUtil.getRequest();
@@ -165,79 +159,19 @@ public class CompanyController {
 	}
 	
 	
-	
-	
-	private static String aliUrl = "https://rst-sit-oss.oss-cn-shenzhen.aliyuncs.com/"; // 不知道这个地址是干什么的
-    private static String endPoint = "https://oss-cn-shenzhen-internal.aliyuncs.com";// endpoint 访问OSS的域名
-    private static String accessKeyId = "LTAIcuauDFcgjLjf"; // accessKeyId和accessKeySecret OSS的访问密钥
-    private static String accessKeySecret = "uIAFNo4rDl3iP8Bt8HuU96aRADIXST";
-    private static String bucketName = "rst-sit-oss";  // Bucket 用来管理所存储Object的存储空间
-    
-    @OnStarted
-    public void initOSSConfig() throws Exception {
-    	db.executePlan(false, ()->{
-    		MachineQuery query = new MachineQuery();
-    		query.setCode("AliYun_OSS_FILE");
-    		Machine model = db.queryForObject("queryForPage", Machine.class, query);
-    		if (model == null) {
-    			log.warn("机器: AliYun_OSS_FILE 没有配置");
-    			return ;
-    		}
-    		
-    		if(model.getStatus() ==null) {
-    			log.warn("机器: AliYun_OSS_FILE 启用状态没有设置");
-    			return ;
-    		}
-    		
-    		if (Dictionary.ENABLE_启用 != model.getStatus()) {
-    			log.warn("机器: AliYun_OSS_FILE 状态没有启用");
-    			return ;
-    		}
-    		
-    		PropertyQuery pq = new PropertyQuery();
-    		pq.setParentCode(model.getCode());
-    		List<Property> list = db.queryForList("queryForPage", Property.class, pq);
-    		for (Property p: list) {
-    			if("aliUrl".equals(p.getName())) {
-    				aliUrl = p.getValue();
-    			}
-    			if("endPoint".equals(p.getName())) {
-    				endPoint = p.getValue();
-    			}
-    			if("accessKeyId".equals(p.getName())) {
-    				accessKeyId = p.getValue();
-    			}
-    			if("accessKeySecret".equals(p.getName())) {
-    				accessKeySecret = p.getValue();
-    			}
-    			if("bucketName".equals(p.getName())) {
-    				bucketName = p.getValue();
-    			}
-    		}
-    		
-    		log.info("######################################################################################");
-    		log.info("#    阿里云文件上传服务器配置");
-    		log.info("#    aliUrl:\t {}",aliUrl);
-    		log.info("#    endPoint:\t {}",endPoint);
-    		log.info("#    accessKeyId:\t {}",accessKeyId);
-    		log.info("#    accessKeySecret:{}",accessKeySecret);
-    		log.info("#    bucketName:\t {}",bucketName);
-    		log.info("######################################################################################");
-    	});
-    }
-    
+
 	/**
 	 * 同步上传到阿里云OSS
 	 * @param serverPath
 	 */
 	private String uploadAliyunOSS(String objectName, String fileFullPath) {
-		AliyunOssUtils util = new AliyunOssUtils(endPoint, accessKeyId, accessKeySecret);
+		AliyunOssUtils util = new AliyunOssUtils(UploadConfigerOSS.endPoint, UploadConfigerOSS.accessKeyId, UploadConfigerOSS.accessKeySecret);
 
 		try {
-			util.withBucket(bucketName);
-			util.createBucketIfExists(bucketName);
+			util.withBucket(UploadConfigerOSS.bucketName);
+			util.createBucketIfExists(UploadConfigerOSS.bucketName);
 			
-			StringBuilder result = new StringBuilder(aliUrl);
+			StringBuilder result = new StringBuilder(UploadConfigerOSS.aliUrl);
 			result.append(util.uploadInputStream(objectName, new FileInputStream(new File(fileFullPath))));
 			return result.toString();
 		} catch (Exception e) {

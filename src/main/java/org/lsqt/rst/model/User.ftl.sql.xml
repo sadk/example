@@ -69,77 +69,28 @@
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
-							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 							 					
-							 
 							user_id like '%${key}%'  or 
-							
 							 
 							real_name like '%${key}%'  or 
 							
-							 
 							nick_name like '%${key}%'  or 
 							
-							 
 							phone like '%${key}%'  or 
 							
-							 
 							wx_account like '%${key}%'  or 
-							
-							 
-							sex like '%${key}%'  or 
-							
 							 
 							education like '%${key}%'  or 
 							
-							 
 							province like '%${key}%'  or 
-							
 							 
 							city like '%${key}%'  or 
 							
-							 
 							country like '%${key}%'  or 
 							
-							 
-							head_img_url like '%${key}%'  or 
-							
-							 
-							role_code like '%${key}%'  or 
-							
-							 
-							role_name like '%${key}%'  or 
-							
-							 
-							registration_source like '%${key}%'  or 
-							
-							 
-							referee_id like '%${key}%'  or 
-							
-							 
-							is_agree_authoize like '%${key}%'  or 
-							
-							 
-							expected_job like '%${key}%'  or 
-							
-							 
-							lately_job_id like '%${key}%'  or 
-							
-							 
-							lately_job_name like '%${key}%'  or 
-							
-							 
-							user_password like '%${key}%'  or 
-							
-							 
 							subscribe like '%${key}%'  or 
 							
-							 
-							union_id like '%${key}%'  or 
-							
-							 
 							seat_number like '%${key}%'  or 
 							
-							 
 							email like '%${key}%' 
 							
 					)

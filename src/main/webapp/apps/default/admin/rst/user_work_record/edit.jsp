@@ -138,6 +138,17 @@
 				if(form.isValid() == false) return;
 				
 				o.recordDate = mini.get("recordDate").text  ;
+				
+				if (parseInt(o.extraHours) > 24) {
+					mini.alert("加班时长不能超过24小时");
+					return ;
+				}
+				if (parseInt(o.leaveHours) > 24) {
+					mini.alert("请假时长不能超过24小时");
+					return ;
+				}
+				
+				
 				//console.log(o)
 				$.ajax({
 					url : "${pageContext.request.contextPath}/rst/user_work_record/save_or_update",

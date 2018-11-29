@@ -52,10 +52,16 @@ public class StoreInfoServiceImpl implements StoreInfoService{
 			}
 		}
 
-		if (codeList.size() > 0) { // 级联删除门店管理员
+		if (codeList.size() > 0) { 
+			// 级联删除门店管理员
 			String sql = String.format("delete from %s where store_id in (%s)", db.getFullTable(StoreManager.class),
 					StringUtil.join(codeList,",","'","'"));
 			db.executeUpdate(sql);
+		
+			String sql2 = String.format("delete from bu_company_store_relationship where store_id in (%s)",
+					StringUtil.join(codeList,",","'","'"));
+			db.executeUpdate(sql2);
+			
 		}
 		
 		return db.deleteById(StoreInfo.class, Arrays.asList(ids).toArray());

@@ -2,9 +2,11 @@ package org.lsqt.components.mvc;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,6 +66,10 @@ public class FormMapBindingPayloadChain implements Chain{
 		return this.state;
 	}
 
+	public static void main(String[] args) {
+		HashMap<String, Object> newMap =	new HashMap<>();
+		newMap.put("key", null);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -84,10 +90,11 @@ public class FormMapBindingPayloadChain implements Chain{
 		if (requestPayloadClass != null || requestPayloadMethod != null) {
 			try {
 				Map<String, Object> form = JSON.parseObject(IOUtils.toString(request.getInputStream(), "UTF-8"),Map.class);
-
+				
 				ContextUtil.getFormMap().putAll(form);
 
 			} catch (Exception e) {
+				e.printStackTrace();
 				log.error(e.getMessage());
 			}
 		}

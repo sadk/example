@@ -327,3 +327,21 @@ ADD COLUMN `tenant_code` VARCHAR(50) NULL COMMENT '用户所属租户码' ;
 ALTER TABLE  `uum_user` 
 ADD COLUMN `tenant_name` VARCHAR(50) NULL AFTER `tenant_code`;
 
+
+ALTER TABLE `bu_video_info` CHANGE COLUMN `id` `id` VARCHAR(50) NOT NULL ;
+
+
+ALTER TABLE `bu_job_video` CHANGE COLUMN `create_date` `create_date` DATETIME NULL DEFAULT now() COMMENT '创建时间' ;
+
+ALTER TABLE `bu_job_video` CHANGE COLUMN `update_date` `update_date` DATETIME NULL DEFAULT now() COMMENT '修改时间' ;
+
+ALTER TABLE  `bu_code_library`  CHANGE COLUMN `code_no` `code_no` VARCHAR(50) NOT NULL COMMENT '编码' ,
+CHANGE COLUMN `item_no` `item_no` VARCHAR(200) NULL DEFAULT NULL COMMENT '项目编号' ;
+
+
+ALTER TABLE `bu_job_video` 
+CHANGE COLUMN `video_id` `video_id` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '视频id' ,
+CHANGE COLUMN `job_id` `job_id` VARCHAR(50) NULL DEFAULT NULL COMMENT '职位ID' ;
+
+
+

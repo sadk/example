@@ -86,7 +86,7 @@
 							<tr>
 								<td>岗位职责：</td>
 								<td>
-									<input id="responsibility" name="responsibility"  class="mini-textarea"  style="width:150px" />
+									<input id="responsibility" name="responsibility"  class="mini-textarea"  style="width:150px" required="true"/>
 								</td>
 								<td> 工资详情 ：</td>
 								<td>
@@ -111,29 +111,29 @@
 		            <div style="padding:5px;">
 				        <table>
 							<tr>
-								<td style="width:100px;">性别要求</td>
+								<td style="width:100px;">性别要求：</td>
 								<td style="width:150px;">
 									<input id="requiredSex" name="requiredSex" class="mini-combobox"  style="width:150px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_sex_required"/>
 								</td>
-								<td style="width:100px;">年龄要求</td>
+								<td style="width:100px;">年龄要求：</td>
 								<td style="width:150px;">
-									<input name="requiredAge" id="requiredAge" class="mini-spinner" minValue="0" maxValue="150"  />
+									<input name="requiredAge" id="requiredAge" class="mini-textbox" minValue="0" maxValue="150"  />
 								</td>
 							</tr>
 							<tr>
-								<td>学历要求</td>
+								<td>学历要求：</td>
 								<td>
 									<input id="requiredEducation" name="requiredEducation" class="mini-combobox"  style="width:150px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_edu_required"/>
 								</td>
-								<td >工作年限</td>
+								<td >工作年限：</td>
 								<td>
-									<input name="requiredWorkYears" id="requiredWorkYears" class="mini-spinner" minValue="0" maxValue="150"  />
+									<input name="requiredWorkYears" id="requiredWorkYears" class="mini-textbox" minValue="0" maxValue="150"  />
 								</td>
 							</tr>
 							<tr>
-								<td>是否需要简历</td>
+								<td>是否需要简历：</td>
 								<td>
-									<input id="requiredResume" name="requiredResume" class="mini-combobox"  style="width:150px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no"/>
+									<input id="requiredResume" name="requiredResume" class="mini-combobox"  style="width:150px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" required="true"/>
 								</td>
 							</tr>
 						</table>
@@ -147,21 +147,21 @@
 							<tr>
 								<td style="width:100px;">发布平台：</td>
 								<td style="width:150px;">
-									<input id="publishPlatfrom" name="publishPlatfrom" class="mini-combobox"  style="width:150px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_publish_platform"/>
+									<input id="publishPlatfrom" name="publishPlatfrom" class="mini-combobox"  style="width:150px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_publish_platform" required="true"/>
 								</td>
 								<td style="width:100px;">是否置顶：</td>
 								<td style="width:150px;">
-									<input id="top" name="top" class="mini-combobox"  style="width:150px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_top_sfzd"/>
+									<input id="top" name="top" class="mini-combobox"  style="width:150px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_top_sfzd" required="true"/>
 								</td>
 							</tr>
 							<tr>
 								<td>发布状态：</td>
 								<td>
-									<input id="status" name="status" class="mini-combobox"  style="width:150px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_publish_status"/>
+									<input id="status" name="status" class="mini-combobox"  style="width:150px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_publish_status" required="true"/>
 								</td>
 								<td>所属门店：</td>
 								<td>
-									<input id="storeName" name="storeName" onclick="selectStore()" class="mini-textbox"  style="width:150px" />
+									<input id="storeName" name="storeName" onclick="selectStore()" class="mini-textbox"  style="width:150px" required="true"/>
 									<input id="storeCode" name="storeCode"   class="mini-hidden" />
 								</td>
 							</tr>

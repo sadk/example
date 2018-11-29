@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.lsqt.components.context.ContextUtil;
+import org.lsqt.components.context.Result;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.db.orm.ORMappingIdGenerator;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.sys.model.Dictionary;
 import org.lsqt.rst.model.CodeLibrary;
@@ -51,10 +54,14 @@ public class CodeLibraryController {
 		return codeLibraryService.saveOrUpdate(form);
 	}
 	
-	@RequestMapping(mapping = { "/delete", "/m/delete" })
-	public int delete(String ids) {
-		List<Long> list = StringUtil.split(Long.class, ids, ",");
-		return codeLibraryService.deleteById(list.toArray(new Long[list.size()]));
+	@RequestMapping(mapping = { "/add_welfare", "/m/add_welfare" },text="用户添加福利")
+	public CodeLibrary addWelfare(CodeLibrary form) {
+		form.setCreateUser(ContextUtil.getLoginAccount());
+		form.setItemNo(new ORMappingIdGenerator().getUUID58().toString());
+		form.setStatus(0);
+		return codeLibraryService.saveOrUpdate(form);
 	}
+	
+	
 	
 }
