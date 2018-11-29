@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.Result;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
@@ -43,11 +44,13 @@ public class WorkAddressController {
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<WorkAddress> queryForPage(WorkAddressQuery query) throws IOException {
+		query.setTenantCode(ContextUtil.getLoginTenantCode());
 		return workAddressService.queryForPage(query); 
 	}
 	
 	@RequestMapping(mapping = { "/list", "/m/list" })
 	public List<WorkAddress> queryForLits(WorkAddressQuery query) throws IOException {
+		query.setTenantCode(ContextUtil.getLoginTenantCode());
 		return workAddressService.queryForList(query); 
 	}
 	
@@ -58,6 +61,7 @@ public class WorkAddressController {
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public WorkAddress saveOrUpdate(WorkAddress form) {
+		form.setTenantCode(ContextUtil.getLoginTenantCode());
 		if (StringUtil.isBlank(form.getCode())) {
 			form.setCode(idgen.getUUID58().toString());
 		}

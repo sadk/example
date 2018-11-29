@@ -35,30 +35,29 @@
 											</tr>
 								
 											<tr>
-												<td>名称：</td>
+												<td>职位名称：</td>
 												<td>
-													<input id="name" name="name"   class="mini-textbox"  emptyText="请输入组名称"  onenter="search"/>
+													<input id="name" name="name"   class="mini-textbox"  emptyText="请输入职位名称"  onenter="search"/>
 												</td>
 											</tr>
 											
 											<tr>
 												<td>发布状态：</td>
 												<td>
-													<input id="enable" name="enable" class="mini-combobox" valueField="value" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择"  url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
+													<input id="status" name="status" class="mini-combobox" valueField="value" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择"  url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_publish_status" />
 												</td>
 											</tr>
 											
 											<tr>
 												<td>发布平台：</td>
 												<td>
-													<input id="enable" name="enable" class="mini-combobox"   valueField="value" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择"  url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
+													<input id="publishPlatfrom" name="publishPlatfrom" class="mini-combobox"   valueField="value" textField="name" showNullItem="true" nullItemText="请选择..." emptyText="请选择"  url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_publish_platform" />
 												</td>
 											</tr>
-											
 											<tr>
-												<td>备注：</td>
+												<td>公司简称：</td>
 												<td>
-													<input id="remark" name="remark"   class="mini-textbox"  emptyText="请输入备注"  onenter="search"/>
+													<input id="companyShortName" name="companyShortName"   class="mini-textbox"  emptyText="请输入公司简称"  onenter="search"/>
 												</td>
 											</tr>
 							</table>
@@ -109,9 +108,23 @@
 									        <div field="requiredEducation" width="80" align="right" headerAlign="center">学历要求</div>
 									        <div field="requiredWorkYears" width="80" align="right" headerAlign="center">工作年限要求</div>
 									        <div field="welfare" width="280" align="left" headerAlign="center">福利</div>
-									        <div field="status" width="80" align="center" headerAlign="center">发布状态</div>
-									        <div field="requiredResume" width="80" align="center" headerAlign="center">是否需要简历</div>
-									        <div field="publishPlatfrom" width="60" align="center" headerAlign="center">发布平台</div>
+									        
+									       <!--  <div field="status" width="80" align="center" headerAlign="center">发布状态</div> -->
+									        <div type="comboboxcolumn" field="status" width="80" headerAlign="center" align="center" allowSort="true">发布状态
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_publish_status" />
+											</div>
+									        
+									        <!-- <div field="requiredResume" width="80" align="center" headerAlign="center">是否需要简历</div> -->
+									        <div type="comboboxcolumn" field="requiredResume" width="80" headerAlign="center" align="center" allowSort="true">是否需要简历
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_required" />
+											</div>
+											
+											
+									       <!--  <div field="publishPlatfrom" width="60" align="center" headerAlign="center">发布平台</div> -->
+									        <div type="comboboxcolumn" field="publishPlatfrom" width="60" headerAlign="center" align="center" allowSort="true">发布平台
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_publish_platform" />
+											</div>
+									        
 									        <div field="interviewAddress" width="280" align="left" headerAlign="center">面试地址</div>
 									        
 									        <div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
@@ -248,6 +261,11 @@
 			var gridAdress = mini.get("datagrid2"); 
 			var gridVideo = mini.get("datagrid4"); 
 			var gridRecord = mini.get("datagrid5");
+			
+			function search() {
+				var data = form.getData();
+				grid.load(data)
+			}
 			
 			function refreshUserJobRecord() {
 				gridRecord.reload();

@@ -31,22 +31,22 @@
 								<td style="width:150px;">
 								 	<input name="name" id="name" class="mini-textbox"  />
 								</td>
-								<td style="width:100px;">编码：</td>
+								<td style="width:100px;">序号：</td>
 								<td style="width:150px;">
-									<input name="code" id="code" class="mini-textbox" />
+									<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
+									<input name="code" id="code" class="mini-hidden" />
 								</td>
 							</tr>
+							<!-- 
 							<tr>
 								<td>是否启用：</td>
 								<td>
 								 	<input id="enable" name="enable" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" data='[{id:"1",text:"启用"},{id:"0",text:"禁用"}]' />
 								</td>
 								<td>排序号：</td>
-								<td>
-								 	<input name="sn" id="sn" class="mini-spinner" value="0" minValue="0" maxValue="999999999"  />
-								</td>
+								 
 							</tr> 
-
+							 -->
 				        </table>
 				    </div>
 				</fieldset>

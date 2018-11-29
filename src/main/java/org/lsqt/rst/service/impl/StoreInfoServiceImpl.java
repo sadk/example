@@ -8,6 +8,7 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.db.orm.ORMappingIdGenerator;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.rst.model.StoreInfo;
 import org.lsqt.rst.model.StoreInfoQuery;
@@ -36,6 +37,9 @@ public class StoreInfoServiceImpl implements StoreInfoService{
 	}
 	
 	public StoreInfo saveOrUpdate(StoreInfo model) {
+		if (StringUtil.isBlank(model.getCode())) {
+			model.setCode(new ORMappingIdGenerator().getUUID58().toString());
+		}
 		return db.saveOrUpdate(model);
 	}
 

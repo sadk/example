@@ -89,6 +89,16 @@ public class User {
 
 	/** 邮箱 */
 	private String email;
+	
+	private String tenantCode;
+	
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
+	}
 
 	// getter、setter
 	public void setId(Long id) {

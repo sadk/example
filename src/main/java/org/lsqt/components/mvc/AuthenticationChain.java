@@ -116,7 +116,7 @@ public class AuthenticationChain implements Chain{
 		}
 
 		// 比较密码+时间戳相等
-		if ((uidList != null && uid2List != null) && (uidList.size() == 5 && uid2List.size() == 2)) {
+		if ((uidList != null && uid2List != null) && (uidList.size() == 6 && uid2List.size() == 2)) {
 			String accPwd1 = uidList.get(1);
 			String accTime1 = uidList.get(2);
 

@@ -64,13 +64,21 @@ public class UserJobRecord {
 	private java.util.Date createTime;
 
 	/** 更新时间 */
-
 	private java.util.Date updateTime;
 
 	/** 投递平台 */
 	private String platfrom;
 
-	// getter、setter
+	
+	private String tenantCode;
+	
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
+	}
 
 	public void setUserCode(String userCode) {
 		this.userCode = userCode;

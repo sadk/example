@@ -86,8 +86,8 @@
 										url="${pageContext.request.contextPath}/rst/store_info/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
 									    <div property="columns">
 									        <div type="checkcolumn"></div>
-									        <div field="code" width="120" headerAlign="center">门店编码</div>
 									        <div field="name" width="160" headerAlign="center">门店名称</div>
+									        <div field="code" width="120" headerAlign="center">门店编码</div>
 									        <div field="belongRegion" width="100" headerAlign="center">区域</div>
 									         
 									        <div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
@@ -165,7 +165,7 @@
 							
 							
 							
-							
+							<%-- 
 							<div title="门店管辖厂区" refreshOnClick="true" name="tabReses">
 								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
 									<table style="width:100%;">
@@ -193,7 +193,7 @@
 									</div>
 								</div>
 							</div>
-							
+							 --%>
 							
 							
 							

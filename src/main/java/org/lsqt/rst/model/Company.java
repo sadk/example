@@ -37,6 +37,9 @@ public class Company {
 
 	/** 更新人 */
 	private String updateUser;
+	
+	/** 租户码**/
+	private String tenantCode;
 
 	// getter、setter
 	public void setId(Long id) {
@@ -125,6 +128,14 @@ public class Company {
 
 	public String getUpdateUser() {
 		return this.updateUser;
+	}
+
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
 	}
 
 }

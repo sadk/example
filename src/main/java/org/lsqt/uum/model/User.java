@@ -89,7 +89,12 @@ public class User {
 	/***/
 
 	private java.util.Date updateTime;
-
+	
+	/**用户所属的租户**/
+	private String tenantCode;
+	private String tenantName;
+	
+	
 	// getter、setter
 	public void setId(Long id) {
 		this.id = id;
@@ -291,6 +296,22 @@ public class User {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
+	}
+
+	public String getTenantName() {
+		return tenantName;
+	}
+
+	public void setTenantName(String tenantName) {
+		this.tenantName = tenantName;
 	}
 
 

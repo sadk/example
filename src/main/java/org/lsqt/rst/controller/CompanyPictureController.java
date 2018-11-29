@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -33,7 +34,8 @@ public class CompanyPictureController {
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<CompanyPicture> queryForPage(CompanyPictureQuery query) throws IOException {
-		return companyPictureService.queryForPage(query); //  
+		query.setTenantCode(ContextUtil.getLoginTenantCode());
+		return companyPictureService.queryForPage(query);
 	}
 	
 	@RequestMapping(mapping = { "/all", "/m/all" })
@@ -43,6 +45,7 @@ public class CompanyPictureController {
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public CompanyPicture saveOrUpdate(CompanyPicture form) {
+		form.setTenantCode(ContextUtil.getLoginTenantCode());
 		return companyPictureService.saveOrUpdate(form);
 	}
 	

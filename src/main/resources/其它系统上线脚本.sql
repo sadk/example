@@ -299,4 +299,31 @@ CHANGE COLUMN `job_id` `job_id` VARCHAR(50) NULL DEFAULT '' ,
 CHANGE COLUMN `addr_id` `addr_id` VARCHAR(50) NULL DEFAULT NULL ;
 
 
+ALTER TABLE `bu_company_info`  CHANGE COLUMN `company_id` `company_id` VARCHAR(50) NOT NULL COMMENT '企业编号' ;
+ALTER TABLE `bu_work_address` CHANGE COLUMN `company_id` `company_id` VARCHAR(50) NULL DEFAULT NULL COMMENT '公司ID' ;
+ALTER TABLE  `bu_company_picture` CHANGE COLUMN `company_id` `company_id` VARCHAR(50) NULL DEFAULT NULL COMMENT '企业编号' ;
+
+ALTER TABLE `bu_job_welfare_relationship` 
+CHANGE COLUMN `welfare_id` `welfare_id` VARCHAR(50) NULL DEFAULT NULL COMMENT '福利ID' ;
+
+ALTER TABLE `bu_job_welfare_relationship` 
+CHANGE COLUMN `job_id` `job_id` VARCHAR(50) NULL DEFAULT NULL COMMENT '职位ID' ;
+
+ALTER TABLE `uathcs_docker_cg`.`bu_base_job_info`  CHANGE COLUMN `base_job_id` `base_job_id` VARCHAR(50) NOT NULL COMMENT '岗位ID' ;
+
+
+ALTER TABLE `bu_base_job_info`  ADD COLUMN `sn` INT(4) NULL COMMENT '排序号';
+
+ALTER TABLE  `bu_job_info` 
+CHANGE COLUMN `company_id` `company_id` VARCHAR(50) NOT NULL COMMENT '公司ID' ,
+CHANGE COLUMN `announcer_id` `announcer_id` VARCHAR(50) NULL DEFAULT NULL COMMENT '发布者编码' ;
+
+
+
+ALTER TABLE  `uum_user` 
+CHANGE COLUMN `code` `code` VARCHAR(50) NULL DEFAULT NULL COMMENT '用户编码' ,
+ADD COLUMN `tenant_code` VARCHAR(50) NULL COMMENT '用户所属租户码' ;
+
+ALTER TABLE  `uum_user` 
+ADD COLUMN `tenant_name` VARCHAR(50) NULL AFTER `tenant_code`;
 

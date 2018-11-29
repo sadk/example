@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -51,7 +52,8 @@ public class StoreCompanyController {
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<StoreCompany> queryForPage(StoreCompanyQuery query) throws IOException {
-		return storeCompanyService.queryForPage(query); //  
+		query.setTenantCode(ContextUtil.getLoginTenantCode());
+		return storeCompanyService.queryForPage(query);
 	}
 	
 	@RequestMapping(mapping = { "/all", "/m/all" })
@@ -61,6 +63,7 @@ public class StoreCompanyController {
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public StoreCompany saveOrUpdate(StoreCompany form) {
+		form.setTenantCode(ContextUtil.getLoginTenantCode());
 		return storeCompanyService.saveOrUpdate(form);
 	}
 	
@@ -114,6 +117,8 @@ public class StoreCompanyController {
 			 
 			model.setCreateTime(new Date());
 			model.setUpdateTime(new Date());
+			
+			model.setTenantCode(ContextUtil.getLoginTenantCode());
 			db.save(model);
 
 		}

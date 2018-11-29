@@ -70,7 +70,16 @@ public class UserJobRecordQuery {
 	/** 投递平台 */
 	private String platfrom;
 
-	// getter、setter
+
+	private String tenantCode;
+	
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
+	}
 
 	public void setUserCode(String userCode) {
 		this.userCode = userCode;

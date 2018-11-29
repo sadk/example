@@ -22,6 +22,15 @@ public class CompanyPictureQuery {
 	/** 图片路径 */
 	private String url;
 
+	private String tenantCode;
+	
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
+	}
 	// getter、setter
 
 	public void setCompanyCode(String companyCode) {

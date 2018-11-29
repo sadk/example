@@ -86,11 +86,11 @@
 							<tr>
 								<td>岗位职责：</td>
 								<td>
-									<input id="responsibility" name="responsibility"  class="mini-textbox"  style="width:150px" />
+									<input id="responsibility" name="responsibility"  class="mini-textarea"  style="width:150px" />
 								</td>
 								<td> 工资详情 ：</td>
 								<td>
-									<input id="salaryDetails" name="salaryDetails"  class="mini-textbox"  style="width:150px" />
+									<input id="salaryDetails" name="salaryDetails"  class="mini-textarea"  style="width:150px" />
 								</td>
 							</tr>
 							
@@ -159,6 +159,11 @@
 								<td>
 									<input id="status" name="status" class="mini-combobox"  style="width:150px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_publish_status"/>
 								</td>
+								<td>所属门店：</td>
+								<td>
+									<input id="storeName" name="storeName" onclick="selectStore()" class="mini-textbox"  style="width:150px" />
+									<input id="storeCode" name="storeCode"   class="mini-hidden" />
+								</td>
 							</tr>
 						</table>
 					</div>
@@ -183,6 +188,34 @@
 			var welfareItemNos = mini.get("welfareItemNos");
 			
 			var interviewAddress = mini.get("interviewAddress"); //面试地址
+			
+			function selectStore() { //职位所属的门店
+	            mini.open({
+	                url: "${pageContext.request.contextPath}/apps/default/admin/rst/store/selector_store.jsp?multiSelect=false",
+	                title: "选择所属门店",
+	                width: 500,  height: 400,
+	            	onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {
+							 
+						};
+						
+						iframe.contentWindow.SetData(data);
+					},
+	                ondestroy: function (action) {
+	                    if (action == "ok") {
+	                        var iframe = this.getIFrameEl();
+	                        var data = iframe.contentWindow.GetData();
+	                        data = mini.clone(data);
+	                        
+	                        if (data) {
+	                        	mini.get("storeName").setValue(data.name);
+	                        	mini.get("storeCode").setValue(data.code);
+	                        } 
+	                    }
+	                }
+	            });
+			}
 			
 			function selectAddr() { //选择面试地址 
 	            mini.open({

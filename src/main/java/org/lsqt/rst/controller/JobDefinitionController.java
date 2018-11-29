@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -31,12 +32,14 @@ public class JobDefinitionController {
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<JobDefinition> queryForPage(JobDefinitionQuery query) throws IOException {
-		return jobDefinitionService.queryForPage(query); //  
+		query.setTenantCode(ContextUtil.getLoginTenantCode());
+		return jobDefinitionService.queryForPage(query);
 	}
 	
 	@RequestMapping(mapping = { "/list", "/m/list" })
 	public List<JobDefinition> queryForList(JobDefinitionQuery query) throws IOException {
-		return jobDefinitionService.queryForList(query); //  
+		query.setTenantCode(ContextUtil.getLoginTenantCode());
+		return jobDefinitionService.queryForList(query);
 	}
 	
 	
@@ -47,6 +50,7 @@ public class JobDefinitionController {
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public JobDefinition saveOrUpdate(JobDefinition form) {
+		form.setTenantCode(ContextUtil.getLoginTenantCode());
 		return jobDefinitionService.saveOrUpdate(form);
 	}
 	

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -37,6 +38,7 @@ public class PositionDefinitionController {
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<PositionDefinition> queryForPage(PositionDefinitionQuery query) throws IOException {
+		query.setTenantCode(ContextUtil.getLoginTenantCode());
 		return positionDefinitionService.queryForPage(query); //  
 	}
 	
@@ -47,6 +49,7 @@ public class PositionDefinitionController {
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public PositionDefinition saveOrUpdate(PositionDefinition form) {
+		form.setTenantCode(ContextUtil.getLoginTenantCode());
 		if (StringUtil.isBlank(form.getCode())) {
 			form.setCode(idgen.getUUID58().toString());
 		}
@@ -74,8 +77,8 @@ public class PositionDefinitionController {
 			
 			List<String> addr = StringUtil.split(workAddressCodes, ",");
 			for(String addrId : addr) {
-				String sql2 = "insert into bu_job_address_relationship(job_id,addr_id) values(?,?)";
-				int ct = db.executeUpdate(sql2, positionCode,addrId);
+				String sql2 = "insert into bu_job_address_relationship(job_id,addr_id,tenant_code) values(?,?,?)";
+				int ct = db.executeUpdate(sql2, positionCode,addrId,ContextUtil.getLoginTenantCode());
 				cnt += ct ;
 			}
 		}

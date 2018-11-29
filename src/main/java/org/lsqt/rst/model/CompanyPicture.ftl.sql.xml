@@ -5,6 +5,8 @@
 		
 	 		<column name="company_id" property="companyCode" text="企业编号"/>
 	 		<column name="picture_url" property="url" text="图片路径"/>
+	 		
+	 		<column name="tenant_code" property="tenantCode" text="租户码"/>
 
 	</table>
 	
@@ -24,6 +26,8 @@
 	  						<#if query.id??> and id = ${query.id} </#if>
 					
 	  						<#if query.companyCode??> and company_id = '${StringUtil.escapeSql(query.companyCode)}' </#if>
+	  						
+	  						<#if query.code??> and addr_id = '${StringUtil.escapeSql(query.code)}' </#if>
         	</#if>
         	
 		]]>

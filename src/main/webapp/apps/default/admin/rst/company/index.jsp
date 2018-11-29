@@ -147,6 +147,7 @@
 											<td style="width:100%;">
 												<a class="mini-button" iconCls="icon-add" onclick="editPicture('add')">添加</a>
 												<a class="mini-button" iconCls="icon-remove" onclick="removePicture()">删除</a>
+												<a class="mini-button" iconCls="icon-node" onclick="viewPicture()">查看</a>
 												<span class="separator"></span>
 												<a class="mini-button" iconCls="icon-reload" onclick="refreshPicture()">刷新</a>
 											</td>
@@ -211,6 +212,14 @@
 			var addressGrid = mini.get("datagrid2");// 用户列表
 			var pictureGrid = mini.get("dataGrid3");
 			var adminGrid = mini.get("dataGrid4");
+			
+			function viewPicture() {
+					
+			}
+			
+			function  refreshPicture() {
+				pictureGrid.reload();
+			}
 			
 			function removePicture() {
 				var rows = pictureGrid.getSelecteds();
@@ -358,7 +367,7 @@
 						iframe.contentWindow.SetData(data);
 					},
 					ondestroy : function(action) {
-						addressGrid.reload();
+						pictureGrid.reload();
 					}
 				});
 			}

@@ -14,6 +14,7 @@
 	 		<column name="create_user" property="createUser" text="创建人"/>
 	 		<column name="update_user" property="updateUser" text="更新人"/>
 	 	
+	 		<column name="tenant_code" property="tenantCode" text="租户码"/>
 	 	
 	 		<column createTime="create_time" property="createTime" text="创建时间"/>
 	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
@@ -57,6 +58,8 @@
 	  						<#if query.createTimeBegin?? && query.createTimeEnd??>
 	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 	  						</#if>
+	  						
+	  						<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
         	</#if>
         	
 		]]>

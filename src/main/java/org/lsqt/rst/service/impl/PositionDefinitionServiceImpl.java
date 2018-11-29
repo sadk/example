@@ -47,6 +47,18 @@ public class PositionDefinitionServiceImpl implements PositionDefinitionService{
 	}
 
 	public int deleteById(Long ... ids) {
+		if (ids != null && ids.length > 0) {
+			for (Long id : ids) {
+				PositionDefinition position = getById(id);
+				if (position != null) {
+					String sql = "delete from bu_job_address_relationship where job_id=?"; // 级联删除职位的“工作地址”
+					db.executeUpdate(sql, position.getCode());
+
+					String sql2 = "delete from bu_job_video where job_id=?"; // 级联删除职位的视频
+					db.executeUpdate(sql2, position.getCode());
+				}
+			}
+		}
 		return db.deleteById(PositionDefinition.class, Arrays.asList(ids).toArray());
 	}
 }

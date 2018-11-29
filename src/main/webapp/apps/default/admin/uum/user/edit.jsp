@@ -171,7 +171,13 @@
 										</td>
 									</tr>
 									
-									
+									<tr>
+										<td>所属租户：</td>
+										<td>
+											<input id="tenantName" name="tenantName"  class="mini-textbox" onclick="selectTenant()" required="true"/>
+											<input id="tenantCode" name="tenantCode"  class="mini-hidden" />
+										</td>
+									</tr>
 									
 								 
 									
@@ -194,6 +200,27 @@
 
 			var form = new mini.Form("edit-form1");
 		
+			function selectTenant() {
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/sys/tenant/selector_tenant.jsp",
+					title : "租户",
+					width : 500,
+					height : 380,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = { };
+						iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						var iframe = this.getIFrameEl();
+						var data = iframe.contentWindow.GetData();
+						data = mini.clone(data);
+						mini.get("tenantCode").setValue(data.code) ;
+						mini.get("tenantName").setValue(data.name) ;
+					}
+				});
+			}
+			
 			function SaveData() {
 				var o = form.getData();
 				form.validate();

@@ -109,11 +109,11 @@
 					<table style="width:100%;">
 						<tr>
 							<td style="width:100%;">
-								<a class="mini-button" iconCls="icon-add" onclick="edit('add')">添加</a>
+								<!-- <a class="mini-button" iconCls="icon-add" onclick="edit('add')">添加</a>
 								<a class="mini-button" iconCls="icon-edit" onclick="edit('edit')">修改</a>
 								<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
-								<span class="separator"></span>  
-								 <a class="mini-button" iconCls="icon-reload" onclick="refresh()">删除</a>
+								<span class="separator"></span>   -->
+								 <a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
 							</td>
 							<td style="white-space:nowrap;">
 		                        <input id="key2" name="key2" class="mini-textbox" emptyText="请输入关键字" style="width:150px;" onenter="search"/>   

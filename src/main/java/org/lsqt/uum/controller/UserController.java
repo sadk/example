@@ -184,7 +184,7 @@ public class UserController {
 			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_ACCOUNT_OBJECT, user.getLoginName());
 			List<Res> resList = getPermissionList(resQuery);
 			
-			writeCookie(user.getId().toString(),user.getName(),username,password,toResNodeList(resList));
+			writeCookie(user.getId().toString(),user.getName(),username,password,user.getTenantCode(), toResNodeList(resList));
 			return Result.ok(user);
 		}
 		
@@ -245,7 +245,7 @@ public class UserController {
 		ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_ACCOUNT_OBJECT, dbUser.getLoginName());
 		List<Res> resList = getPermissionList(resQuery);
 		
-		writeCookie(dbUser.getId().toString(),dbUser.getName(),username, password,toResNodeList(resList));
+		writeCookie(dbUser.getId().toString(),dbUser.getName(),username, password,dbUser.getTenantCode(),toResNodeList(resList));
 		
 	 
 		return Result.ok(dbUser,"登陆成功");
@@ -262,14 +262,14 @@ public class UserController {
 	 * @param data 资源权限数据(写到cookie)
 	 * @throws Exception 
 	 */
-	private void writeCookie(String id,String name,String loginName, String password,List<AuthenticationNode> data) throws Exception {
+	private void writeCookie(String id,String name,String loginName, String password,String tenantCode,List<AuthenticationNode> data) throws Exception {
 		HttpServletResponse response = ContextUtil.getResponse();
 		
 
 		String passwodEncrypted = CodeUtil.passwodEncrypt(password + User.PWD_SALT);
 		String currTime = System.currentTimeMillis()+"";
-		// 第一个cookie存（uid）<==>（账号，密码，时间戳,id,姓名）
-		List<String> uidValue = Arrays.asList(loginName, passwodEncrypted, currTime , id , name);
+		// 第一个cookie存（uid）<==>（账号，密码，时间戳,id,姓名,租户）
+		List<String> uidValue = Arrays.asList(loginName, passwodEncrypted, currTime , id , name,tenantCode);
 		Cookie uid = new Cookie("uid", CodeUtil.simpleEncode(StringUtil.join(uidValue)));
 		uid.setPath("/");
 		uid.setMaxAge(-1);

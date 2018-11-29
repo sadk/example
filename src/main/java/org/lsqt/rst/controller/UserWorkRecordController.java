@@ -12,8 +12,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -63,6 +65,10 @@ public class UserWorkRecordController {
 			return Result.fail("考勤的具体年月不能为空");
 		}
 
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String now = sdf.format(new Date());
+		
+		
 		// 一个月的加班、请假记录
 		UserWorkRecordQuery query = new UserWorkRecordQuery();
 		query.setUserCode(userCode);
@@ -75,7 +81,14 @@ public class UserWorkRecordController {
 		Double totalTime=0D;
 		
 		List<Node> nodeList = buildMonthData(date,data); 
+		List<Node> realList = new ArrayList<>();
 		for (Node e: nodeList) {
+			if(e.recordDate <= Integer.valueOf(now)) {
+				realList.add(e);
+			}
+		}
+		
+		for (Node e: realList) {
 			normalTime += e.workHours;
 			leaveTime += e.leaveHours;
 			overTime += e.extraHours;
@@ -83,7 +96,7 @@ public class UserWorkRecordController {
 		totalTime = normalTime + overTime;
 		
 		Map<String,Object> resultMap = new HashMap<>();
-		resultMap.put("detail",nodeList);
+		resultMap.put("detail",realList);
 		resultMap.put("normalTime",normalTime);
 		resultMap.put("leaveTime",leaveTime);
 		resultMap.put("overTime",overTime);
@@ -149,9 +162,11 @@ public class UserWorkRecordController {
 				
 				n.recordDate = Integer.valueOf(recordDate);
 				
-				SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
+				SimpleDateFormat dateFm = new SimpleDateFormat("EEEE",Locale.CHINESE);
 				String xq = dateFm.format(convertDate(n.recordDate.toString()));
+				System.out.println("------------xq:"+xq);
 				n.weekday = WEEKDAY_MAP.get(xq) ;
+				System.out.println(n.weekday);
 				
 				n.extraHours = 0D;
 				n.leaveHours = 0D;
@@ -239,10 +254,10 @@ public class UserWorkRecordController {
 	@RequestMapping(mapping = { "/wx/save_or_update"})
 	@RequestPayload
 	public Result<UserWorkRecord> saveOrUpdate4WX(UserWorkRecord form) {
-		if (form.getType() == null) {
+		/*if (form.getType() == null) {
 			return Result.fail("考勤类型不能为空");
 		}
-		
+		*/
 		try {
 			return Result.ok(userWorkRecordService.saveOrUpdate(form));
 		} catch (Exception ex) {
@@ -250,7 +265,7 @@ public class UserWorkRecordController {
 		}
 	}
 	
-
+/*
 	@RequestMapping(mapping = { "/wx/get_by_id"},isTransaction = false)
 	public Result<UserWorkRecord> getById4WX(Long id)  {
 		if (id == null) {
@@ -285,6 +300,8 @@ public class UserWorkRecordController {
 		List<Long> list = StringUtil.split(Long.class, ids, ",");
 		return Result.ok(userWorkRecordService.deleteById(list.toArray(new Long[list.size()])));
 	}
+	*/
+	
 	
 	// ---------------------------------------------- 以上是微信端接口  ----------------------------------------------
 	
@@ -298,6 +315,7 @@ public class UserWorkRecordController {
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<UserWorkRecord> queryForPage(UserWorkRecordQuery query) throws IOException {
+		query.setTenantCode(ContextUtil.getLoginTenantCode());
 		return userWorkRecordService.queryForPage(query); //  
 	}
 	
@@ -308,6 +326,7 @@ public class UserWorkRecordController {
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public UserWorkRecord saveOrUpdate(UserWorkRecord form) {
+		form.setTenantCode(ContextUtil.getLoginTenantCode());
 		return userWorkRecordService.saveOrUpdate(form);
 	}
 	

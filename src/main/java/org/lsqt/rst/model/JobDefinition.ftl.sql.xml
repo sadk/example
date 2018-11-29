@@ -1,34 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <statements namespace="org.lsqt.rst.model.JobDefinition" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
 	<table name="bu_base_job_info">
-				<column id="id" type="auto" property="id" text="主键" />
+			<column id="id" type="auto" property="id" text="主键" />
 		
-	 	
 	 		<column name="base_job_id" property="code" text="岗位ID"/>
 	 	
 	 		<column name="base_job_name" property="name" text="岗位名称"/>
 	 	
-	 	
+	 		<column name="sn" property="sn" text="排序号"/>
+	 		
 	 		<column name="create_user" property="createUser" text="创建人"/>
 	 	
-	 	
 	 		<column name="update_user" property="updateUser" text="更新人"/>
-	 	
 		
-		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
+			<column name="tenant_code" property="tenantCode" text="租户码"/>
+			
 	 		<column createTime="create_time" property="createTime" text="创建时间"/>
-	 		
-	 		
-	 		
-	 		
-	 		
 	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
 	 		
 	 		
@@ -38,7 +25,7 @@
 	 	<![CDATA[
 		 	select * from bu_base_job_info where 1=1
 		 	<#if query??>
-		 		<#-- -------------------关键字查询开始 --------------- -->
+		 		 
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
@@ -57,22 +44,15 @@
 							
 					)
 				</#if>
-				<#-- -------------------关键字查询结束 --------------- -->
-	
-				<#-- -------------------综合查询开始 --------------- -->
+				 
 				
-				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
-	  					<#if query.id??> and id = ${query.id} </#if>
+	  						<#if query.id??> and id = ${query.id} </#if>
 					
 	  						<#if query.code??> and base_job_id = '${StringUtil.escapeSql(query.code)}' </#if>
 						
-					
 	  						<#if query.name??> and base_job_name = '${StringUtil.escapeSql(query.name)}' </#if>
-						
-					
-						
-					
 						
 							<#if query.createTimeBegin?? && query.createTimeEnd??>
 	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
@@ -80,13 +60,13 @@
 	  						
 	  						<#if query.createUser??> and create_user = '${StringUtil.escapeSql(query.createUser)}' </#if>
 						
-					
-						
-					
 	  						<#if query.updateUser??> and update_user = '${StringUtil.escapeSql(query.updateUser)}' </#if>
 						
-					
-				<#-- -------------------综合查询结束 --------------- -->
+							<#if query.code??> and addr_id = '${StringUtil.escapeSql(query.code)}' </#if>
+							
+							<#if query.code??> and addr_id = '${StringUtil.escapeSql(query.code)}' </#if>
+							
+							<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
         	</#if>
         	
 		]]>

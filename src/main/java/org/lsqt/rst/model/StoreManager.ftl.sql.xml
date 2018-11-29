@@ -18,31 +18,12 @@
 	 	
 	 		<column name="tenant_code" property="tenantCode" text="租户编码"/>
 	 	
-		
-		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
 	</table>
 	
 	<statement id="queryForPage" parameterName="query">
 	 	<![CDATA[
 		 	select * from bu_store_with_manager where 1=1
 		 	<#if query??>
-		 		<#-- -------------------关键字查询开始 --------------- -->
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
@@ -103,8 +84,6 @@
 	  						
 	  						<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
 						
-					
-				<#-- -------------------综合查询结束 --------------- -->
         	</#if>
         	
 		]]>

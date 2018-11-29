@@ -50,8 +50,10 @@ public class CompanyServiceImpl implements CompanyService{
 				if (model != null) {
 					String sql = "delete from bu_work_address where company_id=?";
 					String sql2 = "delete from bu_company_picture where company_id=?";
+					String sql3 = "delete from bu_company_admin_relationship where company_id = ?";
 					db.executeUpdate(sql, model.getCode());
 					db.executeUpdate(sql2, model.getCode());
+					db.executeUpdate(sql3, model.getCode());
 				}
 			}
 			return db.deleteById(Company.class, Arrays.asList(ids).toArray());

@@ -76,6 +76,7 @@ public class ContextMapBindingChain implements Chain{
 			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_ACCOUNT_OBJECT, uidList.get(0));
 			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_ID_OBJECT, uidList.get(3));
 			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_NAME_OBJECT, uidList.get(4));
+			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_TENANT_CODE_OBJECT, uidList.get(5));
 		}	
 		
 		this.state = STATE_IS_CONTINUE_TO_EXECUTE;

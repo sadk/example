@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.lsqt.components.context.annotation.Inject;
@@ -63,8 +64,17 @@ public class UserWorkRecordServiceImpl implements UserWorkRecordService{
 	
 
 	public UserWorkRecord saveOrUpdate(UserWorkRecord model) {
+		UserWorkRecordQuery query = new UserWorkRecordQuery();
+		query.setRecordDate(model.getRecordDate());
+		query.setUserCode(model.getUserCode());
+		UserWorkRecord dbModel = db.queryForObject("queryForPage", UserWorkRecord.class , query);
+		
+		if (dbModel !=null) {
+			model.setId(dbModel.getId());
+		}
+		
 		if (model.getWeekday() == null) {
-			SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
+			SimpleDateFormat dateFm = new SimpleDateFormat("EEEE",Locale.CHINESE);
 
 			String xq = dateFm.format(convertDate(model.getRecordDate().toString()));
 

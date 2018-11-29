@@ -39,7 +39,8 @@
 	 		
 	 		<column name="platfrom" property="platfrom" text="投递平台"/>
 		
-	  
+			<column name="tenant_code" property="tenantCode" text="租户码"/>
+
 	 		<column createTime="create_time" property="createTime" text="创建时间"/>
 	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
 	 		
@@ -140,7 +141,7 @@
 	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 	  						</#if>
 	  						
-							 
+							 <#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
         	</#if>
         	
 		]]>

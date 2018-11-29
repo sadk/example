@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -43,6 +44,7 @@ public class CompanyAdminController {
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<CompanyAdmin> queryForPage(CompanyAdminQuery query) throws IOException {
+		query.setTenantCode(ContextUtil.getLoginTenantCode());
 		return companyAdminService.queryForPage(query); //  
 	}
 	
@@ -53,6 +55,7 @@ public class CompanyAdminController {
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public CompanyAdmin saveOrUpdate(CompanyAdmin form) {
+		form.setTenantCode(ContextUtil.getLoginTenantCode());
 		return companyAdminService.saveOrUpdate(form);
 	}
 	
@@ -103,6 +106,8 @@ public class CompanyAdminController {
 			model.setUserCode(userCode);
 			model.setUserName(user.getRealName());
 
+			model.setTenantCode(ContextUtil.getLoginTenantCode());
+			
 			model.setCreateDate(new Date());
 			model.setUpdateDate(new Date());
 			db.save(model);

@@ -13,6 +13,8 @@ public class JobDefinition {
 
 	/** 岗位名称 */
 	private String name;
+	
+	private Integer sn;
 
 	/** 创建时间 */
 	private java.util.Date createTime;
@@ -26,7 +28,16 @@ public class JobDefinition {
 	/** 更新人 */
 	private String updateUser;
 
-	// getter、setter
+	private String tenantCode;
+	
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
+	}
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -81,6 +92,14 @@ public class JobDefinition {
 
 	public String getUpdateUser() {
 		return this.updateUser;
+	}
+
+	public Integer getSn() {
+		return sn;
+	}
+
+	public void setSn(Integer sn) {
+		this.sn = sn;
 	}
 
 }

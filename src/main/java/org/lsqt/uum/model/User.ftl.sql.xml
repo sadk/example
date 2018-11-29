@@ -20,6 +20,9 @@
 	 		<column name="remark" property="remark"/>
 	 		<column name="app_code" property="appCode"/>
 	 		
+	 		<column name="tenant_code" property="tenantCode" text="用户所属的租户码"/>
+	 		<column name="tenant_name" property="tenantName" text="租户名称"/>
+	 		
 	 		<column gid="gid" property="gid" text="全局唯一编号"/>
 	 		<column createTime="create_time" property="createTime" text="创建时间"/>
 	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>

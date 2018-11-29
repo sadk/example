@@ -21,6 +21,7 @@
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
 			<input name="id" class="mini-hidden" />
+			<input name="code" id="code" class="mini-hidden" required="true"/>
 			<div style="padding:4px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
 		            <legend>门店信息</legend>
@@ -31,18 +32,12 @@
 								<td style="width:150px;">
 								 	<input name="name" id="name" class="mini-textbox" required="true"/>
 								</td>
-								<td style="width:100px;">编码：</td>
+								<td style="width:100px;">所属区域：</td>
 								<td style="width:150px;">
-									<input name="code" id="code" class="mini-textbox" required="true"/>
+									<input name="belongRegion" id="belongRegion" class="mini-textbox" />
 								</td>
 							</tr>
-							<tr>
-								<td>所属区域：</td>
-								<td colspan="3">
-								 	<input name="belongRegion" id="belongRegion" class="mini-textbox" />
-								</td>
-							</tr> 
-
+							
 				        </table>
 				    </div>
 				</fieldset>
@@ -79,7 +74,7 @@
 				
 				 if(data.action == "edit" || data.action=='view') {
 					$.ajax({
-						url : "${pageContext.request.contextPath}/rst/job_definition/get_by_id?id=" + data.id,
+						url : "${pageContext.request.contextPath}/rst/store_info/get_by_id?id=" + data.id,
 						dataType: 'json',
 						success : function(text) {
 							var o = mini.decode(text);

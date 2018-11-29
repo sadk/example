@@ -3,7 +3,6 @@
 	<table name="bu_job_info">
 			<column id="id" type="auto" property="id" text="主键" />
 		
-	 	
 	 		<column name="job_id" property="code" text="职位ID"/>
 	 	
 	 		<column name="job_name" property="name" text="职位名称"/>
@@ -58,8 +57,11 @@
 	 	
 	 		<column name="interview_address" property="interviewAddress" text="面试地址"/>
 	 	
+	 		<column name="store_id" property="storeCode" text="职位所属门店"/>
+	 		<column name="store_name" property="storeName" text="门店名称"/>
 	 	
-	 	
+	 		<column name="tenant_code" property="tenantCode" text="租户码"/>
+	 		
 	 		<column name="create_user" property="createUser" text="创建用户"/>
 	 		<column name="update_user" property="updateUser" text="更新用户"/>
 	 		
@@ -72,7 +74,6 @@
 	 	<![CDATA[
 		 	select * from bu_job_info where 1=1
 		 	<#if query??>
-		 		<#-- -------------------关键字查询开始 --------------- -->
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
@@ -87,10 +88,13 @@
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						<#if query.storeCode??> and store_id = '${StringUtil.escapeSql(query.storeCode)}' </#if>
+	  						<#if query.storeName??> and store_name = '${StringUtil.escapeSql(query.storeCode)}' </#if>
 					
 	  						<#if query.code??> and job_id = '${StringUtil.escapeSql(query.code)}' </#if>
 					
-	  						<#if query.name??> and job_name = '${StringUtil.escapeSql(query.name)}' </#if>
+	  						<#if query.name??> and job_name like '%${StringUtil.escapeSql(query.name)}%' </#if>
 					
 	  						<#if query.companyCode??> and company_id = '${StringUtil.escapeSql(query.companyCode)}' </#if>
 					
@@ -152,6 +156,7 @@
 	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 	  						</#if>
 	  						
+	  						<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
         	</#if>
         	
 		]]>

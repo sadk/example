@@ -80,7 +80,7 @@
 						
 	  						<#if query.reason??> and reason = '${StringUtil.escapeSql(query.reason)}' </#if>
 					
-	  						<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
+	  						<#if query.tenantCode??> and v.tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
 						
         	</#if>
         	

@@ -88,7 +88,6 @@ public class PositionDefinitionQuery {
 	private String top;
 
 	/** 下线时间 */
-
 	private java.util.Date offlineTime;
 
 	/** 发布平台(0:全平台，1：公众号，2：小程序) */
@@ -101,7 +100,15 @@ public class PositionDefinitionQuery {
 	/** 面试地址 */
 	private String interviewAddress;
 
-	// getter、setter
+	private String tenantCode;
+	
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
+	}
 
 	public void setCode(String code) {
 		this.code = code;

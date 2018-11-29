@@ -51,6 +51,8 @@ public class WorkAddress {
 	/****/
 	private String addressDesc;
 	
+	private String tenantCode;
+	
 	// getter、setter
 	public void setId(Long id) {
 		this.id = id;
@@ -177,6 +179,14 @@ public class WorkAddress {
 
 	public void setAddressDesc(String addressDesc) {
 		this.addressDesc = addressDesc;
+	}
+
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
 	}
 
 }

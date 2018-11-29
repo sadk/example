@@ -8,6 +8,10 @@ public class PositionDefinition {
 	/***/
 	private Long id;
 
+	private String storeCode; //职位所属门店
+	
+	private String storeName;
+	
 	/** 职位ID */
 	private String code;
 
@@ -101,9 +105,21 @@ public class PositionDefinition {
 	/**工资详情**/
 	private String salaryDetails;
 
+
+	
+	private String tenantCode;
+	
 	// ----------------- 辅助字段， 用于获取岗位的福利 (多个福利逗号分割)
 	private String welfareItemNos;
 	
+	
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
+	}
 	// getter、setter
 	public void setId(Long id) {
 		this.id = id;
@@ -367,6 +383,22 @@ public class PositionDefinition {
 
 	public void setWelfareItemNos(String welfareItemNos) {
 		this.welfareItemNos = welfareItemNos;
+	}
+
+	public String getStoreCode() {
+		return storeCode;
+	}
+
+	public void setStoreCode(String storeCode) {
+		this.storeCode = storeCode;
+	}
+
+	public String getStoreName() {
+		return storeName;
+	}
+
+	public void setStoreName(String storeName) {
+		this.storeName = storeName;
 	}
 
 }

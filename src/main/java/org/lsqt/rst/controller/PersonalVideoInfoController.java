@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -33,6 +34,7 @@ public class PersonalVideoInfoController {
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<PersonalVideoInfo> queryForPage(PersonalVideoInfoQuery query) throws IOException {
+		query.setTenantCode(ContextUtil.getLoginTenantCode());
 		return personalVideoInfoService.queryForPage(query); //  
 	}
 	
@@ -43,13 +45,15 @@ public class PersonalVideoInfoController {
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public PersonalVideoInfo saveOrUpdate(PersonalVideoInfo form) {
+		form.setTenantCode(ContextUtil.getLoginTenantCode());
 		return personalVideoInfoService.saveOrUpdate(form);
 	}
 	
 	@RequestMapping(mapping = { "/save_or_update_short", "/m/save_or_update_short" })
 	public PersonalVideoInfo check(PersonalVideoInfo form) {
+		form.setTenantCode(ContextUtil.getLoginTenantCode());
 		if (form.getId() != null) {
-			db.update(form, "reason","status");
+			db.update(form, "reason","status","tenantCode");
 		}
 		return form;
 	}

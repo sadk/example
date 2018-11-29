@@ -58,64 +58,7 @@
 	 	
 	 		<column name="email" property="email" text="邮箱"/>
 	 	
-		
-		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
-	 		
+	 		<column name="tenant_code" property="tenantCode" text="租户码"/>
 	</table>
 	
 	<statement id="queryForPage" parameterName="query">
@@ -201,62 +144,40 @@
 							
 					)
 				</#if>
-				<#-- -------------------关键字查询结束 --------------- -->
-	
-				<#-- -------------------综合查询开始 --------------- -->
 				
-				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
-	  					<#if query.id??> and id = ${query.id} </#if>
+	  						<#if query.id??> and id = ${query.id} </#if>
 					
 	  						<#if query.code??> and user_id = '${StringUtil.escapeSql(query.code)}' </#if>
-						
 					
 	  						<#if query.realName??> and real_name = '${StringUtil.escapeSql(query.realName)}' </#if>
-						
 					
 	  						<#if query.nickName??> and nick_name = '${StringUtil.escapeSql(query.nickName)}' </#if>
-						
 					
 	  						<#if query.mobile??> and phone = '${StringUtil.escapeSql(query.mobile)}' </#if>
-						
 					
 	  						<#if query.wxAccount??> and wx_account = '${StringUtil.escapeSql(query.wxAccount)}' </#if>
-						
 					
 	  						<#if query.sex??> and sex = '${StringUtil.escapeSql(query.sex)}' </#if>
-						
 					
-						
-					
-						
 							<#if query.birthdayBegin?? && query.birthdayEnd??>
 	  							and date_format(birthday,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.birthdayBegin)}' and '${StringUtil.escapeSql(query.birthdayEnd)}'
 	  						</#if>
 	  						
 	  						<#if query.education??> and education = '${StringUtil.escapeSql(query.education)}' </#if>
 						
-					
 	  						<#if query.provinceName??> and province = '${StringUtil.escapeSql(query.provinceName)}' </#if>
-						
 					
 	  						<#if query.cityName??> and city = '${StringUtil.escapeSql(query.cityName)}' </#if>
 						
-					
 	  						<#if query.countryName??> and country = '${StringUtil.escapeSql(query.countryName)}' </#if>
 						
-					
 	  						<#if query.headImgUrl??> and head_img_url = '${StringUtil.escapeSql(query.headImgUrl)}' </#if>
-						
 					
 	  						<#if query.roleCode??> and role_code = '${StringUtil.escapeSql(query.roleCode)}' </#if>
-						
 					
 	  						<#if query.roleName??> and role_name = '${StringUtil.escapeSql(query.roleName)}' </#if>
-						
-					
-						
-					
 						
 							<#if query.registrationTimeBegin?? && query.registrationTimeEnd??>
 	  							and date_format(registration_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.registrationTimeBegin)}' and '${StringUtil.escapeSql(query.registrationTimeEnd)}'
@@ -264,45 +185,32 @@
 	  						
 	  						<#if query.registrationSource??> and registration_source = '${StringUtil.escapeSql(query.registrationSource)}' </#if>
 						
-					
 	  						<#if query.refereeUserCode??> and referee_id = '${StringUtil.escapeSql(query.refereeUserCode)}' </#if>
-						
 					
 	  						<#if query.isAgreeAuthoize??> and is_agree_authoize = '${StringUtil.escapeSql(query.isAgreeAuthoize)}' </#if>
-						
 					
 	  						<#if query.expectedJob??> and expected_job = '${StringUtil.escapeSql(query.expectedJob)}' </#if>
-						
 					
 	  						<#if query.latelyPositionCode??> and lately_job_id = '${StringUtil.escapeSql(query.latelyPositionCode)}' </#if>
 						
-					
 	  						<#if query.latelyPositionName??> and lately_job_name = '${StringUtil.escapeSql(query.latelyPositionName)}' </#if>
 						
-					
 	  						<#if query.userPassword??> and user_password = '${StringUtil.escapeSql(query.userPassword)}' </#if>
-						
 					
-						
-					
-						
 							<#if query.latelyJobEntryDateBegin?? && query.latelyJobEntryDateEnd??>
 	  							and date_format(lately_job_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.latelyJobEntryDateBegin)}' and '${StringUtil.escapeSql(query.latelyJobEntryDateEnd)}'
 	  						</#if>
 	  						
 	  						<#if query.subscribe??> and subscribe = '${StringUtil.escapeSql(query.subscribe)}' </#if>
 						
-					
 	  						<#if query.unionId??> and union_id = '${StringUtil.escapeSql(query.unionId)}' </#if>
-						
 					
 	  						<#if query.seatNumber??> and seat_number = '${StringUtil.escapeSql(query.seatNumber)}' </#if>
 						
-					
 	  						<#if query.email??> and email = '${StringUtil.escapeSql(query.email)}' </#if>
 						
+							<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
 					
-				<#-- -------------------综合查询结束 --------------- -->
         	</#if>
         	
 		]]>

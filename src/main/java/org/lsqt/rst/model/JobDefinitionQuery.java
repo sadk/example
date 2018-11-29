@@ -28,7 +28,15 @@ public class JobDefinitionQuery {
 	/** 更新人 */
 	private String updateUser;
 
-	// getter、setter
+	private String tenantCode;
+	
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
+	}
 
 	public void setCode(String code) {
 		this.code = code;

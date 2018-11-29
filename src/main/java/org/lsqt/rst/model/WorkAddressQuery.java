@@ -51,6 +51,8 @@ public class WorkAddressQuery {
 
 	/** 更新人 */
 	private String updateUser;
+	
+	private String tenantCode;
 
 	// getter、setter
 
@@ -204,6 +206,14 @@ public class WorkAddressQuery {
 
 	public void setPositionCode(String positionCode) {
 		this.positionCode = positionCode;
+	}
+
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
 	}
 
 }

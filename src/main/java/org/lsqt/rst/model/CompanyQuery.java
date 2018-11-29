@@ -39,6 +39,8 @@ public class CompanyQuery {
 
 	/** 更新人 */
 	private String updateUser;
+	
+	private String tenantCode;
 
 	// getter、setter
 
@@ -160,6 +162,14 @@ public class CompanyQuery {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getTenantCode() {
+		return tenantCode;
+	}
+
+	public void setTenantCode(String tenantCode) {
+		this.tenantCode = tenantCode;
 	}
 
 }
