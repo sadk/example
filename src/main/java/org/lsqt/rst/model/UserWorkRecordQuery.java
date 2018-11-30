@@ -53,6 +53,11 @@ public class UserWorkRecordQuery {
 	/**1=星期一， 2=星期二， 7=星期天**/
 	private Integer weekday;
 	
+	
+	private String recordDateBegin;
+	
+	private String recordDateEnd;
+	
 	// getter、setter
 
 	public void setUserCode(String userCode) {
@@ -221,5 +226,21 @@ public class UserWorkRecordQuery {
 
 	public void setRecordDateYearMonth(Integer recordDateYearMonth) {
 		this.recordDateYearMonth = recordDateYearMonth;
+	}
+
+	public String getRecordDateBegin() {
+		return recordDateBegin;
+	}
+
+	public void setRecordDateBegin(String recordDateBegin) {
+		this.recordDateBegin = recordDateBegin;
+	}
+
+	public String getRecordDateEnd() {
+		return recordDateEnd;
+	}
+
+	public void setRecordDateEnd(String recordDateEnd) {
+		this.recordDateEnd = recordDateEnd;
 	}
 }

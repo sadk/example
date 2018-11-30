@@ -150,7 +150,7 @@ public class CompanyController {
 		if (StringUtil.isNotBlank(serverPath)) {
 			aliFile = serverPath.substring(serverPath.lastIndexOf("/"),serverPath.length());
 			
-			String httpPath = uploadAliyunOSS("qdb/company/"+System.currentTimeMillis()+aliFile,fullPath);
+			String httpPath = UploadConfigerOSS.uploadAliyunOSS("qdb/company/"+System.currentTimeMillis()+aliFile,fullPath);
 			request.setAttribute("serverPath", httpPath);
 			System.out.println(httpPath);
 		}
@@ -160,28 +160,6 @@ public class CompanyController {
 	
 	
 
-	/**
-	 * 同步上传到阿里云OSS
-	 * @param serverPath
-	 */
-	private String uploadAliyunOSS(String objectName, String fileFullPath) {
-		AliyunOssUtils util = new AliyunOssUtils(UploadConfigerOSS.endPoint, UploadConfigerOSS.accessKeyId, UploadConfigerOSS.accessKeySecret);
-
-		try {
-			util.withBucket(UploadConfigerOSS.bucketName);
-			util.createBucketIfExists(UploadConfigerOSS.bucketName);
-			
-			StringBuilder result = new StringBuilder(UploadConfigerOSS.aliUrl);
-			result.append(util.uploadInputStream(objectName, new FileInputStream(new File(fileFullPath))));
-			return result.toString();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			util.shutdown();
-		}
-
-		return null;
-	}
   
 	@RequestMapping(mapping = { "/save_company_picture", "/m/save_company_picture" },text="保存公司图片")
 	public CompanyPicture saveCompanyPicture(String companyCode, String serverPath) {

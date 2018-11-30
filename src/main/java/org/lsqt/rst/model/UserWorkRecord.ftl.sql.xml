@@ -43,9 +43,10 @@
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
-							user_code = '${key}' ,
-							user_name = '${key}'				
-					)
+							user_code = '${key}' or
+							user_name = '${key}'  or
+							record_date = '${key}'
+						)
 				</#if>
 				
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
@@ -84,6 +85,12 @@
 							<#if query.createTimeBegin?? && query.createTimeEnd??>
 	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 	  						</#if>
+	  						
+	  						<#if query.recordDateBegin?? && query.recordDateEnd??>
+	  							and record_date between ${StringUtil.escapeSql(query.recordDateBegin)} and ${StringUtil.escapeSql(query.recordDateEnd)}
+	  						</#if>
+	  						
+	  						order by record_date 
 					
         	</#if>
         	

@@ -102,6 +102,9 @@ public class PositionDefinitionQuery {
 
 	private String tenantCode;
 	
+	// ------------- 辅助字段
+	private String imgType; //logo=企业图片，  cover=职位封面
+	
 	public String getTenantCode() {
 		return tenantCode;
 	}
@@ -380,6 +383,14 @@ public class PositionDefinitionQuery {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getImgType() {
+		return imgType;
+	}
+
+	public void setImgType(String imgType) {
+		this.imgType = imgType;
 	}
 
 }

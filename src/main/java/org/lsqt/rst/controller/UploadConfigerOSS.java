@@ -1,11 +1,14 @@
 package org.lsqt.rst.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
 
 import org.lsqt.components.context.annotation.Component;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.OnStarted;
 import org.lsqt.components.db.Db;
+import org.lsqt.rst.util.AliyunOssUtils;
 import org.lsqt.sys.model.Dictionary;
 import org.lsqt.sys.model.Machine;
 import org.lsqt.sys.model.MachineQuery;
@@ -84,5 +87,29 @@ public class UploadConfigerOSS {
     	});
     }
     
+    
+
+	/**
+	 * 同步上传到阿里云OSS
+	 * @param objectName  http路径前段名称标识
+	 * @param fileFullPath 附件的全种径
+	 * @return
+	 */
+	public static String uploadAliyunOSS(String objectName, String fileFullPath) {
+		try (AliyunOssUtils util = new AliyunOssUtils(UploadConfigerOSS.endPoint, UploadConfigerOSS.accessKeyId,
+				UploadConfigerOSS.accessKeySecret)) {
+			
+			util.withBucket(UploadConfigerOSS.bucketName);
+			util.createBucketIfExists(UploadConfigerOSS.bucketName);
+
+			StringBuilder result = new StringBuilder(UploadConfigerOSS.aliUrl);
+			result.append(util.uploadInputStream(objectName, new FileInputStream(new File(fileFullPath))));
+			return result.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
 }
 

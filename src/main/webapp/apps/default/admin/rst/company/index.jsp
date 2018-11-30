@@ -194,7 +194,6 @@
 									</div>
 								</div>
 							</div>
-
 						</div>
 					</div>
 				</div>
@@ -213,8 +212,28 @@
 			var pictureGrid = mini.get("dataGrid3");
 			var adminGrid = mini.get("dataGrid4");
 			
+			pictureGrid.on("drawcell", function(e){
+				var record = e.record;
+				var field = e.field;
+				var value = e.value;
+				var row = e.row;
+				if(typeof(row.url) != 'undefined' && row && field == "url"){
+					e.cellHtml = "<a href='javascript:openUrl(\""+row.url+"\")'>"+row.url +"</a>" ;
+				}
+			})
+			
+			function openUrl(url) {
+				var url= "${pageContext.request.contextPath}/apps/default/admin/rst/company/img_show.jsp?url="+url ;
+	        	window.open(url,"_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width="+screen.width+", height="+screen.height+"");
+			}
+			
 			function viewPicture() {
-					
+				var row = pictureGrid.getSelected();
+				if (!row) {
+					mini.alert("请选择一个企业图片");
+					return ;
+				}
+				openUrl(row.url);
 			}
 			
 			function  refreshPicture() {

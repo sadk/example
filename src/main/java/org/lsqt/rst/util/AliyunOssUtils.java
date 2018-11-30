@@ -2,6 +2,7 @@ package org.lsqt.rst.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -28,7 +29,7 @@ import com.aliyun.oss.model.ListObjectsRequest;
 import com.aliyun.oss.model.OSSObjectSummary;
 import com.aliyun.oss.model.ObjectListing;
 
-public class AliyunOssUtils {
+public class AliyunOssUtils implements java.io.Closeable{
 	private static final Logger log = LoggerFactory.getLogger(AliyunOssUtils.class);
 	
     private OSS ossClient;
@@ -341,7 +342,12 @@ public class AliyunOssUtils {
     }
 
     
-    public void shutdown() {
+/*    public void shutdown() {
     	ossClient.shutdown();
     }
+*/
+	@Override
+	public void close() throws IOException {
+		ossClient.shutdown();
+	}
 }

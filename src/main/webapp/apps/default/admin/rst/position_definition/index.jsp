@@ -202,6 +202,61 @@
 								</div>
 							</div>
 
+
+							<div title="企业Logo" refreshOnClick="true" name="tabUserRoles">
+								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+									<table style="width:100%;">
+										<tr>
+											<td style="width:100%;">
+												<a class="mini-button" iconCls="icon-upload" onclick="addImg('logo')">上传</a>
+												<a class="mini-button" iconCls="icon-remove" onclick="removeImg('logo')">删除</a>
+												<span class="separator"></span>
+												<a class="mini-button" iconCls="icon-reload" onclick="refreshImg('logo')">刷新</a>
+											</td>
+										</tr>
+									</table>
+								</div>
+								<div class="mini-fit">
+									<div id="logoGrid" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" autoLoad="false"
+										  url="${pageContext.request.contextPath}/rst/position_definition/get_position_img" idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
+										<div property="columns">
+											<div type="checkcolumn" ></div>
+											 
+											<div field="code" width="160" headerAlign="center" allowSort="true" align="center">编码</div>
+											<div field="urlCompanyLogo" width="660" headerAlign="center" allowSort="true" align="left">企业logo</div>
+										
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							
+							<div title="职位封面" refreshOnClick="true" name="tabUserRoles">
+								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+									<table style="width:100%;">
+										<tr>
+											<td style="width:100%;">
+												<a class="mini-button" iconCls="icon-upload" onclick="addImg('cover')">上传</a>
+												<a class="mini-button" iconCls="icon-remove" onclick="removeImg('cover')">删除</a>
+												<span class="separator"></span>
+												<a class="mini-button" iconCls="icon-reload" onclick="refreshImg('cover')">刷新</a>
+											</td>
+										</tr>
+									</table>
+								</div>
+								<div class="mini-fit">
+									<div id="coverGrid" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" autoLoad="false"
+										url="${pageContext.request.contextPath}/rst/position_definition/get_position_img"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
+										<div property="columns">
+											<div type="checkcolumn" ></div>
+											 
+											<div field="code" width="160" headerAlign="center" allowSort="true" align="center">编码</div>
+											<div field="urlPositionCover" width="660" headerAlign="center" allowSort="true" align="left">职位封面</div>
+										
+										</div>
+									</div>
+								</div>
+							</div>
 							
 							<div title="职位投递记录" refreshOnClick="true" name="tabUserRoles">
 								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
@@ -262,6 +317,130 @@
 			var gridVideo = mini.get("datagrid4"); 
 			var gridRecord = mini.get("datagrid5");
 			
+			var logoGrid = mini.get("logoGrid")
+			var coverGrid = mini.get("coverGrid");
+			
+			gridVideo.on("drawcell", function(e){
+				var field = e.field;
+				var row = e.row;
+				if(typeof(row.url) != 'undefined' && row && field == "url"){
+					e.cellHtml = "<a href='"+row.url+"' target='_blank'>"+row.url +"</a>" ;
+				}
+			})
+			
+			logoGrid.on("drawcell", function(e){
+				var field = e.field;
+				var row = e.row;
+				if(typeof(row.urlCompanyLogo) != 'undefined' && row && field == "urlCompanyLogo"){
+					e.cellHtml = "<a href='javascript:openUrl(\""+row.urlCompanyLogo+"\")'>"+row.urlCompanyLogo +"</a>" ;
+				}
+			})
+			
+			coverGrid.on("drawcell", function(e){
+				var field = e.field;
+				var row = e.row;
+				if(typeof(row.urlPositionCover) != 'undefined' && row && field == "urlPositionCover"){
+					e.cellHtml = "<a href='javascript:openUrl(\""+row.urlPositionCover+"\")'>"+row.urlPositionCover +"</a>" ;
+				}
+			})
+			
+			function openUrl(url) {
+				var url= "${pageContext.request.contextPath}/apps/default/admin/rst/company/img_show.jsp?url="+url ;
+	        	window.open(url,"_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width="+screen.width+", height="+screen.height+"");
+			}
+			
+			
+			function removeImg(type) { //删除职位的企业Logo或职位封面 
+				var positionCode = null;
+				if("logo" == type) {
+					 var row = logoGrid.getSelected();
+					 if(!row) {
+						 mini.alert("请选择一个企业logo");
+						 return ;
+					 }
+					 positionCode = row.code;
+				}
+				if("cover" == type) {
+					 var row = coverGrid.getSelected();
+					 if(!row) {
+						 mini.alert("请选择一个职位封面");
+						 return ;
+					 }
+					 positionCode = row.code;
+				}
+				
+				var data = {};
+				data.positionCode = positionCode;
+				data.serverPath = "";
+				data.type = type;
+				
+				mini.confirm("确定删除？", "确定？",
+						function (action) {
+							if (action == "ok") {
+								deleteImgUrl();
+							}
+				});
+				var deleteImgUrl = function () {
+					$.ajax({
+						url : "${pageContext.request.contextPath}/rst/position_definition/update_position_img",
+						dataType: 'json', type : 'post',
+						data: data,
+						success : function(text) {
+							if("logo" == type) {
+								logoGrid.reload();
+							}
+							if("cover" == type) {
+								coverGrid.reload();
+							}
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+				             mini.alert(jqXHR.responseText);
+			            }
+					});
+				}
+			}
+			
+			function refreshImg(type) {
+				if("logo" == type) {
+					logoGrid.reload();
+				}
+				if("cover" == type) {
+					coverGrid.reload();
+				}
+			}
+			
+			function addImg(type) { //上传职位的 企业Logo或职位封面 
+				var row = grid.getSelected();
+				if (!row) {
+					mini.alert("请选择一个职位");
+					return ;
+				}
+				
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/rst/position_definition/upload_img_htmlfile.jsp",
+					title : "上传企业Logo图",
+					width : 420,
+					height : 330,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {
+							 positionCode: row.code,
+							 type : type
+						};
+						 
+						iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						if ('ok' == action) { 
+							logoGrid.reload();
+							coverGrid.reload();
+						}
+						//gridVideo.reload();
+					}
+				});
+			}
+			
+			
 			function refreshVideo() {
 				gridVideo.reload();
 			}
@@ -320,8 +499,8 @@
 					ondestroy : function(action) {
 						if ('ok' == action) { 
 							//mini.alert("上传成功");
+							gridVideo.reload();
 						}
-						gridVideo.reload();
 					}
 				});
 			}
@@ -341,6 +520,10 @@
 				gridAdress.load({positionCode: record.code})
 				gridVideo.load({positionCode: record.code})
 				gridRecord.load({positionCode: record.code})
+				
+				logoGrid.load({code: record.code,imgType: "logo"});
+				coverGrid.load({code: record.code,imgType: "cover"});
+				
 			});
 	
 			function removeAddress() {

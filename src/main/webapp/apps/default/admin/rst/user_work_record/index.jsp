@@ -17,7 +17,7 @@
    
     
 <div class="mini-splitter" style="width:100%;height:100%;">
-    <div size="250" showCollapseButton="true">
+    <div size="270" showCollapseButton="true">
 				<div id="form1"  style="padding:8px;">
 					<table>	
 						<tr>
@@ -39,6 +39,20 @@
 								<input id="userName" name="userName"  style="width:140px" class="mini-textbox"  emptyText="请输入姓名"  onenter="search"  />
 							</td>
 						</tr>
+						
+						<tr>
+							<td>考勤日期(开始)：</td>
+							<td>
+								<input id="recordDateBegin" name="recordDateBegin" style="width:140px" format="yyyyMMdd" class="mini-datepicker"  emptyText="请输入创建日期(开始)" />
+							</td>
+						</tr>
+						<tr>
+							<td>考勤日期(结束)：</td>
+							<td>
+								<input id="recordDateEnd" name="recordDateEnd" style="width:140px" format="yyyyMMdd" class="mini-datepicker"  emptyText="请输入创建日期(结束)" />
+							</td>
+						</tr>
+						
 					</table>
 					<div style="text-align:center;padding:10px;">
 						<a class="mini-button" onclick="search()" iconCls="icon-search" style="width:60px;margin-right:20px;">查询</a>
@@ -71,7 +85,7 @@
 							<!-- <div field="id" width="60" headerAlign="center">ID</div> -->
 							<div field="recordDate"  headerAlign="center"  align="center">考勤日期</div>
 							<div field="userName"  headerAlign="center">用户姓名</div>
-							<div field="userCode"  headerAlign="center">用户编码</div>
+							<div field="userCode"  headerAlign="center" width="150" align="center">用户编码</div>
 							
 							
 							<!--
@@ -179,6 +193,9 @@
   
     function search() {
     	var data = form.getData();
+    	data.recordDateBegin = mini.get("recordDateBegin").text;
+    	data.recordDateEnd = mini.get(recordDateEnd).text;
+    	
     	grid.load(data);
     }
     

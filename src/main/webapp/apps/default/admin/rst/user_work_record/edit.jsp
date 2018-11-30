@@ -28,7 +28,7 @@
 				        	<tr>
 				        		<td>考勤日期：</td>
 				        		<td>
-				        			<input id="recordDate" name="recordDate" class="mini-datepicker"   format="yyyyMMdd" />
+				        			<input id="recordDate" name="recordDate" class="mini-datepicker"   format="yyyyMMdd" required="true"/>
 				        		</td>
 				        	</tr>
 				        </table>
@@ -42,11 +42,11 @@
 							<tr>
 								<td>用户姓名:</td>
 								<td>
-									<input id="userName" name="userName" onclick="selectUser()"  style="width:140px" class="mini-textbox"  emptyText="请输入" />
+									<input id="userName" name="userName" onclick="selectUser()"  style="width:140px" class="mini-textbox"  emptyText="请选择用户"/>
 								</td>
 								<td>用户编码:</td>
 								<td>
-									<input id="userCode" name="userCode"  style="width:140px" class="mini-textbox"  emptyText="请输入"  readonly="readonly"/>
+									<input id="userCode" name="userCode"  style="width:140px" class="mini-textbox"  emptyText="请输入"  readonly="readonly" required="true"/>
 								</td>
 							</tr>
 							

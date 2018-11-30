@@ -119,7 +119,7 @@ public class PositionDefinitionController {
 	
 	// ------------------------------------- 职位视频上传 -------------------------------------------------
 	@SuppressWarnings("rawtypes")
-	@RequestMapping(mapping = { "/upload", "/m/upload" }, view=View.JSP, path="/apps/default/admin/rst/position_definition",excludeTransaction=true, text="上传公司图片")
+	@RequestMapping(mapping = { "/upload", "/m/upload" }, view=View.JSP, path="/apps/default/admin/rst/position_definition",excludeTransaction=true, text="职位视频上传")
 	public String upload() throws Exception{
 		String serverPath = "";
 		String uploadDir = FileUploadUtil.UPLOAD_DIR;
@@ -170,7 +170,7 @@ public class PositionDefinitionController {
 		if (StringUtil.isNotBlank(serverPath)) {
 			aliFile = serverPath.substring(serverPath.lastIndexOf("/"),serverPath.length());
 			
-			String httpPath = uploadAliyunOSS("qdb/position/video/"+System.currentTimeMillis()+aliFile,fullPath);
+			String httpPath = UploadConfigerOSS.uploadAliyunOSS("qdb/position/video/"+System.currentTimeMillis()+aliFile,fullPath);
 			request.setAttribute("serverPath", httpPath);
 			System.out.println(httpPath);
 		}
@@ -180,28 +180,7 @@ public class PositionDefinitionController {
 	
 	
 
-	/**
-	 * 同步上传到阿里云OSS
-	 * @param serverPath
-	 */
-	private String uploadAliyunOSS(String objectName, String fileFullPath) {
-		AliyunOssUtils util = new AliyunOssUtils(UploadConfigerOSS.endPoint, UploadConfigerOSS.accessKeyId, UploadConfigerOSS.accessKeySecret);
-
-		try {
-			util.withBucket(UploadConfigerOSS.bucketName);
-			util.createBucketIfExists(UploadConfigerOSS.bucketName);
-			
-			StringBuilder result = new StringBuilder(UploadConfigerOSS.aliUrl);
-			result.append(util.uploadInputStream(objectName, new FileInputStream(new File(fileFullPath))));
-			return result.toString();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			util.shutdown();
-		}
-
-		return null;
-	}
+ 
 	
 	
 	@RequestMapping(mapping = { "/save_position_video", "/m/save_position_video" },text="保存职位视频")
@@ -236,4 +215,121 @@ public class PositionDefinitionController {
 		return 0;
 	}
 	
+	
+	
+	// ------------------------------------- 职位企业Logo上传 -------------------------------------------------
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(mapping = { "/upload_logo", "/m/upload_logo" }, view=View.JSP, path="/apps/default/admin/rst/position_definition",excludeTransaction=true, text="职位logo字段")
+	public String uploadLogo() throws Exception{
+		String serverPath = "";
+		String uploadDir = FileUploadUtil.UPLOAD_DIR;
+		HttpServletRequest request = ContextUtil.getRequest();
+
+		String filePath = request.getServletContext().getRealPath("/") + uploadDir;
+        System.out.println(filePath);//输出存放上传文件所到的路径  
+        File uploadPath = new File(filePath);  
+       
+		if (!uploadPath.exists()) {
+			uploadPath.mkdir();
+		}
+		
+		int fileSize = 100;//文件最大允许100M,注意，有时候Nginx需要同步配置!!!
+
+		MultipartRequest mulit = new MultipartRequest(request, filePath, fileSize * 1024 * 1024, "UTF-8",new PolicyReportFileRename());
+
+		String positionCode = mulit.getParameter("positionCode");  
+		String type = mulit.getParameter("type");
+		request.setAttribute("positionCode", positionCode);
+		request.setAttribute("type", type);
+		
+        int cnt = 0;
+		Enumeration filesname = mulit.getFileNames();// 取得上传的所有文件(相当于标识)
+		while (filesname.hasMoreElements()) {
+			String id = (String) filesname.nextElement();// 标识
+			String fileName = mulit.getFilesystemName(id); // 取得文件名
+			String contentType = mulit.getContentType(id);// 文件类型
+			String originalFileName = mulit.getOriginalFileName(id); //原始文件名
+			if (fileName != null) {
+				cnt++;
+			}
+			System.out.println("文件名：" + fileName + " \n\r文件类型： " + contentType+" \n\r原始文件名："+originalFileName);
+			serverPath =uploadDir+"/"+fileName;
+		}
+		System.out.println("共上传" + cnt + "个文件！");
+
+		if(cnt == 0) { // 用户没有上传文件，个数为0
+			serverPath = "";
+		}
+		request.setAttribute("serverPath", serverPath);
+
+		
+		String fullPath = request.getServletContext().getRealPath("/") + serverPath;
+		System.out.println("全路径:" + fullPath);
+		
+		String aliFile = "";
+		if (StringUtil.isNotBlank(serverPath)) {
+			aliFile = serverPath.substring(serverPath.lastIndexOf("/"),serverPath.length());
+			
+			String httpPath = UploadConfigerOSS.uploadAliyunOSS("qdb/position/logo/"+System.currentTimeMillis()+aliFile,fullPath);
+			request.setAttribute("serverPath", httpPath);
+			System.out.println(httpPath);
+		}
+		
+		return "/upload_img_htmlfile.jsp";
+	}
+	
+	
+
+	  
+	@RequestMapping(mapping = { "/update_position_img", "/m/update_position_img" },text="更新职位封面或logo字段")
+	public PositionDefinition update_position_img(String positionCode, String serverPath,String type) {
+		if (StringUtil.isNotBlank(positionCode,type)) {
+			PositionDefinitionQuery query = new PositionDefinitionQuery();
+			query.setCode(positionCode);
+			PositionDefinition model = db.queryForObject("queryForPage", PositionDefinition.class, query);
+			if (model != null) {
+				if ("logo".equals(type)) {
+					model.setUrlCompanyLogo(serverPath);
+					db.update(model, "urlCompanyLogo");
+				} 
+				if ("cover".equals(type)) {
+					model.setUrlPositionCover(serverPath);
+					db.update(model, "urlPositionCover");
+				}
+			}
+			return model;
+		}
+		return null;
+	}
+	
+	@RequestMapping(mapping = { "/get_position_img", "/m/get_position_img" })
+	public Page<PositionDefinition> queryForPage4Img(PositionDefinitionQuery query) throws IOException {
+		Page<PositionDefinition> emptyPage = new Page.PageModel<>();
+		if (StringUtil.isBlank(query.getCode())) {
+			return emptyPage;
+		}
+		if (StringUtil.isBlank(query.getImgType())) {
+			return emptyPage;
+		}
+		
+		query.setTenantCode(ContextUtil.getLoginTenantCode());
+		
+		
+		
+		Page<PositionDefinition> page = positionDefinitionService.queryForPage(query);  
+		if(page.getData().size() == 1) {
+			PositionDefinition p = page.getData().iterator().next();
+			if("logo".equals(query.getImgType()) && StringUtil.isBlank(p.getUrlCompanyLogo())) {
+				return emptyPage;
+			}   
+			
+			if("cover".equals(query.getImgType()) && StringUtil.isBlank(p.getUrlPositionCover())) {
+				return emptyPage;
+			}
+			
+			return page;
+		} else {
+			return emptyPage;
+		}
+	}
 }

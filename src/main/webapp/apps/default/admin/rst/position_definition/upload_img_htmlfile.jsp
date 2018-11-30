@@ -16,12 +16,13 @@
 			   <div class="mini-fit">
 					<div style="padding-left:5px;padding-bottom:5px;">
 					
-							    <form id="edit-form1" action="${pageContext.request.contextPath}/rst/company/upload" method="post" enctype="multipart/form-data">
+							    <form id="edit-form1" action="${pageContext.request.contextPath}/rst/position_definition/upload_logo" method="post" enctype="multipart/form-data">
 							    	<table>
 						         	<tr>
 						            	<td>图片上传:</td>
 						            	<td colspan="3">
-						            		<input class="mini-hidden" name="companyCode" id="companyCode" value="${companyCode}"/>
+						            		<input class="mini-hidden" name="type" id="type" value="${type}"/>
+						            		<input class="mini-hidden" name="positionCode" id="positionCode" value="${positionCode}"/>
 						            		<input class="mini-htmlfile" name="dataFile" limitType="*.png,*.jpg,*.gif,*.jpeg" style="width:224px;" />
 											<a class="mini-button" onclick="startUpload()">上传</a>
 						            	</td>
@@ -36,13 +37,9 @@
 						            </table>
 							    </form>
 					</div>
+					
 					<img src="${serverPath }" alt="" width="350" height="300" onclick="openOriginal('${serverPath }')"/>
-					<script>
-				        function openOriginal(url) {//全屏打开原图
-				        	var url= "${pageContext.request.contextPath}/apps/default/admin/rst/company/img_show.jsp?url="+url ;
-				        	window.open(url,"_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width="+screen.width+", height="+screen.height+"");
-				        }
-					</script>
+					
 				</div>
 		    
 
@@ -56,9 +53,11 @@
 	    var form = new mini.Form("edit-form1");
 	   	var grid = mini.get("grid");
 	   	var serverPath = mini.get("serverPath");
-	   
 	   	 
- 
+	   	function openOriginal(url) {//全屏打开原图
+        	var url= "${pageContext.request.contextPath}/apps/default/admin/rst/company/img_show.jsp?url="+url ;
+        	window.open(url,"_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width="+screen.width+", height="+screen.height+"");
+        }
 		
 		function clearFileImport() {
 			serverPath.setValue("");
@@ -70,8 +69,6 @@
 	    }
 	    
 	    function onUploadSuccessImport(e) {
-	    	//console.log(e.serverData);
-	    	//mini.alert(typeof e.serverData);
 	        mini.alert("上传成功!");
 	        mini.get("serverPath").setValue(mini.decode(e.serverData));
 	    }
@@ -101,7 +98,7 @@
 			
 			 
 			$.ajax({
-				url : "${pageContext.request.contextPath}/rst/company/save_company_picture",
+				url : "${pageContext.request.contextPath}/rst/position_definition/update_position_img",
 				dataType: 'json', type : 'post',
 				data: data,
 				success : function(text) {
