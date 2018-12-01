@@ -161,7 +161,7 @@
 								</td>
 								<td>所属门店：</td>
 								<td>
-									<input id="storeName" name="storeName" onclick="selectStore()" class="mini-textbox"  style="width:150px" required="true"/>
+									<input id="storeName" name="storeName" onclick="selectStore()" class="mini-textbox"  style="width:150px"/>
 									<input id="storeCode" name="storeCode"   class="mini-hidden" />
 								</td>
 							</tr>

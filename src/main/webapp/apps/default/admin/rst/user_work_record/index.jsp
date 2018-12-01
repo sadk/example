@@ -79,7 +79,7 @@
 		        </div>
 		        <div class="mini-fit" >
 					<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" showPager="true"
-						url="${pageContext.request.contextPath}/rst/user_work_record/page"  idField="id" autoLoad="true">
+						url="${pageContext.request.contextPath}/rst/user_work_record/page" pageSize="50" idField="id" autoLoad="true">
 						<div property="columns">
 							<div type="checkcolumn" ></div>
 							<!-- <div field="id" width="60" headerAlign="center">ID</div> -->

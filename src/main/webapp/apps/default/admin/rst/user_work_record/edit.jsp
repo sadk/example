@@ -19,7 +19,7 @@
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
 			<input id="id" name="id" class="mini-hidden" />
-
+			<input id="weekday" name="weekday" class="mini-hidden" />
 			<div style="padding-left:11px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
 		            <legend>考勤日期</legend>
@@ -28,7 +28,11 @@
 				        	<tr>
 				        		<td>考勤日期：</td>
 				        		<td>
-				        			<input id="recordDate" name="recordDate" class="mini-datepicker"   format="yyyyMMdd" required="true"/>
+				        			<input id="recordDate" name="recordDate" style="width:140px"  class="mini-datepicker"   format="yyyyMMdd" required="true"/>
+				        		</td>
+				        		<td>正常工时：</td>
+				        		<td>
+				        			<input id="workingHours" name="workingHours" style="width:140px" class="mini-spinner" value="0" minValue="0" maxValue="8"/>
 				        		</td>
 				        	</tr>
 				        </table>
@@ -134,10 +138,14 @@
 			
 			function SaveData() {
 				var o = form.getData();
+				
+				o.recordDate = mini.get("recordDate").text  ;
+				mini.get("recordDate").setValue(o.recordDate+"");
+				
 				form.validate();
 				if(form.isValid() == false) return;
 				
-				o.recordDate = mini.get("recordDate").text  ;
+				
 				
 				if (parseInt(o.extraHours) > 24) {
 					mini.alert("加班时长不能超过24小时");
@@ -172,9 +180,11 @@
 						success : function(text) {
 							if(text) {
 								var o = mini.decode(text);
+								o.recoredDate = o.recordDate+"";
 								form.setData(o);
 								
-								mini.get("recordDate").setText(o.recordDate);
+								mini.get("recordDate").setText(o.recoredDate);
+								//mini.get("recordDate").setValue(o.recordDate);
 							}
 						}
 					});

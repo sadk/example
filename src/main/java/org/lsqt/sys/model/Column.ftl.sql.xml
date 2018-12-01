@@ -215,6 +215,7 @@
 			SELECT 
 			    A.TABLE_NAME table_name,
 			    A.COLUMN_NAME name,
+			    A.COLUMN_TYPE,
 			    A.COLUMN_NAME code,
 			    A.COLUMN_COMMENT comment,
 			    A.DATA_TYPE db_type,
@@ -224,8 +225,9 @@
 			    information_schema.columns A
 			WHERE
 			    1 = 1 
+			    and table_name = '${StringUtil.escapeSql(args[1])}'
 		        and table_schema = '${StringUtil.escapeSql(args[0])}'
-		        and table_name = '${StringUtil.escapeSql(args[1])}'
+		        
 	 	]]>
 	</statement>
 	

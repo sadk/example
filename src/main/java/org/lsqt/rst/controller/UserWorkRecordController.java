@@ -118,67 +118,59 @@ public class UserWorkRecordController {
 			
 			for (UserWorkRecord e: data) {
 				int d = getDay(e.getRecordDate());
-				if (i == d) { //非周六周天的算法计时
+				if (i == d) {
 					isFind = true;
 					
 					Node n = new Node();
 					n.recordDate = e.getRecordDate();
 					n.day = i;
 					n.weekday = e.getWeekday();
-					
-					if (StringUtil.isNotBlank(e.getExtraHours())) { // 有加班
-						n.extraHours = Double.valueOf(e.getExtraHours());
-					} else {
-						n.extraHours = 0D;
-					}
-					/*
-					if (e.getWeekday() == 6 || e.getWeekday() == 7) { // 周六、周天
-						n.leaveHours = 0D;
-						n.workHours = 0D;
 
-					} else { // 工作日周一到周五
-						*/
-						if (StringUtil.isNotBlank(e.getLeaveHours())) { // 有请假
-							n.leaveHours = Double.valueOf(e.getLeaveHours());
+					// 周六周天只算加班；周一至周五算正常工时，超过8小时才能 加班
+					if (e.getWeekday() == 6 || e.getWeekday() == 7) {
+						n.leaveHours = 0D;
+						n.extraHours = StringUtil.isBlank(e.getExtraHours())  ? 0D : Double.valueOf(e.getExtraHours());
+						n.workHours = 0D;
+					} else {
+						n.workHours = StringUtil.isBlank(e.getWorkingHours()) ? 0D : Double.valueOf(e.getWorkingHours());
+						if (n.workHours > DAY_WORK_HOUR_SETTING) {
+							n.extraHours = StringUtil.isBlank(e.getExtraHours()) ? 0D : Double.valueOf(e.getExtraHours());
+							n.leaveHours = StringUtil.isBlank(e.getLeaveHours()) ? 0D : Double.valueOf(e.getLeaveHours());
 						} else {
+							n.extraHours = 0D;
 							n.leaveHours = 0D;
 						}
-						n.workHours = DAY_WORK_HOUR_SETTING - Double.valueOf(n.leaveHours);
-					//}
-					
+						
+					}
+
 					result.add(n);
 					
 					break;
-				} 
+				}
 			}
 			
 			if (isFind == false) {
 				Node n = new Node();
 				n.day = i;
-				
+
 				String recordDate = date.toString();
-				if (i<10) {
-					recordDate = recordDate+"0"+i;
-				}else {
+				if (i < 10) {
+					recordDate = recordDate + "0" + i;
+				} else {
 					recordDate = recordDate + i;
 				}
-				
+
 				n.recordDate = Integer.valueOf(recordDate);
-				
-				SimpleDateFormat dateFm = new SimpleDateFormat("EEEE",Locale.CHINESE);
+
+				SimpleDateFormat dateFm = new SimpleDateFormat("EEEE", Locale.CHINESE);
 				String xq = dateFm.format(convertDate(n.recordDate.toString()));
-				//System.out.println("------------xq:"+xq);
-				n.weekday = WEEKDAY_MAP.get(xq) ;
-				//System.out.println(n.weekday);
-				
+
+				n.weekday = WEEKDAY_MAP.get(xq);
+
 				n.extraHours = 0D;
 				n.leaveHours = 0D;
-				/*if (n.weekday.intValue() == 6 || n.weekday.intValue() == 7) {
-					n.workHours = 0D;
-				} else {*/
-					n.workHours = Double.valueOf(DAY_WORK_HOUR_SETTING);
-				//}
-				
+				n.workHours = 0D;
+
 				result.add(n);
 			}
 		}

@@ -77,8 +77,16 @@ public class UserWorkRecordServiceImpl implements UserWorkRecordService{
 			SimpleDateFormat dateFm = new SimpleDateFormat("EEEE",Locale.CHINESE);
 
 			String xq = dateFm.format(convertDate(model.getRecordDate().toString()));
-
 			model.setWeekday(WEEKDAY_MAP.get(xq));
+			
+		}
+		
+		if (model.getWeekday() != null 
+				&& (model.getWeekday() == 6 || model.getWeekday() ==7)) {
+			model.setWorkingHours("0");
+			model.setLeaveHours("0");
+			model.setLeaveShiftType(null);
+			model.setLeaveType(null);
 		}
 
 		if (model.getRecordDate() == null) {
