@@ -369,5 +369,8 @@ public interface Db extends Closeable{
 		
 		/**Firebird**/
 		int FirebirdDialect=22;
+		
+		/**Oracle 11g**/
+		int Oracle11gDialect=23;
 	}
 }

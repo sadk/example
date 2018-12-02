@@ -803,10 +803,22 @@
 				 columnGrid2.reload();
 			}
 			
-			function search() {
-				var data = {};
-		 		
-				grid.load(data);
+			function search(type) {
+				if(typeof type == 'undefined' || type == null) {
+					var data = {};
+					grid.load(data);
+				}
+				
+				if(type == 1) {
+					var row = grid.getSelected();
+					if(!row) {mini.alert("请选择一个报表"); return ;}
+					columnGrid.load({key: mini.get("key1").value, definitionId: row.id});
+				}
+				
+				if(type == 2) {
+					if(!row) {mini.alert("请选择一个报表"); return ;}
+					columnGrid2.load({key: mini.get("key2").value,definitionId: row.id })
+				}
 			}
 		 
 			

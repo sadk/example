@@ -15,6 +15,7 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.rst.model.UserWorkRecord;
 import org.lsqt.rst.model.UserWorkRecordQuery;
 import org.lsqt.rst.service.UserWorkRecordService;
@@ -62,7 +63,7 @@ public class UserWorkRecordServiceImpl implements UserWorkRecordService{
 		return null;
 	}
 	
-
+	
 	public UserWorkRecord saveOrUpdate(UserWorkRecord model) {
 		UserWorkRecordQuery query = new UserWorkRecordQuery();
 		query.setRecordDate(model.getRecordDate());
@@ -81,12 +82,34 @@ public class UserWorkRecordServiceImpl implements UserWorkRecordService{
 			
 		}
 		
-		if (model.getWeekday() != null 
-				&& (model.getWeekday() == 6 || model.getWeekday() ==7)) {
-			model.setWorkingHours("0");
-			model.setLeaveHours("0");
-			model.setLeaveShiftType(null);
-			model.setLeaveType(null);
+		if (model.getWeekday() != null ) {
+			if(model.getWeekday() == 6 || model.getWeekday() ==7){
+				model.setWorkingHours("0");
+				model.setLeaveHours("0");
+				model.setLeaveShiftType(null);
+				model.setLeaveType(null);
+			}else { 
+				
+				if (StringUtil.isNotBlank(model.getWorkingHours())) {// 工作日有正常上班不能有请假
+					double wh = Double.valueOf(model.getWorkingHours());
+					if (wh > 0) {
+						model.setLeaveHours("0");
+						model.setLeaveShiftType(null);
+						model.setLeaveType(null);
+					}
+					if (wh > 0 && wh < 8) { // 正常工时未满8小时，不能填加班
+						model.setExtraHours("0");
+						model.setExtraShiftType(null);
+					}
+				}
+				if (StringUtil.isNotBlank(model.getExtraHours())) {// 工作日有班不能有请假
+					if (Double.valueOf(model.getExtraHours())>0) {
+						model.setLeaveHours("0");
+					}
+				}
+				
+				
+			}
 		}
 
 		if (model.getRecordDate() == null) {

@@ -20,6 +20,7 @@ import org.lsqt.components.cache.SimpleCache;
 import org.lsqt.components.db.Db.Dialect;
 import org.lsqt.components.db.support.ColumnUtil;
 import org.lsqt.components.db.support.MySQLTypeMapping;
+import org.lsqt.components.db.support.OracleTypeMapping;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.Md5Util;
 import org.lsqt.components.util.lang.StringUtil;
@@ -69,7 +70,7 @@ public class JDBCExecutor {
 			
 			
 		//	log.debug("[THREAD-ID: {}] Prepare connection instance: {}, url: {}  , username: {}", con,meta.getURL(),meta.getUserName());
-		/*	log.debug(" --- >>>>>>>>>>>> thread-id:" + Thread.currentThread().getId() + "," 
+			/*log.info(" --- >>>>>>>>>>>> thread-id:" + Thread.currentThread().getId() + "," 
 					+ con.getMetaData().getDatabaseProductName() 
 					+ con.getMetaData().getDatabaseMajorVersion() + "." 
 					+ con.getMetaData().getDatabaseMinorVersion() + "  "
@@ -108,8 +109,7 @@ public class JDBCExecutor {
 	}
 
 	private PreparedStatement prepareStatement(Connection conn, String sql,Object[] paramValues) throws SQLException {
-		String logSql = sql.replaceAll("((\r\n)|\n)[\\s\t ]*(\\1)+", "$1"); //删除其中的空行，而且要删除仅包含Tab、空格的空行,不改变原有的SQL！！！
-		log.debug(String.format(formatStr, logSql, ArrayUtil.join(paramValues, ",", true)));
+		//	String logSql = sql.replaceAll("((\r\n)|\n)[\\s\t ]*(\\1)+", "$1"); //删除其中的空行，而且要删除仅包含Tab、空格的空行,不改变原有的SQL！！！
 		
 		PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
@@ -187,6 +187,34 @@ public class JDBCExecutor {
 		//return jdbcCache.get(sqlContent);
 	}*/
 	
+	public int resolveDialect()   {
+		try{
+			String prdName = getCurrentConnection().getMetaData().getDatabaseProductName();
+	
+			if (StringUtil.isNotBlank(prdName)) {
+				prdName = prdName.toLowerCase();
+				if (prdName.startsWith("oracle11")) {
+					return Db.Dialect.Oracle11gDialect;
+				}
+				if (prdName.startsWith("oracle10")) {
+					return Db.Dialect.Oracle10gDialect;
+				}
+				if (prdName.startsWith("oracle9")) {
+					return Db.Dialect.Oracle9iDialect;
+				}
+				if (prdName.startsWith("oracle")) {
+					return Db.Dialect.OracleDialect;
+				}
+				// other db, to be continue ...
+			}
+		}catch(Exception ex) {
+			Throwable thx = ex.getCause();
+			throw new DbException(ex.getMessage(),thx == null ? ex: thx);
+		}
+		return Db.Dialect.MySQLDialect;
+	}
+	
+	
 	public List<Column> getMetaDataColumn(String sql,Object ... paramValues) throws DbException {
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -197,6 +225,8 @@ public class JDBCExecutor {
 			stmt = prepareStatement(con, sql, paramValues);
 			rs = stmt.executeQuery();
 
+			int dialect = resolveDialect();
+			
 			List<Column> list = new ArrayList<>();
 			int cnt = rs.getMetaData().getColumnCount();
 			
@@ -206,11 +236,18 @@ public class JDBCExecutor {
 				if(StringUtil.isNotBlank(dbType)) {
 					dbType = dbType.toLowerCase();
 				}
-				column.setJavaType(MySQLTypeMapping.guessJavaType(dbType));
 				column.setName(rs.getMetaData().getColumnName(i));
 				column.setText(rs.getMetaData().getColumnLabel(i));
 				column.setDbType(dbType);
 				column.setPropertyName(ColumnUtil.toPropertyName(column.getName()));
+				
+				column.setJavaType(MySQLTypeMapping.guessJavaType(dbType)); //默认为mysql数据库
+				
+				if (dialect == Db.Dialect.Oracle10gDialect || dialect == Db.Dialect.Oracle11gDialect
+						|| dialect == Db.Dialect.Oracle9iDialect || dialect == Db.Dialect.OracleDialect) {
+					column.setJavaType(OracleTypeMapping.guessJavaType(dbType.toUpperCase()));
+				}
+				
 				
 				list.add(column);
 			}

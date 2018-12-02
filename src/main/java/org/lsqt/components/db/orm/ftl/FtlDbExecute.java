@@ -1150,7 +1150,7 @@ public class FtlDbExecute implements Db{
 		long total = 0;
 		long pageCount = 0;
 		if (requiredCount) {
-			String totalSqlFmt = "select count(0) from (%s) _t0_amount";
+			String totalSqlFmt = "select count(0) from (%s) t0_amount";
 			String totalSql = String.format(totalSqlFmt, sql);
 
 			List<Map<String, Object>> totalMapList = exe.executeQuery(totalSql);
@@ -1180,11 +1180,29 @@ public class FtlDbExecute implements Db{
 			page.setTotal(Integer.MAX_VALUE);
 		}
 		
-		String pageSql = sql.concat(" limit ?,? ");
-		List<Object> params = new ArrayList<>();
-		params.add(pageIndex * pageSize);
-		params.add(pageSize);
-		List<Map<String,Object>> list = exe.executeQuery(pageSql, params.toArray());
+		
+		int dialect = exe.resolveDialect();
+		
+		String pageSql = null;
+		List<Map<String,Object>> list = null;
+		
+		if (dialect == Db.Dialect.MySQLDialect || dialect == Db.Dialect.MySQLInnoDBDialect || dialect == Db.Dialect.MySQLMyISAMDialect) {
+			 pageSql = sql.concat(" limit ?,? "); //默认是MySql数据库分页
+	
+			List<Object> params = new ArrayList<>();
+			params.add(pageIndex * pageSize);
+			params.add(pageSize);
+			list = exe.executeQuery(pageSql, params.toArray());
+		}
+		else 
+			
+		if (dialect == Db.Dialect.Oracle10gDialect || dialect == Db.Dialect.Oracle11gDialect
+				|| dialect == Db.Dialect.Oracle9iDialect || dialect == Db.Dialect.OracleDialect) {
+			pageSql = "SELECT * FROM (SELECT ROWNUM AS rowno, r.* FROM ( "+sql+" ) r  where ROWNUM <= "+ (pageIndex+1) +"*"+pageSize+"   ) table_0_alias WHERE table_0_alias.ROWNO > "+pageIndex+"*"+pageSize+"" ;
+			list = exe.executeQuery(pageSql);
+		}
+
+
 		
 		List<Map<String,Object>> data = new ArrayList<>();
 		if (list!=null && list.size()>0) {

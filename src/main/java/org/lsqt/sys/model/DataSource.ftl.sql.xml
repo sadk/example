@@ -13,6 +13,8 @@
 		<column name="url" property="url"/>
 		<column name="status" property="status"/>
 		
+		<column name="dialect" property="dialect" text="数据库方言类型"/>
+		
 		<column name="address" property="address"/>
 		<column name="port" property="port" />
 		<column name="sn" property="sn" />

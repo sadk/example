@@ -103,9 +103,20 @@
 									        <div field="comprehensiveSalary" width="120" align="left" headerAlign="center">薪水</div>
 									        <div field="workTime" width="80" align="left" headerAlign="center">作息时间</div>
 									        
-									        <div field="requiredSex" width="80" align="right" headerAlign="center">性别要求</div>
+									        <!-- <div field="requiredSex" width="80" align="right" headerAlign="center">性别要求</div> -->
+									        <div type="comboboxcolumn" field="requiredSex" width="80" headerAlign="center" align="center" allowSort="true">性别要求
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_sex_required" />
+											</div>
+											
+									        
 									        <div field="requiredAge" width="80" align="right" headerAlign="center">年龄要求</div>
-									        <div field="requiredEducation" width="80" align="right" headerAlign="center">学历要求</div>
+									        
+									        <!-- <div field="requiredEducation" width="80" align="right" headerAlign="center">学历要求</div> -->
+									        
+									        <div type="comboboxcolumn" field="requiredEducation" width="80" headerAlign="center" align="center" allowSort="true">学历要求
+												<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_edu_required" />
+											</div>
+									        
 									        <div field="requiredWorkYears" width="80" align="right" headerAlign="center">工作年限要求</div>
 									        <div field="welfare" width="280" align="left" headerAlign="center">福利</div>
 									        

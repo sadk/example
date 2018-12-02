@@ -125,22 +125,21 @@ public class UserWorkRecordController {
 					n.recordDate = e.getRecordDate();
 					n.day = i;
 					n.weekday = e.getWeekday();
-
+					
+					n.workHours = StringUtil.isBlank(e.getWorkingHours()) ? 0D : Double.valueOf(e.getWorkingHours());
+					
 					// 周六周天只算加班；周一至周五算正常工时，超过8小时才能 加班
 					if (e.getWeekday() == 6 || e.getWeekday() == 7) {
 						n.leaveHours = 0D;
 						n.extraHours = StringUtil.isBlank(e.getExtraHours())  ? 0D : Double.valueOf(e.getExtraHours());
 						n.workHours = 0D;
 					} else {
-						n.workHours = StringUtil.isBlank(e.getWorkingHours()) ? 0D : Double.valueOf(e.getWorkingHours());
-						if (n.workHours > DAY_WORK_HOUR_SETTING) {
-							n.extraHours = StringUtil.isBlank(e.getExtraHours()) ? 0D : Double.valueOf(e.getExtraHours());
-							n.leaveHours = StringUtil.isBlank(e.getLeaveHours()) ? 0D : Double.valueOf(e.getLeaveHours());
-						} else {
-							n.extraHours = 0D;
-							n.leaveHours = 0D;
-						}
+						n.extraHours = StringUtil.isBlank(e.getExtraHours()) ? 0D : Double.valueOf(e.getExtraHours());
+						n.leaveHours = StringUtil.isBlank(e.getLeaveHours()) ? 0D : Double.valueOf(e.getLeaveHours());
 						
+						if (n.workHours > 0 || n.extraHours>0) { //有加班和正常上班，不能算请假
+							n.leaveHours = 0D;
+						} 
 					}
 
 					result.add(n);

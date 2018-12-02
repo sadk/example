@@ -84,7 +84,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 	public Definition getById(Long id) {
 		return db.getById(Definition.class, id);
 	}
-
+	
 	public void importColumn(Long id,Integer dataType,boolean isIncremental) {
 		Objects.requireNonNull(id);
 		Objects.requireNonNull(dataType);
@@ -92,6 +92,16 @@ public class DefinitionServiceImpl implements DefinitionService{
 		if(!isIncremental) {// 增量导入不删除原有数据
 			db.executeUpdate(String.format("delete from %s where definition_id=? and data_type = ? ",db.getFullTable(Column.class)), id,dataType);
 		}
+		
+		
+		// 之前已导入过的定义列
+		List<org.lsqt.report.model.Column> temp = new ArrayList<>();
+		ColumnQuery cq = new ColumnQuery();
+		cq.setDefinitionId(id);
+		cq.setDataType(dataType);
+		List<org.lsqt.report.model.Column> dbColumnList = db.queryForList("queryForPage",org.lsqt.report.model.Column.class, cq);
+
+		
 		
 		Definition model = db.getById(Definition.class, id);
 		DataSource dsModel = db.getById(DataSource.class, model.getDatasourceId());
@@ -103,12 +113,34 @@ public class DefinitionServiceImpl implements DefinitionService{
 		List<org.lsqt.report.model.Column> reportColumnList = new ArrayList<>();
 		
 		
+		
+
+		
+		
 		Connection con = db.getCurrentConnection();
 		try {
 			Connection switchConn = ds.getConnection();
 			db.setCurrentConnection(switchConn);
 			db.executePlan(() -> {
-				String sqlWrap = "select * from ("+model.getColumnSql()+" ) t10000_amount limit 1"; //防止用户把所有数据load出来!!!
+				// 默认是mysql数据库
+				String sqlWrap = "select * from (" + model.getColumnSql() + " ) t10000_amount limit 1"; // 防止用户把所有数据load出来!!!
+				
+				
+				if (dsModel.getDialect() != null && (dsModel.getDialect() == Db.Dialect.Oracle10gDialect
+						|| dsModel.getDialect() == Db.Dialect.Oracle9iDialect
+						|| dsModel.getDialect() == Db.Dialect.OracleDialect)) {
+					
+					sqlWrap = "select * from (" + model.getColumnSql() + " ) t10000_amount where rownum=1";
+					/*
+					// bug fix :ORA-00918: column ambiguously defined
+					int whereIdx = model.getColumnSql().toLowerCase().indexOf("where ");
+					int groupbyIdx = model.getColumnSql().toLowerCase().indexOf("group by");
+					if ((whereIdx!=-1 && groupbyIdx != -1) && (whereIdx < groupbyIdx)) {
+						sqlWrap = model.getColumnSql();
+					} 
+					*/
+				}
+
 				List<org.lsqt.components.db.Column> list = db.getMetaDataColumn(sqlWrap);
 				
 				if(ArrayUtil.isNotBlank(list)) {
@@ -120,11 +152,6 @@ public class DefinitionServiceImpl implements DefinitionService{
 				}
 				
 				
-				List<org.lsqt.report.model.Column> temp = new ArrayList<>();
-				ColumnQuery cq = new ColumnQuery();
-				cq.setDefinitionId(id);
-				cq.setDataType(dataType);
-				List<org.lsqt.report.model.Column> dbColumnList = db.queryForList("queryForPage",org.lsqt.report.model.Column.class, cq);
 
 
 				if (isIncremental && ArrayUtil.isNotBlank(dbColumnList)) {

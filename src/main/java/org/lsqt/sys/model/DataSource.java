@@ -2,6 +2,8 @@ package org.lsqt.sys.model;
 
 import java.util.Date;
 
+import org.lsqt.components.db.Db;
+
 /**
  * 数据源管理
  * @author yuanmm
@@ -30,6 +32,8 @@ public class DataSource {
 	private String address; // 地址,可以是ip也可以是域名
 	private String port ;
 
+	private Integer dialect ; //数据源对应的数据库类型方言：见,Db.Dialect
+	
 	
 	private String remark;
 	
@@ -139,6 +143,12 @@ public class DataSource {
 	}
 	public void setLoginDefaultDb(String loginDefaultDb) {
 		this.loginDefaultDb = loginDefaultDb;
+	}
+	public Integer getDialect() {
+		return dialect;
+	}
+	public void setDialect(Integer dialect) {
+		this.dialect = dialect;
 	}
 
 	

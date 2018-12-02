@@ -87,6 +87,10 @@
 								</td>
 							</tr>
 							<tr>
+								<td>数据库方言：</td>
+								<td>
+									<input id="dialect" name="dialect" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sys_datasource_dialect" />
+								</td>
 								<td>备注：</td>
 								<td>
 								 	<input id="remark" name="remark" class="mini-textbox"/>

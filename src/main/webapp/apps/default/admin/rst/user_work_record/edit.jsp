@@ -32,17 +32,9 @@
 				        		</td>
 				        		<td>正常工时：</td>
 				        		<td>
-				        			<input id="workingHours" name="workingHours" style="width:140px" class="mini-spinner" value="0" minValue="0" maxValue="8"/>
+				        			<input id="workingHours" name="workingHours" style="width:140px" class="mini-spinner" increment="0.5" value="0" minValue="0" maxValue="8"/>
 				        		</td>
 				        	</tr>
-				        </table>
-				    </div>
-				</fieldset>
-			
-				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
-		            <legend>加班工时</legend>
-		            <div style="padding:5px;">
-				        <table>
 							<tr>
 								<td>用户姓名:</td>
 								<td>
@@ -53,7 +45,14 @@
 									<input id="userCode" name="userCode"  style="width:140px" class="mini-textbox"  emptyText="请输入"  readonly="readonly" required="true"/>
 								</td>
 							</tr>
-							
+				        </table>
+				    </div>
+				</fieldset>
+			
+				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
+		            <legend>加班工时</legend>
+		            <div style="padding:5px;">
+				        <table>
 							<tr>
 									<%-- 
 									<td>记录类型:</td>
@@ -63,7 +62,7 @@
 									 --%>
 									<td>加班时长(h):</td>
 									<td>
-										<input id="extraHours" name="extraHours"  style="width:140px" class="mini-textbox"  emptyText="小时数,保留一个小数"/>
+										<input id="extraHours" name="extraHours"  style="width:140px" class="mini-spinner" increment="0.5"  value="0" minValue="0" maxValue="24" emptyText="小时数,保留一个小数"/>
 									</td>
 									<td>上班类型:</td>
 									<td>
@@ -81,7 +80,7 @@
 				        	<tr>
 				        		<td>请假时长(h):</td>
 								<td>
-									<input id="leaveHours" name="leaveHours"  style="width:140px" class="mini-textbox"  emptyText="小时数,保留一个小数"/>
+									<input id="leaveHours" name="leaveHours"  style="width:140px" class="mini-spinner" increment="0.5" value="0" minValue="0" maxValue="24"  emptyText="小时数,保留一个小数"/>
 								</td>
 								<td>请假类型:</td>
 								<td>
