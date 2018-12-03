@@ -58,11 +58,13 @@
           <img src="${pageContext.request.contextPath}/logo.png" style="margin-top: 15px;margin-left: 10px;"/> 
           <!-- <div style="margin-left:5px;line-height:15px;text-align:left;cursor:default;color: green">晴天集团 Copyright © 版权所有 </div> -->
         <div class="topNav">    
+        	<!-- 
             <a href="#">首页</a> |
             <a href="#">在线示例</a> |
             <a href="#">Api手册</a> |            
             <a href="#">开发教程</a> |
             <a href="#">快速入门</a> |
+             -->
             <a href="#" id="loginNameWelcome">欢迎，登陆</a> |     
             <a href="javascript:updatePwd()">修改密码</a> |    
             <a href="javascript:logout()" style="color:Red;font-family:Tahoma;font-weight: bold;" >退出</a>
