@@ -82,7 +82,7 @@ public class Definition {
 	private Integer pageSize=20; //表格分页大小
 	private String pageSizeList; //逗号分割
 	
-	private Integer canExport;  //是否可以导出excel、PDF等
+	private Integer canExport;  //是否可以导出excel、PDF等, (1=是，0=否)
 	private Integer exportMode; //数据导出的模式, 1=默认全部字段数据导出 2=用户选择字段导出
 	public static final Integer EXPORT_OR_IMPORT_MODE_ALL_COLUMN=1;
 	public static final Integer EXPORT_OR_IMPORT_MODE_SELECTED_COLUMN=2;
@@ -105,6 +105,16 @@ public class Definition {
 	public static final String LAYOUT_LEFT_MID_RIGHT="5";
 
 
+	
+	private Integer exportCurrPage; //导出查询当前页=1 、导出查询所有页 =0 (注：如果报表定义不分页，则这个忽略)
+	private Integer exportDataRender; // 按导出模板渲染=0 ， 大数据自动渲染 = 1
+	
+	public static int EXPORT_CURR_PAGE_导出查询当前页=1;
+	public static int EXPORT_CURR_PAGE_导出查询所有页=0;
+	
+	public static int EXPORT_DATA_RENDER_按导出模板渲染=0;
+	public static int EXPORT_DATA_RENDER_数据自动渲染=1;
+	
 	
 	private String version;
 	
@@ -488,5 +498,21 @@ public class Definition {
 
 	public void setStoreReplicaData(Integer storeReplicaData) {
 		this.storeReplicaData = storeReplicaData;
+	}
+
+	public Integer getExportCurrPage() {
+		return exportCurrPage;
+	}
+
+	public void setExportCurrPage(Integer exportCurrPage) {
+		this.exportCurrPage = exportCurrPage;
+	}
+
+	public Integer getExportDataRender() {
+		return exportDataRender;
+	}
+
+	public void setExportDataRender(Integer exportDataRender) {
+		this.exportDataRender = exportDataRender;
 	}
 }

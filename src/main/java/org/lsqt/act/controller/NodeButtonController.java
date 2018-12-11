@@ -23,7 +23,6 @@ import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
-import org.lsqt.components.util.ExceptionUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.sys.model.Application;
 import org.lsqt.sys.model.Dictionary;

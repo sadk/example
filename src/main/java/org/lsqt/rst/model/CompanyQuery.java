@@ -37,6 +37,9 @@ public class CompanyQuery {
 	/** 创建人 */
 	private String createUser;
 
+	/**企业的考勤月切预留天数。例如：5天后不能修改考勤数据**/
+	private Integer attendanceDay ;
+	
 	/** 更新人 */
 	private String updateUser;
 	
@@ -170,6 +173,14 @@ public class CompanyQuery {
 
 	public void setTenantCode(String tenantCode) {
 		this.tenantCode = tenantCode;
+	}
+
+	public Integer getAttendanceDay() {
+		return attendanceDay;
+	}
+
+	public void setAttendanceDay(Integer attendanceDay) {
+		this.attendanceDay = attendanceDay;
 	}
 
 }

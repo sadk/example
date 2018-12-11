@@ -287,6 +287,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 		return null;
 	}
 	
+	
 	public Page<Map<String,Object>> search(Long id,Map<String,Object> formMap) throws Exception{
 		
 		class Result { public Page<Map<String,Object>> data; }
@@ -368,7 +369,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 				formMap = wrapFormMap(def, formMap);
 				boolean countRequired = (def.getCountRequired()!= null && (Dictionary.YES == def.getCountRequired()));
 				
-				if (String.valueOf(org.lsqt.sys.model.Column.YES).equals(def.getShowPager())) {
+				if (String.valueOf(Dictionary.YES).equals(def.getShowPager())) {
 					String pageIndexParam = "pageIndex";
 					String pageSizeParam = "pageSize";
 
@@ -400,7 +401,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 						pageSize = 20;
 					}
 					
-					if(String.valueOf(org.lsqt.sys.model.Column.YES).equals(def.getPreventSqlInjection())) { //防SQL注入启用
+					if(String.valueOf(Dictionary.YES).equals(def.getPreventSqlInjection())) { //防SQL注入启用
 						SqlStatementArgs sqlStmt = renderSQLPrvInjectSQL(formMap,def.getReportSql());
 						
 						return reportDb.executeQueryForPage(sqlStmt.getSql(),countRequired, pageIndex,  pageSize, sqlStmt.getArgs().toArray());
@@ -412,7 +413,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 				} else {
 					List<Map<String,Object>> list = new ArrayList<>();
 					
-					if(String.valueOf(org.lsqt.sys.model.Column.YES).equals(def.getPreventSqlInjection())) { //防SQL注入启用
+					if(String.valueOf(Dictionary.YES).equals(def.getPreventSqlInjection())) { //防SQL注入启用
 						SqlStatementArgs sqlStmt = renderSQLPrvInjectSQL(formMap,def.getReportSql());
 						list = reportDb.executeQuery(sqlStmt.getSql(), sqlStmt.getArgs().toArray());
 					} else {
@@ -515,7 +516,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 					baseValue = ModelUtil.prepareBaseValue(String.class, blankText2Null(formMap,e.getPropertyName()));
 					
 					if(baseValue!=null && e.getLikeSearchIs()!=null) { //如果是模糊查询
-						if(org.lsqt.sys.model.Column.YES == e.getLikeSearchIs()) {
+						if(Dictionary.YES == e.getLikeSearchIs()) {
 							if(e.getLikeSearchType()!=null && org.lsqt.report.model.Column.LIKE_SEARCH_TYPE_LEFT == e.getLikeSearchType()) {
 								baseValue = baseValue+"%";
 							}
@@ -707,5 +708,161 @@ public class DefinitionServiceImpl implements DefinitionService{
 				root.put(util, utilStatics);
 			}
 		}
+	}
+	
+	
+	/**
+	 * 报表使终分页查询 (注意在客户端切换数据源)
+	 * @param reportDb 报表数据源
+	 * @param def 报表定义（需包含报表列定义）
+	 * @param formMap 表单原始数据
+	 * @return 报表数据
+	 * @throws Exception
+	 */
+	public Page<Map<String, Object>> getPerPage(Db reportDb,Definition def,boolean countRequired, Map<String,Object> formMap) throws Exception {
+		if (def == null  || formMap.isEmpty()) {
+			return new Page.PageModel<Map<String,Object>>();
+		}
+		formMap = wrapFormMap(def, formMap);
+		
+		String pageIndexParam = "pageIndex";
+		String pageSizeParam = "pageSize";
+
+		Integer pageIndex = 0;
+		Integer pageSize = 20;
+		if (StringUtil.isNotBlank(def.getPageIndexParam())) {
+			pageIndexParam = def.getPageIndexParam();
+		}
+
+		if (StringUtil.isNotBlank(def.getPageSizeParam())) {
+			pageSizeParam = def.getPageSizeParam();
+		}
+
+		Object pageIndexObj = formMap.get(pageIndexParam);
+		if (pageIndexObj != null) {
+			pageIndex = Integer.valueOf(pageIndexObj.toString());
+		}
+
+		Object pageSizeObj = formMap.get(pageSizeParam);
+		if (pageSizeObj != null) {
+			pageSize = Integer.valueOf(pageSizeObj.toString());
+		}
+		
+		if (pageIndex < 0) {
+			pageIndex = 0;
+		}
+
+		if (pageSize < 0) {
+			pageSize = 20;
+		}
+		
+		String sql = renderSQL(formMap, def.getReportSql()); 
+		return reportDb.executeQueryForPage(sql,countRequired, pageIndex,pageSize);
+	}
+	
+	
+	/**
+	 * 
+	 * @param def 报表配置
+	 * @param ds 报表导出对应的数据源
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getDataFromDbByLoopPage(Definition def, javax.sql.DataSource ds,Page.Action action) throws Exception {
+		List<Map<String, Object>> dbData = new ArrayList<>();
+		
+		Connection con = db.getCurrentConnection(); // 系统数据源
+		try {
+			Connection switchConn = ds.getConnection();
+			db.setCurrentConnection(switchConn); // 切换到报表数据源!!!!
+			db.executePlan(false, () -> {
+				try {
+					boolean isCountedTotal = false;
+					long pageCount = 0;
+					long total = 0;
+					
+					int pageIndex = Page.DEFAULT_PAGE_INDEX ;
+					Object pageIndexObj = ContextUtil.getFormMap().get("pageIndex");
+					if (pageIndexObj != null) {
+						if(StringUtil.isBlank(pageIndexObj.toString())) {
+							pageIndex = Page.DEFAULT_PAGE_INDEX ;
+						}else {
+							pageIndex = Integer.valueOf(pageIndexObj.toString());
+						}
+					} 
+					ContextUtil.getFormMap().put("pageIndex", pageIndex);
+					
+					if (def.getExportCurrPage() == Definition.EXPORT_CURR_PAGE_导出查询所有页) {
+						ContextUtil.getFormMap().put("pageSize", Page.Action.MAX_PAGE_SIZE_LOOPED);
+					}
+					
+					do {
+						Page<Map<String, Object>> page = getPerPage(db, def, !isCountedTotal, ContextUtil.getFormMap());
+						if(isCountedTotal == false) {
+							pageCount = page.getPageCount();
+							total = page.getTotal();
+						}
+						isCountedTotal = true;
+						
+						
+						if (def.getExportCurrPage() == Definition.EXPORT_CURR_PAGE_导出查询当前页) {
+							dbData.addAll(page.getData());
+							break;
+						} else {
+							dbData.addAll(page.getData());
+						}
+						
+						if (action != null) {
+							action.doNextPage(pageIndex, page.getPageSize(), new ArrayList<>(page.getData()));
+						}
+						
+						if (pageCount == 0 || pageCount < pageIndex + 1 ) {
+							break;
+						}
+						
+						//使终保证退出混环
+						if (page == null || page.getData() == null || page.getData().isEmpty() || !page.getHasNext()) {
+							break;
+						}
+
+						ContextUtil.getFormMap().put("pageIndex", ++pageIndex);
+					} while(true) ;
+					
+				} catch (Exception e) {
+					throw new DbException((e.getCause() == null ? e : e.getCause()));
+				}
+			});
+			
+		} catch (Exception ex) {
+			throw ex;
+		} finally {
+			db.setCurrentConnection(con);
+		}
+		
+
+		
+		//跟据DB字段，转化成java属性字段
+		List<Map<String, Object>> pojoData = new ArrayList<>();
+		if (ArrayUtil.isNotBlank(dbData)) {
+			for (Map<String, Object> row : dbData) {
+				Map<String, Object> pojoMap = new LinkedHashMap<>();
+
+				List<String> keyList = MapUtil.toKeyList(row);
+				for (String k : keyList) {
+					for (org.lsqt.report.model.Column column : def.getColumnList()) {
+						if (k.equals(column.getCode())) {
+							pojoMap.put(column.getPropertyName(), row.get(k));
+							break;
+						}
+					}
+				}
+				pojoData.add(pojoMap);
+			}
+		}
+		return pojoData;
+	}
+ 
+	
+	public List<Map<String, Object>> getDataFromDbByLoopPage(Definition def, javax.sql.DataSource ds) throws Exception {
+		return getDataFromDbByLoopPage(def, ds, null);
 	}
 }

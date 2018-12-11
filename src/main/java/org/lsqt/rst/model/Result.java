@@ -44,7 +44,7 @@ public class Result<T> {
 		Result<T> r = new Result<>();
 		r.setIsSuccess(false);
 		r.setData(data);
-		r.setCode(500);
+		r.setCode(400);
 		if (msg != null && msg.length > 0) {
 			r.setMessage(msg[0]);
 		} else {

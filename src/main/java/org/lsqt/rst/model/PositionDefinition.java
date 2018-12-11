@@ -112,6 +112,8 @@ public class PositionDefinition {
 	// ----------------- 辅助字段， 用于获取岗位的福利 (多个福利逗号分割)
 	private String welfareItemNos;
 	
+	private String redAmount ; //推荐奖利金额
+	private String amountRule; //推荐奖利规则
 	
 	public String getTenantCode() {
 		return tenantCode;
@@ -399,6 +401,22 @@ public class PositionDefinition {
 
 	public void setStoreName(String storeName) {
 		this.storeName = storeName;
+	}
+
+	public String getRedAmount() {
+		return redAmount;
+	}
+
+	public void setRedAmount(String redAmount) {
+		this.redAmount = redAmount;
+	}
+
+	public String getAmountRule() {
+		return amountRule;
+	}
+
+	public void setAmountRule(String amountRule) {
+		this.amountRule = amountRule;
 	}
 
 }

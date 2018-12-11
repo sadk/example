@@ -5,7 +5,7 @@ import org.lsqt.components.context.annotation.model.Pattern;
 /**
  * 用户表
  */
-public class User {
+public class User implements java.io.Serializable{
 	public static final String PWD_SALT = "bqjr@123"; // 暂拟用固定值做密码盐
 	
 	public static final int status_过期 = 3;

@@ -62,6 +62,26 @@
 				        </table>
 				    </div>
 				</fieldset>
+				
+				
+			<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
+	            <legend>考勤设置</legend>
+	            <div style="padding:5px;">
+			        <table>
+								
+								<tr>
+									<td>考勤月切天数：</td>
+									<td>
+										<input id="attendanceDay" name="attendanceDay"  style="width:140px" class="mini-spinner" maxValue="1000"  emptyText="5天后不能修改考勤数据"  required="true"/>
+									</td>
+									<td style="color: green;">例如：5天后不能修改考勤数据</td>
+									<td></td>
+								</tr>
+					</table>
+				</div>
+			</fieldset>
+				
+				
 			</div>
 			<div id="subbtn" style="text-align:center;padding:10px;">
 				<a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>

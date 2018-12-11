@@ -74,7 +74,8 @@
 	      /user/login.*,
 	      /user/save_or_update.*,
 		  /rst/user_work_record/wx/*.*,
-          /rst/work_address/wx/*.*
+          /rst/work_address/wx/*.*,
+          /rst/user/wx/*.*
 
       </param-value>
     </init-param>

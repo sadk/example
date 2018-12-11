@@ -1,5 +1,7 @@
 package org.lsqt.rst.model;
 
+import java.util.Date;
+
 import org.lsqt.components.db.Page;
 
 /**
@@ -84,7 +86,6 @@ public class UserQuery {
 	private String userPassword;
 
 	/** 最近一份工作的入职时间 */
-
 	private java.util.Date latelyJobEntryDate;
 
 	/** 公众号关注状态 */
@@ -100,6 +101,16 @@ public class UserQuery {
 	private String email;
 	
 	private String tenantCode;
+	
+	/**用户离在职离职状态: L1 是离职 */
+	private String entryStatus;
+
+	/**离职日期**/
+	private Date quitTime;
+	
+	/**当前用户在职企业**/
+	private String dependCompanyName;
+	private String dependCompanyCode;
 	
 	public String getTenantCode() {
 		return tenantCode;
@@ -381,6 +392,38 @@ public class UserQuery {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getEntryStatus() {
+		return entryStatus;
+	}
+
+	public void setEntryStatus(String entryStatus) {
+		this.entryStatus = entryStatus;
+	}
+
+	public Date getQuitTime() {
+		return quitTime;
+	}
+
+	public void setQuitTime(Date quitTime) {
+		this.quitTime = quitTime;
+	}
+
+	public String getDependCompanyName() {
+		return dependCompanyName;
+	}
+
+	public void setDependCompanyName(String dependCompanyName) {
+		this.dependCompanyName = dependCompanyName;
+	}
+
+	public String getDependCompanyCode() {
+		return dependCompanyCode;
+	}
+
+	public void setDependCompanyCode(String dependCompanyCode) {
+		this.dependCompanyCode = dependCompanyCode;
 	}
 
 }

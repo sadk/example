@@ -4,30 +4,27 @@
 			<column id="id" type="auto" property="id" text="主键" />
 		
 	 		<column name="user_code" property="userCode" text="用户编码"/>
-	 		
 	 		<column name="user_name" property="userName" text="用户名称"/>
-	 	
-	 		<column name="type" property="type" text="考勤类型 :100=正常上班 200=加班 300=请假"/>
-	 	
-	 		<column name="working_hours" property="workingHours" text="(工作日)正常工时"/>
-	 		<column name="leave_hours" property="leaveHours" text="(工作日)请假工时"/>
-	 		<column name="extra_hours" property="extraHours" text="加班工时"/>
-	 	
 	 		<column name="record_date" property="recordDate" text="考勤日期:yyyyMMdd"/>
 	 		
-	 		<column name="extra_shift_type" property="extraShiftType" text="加班班次类型:1=白班、2=中班、3=晚班、4=休息"/>
-	 		<column name="leave_shift_type" property="leaveShiftType" text="请假班次类型:1=白班、2=中班、3=晚班、4=休息"/>
+	 		<column name="working_hours" property="workingHours" text="正常工时"/>
+	 		<column name="extra_hours" property="extraHours" text="加班工时"/>
+	 		<column name="leave_hours" property="leaveHours" text="请假工时"/>
+	 		
+	 		<column name="shift_type" property="shiftType" text="(上班和加班的)班次类型:1=白班、2=中班、3=晚班"/>
 	 		
 	 		<column name="leave_type" property="leaveType" text="请假类型:1=事假、2=病假、3=其他"/>
-	 	
+	 		<column name="leave_has" property="leaveHas" text="是否有请假 :1=有 0=没有"/>
+	 		
 	 		<column name="remark" property="remark" text="（请假原因）备注"/>
-	 	
-	 		<column name="tenant_code" property="tenantCode" text="租户编码"/>
-	 	
-	 		<column name="app_code" property="appCode" text="系统编码"/>
+	 		
+	 		<column name="company_name" property="companyName" text="考勤公司"/>
+	 		<column name="company_code" property="companyCode" text="考勤公司编码"/>
 	 	
 	 		<column name="weekday" property="weekday" text="1=星期一 2=星期二  3=星期三 等"/>
 	 		
+	 		<column name="tenant_code" property="tenantCode" text="租户编码"/>
+	 		<column name="app_code" property="appCode" text="系统编码"/>
 	 		<column name="sn" property="sn" text="排序"/>
 	 	
 	 	
@@ -50,22 +47,21 @@
 				</#if>
 				
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
-						
 	  						<#if query.id??> and id = ${query.id} </#if>
 	  						
+	  						<#if query.companyName??> and company_name = '${StringUtil.escapeSql(query.companyName)}' </#if>
+	  						<#if query.companyCode??> and company_code = '${StringUtil.escapeSql(query.companyCode)}' </#if>
 	  						
 	  						
 	  						<#if query.recordDate??> and record_date = ${query.recordDate} </#if>
 	  						<#if query.recordDateYearMonth??> and record_date like '${query.recordDateYearMonth}%' </#if>
 					
-					
-
+							<#if query.leaveHas??> and leave_has = '${StringUtil.escapeSql(query.leaveHas)}' </#if>
+							
 	  						<#if query.userCode??> and user_code = '${StringUtil.escapeSql(query.userCode)}' </#if>
 							
 							<#if query.userName??> and user_name = '${StringUtil.escapeSql(query.userName)}' </#if>
 							
-	  						<#if query.type??> and type = ${query.type} </#if>
-					
 	  						<#if query.workingHours??> and working_hours = '${StringUtil.escapeSql(query.workingHours)}' </#if>
 						
 	  						<#if query.extraShiftType??> and extra_shift_type = '${StringUtil.escapeSql(query.extraShiftType)}' </#if>

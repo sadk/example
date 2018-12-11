@@ -59,6 +59,15 @@
 	 		<column name="email" property="email" text="邮箱"/>
 	 	
 	 		<column name="tenant_code" property="tenantCode" text="租户码"/>
+	 		
+	 		<column name="is_entry" property="entryStatus" text="是否入职:L1=离职"/>
+	 		
+	 		<column name="quit_time" property="quitTime" text="离职日期"/>
+	 		
+	 		<column name="depend_company_name" property="dependCompanyName" text="入职工厂名"/>
+	 		
+	 		<column name="depend_company_code" property="dependCompanyCode" text="入职工厂编码"/>
+	 		
 	</table>
 	
 	<statement id="queryForPage" parameterName="query">
@@ -99,7 +108,12 @@
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  						<#if query.id??> and id = ${query.id} </#if>
-					
+	  						
+	  						<#if query.dependCompanyName??> and depend_company_name like  '%${StringUtil.escapeSql(query.dependCompanyName)}%' </#if>
+	  						
+	  						<#if query.dependCompanyCode??> and depend_company_code = '${StringUtil.escapeSql(query.dependCompanyCode)}' </#if>
+	  						
+	  						
 	  						<#if query.code??> and user_id = '${StringUtil.escapeSql(query.code)}' </#if>
 					
 	  						<#if query.realName??> and real_name = '${StringUtil.escapeSql(query.realName)}' </#if>
@@ -160,6 +174,8 @@
 						
 	  						<#if query.email??> and email = '${StringUtil.escapeSql(query.email)}' </#if>
 						
+							<#if query.entryStatus??> and is_entry = '${StringUtil.escapeSql(query.entryStatus)}' </#if>
+							
 							<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
 					
         	</#if>

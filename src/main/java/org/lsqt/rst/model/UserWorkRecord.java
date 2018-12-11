@@ -10,15 +10,13 @@ public class UserWorkRecord {
 
 	/** 用户编码 */
 	private String userCode;
-	
 	/** 用户名称 */
 	private String userName;
+	
+	private String companyCode; //用户所在企业的打卡
+	private String companyName; 
 
-	/** 考勤类型 :100=正常上班 200=加班 300=请假 */
-	private Integer type;
-	public static final int TYPE_正常上班=100;
-	public static final int TYPE_加班=200;
-	public static final int TYPE_请假=300;
+	
 	
 	private Integer recordDate; //考勤记录的日期yyyyMMdd
 
@@ -27,9 +25,12 @@ public class UserWorkRecord {
 	private String extraHours; //加班工时
 	
 
-	/**加班 班次类型:1=白班、2=中班、3=晚班、4=休息 */
-	private String extraShiftType;
-	private String leaveShiftType;
+	/**加班 班次类型:1=白班、2=中班、3=晚班、4=休息(已作废) */
+	private String shiftType;
+	
+	/**是否有请假: 1=有 0=没有**/
+	private String leaveHas;
+ 
 	
 	/** 请假类型:1=事假、2=病假、3=其他 */
 	private String leaveType;
@@ -60,6 +61,39 @@ public class UserWorkRecord {
 	
 	/**1=星期一， 2=星期二， 7=星期天**/
 	private Integer weekday;
+	
+	// -- 辅助字段
+	private String attendanceMothCut;//考勤月切天数: 比如等于5， 表示5天后不能再修改上月的考勤数据
+	
+	
+	
+	public String getWeekDayDesc() {
+		if(weekday == null){
+			return "";
+		}
+		if (weekday ==1) {
+			return "星期一";
+		}
+		if (weekday ==2) {
+			return "星期二";
+		}
+		if (weekday ==3) {
+			return "星期三";
+		}
+		if (weekday ==4) {
+			return "星期四";
+		}
+		if (weekday ==5) {
+			return "星期五";
+		}
+		if (weekday ==6) {
+			return "星期六";
+		}
+		if (weekday ==7) {
+			return "星期天";
+		}
+		return "";
+	}
 
 	// getter、setter
 	public void setId(Long id) {
@@ -76,14 +110,6 @@ public class UserWorkRecord {
 
 	public String getUserCode() {
 		return this.userCode;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
-	}
-
-	public Integer getType() {
-		return this.type;
 	}
 
 	public void setWorkingHours(String workingHours) {
@@ -191,28 +217,52 @@ public class UserWorkRecord {
 		this.extraHours = extraHours;
 	}
 
-	public String getExtraShiftType() {
-		return extraShiftType;
-	}
-
-	public void setExtraShiftType(String extraShiftType) {
-		this.extraShiftType = extraShiftType;
-	}
-
-	public String getLeaveShiftType() {
-		return leaveShiftType;
-	}
-
-	public void setLeaveShiftType(String leaveShiftType) {
-		this.leaveShiftType = leaveShiftType;
-	}
-
 	public Integer getRecordDate() {
 		return recordDate;
 	}
 
 	public void setRecordDate(Integer recordDate) {
 		this.recordDate = recordDate;
+	}
+
+	public String getShiftType() {
+		return shiftType;
+	}
+
+	public void setShiftType(String shiftType) {
+		this.shiftType = shiftType;
+	}
+
+	public String getLeaveHas() {
+		return leaveHas;
+	}
+
+	public void setLeaveHas(String leaveHas) {
+		this.leaveHas = leaveHas;
+	}
+
+	public String getCompanyCode() {
+		return companyCode;
+	}
+
+	public void setCompanyCode(String companyCode) {
+		this.companyCode = companyCode;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getAttendanceMothCut() {
+		return attendanceMothCut;
+	}
+
+	public void setAttendanceMothCut(String attendanceMothCut) {
+		this.attendanceMothCut = attendanceMothCut;
 	}
 
 }

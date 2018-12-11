@@ -18,12 +18,11 @@ public class UserWorkRecordQuery {
 
 	/** 用户编码 */
 	private String userCode;
-	
 	private String userName;
 
-	/** 考勤类型 :100=正常上班 200=加班 300=请假 */
-	private Integer type;
-
+	private String companyCode; //用户所在企业的打卡
+	private String companyName; 
+	
 	private Integer recordDate; //考勤记录的日期yyyyMMdd
 
 	private Integer recordDateYearMonth; // 用于查询 recordDate like '201811%'记录
@@ -31,13 +30,15 @@ public class UserWorkRecordQuery {
 	/** 时长精确到小时，保留一个小数 */
 	private String workingHours;
 
-	/** 班次类型:1=白班、2=中班、3=晚班、4=休息 */
-	private String extraShiftType;
-	private String leaveShiftType;
+	/** 班次类型:1=白班、2=中班、3=晚班*/
+	private String shiftType;
 
 	/** 请假类型:1=事假、2=病假、3=其他 */
 	private String leaveType;
-
+	
+	/**是否有请假: 1=有 0=没有**/
+	private String leaveHas;
+	
 	/** （请假原因）备注 */
 	private String remark;
 
@@ -66,14 +67,6 @@ public class UserWorkRecordQuery {
 
 	public String getUserCode() {
 		return this.userCode;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
-	}
-
-	public Integer getType() {
-		return this.type;
 	}
 
 	public void setWorkingHours(String workingHours) {
@@ -196,22 +189,6 @@ public class UserWorkRecordQuery {
 		this.weekday = weekday;
 	}
 
-	public String getExtraShiftType() {
-		return extraShiftType;
-	}
-
-	public void setExtraShiftType(String extraShiftType) {
-		this.extraShiftType = extraShiftType;
-	}
-
-	public String getLeaveShiftType() {
-		return leaveShiftType;
-	}
-
-	public void setLeaveShiftType(String leaveShiftType) {
-		this.leaveShiftType = leaveShiftType;
-	}
-
 	public Integer getRecordDate() {
 		return recordDate;
 	}
@@ -242,5 +219,37 @@ public class UserWorkRecordQuery {
 
 	public void setRecordDateEnd(String recordDateEnd) {
 		this.recordDateEnd = recordDateEnd;
+	}
+
+	public String getShiftType() {
+		return shiftType;
+	}
+
+	public void setShiftType(String shiftType) {
+		this.shiftType = shiftType;
+	}
+
+	public String getLeaveHas() {
+		return leaveHas;
+	}
+
+	public void setLeaveHas(String leaveHas) {
+		this.leaveHas = leaveHas;
+	}
+
+	public String getCompanyCode() {
+		return companyCode;
+	}
+
+	public void setCompanyCode(String companyCode) {
+		this.companyCode = companyCode;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 }

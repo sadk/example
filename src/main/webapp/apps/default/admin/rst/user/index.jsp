@@ -97,11 +97,8 @@
 								<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
 								<span class="separator"></span>   -->
 								 <a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
+								 <a class="mini-button" iconCls="icon-user" onclick="entry()">入(离)职处理</a>
 							</td>
-							<td style="white-space:nowrap;">
-		                        <input id="key2" name="key2" class="mini-textbox" emptyText="请输入关键字" style="width:150px;" onenter="search"/>   
-		                        <a class="mini-button" onclick="search()">查询</a>
-		                    </td>
 						</tr>
 					</table>
 				</div>
@@ -110,13 +107,22 @@
 					url="${pageContext.request.contextPath}/rst/user/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
 					<div property="columns">
 						<div type="checkcolumn" ></div>
-						<div field="code" width="160" headerAlign="center" allowSort="true" align="center">编号</div>
-						<div field="realName" width="160" headerAlign="center" allowSort="true" align="center">姓名</div>
-						<div field="nickName" width="160" headerAlign="center" allowSort="true" align="center">昵称</div>
+						<div field="code" width="160" headerAlign="center" allowSort="true" align="left">编号</div>
+						<div field="realName" width="160" headerAlign="center" allowSort="true" align="left">姓名</div>
+						<div field="nickName" width="160" headerAlign="center" allowSort="true" align="left">昵称</div>
 						<div field="mobile" width="160" headerAlign="center" allowSort="true" align="center">手机</div>
-						<div field="wxAccount" width="160" headerAlign="center" allowSort="true" align="center">微信号</div>
+						<div type="comboboxcolumn" field="entryStatus" width="80" headerAlign="center" align="center" allowSort="true">在职状态
+							<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_jianli_tech_entry_status" />
+						</div>
+						<div field="dependCompanyName" width="180" headerAlign="center" allowSort="true" align="left">入职工厂</div>
 						
-						<div field="sex" width="160" headerAlign="center" allowSort="true" align="center">性别</div>
+						
+						<div type="comboboxcolumn" field="sex" width="80" headerAlign="center" align="center" allowSort="true">性别
+							<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sex" />
+						</div>
+						<div field="wxAccount" width="160" headerAlign="center" allowSort="true" align="center">微信号</div>
+						<div field="email" width="160" headerAlign="center" allowSort="true" align="center">邮箱</div>
+						
 						<div field="birthday" dateFormat="yyyy-MM-dd" width="160" headerAlign="center" allowSort="true" align="center">生日</div>
 						
 						<div field="education" width="160" headerAlign="center" allowSort="true" align="center">学历</div>
@@ -125,15 +131,12 @@
 						<div field="provinceName" width="160" headerAlign="center" allowSort="true" align="center">省份</div>
 						<div field="cityName" width="160" headerAlign="center" allowSort="true" align="center">城市</div>
 						
-						<!-- 
-							<div field="headImgUrl" width="160" headerAlign="center" allowSort="true" align="center">家庭地址</div> 
-						-->
-						
+				 
 						<div field="registrationTime" dateFormat="yyyy-MM-dd" width="160" headerAlign="center" allowSort="true" align="center">注册时间</div>
 						<div field="registrationSource" width="160" headerAlign="center" allowSort="true" align="center">注册来源</div>
 						<div field="refereeUserCode" width="160" headerAlign="center" allowSort="true" align="center">邀请码</div>
 						<div field="seatNumber" width="160" headerAlign="center" allowSort="true" align="center">坐席电话</div>
-						<div field="email" width="160" headerAlign="center" allowSort="true" align="center">邮箱</div>
+						
 					</div>
 					</div>
 				</div>
@@ -159,6 +162,35 @@
 			}
 		});
 		
+		function entry() { // 入职处理
+			var rows = grid.getSelecteds();
+			if(rows.length == 0) {
+				mini.alert("请至少选择一个要入职用户");
+				return ;
+			}
+			var userIds = new Array();
+			for (var i=0;i<rows.length; i++) {
+				userIds.add(rows[i].id);
+			}
+			mini.open({
+				url : "${pageContext.request.contextPath}/apps/default/admin/rst/user/entry.jsp",
+				title : "入职/离职处理",
+				width : 500,
+				height : 180,
+				onload : function() {
+					var iframe = this.getIFrameEl();
+					var data = {};
+					data.userIds = userIds.join(",")
+					iframe.contentWindow.SetData(data);
+				},
+				ondestroy : function(action) {
+					if(action == 'save') {
+					 	grid.reload();
+					}
+				}
+			});
+		}
+		
 		function search() {
 			var data = form.getData();
 			
@@ -167,11 +199,6 @@
 			
 			//data.createTimeBegin = createTimeBegin;
 			//data.createTimeEnd = createTimeEnd;
-			
-			var key2 = mini.get("key2").value;
-			if( (data.key==null || data.key=="") && (key2!=null && key2!="")){
-				data.key = key2;
-			}
 			
 			grid.load(data);
 		}

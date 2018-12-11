@@ -13,6 +13,8 @@
 	 		
 	 		<column name="create_user" property="createUser" text="创建人"/>
 	 		<column name="update_user" property="updateUser" text="更新人"/>
+	 		
+	 		<column name="attendance_day" property="attendanceDay" text="企业的考勤月切预留天数。例如：5天后不能修改考勤数据"/>
 	 	
 	 		<column name="tenant_code" property="tenantCode" text="租户码"/>
 	 	
@@ -38,6 +40,8 @@
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						<#if query.attendanceDay??> and attendance_day = ${query.attendanceDay} </#if>
 					
 	  						<#if query.code??> and company_id = '${StringUtil.escapeSql(query.code)}' </#if>
 					

@@ -314,9 +314,15 @@
 		    			data.${column.propertyName}Begin =  mini.get('${column.propertyName}Begin').text;
 		    			data.${column.propertyName}End =  mini.get('${column.propertyName}End').text;
 		    		</#if>
+		    		<#if column.columnCodegenType == 10>
+	    				data.${column.propertyName} =  mini.get('${column.propertyName}').text;
+    				</#if>
 		    	</#if>
 		    </#if>
 		</#list>
+		
+		
+		
 		
 		 <#if (definition.showPager?? && definition.showPager==1)>
 		 	data.pageIndex = grid.pageIndex;
@@ -324,7 +330,27 @@
 		 </#if>
 		data.reportDefinitionId=${definition.id};
 		
-		download(data);
+		<#if (definition.canExport?? && definition.canExport==1)>
+			<#if definition.exportCurrPage?? && definition.exportCurrPage == 0>
+				data.pageIndex = null;
+				data.pageSize = null;
+			</#if>
+			
+			<#if definition.exportDataRender??>
+				<#if definition.exportDataRender == 0>
+					download(data);
+				<#else>
+					var url = "<#noparse>${pageContext.request.contextPath}</#noparse>/report/definition/export?1=1";
+					for (var i in data) {
+						console.log(i);
+						if (data.hasOwnProperty(i)) {
+					          url += "&"+i+"="+ ((typeof(data[i]) == 'undefined' || data[i] == null) ? "":data[i]);
+					    }
+			    	}
+					window.location.href = url;
+				</#if>
+			</#if>
+		</#if>
 
 	}
 	

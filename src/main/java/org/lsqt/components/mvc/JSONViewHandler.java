@@ -77,12 +77,15 @@ public class JSONViewHandler implements ViewHandler{
 				out.write(json.getBytes("UTF-8"));
 			}
 		} else {
+			/*
 			try {
 				out.write("".getBytes("UTF-8"));
 			} catch (Exception ex) {
 				// 如果有controller控制关闭
+				ex.printStackTrace();
 				log.info("{}#write was invoked, The output stream has been shut down in advance.",out.getClass().getName());
 			}
+			*/
 		}
 		
 		out.flush();

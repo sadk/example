@@ -192,6 +192,18 @@
 				        			<input name="exportMode" id="exportMode" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=report_data_export_mode" />
 				        		</td>
 							</tr>
+							
+							<tr class="exportMode">
+								<td>是否导出当前页 ：</td>
+								<td>
+									<input id="exportCurrPage" name="exportCurrPage" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sys_export_is_currpage" />
+								</td>
+								<td>数据渲染模式：</td>
+				        		<td>
+				        			<input name="exportDataRender" id="exportDataRender" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sys_rpt_data_render_type" />
+				        		</td>
+							</tr>
+							
 							<tr>
 								<td>是否可以导入 ：</td>
 								<td>
@@ -215,7 +227,7 @@
 								</td>
 								
 							</tr>
-							<tr>
+							<tr class="canImport">
 								<td>是否存储副本：</td>
 								<td>
 									<input id="storeReplicaData" name="storeReplicaData" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no" />
@@ -580,12 +592,24 @@
 			
 			function SaveData() {
 				var o = form.getData();
+				console.log(o)
 				form.validate();
 				if(form.isValid() == false) return;
 							
-				if ('1' == (o.canImport+"")) { 
+				if ('1' == (o.canImport+"")) { // 导入必填项
 					if(o.importDatasourceId == null || o.importDatasourceId == ''){
 						mini.alert("请选择导入数据源");
+						return ;
+					}
+				}
+				 
+				if ('1' == (o.canExport+"")) { // 导出必填项
+					if (o.exportCurrPage == null || (o.exportCurrPage+"") == '') {
+						mini.alert("请选择是否导出当前页 ");
+						return ;
+					}
+					if (o.exportDataRender == null || (o.exportDataRender+"") == '') {
+						mini.alert("请选择数据渲染模式");
 						return ;
 					}
 				}

@@ -22,13 +22,21 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestPayload;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
+import org.lsqt.components.db.orm.ORMappingIdGenerator;
+import org.lsqt.components.db.orm.ftl.FtlDbExecute;
 import org.lsqt.components.util.lang.StringUtil;
+import org.lsqt.rst.model.Company;
+import org.lsqt.rst.model.CompanyQuery;
 import org.lsqt.rst.model.Result;
+import org.lsqt.rst.model.User;
+import org.lsqt.rst.model.UserQuery;
 import org.lsqt.rst.model.UserWorkRecord;
 import org.lsqt.rst.model.UserWorkRecordQuery;
 import org.lsqt.rst.service.UserWorkRecordService;
 import org.lsqt.sys.model.Dictionary;
 import org.lsqt.sys.service.DictionaryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
@@ -42,6 +50,7 @@ import com.alibaba.fastjson.JSON;
  */
 @Controller(mapping={"/rst/user_work_record"})
 public class UserWorkRecordController {
+	private static final Logger log = LoggerFactory.getLogger(UserWorkRecordController.class);
 	
 	@Inject private UserWorkRecordService userWorkRecordService; 
 	@Inject private DictionaryService dictionaryService;
@@ -49,6 +58,35 @@ public class UserWorkRecordController {
 	@Inject private Db db;
 	
 	private static final int DAY_WORK_HOUR_SETTING = 8; // 一天正常上班时间默认为8小时
+	
+	@RequestMapping(mapping = { "/wx/big_test" }, isTransaction = false, text = "测试插入大数据，试试导出查询")
+	public Result<Object> bathInsertData4BigTest() throws Exception {
+		String userCode = new ORMappingIdGenerator().getUUID58().toString();
+		int m = 20181206;
+		for (int t=0;t<100;t++) {
+			List<UserWorkRecord> uwr = new ArrayList<>();
+			for (int i=0;i<10000;i++) {
+				
+				UserWorkRecord model = new UserWorkRecord();
+				model.setAppCode("6000");
+				model.setTenantCode("6000");
+				model.setAttendanceMothCut("5");
+				model.setCompanyCode("jbnG7uGdECBfbfx9wxzhc");
+				model.setCompanyName("简历科技淘宝有限公司");
+				model.setExtraHours("2");
+				model.setRecordDate(m--);
+				model.setShiftType("1");
+				model.setUserCode(userCode);
+				model.setUserName("考勤导出用户测试");
+				model.setWeekday(4);
+				model.setWorkingHours("8");
+				uwr.add(model);
+			}
+			db.batchSave(uwr);
+		}
+		
+		return Result.ok();
+	}
 	
 	/**
 	 * 查询一个月的考勤记录，每一天
@@ -59,6 +97,8 @@ public class UserWorkRecordController {
 	 */
 	@RequestMapping(mapping = { "/wx/query_work" }, isTransaction = false, text = "每个月的考勤统计")
 	public Result<Map<String,Object>> queryWork(String userCode,Integer date) throws Exception {
+		System.out.println("userCode = "+userCode+" ,date = "+date);
+		
 		if (StringUtil.isBlank(userCode)) {
 			return Result.fail("用户编码不能为空");
 		}
@@ -67,8 +107,10 @@ public class UserWorkRecordController {
 			return Result.fail("考勤的具体年月不能为空");
 		}
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		String now = sdf.format(new Date());
+		if (date.toString().length() != 6) {
+			return Result.fail("日期格式必须为yyyyMM");
+		}
+
 		
 		
 		// 一个月的加班、请假记录
@@ -77,32 +119,39 @@ public class UserWorkRecordController {
 		query.setRecordDateYearMonth(date);
 		List<UserWorkRecord> data = db.queryForList("queryForPage", UserWorkRecord.class, query);
 
-		Double normalTime = 0D;
-		Double leaveTime = 0D;
-		Double overTime =0D;
-		Double totalTime=0D;
+		Double normalWorking = 0D; //正常工时
+		Double normalExtra = 0D; //平时加班
+		Double weekendExtra = 0D; //周末加班
+
 		
-		List<Node> nodeList = buildMonthData(date,data); 
-		List<Node> realList = new ArrayList<>();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String now = sdf.format(new Date());
+		
+		List<Node> nodeList = buildMonthData(date,data); //DB里的考勤数据
+		
+		List<Node> realList = new ArrayList<>(); //界面显示的考勤数据
 		for (Node e: nodeList) {
-			if(e.recordDate <= Integer.valueOf(now)) {
+			if(e.recordDate <= Integer.valueOf(now)) { //不显示未来的考勤数据
 				realList.add(e);
 			}
 		}
 		
 		for (Node e: realList) {
-			normalTime += e.workHours;
-			leaveTime += e.leaveHours;
-			overTime += e.extraHours;
+			normalWorking += e.workHours;
+			
+			if (e.weekday == 6 || e.weekday == 7) {
+				weekendExtra += e.extraHours;
+			} else {
+				normalExtra += e.extraHours;
+			}
 		}
-		totalTime = normalTime + overTime;
-		
+		 
 		Map<String,Object> resultMap = new HashMap<>();
 		resultMap.put("detail",realList);
-		resultMap.put("normalTime",normalTime);
-		resultMap.put("leaveTime",leaveTime);
-		resultMap.put("overTime",overTime);
-		resultMap.put("totalTime",totalTime);
+		resultMap.put("normalWorking",normalWorking);
+		resultMap.put("normalExtra",normalExtra);
+		resultMap.put("weekendExtra",weekendExtra);
+		 
 		
 		return Result.ok(resultMap);
 	}
@@ -125,6 +174,7 @@ public class UserWorkRecordController {
 					n.recordDate = e.getRecordDate();
 					n.day = i;
 					n.weekday = e.getWeekday();
+					n.leaveHas = e.getLeaveHas();
 					
 					n.workHours = StringUtil.isBlank(e.getWorkingHours()) ? 0D : Double.valueOf(e.getWorkingHours());
 					
@@ -203,6 +253,8 @@ public class UserWorkRecordController {
 		public Integer day ; //一个月的第几天，从1开始
 		public Integer weekday; //星期几 ，从1开始是星期一
 		
+		public String leaveHas;
+		
 		public Double workHours; //正常上班工时
 		public Double leaveHours; //请假工时
 		public Double extraHours; //加班工时
@@ -248,18 +300,54 @@ public class UserWorkRecordController {
 	@RequestMapping(mapping = { "/wx/save_or_update"})
 	@RequestPayload
 	public Result<UserWorkRecord> saveOrUpdate4WX(UserWorkRecord form) {
-		/*if (form.getType() == null) {
-			return Result.fail("考勤类型不能为空");
-		}
-		*/
 		System.out.println(JSON.toJSONString(form, true));
 		
+		if (form.getRecordDate() != null && form.getRecordDate().toString().length() != 8) { // yyyyMMdd
+			return Result.fail("日期格式必须为6位");
+		}
+
+		if (StringUtil.isBlank(form.getUserCode())) {
+			return Result.fail("用户编码不能为空");
+		}
+
 		try {
 			return Result.ok(userWorkRecordService.saveOrUpdate(form));
 		} catch (Exception ex) {
 			return Result.fail(ex.getMessage());
 		}
 	}
+	
+	@RequestMapping(mapping = { "/wx/get_user_company_monthcut_day"},isTransaction = false,text="获取用户所在企业的月切考勤日")
+	public Result<Integer> getUserCompanyMonthCutDay(String userCode)  {
+		if(StringUtil.isBlank(userCode)) {
+			return Result.fail("用户编码不能为空");
+		}
+		
+		UserQuery q = new UserQuery();
+		q.setCode(userCode);
+		User dbUser = db.queryForObject("queryForPage", User.class, q);
+		if(dbUser == null) {
+			return Result.fail("没有找到当前用户");
+		}
+		
+		if (StringUtil.isBlank(dbUser.getDependCompanyCode())) {
+			return Result.fail("没有找到用户入职的企业");
+		}
+		
+		CompanyQuery cq = new CompanyQuery();
+		cq.setCode(dbUser.getDependCompanyCode());
+		Company c = db.queryForObject("queryForPage", Company.class, cq);
+		if(c == null) {
+			return Result.fail("用户入职企业为空");
+		}
+		
+		if (c.getAttendanceDay() == null) {
+			return Result.fail("当前用户入职企业没有设置考勤关闭日");
+		}
+		
+		return Result.ok(c.getAttendanceDay());
+	}
+	
 	
 	@RequestMapping(mapping = { "/wx/get_by_date"},isTransaction = false)
 	public Result<UserWorkRecord> getById4WX(String userCode,Integer recordDate)  {
@@ -282,7 +370,7 @@ public class UserWorkRecordController {
 		query.setUserCode(userCode);
 		UserWorkRecord dbModel = db.queryForObject("queryForPage", UserWorkRecord.class , query);
 		
-		if (dbModel == null) { //如果没有，默认正常上班
+		if (dbModel == null) {
 			dbModel = new UserWorkRecord();
 			dbModel.setRecordDate(recordDate);
 			dbModel.setUserCode(userCode);
@@ -293,47 +381,12 @@ public class UserWorkRecordController {
 			
 			dbModel.setLeaveHours("0");
 			dbModel.setExtraHours("0");
+			dbModel.setAttendanceMothCut("0");
+			dbModel.setWorkingHours(DAY_WORK_HOUR_SETTING+""); //如果数据库没有记录，默认给前端显示8小时，不需用户输入 
 			
-			/*if(dbModel.getWeekday() == 6 || dbModel.getWeekday() == 7) {
-				dbModel.setWorkingHours("0");
-			} else {*/
-				dbModel.setWorkingHours(DAY_WORK_HOUR_SETTING+"");
-			//}
 		}
 		return Result.ok(dbModel);
 	}
-	
-/*
-
-
-
-	@RequestMapping(mapping = { "/wx/page" },isTransaction = false)
-	public Result<Page<UserWorkRecord>> queryForPage4WX(UserWorkRecordQuery query) {
-		if (StringUtil.isBlank(query.getUserCode())) {
-			return Result.fail("用户编码不能为空");
-		}
-		return Result.ok(userWorkRecordService.queryForPage(query));
-	}
-	
-	@RequestMapping(mapping = { "/wx/list"},isTransaction = false)
-	public Result<List<UserWorkRecord>> queryForList4WX(UserWorkRecordQuery query) throws IOException {
-		if (StringUtil.isBlank(query.getUserCode())) {
-			return Result.fail("用户编码不能为空");
-		}
-		return Result.ok(userWorkRecordService.queryForList(query));
-	}
-	
-	@RequestMapping(mapping = { "/wx/delete"})
-	public Result<Integer> delete4WX(String ids) {
-		if (StringUtil.isBlank(ids)) {
-			return Result.fail("id不能为空");
-		}
-		
-		List<Long> list = StringUtil.split(Long.class, ids, ",");
-		return Result.ok(userWorkRecordService.deleteById(list.toArray(new Long[list.size()])));
-	}
-	*/
-	
 	
 	// ---------------------------------------------- 以上是微信端接口  ----------------------------------------------
 	

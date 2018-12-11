@@ -477,7 +477,7 @@
 					url : "${pageContext.request.contextPath}/apps/default/admin/rst/company/edit.jsp",
 					title : "编辑信息",
 					width : 480,
-					height : 300,
+					height : 400,
 					onload : function() {
 						var iframe = this.getIFrameEl();
 						var data = {};

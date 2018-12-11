@@ -1,6 +1,7 @@
 package org.lsqt.report.controller;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,16 +25,20 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.lsqt.components.context.ContextUtil;
+import org.lsqt.components.context.Result;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
+import org.lsqt.components.db.DbException;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.mvc.util.FileUploadUtil;
 import org.lsqt.components.util.ExceptionUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
+import org.lsqt.components.util.collection.MapUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.report.model.Column;
 import org.lsqt.report.model.ColumnQuery;
@@ -170,53 +175,171 @@ public class DefinitionController {
 	
 	@RequestMapping(mapping = { "/export", "/m/export" },text="导出报表数据")
 	public void export(Long reportDefinitionId) throws Exception {
+		HttpServletRequest request = ContextUtil.getRequest();
+		final String root = request.getServletContext().getRealPath("/");
+		
 		Definition def = definitionService.getById(reportDefinitionId);
-		if(def!=null) {
+		
+		if(def == null) {
+			return ;//Result.fail(String.format("没有找到id=%s的报表定义", reportDefinitionId));
+		}
+		
+		if (def.getCanExport() == null || def.getCanExport() == Dictionary.NO) {
+			return ;//Result.fail(String.format("没有设置可以导出,报表定义id=%s", reportDefinitionId));
+		}
+
+		if (def.getExportCurrPage() == null) {
+			return ;//Result.fail(String.format("没有设置导出所有页或当前页,报表定义id=%s", reportDefinitionId));
+		}
+		
+		if (def.getExportCurrPage() == null) {
+			return ;//Result.fail(String.format("没有设置数据导出渲染方式,报表定义id=%s", reportDefinitionId));
+		}
+		
+		//加载报表的所有列
+		ColumnQuery colQuery = new ColumnQuery();
+		colQuery.setDefinitionId(def.getId());
+		List<org.lsqt.report.model.Column> list = db.queryForList("queryForPage", org.lsqt.report.model.Column.class, colQuery); 
+		def.setColumnList(list);
+		
+		
+		//查询不导出的列，用于将字段数据置为null
+		ColumnQuery columnQuery = new ColumnQuery();
+		columnQuery.setDefinitionId(reportDefinitionId);
+		columnQuery.setDataType(Column.DATA_TYPE_REPORT_SHOW);
+		columnQuery.setAllowExport(Dictionary.NO);
+		List<Column> notAllowColumn = columnService.queryForList(columnQuery);
+		
+		
+		//获取报表数据源,并实例化
+		DataSource dsModel = db.getById(DataSource.class, def.getDatasourceId());
+		DataSourceFactory dbfactory = new DataSourceFactory();
+		dbfactory.setBaseDb(db);
+		javax.sql.DataSource ds = dbfactory.getDataSouce(dsModel.getCode());//报表数据源实例
+		
+		
+		if (def.getExportDataRender() == Definition.EXPORT_DATA_RENDER_按导出模板渲染) {
+			
+			// 获取导出模板 
 			ExportTemplateQuery query = new ExportTemplateQuery();
 			query.setDefinitionId(reportDefinitionId);
 			query.setType(ExportTemplate.TYPE_EXPORT);
 			ExportTemplate model = exportTemplateService.queryForObject(query);
 			
-			if(model!=null) {
-				//查询不导出的列，将字段数据置为null
-				ColumnQuery columnQuery = new ColumnQuery();
-				columnQuery.setDefinitionId(reportDefinitionId);
-				columnQuery.setDataType(Column.DATA_TYPE_REPORT_SHOW);
-				columnQuery.setAllowExport(Dictionary.NO);
-				List<Column> notAllowColumn = columnService.queryForList(columnQuery);
-				
-				HttpServletRequest request = ContextUtil.getRequest();
-				String root = request.getServletContext().getRealPath("/");
-				String srcFilePath =  root + model.getPath();
-			 
-				Page<Map<String, Object>> data = definitionService.search(reportDefinitionId, ContextUtil.getFormMap());
+			if (model == null) {
+				return ;//Result.fail(String.format("没有上传导出模板,报表定义id=%s", reportDefinitionId));
+			}
+			
+			List<Map<String,Object>> dataFromDb = definitionService.getDataFromDbByLoopPage(def, ds);
+			if (def.getExportMode()!=null && def.getExportMode() == Definition.EXPORT_OR_IMPORT_MODE_SELECTED_COLUMN) { //用户选择字段导出
 				if (ArrayUtil.isNotBlank(notAllowColumn)) {
-					Collection<Map<String, Object>> tableData = data.getData();
-					for (Map<String, Object> row : tableData) {
+					for (Map<String, Object> row : dataFromDb) {
 						for (Column c : notAllowColumn) {
 							row.put(c.getCode(), null);
 						}
 					}
 				}
-				
-				Map<String,Object> ct = new HashMap<>();
-				ct.put("data",data.getData());
-				
-				XLSTransformer transformer = new XLSTransformer();  
-				
-				String webFilePath="/upload/rpt_"+reportDefinitionId+".xlsx";
-				String destFilePath= root + webFilePath;
-				transformer.transformXLS(srcFilePath,ct,destFilePath);
-				
-				Util4Download.download(webFilePath, def.getName());
-				
-				File destFile = new File(destFilePath);
-				if(destFile.exists()) {
-					destFile.delete();
-				}
 			}
+			
+			Map<String,Object> ct = new HashMap<>();
+			ct.put("data",dataFromDb); //查询不导出的列，将字段数据置为null
+			
+			String uploadDir = "/upload/report/data";
+			String dir = root +uploadDir ;
+			File dirF = new File(dir);
+			if(!dirF.exists()) {
+				dirF.mkdirs();
+			}
+			
+			String fileName = "/report_"+reportDefinitionId+"_"+ContextUtil.getLoginId()+".xlsx";
+			String destFilePath = root +  uploadDir + fileName;
+			String srcFilePath =  root + model.getPath(); //源模板路径
+			
+			XLSTransformer transformer = new XLSTransformer();  
+			transformer.transformXLS(srcFilePath,ct,destFilePath); //直接模板渲染导出
+		
+			File destFile = new File(destFilePath);
+			if(destFile.exists()) {
+				destFile.delete();
+			}
+			
+			Util4Download.download(uploadDir+fileName, def.getName());
+			return ;
+		}
+
+		
+		if (def.getExportDataRender() == Definition.EXPORT_DATA_RENDER_数据自动渲染) {
+			
+			String uploadDir = "/upload/report/data";
+			String dir = root +uploadDir ;
+			File dirF = new File(dir);
+			if(!dirF.exists()) {
+				dirF.mkdirs();
+			}
+			
+			String fileName = "/rpt_"+reportDefinitionId+"_"+ContextUtil.getLoginId()+"_"+System.currentTimeMillis()+".xlsx";
+			String destFilePath = root + uploadDir + fileName;
+			
+			
+			Workbook wb = new SXSSFWorkbook(1000); // keep 100 rows in memory,  exceeding rows will be flushed to disk 
+			Sheet sh = wb.createSheet();
+
+			
+			definitionService.getDataFromDbByLoopPage(def, ds, (currPageIndex, currPageSize, currPageData) -> {
+				if (currPageIndex == 0 && (currPageData != null && currPageData.size() > 0)) { // 处理表头
+					Map<String, Object> dataHead= new  LinkedHashMap<>();
+					
+					List<String> keyList = MapUtil.toKeyList(currPageData.get(0));
+					for (String key: keyList) {
+						boolean isExists = false;
+						for (Column c: def.getColumnList()) {
+							if(key.equals(c.getCode())) {
+							 
+								dataHead.put(c.getCode(), c.getName());
+								 
+								isExists = true;
+								break;
+							}
+						}
+						
+						if(!isExists) {
+							dataHead.put(key,null);
+						}
+					}
+					currPageData.add(0,dataHead);
+				}
+				
+				for (int rownum = 0; rownum < currPageData.size(); rownum++) {
+					int idx = rownum + (currPageIndex * currPageSize);
+					if (currPageIndex>0) {
+						idx+=1;
+					}
+					Row row = sh.createRow(idx); //物理行号
+
+					Map<String, Object> rowMap = currPageData.get(rownum);
+					List<String> keyList = MapUtil.toKeyList(rowMap);
+
+					for (int i = 0; i < keyList.size(); i++) {
+						Cell cell = row.createCell(i);
+						Object value = rowMap.get(keyList.get(i));
+						cell.setCellValue(value == null ? "" : value.toString());
+					}
+				}
+			});
+			
+			FileOutputStream out = new FileOutputStream(destFilePath); 
+			wb.write(out); 
+			out.close();
+			
+			Util4Download.download(uploadDir+fileName, def.getName());
+			return ;
 		}
 	}
+
+
+	
+	
+	
 	
 	
 	@SuppressWarnings("rawtypes")

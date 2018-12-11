@@ -2,6 +2,7 @@ package org.lsqt.rst.service.impl;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
@@ -17,8 +18,23 @@ public class PositionDefinitionServiceImpl implements PositionDefinitionService{
 	
 	@Inject private Db db;
 	
+	@SuppressWarnings("unchecked")
 	public PositionDefinition getById(Long id) {
-		return db.getById(PositionDefinition.class, id) ;
+		PositionDefinition model = db.getById(PositionDefinition.class, id) ;
+		
+		Map<String,Object> row = db.executeQueryForObject("select * from bu_red_packet where job_id=?", Map.class, model.getCode());
+		if(row!=null) {
+			Object amount = row.get("red_packet_amount");
+			Object rule = row.get("red_packet_rule");
+			
+			if (amount != null) {
+				model.setRedAmount(amount.toString());
+			}
+			if (rule != null) {
+				model.setAmountRule(rule.toString());
+			}
+		}
+		return model;
 	}
 	
 	public List<PositionDefinition> queryForList(PositionDefinitionQuery query) {
@@ -43,7 +59,16 @@ public class PositionDefinitionServiceImpl implements PositionDefinitionService{
 				db.executeUpdate(sql, model.getCode(), itemNo);
 			}
 		}
-		return db.saveOrUpdate(model);
+		
+		db.saveOrUpdate(model);
+
+		if (StringUtil.isNotBlank(model.getAmountRule()) || StringUtil.isNotBlank(model.getRedAmount())) {
+			db.executeUpdate("delete from bu_red_packet where job_id=?", model.getCode());
+			
+			String sql = "insert into bu_red_packet (job_id,red_packet_amount,red_packet_rule,tenant_code) values(?,?,?,?)";
+			db.executeUpdate(sql, model.getCode(), model.getRedAmount(), model.getAmountRule(), model.getTenantCode());
+		}
+		return model;
 	}
 
 	public int deleteById(Long ... ids) {

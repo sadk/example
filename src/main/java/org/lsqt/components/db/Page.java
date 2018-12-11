@@ -3,6 +3,8 @@ package org.lsqt.components.db;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -43,6 +45,24 @@ public interface Page<T> {
 	/**数据钩子,用于附带其它上下文需要的数据**/
 	Object getHook();
 	void setHook(Object hookObject);
+
+	/**
+	 * 分页动作接口
+	 * 
+	 * @author mm
+	 *
+	 */
+	interface Action {
+		int MAX_PAGE_SIZE_LOOPED = 10000; // 报表数据量过大导出，进行分页加载数据, 分页的阀值
+		/**
+		 * 循环执行翻页时，调用的模板函数
+		 * 
+		 * @param currPageIndex  当前页索引
+		 * @param currPageSize  当前分页大小
+		 * @param currPageData  当前页数据
+		 */
+		void doNextPage(int currPageIndex, int currPageSize, List<Map<String, Object>> currPageData);
+	}
 	
 	class PageModel<T> implements Page<T> {
 		

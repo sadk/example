@@ -60,6 +60,11 @@
 	 		<column name="import_mode" property="importMode" text="数据导入的模式, 1=默认全部字段数据导入 2=用户选择字段导入"/>
 	 		
 	 		
+	 		<column name="export_curr_page" property="exportCurrPage" text="导出查询当前页=1 、导出查询所有页 =0 (注：如果报表定义不分页，则这个忽略)"/>
+	 		<column name="export_data_render" property="exportDataRender" text="按导出模板渲染=0 ， 数据自动渲染 = 1"/>
+	 		
+	 		
+	 		
 	 		<column name="app_code" property="appCode" text="租户编码"/>
 	 	
 	 		<column name="sn" property="sn" text="排序"/>
@@ -95,7 +100,7 @@
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  						<#if query.id??> and id = ${query.id} </#if>
-					
+							
 	  						<#if query.categoryId??> and category_id = ${query.categoryId} </#if>
 					
 	  						<#if query.datasourceId??> and datasource_id = ${query.datasourceId} </#if>
@@ -121,6 +126,10 @@
 	  						<#if query.dbType??> and db_type = '${StringUtil.escapeSql(query.dbType)}' </#if>
 						
 							<#if query.status??> and status = ${query.status} </#if>
+							
+							<#if query.exportCurrPage??> and export_curr_page = ${query.exportCurrPage} </#if>
+							
+							<#if query.exportDataRender??> and export_data_render = ${query.exportDataRender} </#if>
 							
 	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
 						

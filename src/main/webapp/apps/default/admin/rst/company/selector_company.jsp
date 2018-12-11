@@ -16,23 +16,17 @@
           <a class="mini-button" style="width:60px;" onclick="search()">查询</a>
     </div>
     <div class="mini-fit">
-		<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="${param.multiSelect}" autoLoad="true"
-			url="${pageContext.request.contextPath}/rst/user/page?entryStatus=${param.entryStatus}"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" > 
+		<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="${param.multiSelect }" autoLoad="true"
+			url="${pageContext.request.contextPath}/rst/company/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" > 
 		    <div property="columns">
 					<div type="checkcolumn" ></div>
-						<div field="code" width="160" headerAlign="center" allowSort="true" align="left">编号</div>
-						<div field="realName" width="160" headerAlign="center" allowSort="true" align="left">姓名</div>
-						<div field="nickName" width="160" headerAlign="center" allowSort="true" align="left">昵称</div>
-						<div field="mobile" width="160" headerAlign="center" allowSort="true" align="center">手机</div>
-						<div type="comboboxcolumn" field="entryStatus" width="80" headerAlign="center" align="center" allowSort="true">在职状态
-							<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_jianli_tech_entry_status" />
-						</div>
-						<div field="dependCompanyName" width="180" headerAlign="center" allowSort="true" align="left">入职工厂</div>
-						
-						
-						<div type="comboboxcolumn" field="sex" width="80" headerAlign="center" align="center" allowSort="true">性别
-							<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sex" />
-						</div>
+			        <div field="shortName" width="120" headerAlign="center">简称</div>
+			        <div field="fullName" width="160" headerAlign="center">全称</div>
+			        <div field="code" width="100" headerAlign="center">公司编码</div>
+			        <div type="comboboxcolumn" field="status" width="50" headerAlign="center" align="center" allowSort="true">状态
+						<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dic_active_status" />
+					</div>
+			        <div field="introduction" width="200" headerAlign="center" align="left" >介绍</div>
 		    </div>
 		</div>
     </div>                
@@ -44,9 +38,47 @@
     
 	<script type="text/javascript">
 	    mini.parse();
-	    
 	    var grid = mini.get("datagrid1");
 	    
+	    var companyCode = null;
+	    var companyName = null;
+	    
+	    
+	    function SaveData() {
+	    	var rows = grid.getSelecteds();
+	    	if (rows.length == 0) {
+	    		mini.alert("请至少选择一个用户");
+	    		return ;
+	    	}  
+	    	var userCodes = new Array();
+	    	for(var i=0;i<rows.length;i++) {
+	    		userCodes.push(rows[i].code);
+	    	}
+	    	
+	    	var data = {};
+	    	data.companyCode = companyCode;
+	    	data.userCodes = userCodes.join(",");
+	    	$.ajax({
+				'url': "${pageContext.request.contextPath}/rst/company_admin/save_manager",
+				type: 'post', dataType:'JSON',
+				data : data,
+				success: function (json) {
+					 CloseWindow("ok");
+				},
+				error : function(data) {
+			  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
+			  		mini.alert(data.responseText);
+				}
+			});
+	    }
+		////////////////////
+		//标准方法接口定义
+		function SetData(data) {
+			data = mini.clone(data); //跨页面传递的数据对象，克隆后才可以安全使用
+			companyCode = data.companyCode;
+			companyName = data.companyName;
+		}
+		
 	    function GetData() {
 	    	var row = grid.getSelected();
 	        return row;
@@ -75,7 +107,7 @@
 	    }
 	
 	    function onOk() {
-	        CloseWindow("ok");
+	    	SaveData();
 	    }
 	    function onCancel() {
 	        CloseWindow("cancel");

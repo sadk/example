@@ -16,9 +16,13 @@ import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
+import org.lsqt.rst.model.Result;
+import org.lsqt.rst.model.User;
+import org.lsqt.rst.model.UserQuery;
 import org.lsqt.rst.model.UserWorkRecord;
 import org.lsqt.rst.model.UserWorkRecordQuery;
 import org.lsqt.rst.service.UserWorkRecordService;
+import org.lsqt.sys.model.Dictionary;
 
 @Service
 public class UserWorkRecordServiceImpl implements UserWorkRecordService{
@@ -65,6 +69,38 @@ public class UserWorkRecordServiceImpl implements UserWorkRecordService{
 	
 	
 	public UserWorkRecord saveOrUpdate(UserWorkRecord model) {
+		if (model.getRecordDate() == null) {
+			throw new UnsupportedOperationException("考勤日期为空");
+		}
+
+		if (model.getUserCode() == null) {
+			throw new UnsupportedOperationException("考勤用户不能为空");
+		}
+
+		if (StringUtil.isBlank(model.getTenantCode())) {
+			throw new UnsupportedOperationException("租户码不能为空");
+		}
+
+		UserQuery uquery = new UserQuery();
+		uquery.setCode(model.getUserCode());
+		User user = db.queryForObject("queryForPage", User.class, uquery);
+
+		if (user == null) {
+			throw new UnsupportedOperationException("没有当前注册用户");
+		}
+		
+		if(User.ENTRY_STATUS_离职.equals(user.getEntryStatus())) {
+			throw new UnsupportedOperationException("用户已离职不能进行考勤记录");
+		}
+		
+		if(StringUtil.isBlank(user.getDependCompanyCode())) {
+			throw new UnsupportedOperationException("没有找到注册用户的入职企业");
+		}
+		
+		model.setCompanyCode(user.getDependCompanyCode());
+		model.setCompanyName(user.getDependCompanyName());
+		
+		
 		UserWorkRecordQuery query = new UserWorkRecordQuery();
 		query.setRecordDate(model.getRecordDate());
 		query.setUserCode(model.getUserCode());
@@ -74,49 +110,35 @@ public class UserWorkRecordServiceImpl implements UserWorkRecordService{
 			model.setId(dbModel.getId());
 		}
 		
-		if (model.getWeekday() == null) {
-			SimpleDateFormat dateFm = new SimpleDateFormat("EEEE",Locale.CHINESE);
-
-			String xq = dateFm.format(convertDate(model.getRecordDate().toString()));
-			model.setWeekday(WEEKDAY_MAP.get(xq));
-			
+		
+		SimpleDateFormat dateFm = new SimpleDateFormat("EEEE",Locale.CHINESE);
+		String xq = dateFm.format(convertDate(model.getRecordDate().toString()));
+		model.setWeekday(WEEKDAY_MAP.get(xq));
+		
+		
+		if (StringUtil.isBlank(model.getWorkingHours())) {
+			model.setWorkingHours("0");
 		}
 		
-		if (model.getWeekday() != null ) {
-			if(model.getWeekday() == 6 || model.getWeekday() ==7){
-				model.setWorkingHours("0");
-				model.setLeaveHours("0");
-				model.setLeaveShiftType(null);
-				model.setLeaveType(null);
-			}else { 
-				
-				if (StringUtil.isNotBlank(model.getWorkingHours())) {// 工作日有正常上班不能有请假
-					double wh = Double.valueOf(model.getWorkingHours());
-					if (wh > 0) {
-						model.setLeaveHours("0");
-						model.setLeaveShiftType(null);
-						model.setLeaveType(null);
-					}
-					if (wh > 0 && wh < 8) { // 正常工时未满8小时，不能填加班
-						model.setExtraHours("0");
-						model.setExtraShiftType(null);
-					}
-				}
-				if (StringUtil.isNotBlank(model.getExtraHours())) {// 工作日有班不能有请假
-					if (Double.valueOf(model.getExtraHours())>0) {
-						model.setLeaveHours("0");
-					}
-				}
-				
-				
+		
+		if(model.getWeekday() == 6 || model.getWeekday() == 7) { // 周六至周天
+			model.setExtraHours(model.getWorkingHours());
+			model.setWorkingHours("0");
+			 
+		} else  {
+			Double wh = Double.valueOf(model.getWorkingHours());
+			if (wh > 8) {
+				model.setWorkingHours("8");
+				model.setExtraHours((wh - 8) + "");
+			} else {
+				model.setExtraHours("0");
 			}
 		}
-
-		if (model.getRecordDate() == null) {
-			SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
-			model.setRecordDate(Integer.valueOf(df.format(new Date())));
+		
+		if (StringUtil.isBlank(model.getLeaveHas()) || (Dictionary.NO+"").equals(model.getLeaveHas())) {
+			model.setLeaveType(null);;
 		}
-
+		
 		return db.saveOrUpdate(model);
 	}
 

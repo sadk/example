@@ -109,7 +109,8 @@ public class JDBCExecutor {
 	}
 
 	private PreparedStatement prepareStatement(Connection conn, String sql,Object[] paramValues) throws SQLException {
-		//	String logSql = sql.replaceAll("((\r\n)|\n)[\\s\t ]*(\\1)+", "$1"); //删除其中的空行，而且要删除仅包含Tab、空格的空行,不改变原有的SQL！！！
+		String logSql = sql.replaceAll("((\r\n)|\n)[\\s\t ]*(\\1)+", "$1"); //删除其中的空行，而且要删除仅包含Tab、空格的空行,不改变原有的SQL！！！
+		log.info(logSql+" ==> {}",StringUtil.join(Arrays.asList(paramValues)));
 		
 		PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 

@@ -96,9 +96,20 @@
 							
 							<tr>
 								<td>岗位福利：</td>
-								<td colspan="3">
+								<td>
 									<input name="welfareItemNos" id="welfareItemNos" class="mini-hidden" />
-									<input id="welfare" name="welfare" class="mini-buttonedit" onbuttonclick="onButtonEditJobWelfares" style="width:100%"/>
+									<input id="welfare" name="welfare" class="mini-buttonedit" onbuttonclick="onButtonEditJobWelfares" style="width:150px"	/>
+								</td>
+								<td>推荐奖利金额：</td>
+								<td>
+									<input id="redAmount" name="redAmount"  class="mini-spinner"  style="width:150px" />
+								</td>
+							</tr>
+							
+							<tr>
+								<td>推荐奖利规则 ：</td>
+								<td colspan="3">
+									<input id="amountRule" name="amountRule"  class="mini-textarea"  style="width:415px"  />
 								</td>
 							</tr>
 				        </table>
