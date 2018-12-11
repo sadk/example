@@ -72,7 +72,7 @@ public class ContextMapBindingChain implements Chain{
 		
 		
 		// 绑定用户ID或账号到上下文
-		if (ArrayUtil.isNotBlank(uidList)) {
+		if (ArrayUtil.isNotBlank(uidList) && uidList.size()>=6) {
 			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_ACCOUNT_OBJECT, uidList.get(0));
 			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_ID_OBJECT, uidList.get(3));
 			ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_NAME_OBJECT, uidList.get(4));
