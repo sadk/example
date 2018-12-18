@@ -3,19 +3,17 @@ package org.lsqt.rst.controller;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.lsqt.rst.model.Result;
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
-
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
+import org.lsqt.rst.model.Result;
 import org.lsqt.rst.model.User;
 import org.lsqt.rst.model.UserEntryInfo;
 import org.lsqt.rst.model.UserEntryInfoQuery;

@@ -7,7 +7,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -99,10 +98,11 @@ public class UserEntryInfoController {
 				entry.setEntryStatus(entryStatus);
 				entry.setCompanyCode(companyCode);
 				entry.setCompanyName(companyName);
+				
 				if (UserEntryInfo.ENTRY_STATUS_已入职 == entry.getEntryStatus()) {
 					entry.setLeaveTime(null);
-					
 				}
+				
 				if (UserEntryInfo.ENTRY_STATUS_已离职 == entry.getEntryStatus()) {
 					//entry.setCompanyCode(null);
 					//entry.setCompanyName(null);
@@ -114,6 +114,7 @@ public class UserEntryInfoController {
 			}
 		}
 	}
+	 
 	
 	@RequestMapping(mapping = { "/tree", "/m/tree" })
 	public List<Node> getTree(UserEntryInfoQuery query) throws IOException {

@@ -19,25 +19,6 @@ public class Role {
 	private String createUser;
 
 	private String remark;
-	
-	
-	// getter、setter
-
-	public void setCreateTime(java.util.Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public java.util.Date getCreateTime() {
-		return this.createTime;
-	}
-
-	public void setCreateUser(String createUser) {
-		this.createUser = createUser;
-	}
-
-	public String getCreateUser() {
-		return this.createUser;
-	}
 
 	public Long getId() {
 		return id;
@@ -63,6 +44,22 @@ public class Role {
 		this.name = name;
 	}
 
+	public java.util.Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(java.util.Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getCreateUser() {
+		return createUser;
+	}
+
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
+
 	public String getRemark() {
 		return remark;
 	}
@@ -70,5 +67,7 @@ public class Role {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+	
+	 
 
 }

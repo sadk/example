@@ -43,6 +43,11 @@ public class UserEntryInfo {
 	public static int ENTRY_STATUS_入职失败=500; //后台审核都失败
 	
 	public static int ENTRY_STATUS_入职信息完善中=180;
+ 
+ 
+	
+	public static int ENTRY_STATUS_入职信息完善=180;
+ 
 	
 	
 

@@ -106,12 +106,12 @@
 	    <version>1.27-SNAPSHOT</version>
 	</dependency>
 	
-<!-- 堆外内存数据库 , 一般不如堆内的ConccurntHashMap
+<!-- 堆外内存数据库 , 一般不如堆内的ConccurntHashMap-->
  <dependency>
     <groupId>org.mapdb</groupId>
     <artifactId>mapdb</artifactId>
-    <version>3.0.3</version>
-</dependency>-->
+    <version>3.0.7</version>
+</dependency>
 
 <!-- 高性能的web服务器，红帽产品，jboss中 widfly里的默认服务器 
   <dependency>
