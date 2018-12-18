@@ -1,6 +1,6 @@
 package org.lsqt.rst.model;
 
-import java.util.Date;
+import org.lsqt.components.context.annotation.model.Pattern;
 
 /**
  * 用户信息
@@ -29,6 +29,7 @@ public class User {
 	private String sex;
 
 	/** 出生日期 */
+	@Pattern("yyyy-MM-dd")
 	private java.util.Date birthday;
 
 	/** 学历 */
@@ -91,19 +92,19 @@ public class User {
 
 	/** 邮箱 */
 	private String email;
-	
-	/**用户离在职离职状态: L1 是离职 */
+	/*
+	*//**用户离在职离职状态: L1 是离职 *//*
 	private String entryStatus;
 	public static final String ENTRY_STATUS_离职="L1";
 	public static final String ENTRY_STATUS_入职="P5";
 
-	/**离职日期**/
+	*//**离职日期**//*
 	private Date quitTime;
 	
-	/**当前用户在职企业**/
+	*//**当前用户在职企业**//*
 	private String dependCompanyName;
 	private String dependCompanyCode;
-	
+	*/
 	
 	private String tenantCode;
 	
@@ -338,38 +339,6 @@ public class User {
 
 	public String getEmail() {
 		return this.email;
-	}
-
-	public String getEntryStatus() {
-		return entryStatus;
-	}
-
-	public void setEntryStatus(String entryStatus) {
-		this.entryStatus = entryStatus;
-	}
-
-	public Date getQuitTime() {
-		return quitTime;
-	}
-
-	public void setQuitTime(Date quitTime) {
-		this.quitTime = quitTime;
-	}
-
-	public String getDependCompanyName() {
-		return dependCompanyName;
-	}
-
-	public void setDependCompanyName(String dependCompanyName) {
-		this.dependCompanyName = dependCompanyName;
-	}
-
-	public String getDependCompanyCode() {
-		return dependCompanyCode;
-	}
-
-	public void setDependCompanyCode(String dependCompanyCode) {
-		this.dependCompanyCode = dependCompanyCode;
 	}
 
 }

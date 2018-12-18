@@ -1,6 +1,7 @@
 package org.lsqt.rst.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,6 +34,16 @@ public class UserJobRecordController {
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<UserJobRecord> queryForPage(UserJobRecordQuery query) throws IOException {
 		query.setTenantCode(ContextUtil.getLoginTenantCode());
+		
+		List<String> statusList = new ArrayList<>();
+		if (StringUtil.isNotBlank(query.getStatusInterview())) {
+			statusList.addAll(StringUtil.split(query.getStatusInterview(),","));
+		}
+		
+		if (StringUtil.isNotBlank(query.getStatusWorkOn())) {
+			statusList.addAll(StringUtil.split(query.getStatusWorkOn(),","));
+		}
+		query.setStatusList(statusList);
 		return userJobRecordService.queryForPage(query);
 	}
 	

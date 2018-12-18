@@ -100,13 +100,13 @@
 					url="${pageContext.request.contextPath}/role/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
 					<div property="columns">
 						<div type="checkcolumn" ></div>
-						<div field="name" width="160" headerAlign="center" allowSort="true" align="center">名称</div>
-						<div field="nameShort" width="160" headerAlign="center" allowSort="true" align="center">简称</div>
-						<div field="code" width="160" headerAlign="center" allowSort="true" align="center">编码</div>
-						<div field="statusDesc" width="160" headerAlign="center" allowSort="true" align="center">状态</div>
+						<div field="name" width="160" headerAlign="center" allowSort="true" align="left">名称</div>
+						<div field="nameShort" width="160" headerAlign="center" allowSort="true" align="left">简称</div>
+						<div field="code" width="160" headerAlign="center" allowSort="true" align="left">编码</div>
+						<div field="statusDesc" width="80" headerAlign="center" allowSort="true" align="center">状态</div>
 						
-						<div field="sn" width="160" headerAlign="center" allowSort="true" align="center">序号</div>
-						<div field="remark" width="160" headerAlign="center" allowSort="true" align="center">备注</div>
+						<div field="sn" width="80" headerAlign="center" allowSort="true" align="center">序号</div>
+						<div field="remark" width="160" headerAlign="center" allowSort="true" align="left">备注</div>
 						<div field="appCode" width="160" headerAlign="center" allowSort="true" align="center">系统编码</div>
 						<div field="gid" width="160" headerAlign="center" allowSort="true" align="center">全局编码</div>
 						<div field="createTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">创建日期</div>

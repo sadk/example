@@ -22,20 +22,30 @@
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
 			<div style="padding:4px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
-		            <legend>入职</legend>
+		            <legend>入职办理</legend>
 		            <div style="padding:5px;">
 				        <table>
 							<tr>
 								<td style="width:100px;">入职企业：</td>
 								<td style="width:150px;">
-									
-								 	<input name="companyName" id="companyName" class="mini-textbox" onclick = "onClickCompanyName()" />
+								 	<input name="companyName" id="companyName" class="mini-textbox" onclick = "onClickCompanyName()" emptyText="请选择入职企业" />
 								 	<input name="companyCode" id="companyCode" class="mini-hidden"/>
 								 	<input name="userIds"     id="userIds" class="mini-hidden"/>
 								</td>
-								<td style="width:100px;">是否入职：</td>
+								<td style="width:100px;">入(离)职日期：</td>
 								<td style="width:150px;">
-									<input id="entryStatus" name="entryStatus" style="width:140px" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_jianli_tech_entry_status" required="true" />
+									<input id="entryTime" name="entryTime" class="mini-datepicker" emptyText="请选择入职日期"  />
+								</td>
+							</tr>
+							
+							<tr>
+								<td>入职状态：</td>
+								<td>
+								 	<input id="entryStatus" name="entryStatus" required="true"   class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_jianli_tech_entry_status_new" />
+								</td>
+								<td>入职备注：</td>
+								<td>
+									<input id="remark" name="remark" class="mini-textbox" emptyText="请输入备注"  />
 								</td>
 							</tr>
 				        </table>
@@ -81,9 +91,11 @@
 				form.validate();
 				if(form.isValid() == false) return;
 				
+				o.entryTime = mini.get("entryTime").text;
+				
 				$.ajax({
-					url : "${pageContext.request.contextPath}/rst/user/batch_short_update",
-					dataType: 'json', data: form.getData(),
+					url : "${pageContext.request.contextPath}/rst/user_entry_info/batch_short_update",
+					dataType: 'json', data: o,type : 'post',
 					success : function(text) {
 						CloseWindow("save");
 					}

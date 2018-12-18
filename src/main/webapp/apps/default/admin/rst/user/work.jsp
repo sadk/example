@@ -3,7 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>用户表</title>
+		<title>在职人员管理</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
 		<style>
@@ -92,8 +92,8 @@
 					<table style="width:100%;">
 						<tr>
 							<td style="width:100%;">
-								   <a class="mini-button" iconCls="icon-edit" onclick="edit('edit')">编辑</a>
-								    <a class="mini-button" iconCls="icon-reload" onclick="entry()">入(离)职办理</a>
+								   <a class="mini-button" iconCls="icon-node" onclick="edit('edit')">详情</a>
+								   
 								   <span class="separator"></span>
 								   <a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
 							</td>
@@ -109,21 +109,19 @@
 						<div field="realName" width="160" headerAlign="center" allowSort="true" align="left">姓名</div>
 						<div field="nickName" width="160" headerAlign="center" allowSort="true" align="left">昵称</div>
 						<div field="mobile" width="160" headerAlign="center" allowSort="true" align="center">手机</div>
-						
-						<%-- 
 						<div type="comboboxcolumn" field="entryStatus" width="80" headerAlign="center" align="center" allowSort="true">在职状态
 							<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_jianli_tech_entry_status" />
 						</div>
 						<div field="dependCompanyName" width="180" headerAlign="center" allowSort="true" align="left">入职工厂</div>
-						 --%>
+						
 						
 						<div type="comboboxcolumn" field="sex" width="80" headerAlign="center" align="center" allowSort="true">性别
 							<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_sex_required" />
 						</div>
 						<div field="wxAccount" width="160" headerAlign="center" allowSort="true" align="center">微信号</div>
-						<div field="email" width="160" headerAlign="center" allowSort="true" align="left">邮箱</div>
+						<div field="email" width="160" headerAlign="center" allowSort="true" align="center">邮箱</div>
 						
-						<div field="birthday" dateFormat="yyyy-MM-dd" width="120" headerAlign="center" allowSort="true" align="center">生日</div>
+						<div field="birthday" dateFormat="yyyy-MM-dd" width="160" headerAlign="center" allowSort="true" align="center">生日</div>
 						
 						<div field="education" width="160" headerAlign="center" allowSort="true" align="center">学历</div>
 						
@@ -134,7 +132,7 @@
 				 
 						<div field="registrationTime" dateFormat="yyyy-MM-dd" width="160" headerAlign="center" allowSort="true" align="center">注册时间</div>
 						<div field="registrationSource" width="160" headerAlign="center" allowSort="true" align="center">注册来源</div>
-						<!-- <div field="refereeUserCode" width="160" headerAlign="center" allowSort="true" align="center">邀请码</div> -->
+						<div field="refereeUserCode" width="160" headerAlign="center" allowSort="true" align="center">邀请码</div>
 						<div field="seatNumber" width="160" headerAlign="center" allowSort="true" align="center">坐席电话</div>
 						
 					</div>
@@ -163,18 +161,18 @@
 		function entry() { // 入职处理
 			var rows = grid.getSelecteds();
 			if(rows.length == 0) {
-				mini.alert("请至少选择一个要入职员工");
+				mini.alert("请至少选择一个要入职用户");
 				return ;
 			}
 			var userIds = new Array();
 			for (var i=0;i<rows.length; i++) {
-				userIds.add(rows[i].code);
+				userIds.add(rows[i].id);
 			}
 			mini.open({
-				url : "${pageContext.request.contextPath}/apps/default/admin/rst/user_entry_info/entry.jsp",
+				url : "${pageContext.request.contextPath}/apps/default/admin/rst/user/entry.jsp",
 				title : "入职/离职处理",
-				width : 520,
-				height : 350,
+				width : 500,
+				height : 180,
 				onload : function() {
 					var iframe = this.getIFrameEl();
 					var data = {};
@@ -244,10 +242,10 @@
 			
 			if (row) {
 				mini.open({
-					url : "${pageContext.request.contextPath}/apps/default/admin/rst/user/edit.jsp",
-					title : "编辑",
-					width : 500,
-					height : 380,
+					url : "${pageContext.request.contextPath}/apps/default/admin/rst/user/work_detail.jsp",
+					title : "详情",
+					width : 480,
+					height : 480,
 					onload : function() {
 						var iframe = this.getIFrameEl();
 						var data = {

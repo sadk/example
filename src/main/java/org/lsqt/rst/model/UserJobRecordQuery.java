@@ -1,5 +1,7 @@
 package org.lsqt.rst.model;
 
+import java.util.List;
+
 import org.lsqt.components.db.Page;
 
 /**
@@ -53,7 +55,8 @@ public class UserJobRecordQuery {
 	private String interviewPlace;
 
 	/** 面试时间 */
-	private String interviewTime;
+	private String interviewTimeBegin;
+	private String interviewTimeEnd;
 
 	/** 面试联系人名称 */
 	private String interviewContactName;
@@ -66,6 +69,10 @@ public class UserJobRecordQuery {
 
 	/** 状态(待面试，未面试，面试通过，面试失败) */
 	private String status;
+	private List<String> statusList; //多个状态
+	private String statusInterview; //面试状态用
+	private String statusWorkOn; //入职状态用
+	
 
 	/** 投递平台 */
 	private String platfrom;
@@ -177,14 +184,6 @@ public class UserJobRecordQuery {
 		return this.interviewPlace;
 	}
 
-	public void setInterviewTime(String interviewTime) {
-		this.interviewTime = interviewTime;
-	}
-
-	public String getInterviewTime() {
-		return this.interviewTime;
-	}
-
 	public void setInterviewContactName(String interviewContactName) {
 		this.interviewContactName = interviewContactName;
 	}
@@ -271,5 +270,45 @@ public class UserJobRecordQuery {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getStatusInterview() {
+		return statusInterview;
+	}
+
+	public void setStatusInterview(String statusInterview) {
+		this.statusInterview = statusInterview;
+	}
+
+	public String getStatusWorkOn() {
+		return statusWorkOn;
+	}
+
+	public void setStatusWorkOn(String statusWorkOn) {
+		this.statusWorkOn = statusWorkOn;
+	}
+
+	public List<String> getStatusList() {
+		return statusList;
+	}
+
+	public void setStatusList(List<String> statusList) {
+		this.statusList = statusList;
+	}
+
+	public String getInterviewTimeBegin() {
+		return interviewTimeBegin;
+	}
+
+	public void setInterviewTimeBegin(String interviewTimeBegin) {
+		this.interviewTimeBegin = interviewTimeBegin;
+	}
+
+	public String getInterviewTimeEnd() {
+		return interviewTimeEnd;
+	}
+
+	public void setInterviewTimeEnd(String interviewTimeEnd) {
+		this.interviewTimeEnd = interviewTimeEnd;
 	}
 }

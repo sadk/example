@@ -60,61 +60,37 @@
 	 	
 	 		<column name="tenant_code" property="tenantCode" text="租户码"/>
 	 		
-	 		<column name="is_entry" property="entryStatus" text="是否入职:L1=离职"/>
-	 		
-	 		<column name="quit_time" property="quitTime" text="离职日期"/>
-	 		
-	 		<column name="depend_company_name" property="dependCompanyName" text="入职工厂名"/>
-	 		
-	 		<column name="depend_company_code" property="dependCompanyCode" text="入职工厂编码"/>
-	 		
 	</table>
 	
 	<statement id="queryForPage" parameterName="query">
 	 	<![CDATA[
 		 	select * from bu_user_info where 1=1
 		 	<#if query??>
-		 		<#-- -------------------关键字查询开始 --------------- -->
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
-							user_id like '%${key}%'  or 
-							 
 							real_name like '%${key}%'  or 
-							
 							nick_name like '%${key}%'  or 
-							
-							phone like '%${key}%'  or 
-							
-							wx_account like '%${key}%'  or 
-							 
-							education like '%${key}%'  or 
-							
-							province like '%${key}%'  or 
-							 
-							city like '%${key}%'  or 
-							
-							country like '%${key}%'  or 
-							
-							subscribe like '%${key}%'  or 
-							
-							seat_number like '%${key}%'  or 
-							
+							phone = '${key}'  or 
 							email like '%${key}%' 
-							
 					)
 				</#if>
 				
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  						<#if query.id??> and id = ${query.id} </#if>
-	  						
-	  						<#if query.dependCompanyName??> and depend_company_name like  '%${StringUtil.escapeSql(query.dependCompanyName)}%' </#if>
-	  						
-	  						<#if query.dependCompanyCode??> and depend_company_code = '${StringUtil.escapeSql(query.dependCompanyCode)}' </#if>
-	  						
+	  				 
 	  						
 	  						<#if query.code??> and user_id = '${StringUtil.escapeSql(query.code)}' </#if>
+	  						
+	  						
+  						    <#if query.codeNotInList?? && (query.codeNotInList?size > 0)>
+  						    	and user_id not in (
+							    	<#list query.codeNotInList as code>
+							    		  '${StringUtil.escapeSql(code)}' <#if code_has_next>,</#if>
+									</#list>
+								)
+							</#if>
 					
 	  						<#if query.realName??> and real_name = '${StringUtil.escapeSql(query.realName)}' </#if>
 					
@@ -174,8 +150,6 @@
 						
 	  						<#if query.email??> and email = '${StringUtil.escapeSql(query.email)}' </#if>
 						
-							<#if query.entryStatus??> and is_entry = '${StringUtil.escapeSql(query.entryStatus)}' </#if>
-							
 							<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
 					
         	</#if>

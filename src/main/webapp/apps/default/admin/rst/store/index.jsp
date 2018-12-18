@@ -76,6 +76,7 @@
 												<a class="mini-button" iconCls="icon-add" onclick="edit('add')">添加</a>
 												<a class="mini-button" iconCls="icon-edit" onclick="edit('edit')">编辑</a>
 												<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
+												
 											</td>
 										</tr>
 									</table>
@@ -160,43 +161,6 @@
 								</div>
 							</div>
 							
-							
-							
-							
-							
-							
-							<%-- 
-							<div title="门店管辖厂区" refreshOnClick="true" name="tabReses">
-								<div class="mini-toolbar" style="border-bottom:0;padding:0px;">
-									<table style="width:100%;">
-										<tr>
-											<td style="width:100%;">
-												<a class="mini-button" iconCls="icon-add" onclick="editManagerCompany()">添加</a>
-												<a class="mini-button" iconCls="icon-remove" onclick="removeManagerCompany()">删除</a>
-												<span class="separator"></span>  
-												<a class="mini-button" iconCls="icon-reload" onclick="refreshManagerCompany()">刷新</a>
-											</td>
-										</tr>
-									</table>
-								</div>
-								<div class="mini-fit">
-									<div id="datagrid3" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" autoLoad="false"
-										url="${pageContext.request.contextPath}/rst/store_company/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" >
-										<div property="columns">
-											<div type="checkcolumn"></div>
-									        <div field="companyCode" width="120" headerAlign="center">厂区编码</div>
-									        <div field="companyName" width="120" headerAlign="center">厂区名称</div>
-									        
-									        <div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
-									        <div field="updateTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">更新日期</div>     
-										</div>
-									</div>
-								</div>
-							</div>
-							 --%>
-							
-							
-							
 						</div>
 					</div>
 				</div>
@@ -216,6 +180,8 @@
 				companyGuanXiaGrid.load({storeCode:record.code});
 			});
 	
+ 
+			
 			function removeManagerCompany() { //删除门店管理的厂区
 				var rows = companyGuanXiaGrid.getSelecteds();
 				if (rows.length ==0) {
@@ -371,7 +337,7 @@
 				mini.open({
 					url : "${pageContext.request.contextPath}/apps/default/admin/rst/store/edit.jsp",
 					title : "编辑",
-					width : 480,
+					width : 500,
 					height : 300,
 					onload : function() {
 						var iframe = this.getIFrameEl();

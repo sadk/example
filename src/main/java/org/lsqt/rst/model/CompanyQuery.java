@@ -44,6 +44,10 @@ public class CompanyQuery {
 	private String updateUser;
 	
 	private String tenantCode;
+	
+	private Integer enableOcrIdCard; //是否开启Ocr身份证识别
+	private Integer enableOcrBankCard; //是否开启Orc银行认证识别
+	private Integer enableFaceDetect; //是否开启人脸识别
 
 	// getter、setter
 
@@ -181,6 +185,30 @@ public class CompanyQuery {
 
 	public void setAttendanceDay(Integer attendanceDay) {
 		this.attendanceDay = attendanceDay;
+	}
+
+	public Integer getEnableOcrIdCard() {
+		return enableOcrIdCard;
+	}
+
+	public void setEnableOcrIdCard(Integer enableOcrIdCard) {
+		this.enableOcrIdCard = enableOcrIdCard;
+	}
+
+	public Integer getEnableOcrBankCard() {
+		return enableOcrBankCard;
+	}
+
+	public void setEnableOcrBankCard(Integer enableOcrBankCard) {
+		this.enableOcrBankCard = enableOcrBankCard;
+	}
+
+	public Integer getEnableFaceDetect() {
+		return enableFaceDetect;
+	}
+
+	public void setEnableFaceDetect(Integer enableFaceDetect) {
+		this.enableFaceDetect = enableFaceDetect;
 	}
 
 }

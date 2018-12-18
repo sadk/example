@@ -330,11 +330,16 @@
 					mini.alert("请选择一个厂区");
 					return ;
 				}
+				
+				var data = adminGrid.getData();
+				var tempArr = new Array();
+				for(var i=0;i<data.length;i++) {
+					tempArr.push(data[i].userCode);
+				}
 				mini.open({
-					url : "${pageContext.request.contextPath}/apps/default/admin/rst/company/selector_user.jsp",
+					url : "${pageContext.request.contextPath}/apps/default/admin/rst/company/selector_user.jsp?codesNotIn="+tempArr.join(","),
 					title : "添加驻场管理员",
-					width : 680,
-					height : 400,
+					width : 680, height : 400,
 					onload : function() {
 						var iframe = this.getIFrameEl();
 						var data = {};
@@ -476,8 +481,8 @@
 				mini.open({
 					url : "${pageContext.request.contextPath}/apps/default/admin/rst/company/edit.jsp",
 					title : "编辑信息",
-					width : 480,
-					height : 400,
+					width : 520,
+					height : 500,
 					onload : function() {
 						var iframe = this.getIFrameEl();
 						var data = {};

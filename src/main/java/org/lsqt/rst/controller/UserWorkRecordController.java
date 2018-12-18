@@ -29,6 +29,8 @@ import org.lsqt.rst.model.Company;
 import org.lsqt.rst.model.CompanyQuery;
 import org.lsqt.rst.model.Result;
 import org.lsqt.rst.model.User;
+import org.lsqt.rst.model.UserEntryInfo;
+import org.lsqt.rst.model.UserEntryInfoQuery;
 import org.lsqt.rst.model.UserQuery;
 import org.lsqt.rst.model.UserWorkRecord;
 import org.lsqt.rst.model.UserWorkRecordQuery;
@@ -330,12 +332,28 @@ public class UserWorkRecordController {
 			return Result.fail("没有找到当前用户");
 		}
 		
-		if (StringUtil.isBlank(dbUser.getDependCompanyCode())) {
-			return Result.fail("没有找到用户入职的企业");
+		
+		UserEntryInfoQuery entryQuery = new UserEntryInfoQuery();
+		entryQuery.setUserCode(userCode);
+		UserEntryInfo ueModel = db.queryForObject("queryForPage", UserEntryInfo.class, entryQuery);
+		
+		if (ueModel == null || ueModel.getEntryStatus() == null) {
+			return Result.fail("入职信息为空，不能记录考勤");
 		}
 		
+		if(UserEntryInfo.ENTRY_STATUS_已入职 != ueModel.getEntryStatus()) {
+			return Result.fail("用户未入职不能进行考勤记录");
+		}
+		
+		 
+		if(StringUtil.isBlank(ueModel.getCompanyCode())) {
+			return Result.fail("没有找到注册用户的入职企业");
+		}
+		
+		
+		
 		CompanyQuery cq = new CompanyQuery();
-		cq.setCode(dbUser.getDependCompanyCode());
+		cq.setCode(ueModel.getCompanyCode());
 		Company c = db.queryForObject("queryForPage", Company.class, cq);
 		if(c == null) {
 			return Result.fail("用户入职企业为空");

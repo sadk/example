@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.UserEntryInfo" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="bu_user_entry_info">
+			<column id="id" type="auto" property="id" text="主键" />
+		
+	 		<column name="user_id" property="userCode" text="用户ID"/>
+	 		<column name="real_name" property="userName" text="真实姓名"/>
+	 		<column name="phone" property="phone" text="手机号"/>
+	 		<column name="entry_status" property="entryStatus" text="入职状态: 100=待入职    120=身份证识别状态  140=人脸识别状态  160=银行卡是被状态  180=入职信息完善  300=待人工审核  400=已入职  500=审核失败"/>
+	 		<column name="company_name" property="companyName" text="用户当前所属企业(名称)"/>
+	 		<column name="company_id" property="companyCode" text="用户当前所属企业(编码)"/>
+	 		<column name="store_id" property="storeCode" text="用户当前所属门店(编码)"/>
+	 		<column name="store_name" property="storeName" text="用户当前所属门店"/>
+	 		<column name="entry_time" property="entryTime" text="入职时间" />
+	 		<column name="leave_time" property="leaveTime" text="离职时间" />
+	 		<column name="tenant_code" property="tenantCode" text="租户编码"/>
+	 	
+	 	
+	 		<column name="sex" property="sex"  isVirtual="true" text="工员性别"/>
+	 		<column name="identity_card" property="idCard"  isVirtual="true" text="身份证号码"/>
+	 		<column name="bank_card" property="bankCard"  isVirtual="true" text="开户行卡号"/>
+	 		<column name="bank_card_deposit" property="bankCardName"  isVirtual="true" text="开户行名称"/>
+	 		<column name="contact_person" property="contactor"  isVirtual="true" text="紧急联系人"/>
+	 		<column name="contact_person_phone" property="contactorPhone"  isVirtual="true" text="紧急联系人电话"/>
+	 		<column name="birthday" property="birthday"  isVirtual="true" text="生日"/>
+	 		<column name="nation" property="nation"  isVirtual="true" text="户籍地址"/>
+	 		<column name="idcard0_url" property="idCardUrl0"  isVirtual="true" text="身份证正面"/>
+	 		<column name="idcard1_url" property="idCardUrl1"  isVirtual="true" text="身份证反面"/>
+	 		<column name="face_url" property="faceUrl"  isVirtual="true" text="人脸识别图"/>
+	 		<column name="bank_url" property="bankUrl"  isVirtual="true" text="银行卡号图"/>
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+			SELECT 
+			    A.id,
+			    A.user_id,
+			    A.real_name,
+			    A.phone,
+			    A.entry_status, 
+			    A.company_name,
+			    A.company_id,
+			    A.store_id,
+			    A.store_name,
+			    A.tenant_code,
+			    A.entry_time,
+			    A.leave_time,
+			     
+			    
+			    B.sex,
+			    B.identity_card,
+			    B.bank_card,
+			    B.bank_card_deposit,
+			    B.contact_person,
+			    B.contact_person_phone,
+			    B.birthday,
+			    B.nation,
+			    B.idcard0_url,
+			    B.idcard1_url,
+			    B.face_url,
+			    B.bank_url
+			   
+			FROM
+			    bu_user_entry_info A
+			        LEFT JOIN
+			    bu_user_extra_info B ON A.user_id = B.user_id
+			WHERE 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							B.real_name like '%${key}%'  or 
+							B.phone like '%${key}%'  or 
+							A.company_name like '%${key}%'  or 
+							A.store_name like '%${key}%' 
+					)
+				</#if>
+	
+							<#if query.ids??> and A.id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and A.id = ${query.id} </#if>
+					
+	  						<#if query.userCode??> and A.user_id = '${StringUtil.escapeSql(query.userCode)}' </#if>
+					
+	  						<#if query.userName??> and B.real_name = '${StringUtil.escapeSql(query.userName)}' </#if>
+						
+	  						<#if query.phone??> and B.phone = '${StringUtil.escapeSql(query.phone)}' </#if>
+						
+	  						<#if query.entryStatus??> and A.entry_status = '${StringUtil.escapeSql(query.entryStatus)}' </#if>
+					
+	  						<#if query.companyName??> and A.company_name like '%${StringUtil.escapeSql(query.companyName)}%' </#if>
+					
+	  						<#if query.companyCode??> and A.company_id = '${StringUtil.escapeSql(query.companyCode)}' </#if>
+					
+	  						<#if query.storeCode??> and A.store_id = '${StringUtil.escapeSql(query.storeCode)}' </#if>
+						
+	  						<#if query.storeName??> and A.store_name like '%${StringUtil.escapeSql(query.storeName)}%' </#if>
+						
+	  						<#if query.tenantCode??> and A.tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
+	  						
+							<#if query.entryTimeBegin?? && query.entryTimeEnd??>
+	  							and date_format(A.entry_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.entryTimeBegin)}' and '${StringUtil.escapeSql(query.entryTimeEnd)}'
+	  						</#if>
+						
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from bu_user_entry_info ]]>
+	</statement>
+	
+</statements>

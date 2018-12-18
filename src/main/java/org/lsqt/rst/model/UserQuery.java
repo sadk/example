@@ -1,6 +1,7 @@
 package org.lsqt.rst.model;
 
 import java.util.Date;
+import java.util.List;
 
 import org.lsqt.components.db.Page;
 
@@ -19,7 +20,7 @@ public class UserQuery {
 	private Long id;
 	/** 用户ID */
 	private String code;
-
+	
 	/** 真实姓名 */
 	private String realName;
 
@@ -111,6 +112,8 @@ public class UserQuery {
 	/**当前用户在职企业**/
 	private String dependCompanyName;
 	private String dependCompanyCode;
+	
+	private List<String> codeNotInList ; // 利用编码，排除某些用户
 	
 	public String getTenantCode() {
 		return tenantCode;
@@ -424,6 +427,14 @@ public class UserQuery {
 
 	public void setDependCompanyCode(String dependCompanyCode) {
 		this.dependCompanyCode = dependCompanyCode;
+	}
+
+	public List<String> getCodeNotInList() {
+		return codeNotInList;
+	}
+
+	public void setCodeNotInList(List<String> codeNotInList) {
+		this.codeNotInList = codeNotInList;
 	}
 
 }
