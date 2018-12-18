@@ -18,6 +18,8 @@ import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.rst.model.Result;
 import org.lsqt.rst.model.User;
+import org.lsqt.rst.model.UserEntryInfo;
+import org.lsqt.rst.model.UserEntryInfoQuery;
 import org.lsqt.rst.model.UserQuery;
 import org.lsqt.rst.model.UserWorkRecord;
 import org.lsqt.rst.model.UserWorkRecordQuery;
@@ -89,16 +91,25 @@ public class UserWorkRecordServiceImpl implements UserWorkRecordService{
 			throw new UnsupportedOperationException("没有当前注册用户");
 		}
 		
-		if(User.ENTRY_STATUS_离职.equals(user.getEntryStatus())) {
-			throw new UnsupportedOperationException("用户已离职不能进行考勤记录");
+		UserEntryInfoQuery entryQuery = new UserEntryInfoQuery();
+		entryQuery.setUserCode(model.getUserCode());
+		UserEntryInfo ueModel = db.queryForObject("queryForPage", UserEntryInfo.class, entryQuery);
+		
+		if (ueModel == null || ueModel.getEntryStatus() == null) {
+			throw new UnsupportedOperationException("入职信息为空，不能记录考勤");
 		}
 		
-		if(StringUtil.isBlank(user.getDependCompanyCode())) {
+		if(UserEntryInfo.ENTRY_STATUS_已入职 != ueModel.getEntryStatus()) {
+			throw new UnsupportedOperationException("用户未入职不能进行考勤记录");
+		}
+		
+		 
+		if(StringUtil.isBlank(ueModel.getCompanyCode())) {
 			throw new UnsupportedOperationException("没有找到注册用户的入职企业");
 		}
-		
-		model.setCompanyCode(user.getDependCompanyCode());
-		model.setCompanyName(user.getDependCompanyName());
+	 
+		model.setCompanyCode(ueModel.getCompanyCode());
+		model.setCompanyName(ueModel.getCompanyName());
 		
 		
 		UserWorkRecordQuery query = new UserWorkRecordQuery();

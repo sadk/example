@@ -62,7 +62,39 @@
 				        </table>
 				    </div>
 				</fieldset>
-				
+
+
+			<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
+	            <legend>认证设置</legend>
+	            <div style="padding:5px;">
+			        <table>
+						<tr>
+							<td>人脸识别：</td>
+							<td>
+								<input id="enableFaceDetect" name="enableFaceDetect" class="mini-combobox"  style="width:140px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status"/>
+							</td>
+							<%-- 
+							<td>OCR认别:</td>
+							<td>
+								<input id="enableOcr" name="enableOcr" class="mini-combobox" onvaluechanged="onValueChangedOcr"  style="width:140px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status"/>
+							</td>
+							 --%>
+						</tr>
+						<tr class="ocrTR">
+							<td>身份证认证:</td>
+							<td>
+								<input id="enableOcrIdCard" name="enableOcrIdCard" class="mini-combobox"  style="width:140px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status"/>
+							</td>
+							<td>银行卡认证:</td>
+							<td>
+								<input id="enableOcrBankCard" name="enableOcrBankCard" class="mini-combobox"  style="width:140px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</fieldset>
+
+
 				
 			<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
 	            <legend>考勤设置</legend>
@@ -81,7 +113,7 @@
 				</div>
 			</fieldset>
 				
-				
+			
 			</div>
 			<div id="subbtn" style="text-align:center;padding:10px;">
 				<a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>
@@ -92,7 +124,25 @@
 			mini.parse();
 
 			var form = new mini.Form("edit-form1");
-		
+			var enableOcrIdCard = mini.get("enableOcrIdCard");
+			var enableOcrBankCard = mini.get("enableOcrBankCard");
+			/* 
+			$(function(){
+				$(".ocrTR").hide();
+			})
+			
+			function onValueChangedOcr(e) {
+				var obj = e.sender;
+				if("1" != obj.getValue()) {
+					$(".ocrTR").hide();
+					enableOcrIdCard.setValue("0");
+					enableOcrBankCard.setValue("0");
+				}else {
+					$(".ocrTR").show();
+				}
+				
+			}
+			 */
 			function SaveData() {
 				var o = form.getData();
 				form.validate();
@@ -116,20 +166,18 @@
 				
 				 if(data.action == "edit" || data.action=='view') {
 					$.ajax({
-						url : "${pageContext.request.contextPath}/rst/company/page?id=" + data.id,
+						url : "${pageContext.request.contextPath}/rst/company/get_by_id?id=" + data.id,
 						dataType: 'json',
 						cache : false,
 						success : function(text) {
 							var o = mini.decode(text);
-							if(o!=null && o.data!=null && o.data.length>0) {
-								o = o.data[0];
-							}
 							form.setData(o);
-							form.setChanged(false);
-							
-							if (data.action == 'view') {
-								form.setEnabled(false);
+							/* 
+							if(o.enableOcrIdCard == 1 || o.enableOcrBankCard == 1) {
+								mini.get("enableOcr").setValue("1");
+								$(".ocrTR").show();
 							}
+							 */
 						}
 					});
 				}

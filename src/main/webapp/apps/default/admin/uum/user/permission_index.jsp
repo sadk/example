@@ -185,21 +185,21 @@
 						                sizeList="[5,10,20,50]" pageSize="20" showEmptyText="true" emptyText="暂无待修改信息" sortMode="client" >
 						                <div property="columns">
 											<div type="checkcolumn" ></div>
-											<div field="name" width="160" headerAlign="center" allowSort="true" align="center">姓名</div>
-											<div field="loginName" width="160" headerAlign="center" allowSort="true" align="center">帐号</div>
-											<div field="loginPwd" width="160" headerAlign="center" allowSort="true" align="center">密码</div>
-											<div field="statusDesc" width="160" headerAlign="center" allowSort="true" align="center">状态</div>
-											<div field="email" width="160" headerAlign="center" allowSort="true" align="center">邮箱</div>
+											<div field="name" width="160" headerAlign="center" allowSort="true" align="left">姓名</div>
+											<div field="loginName" width="160" headerAlign="center" allowSort="true" align="left">帐号</div>
+											<!-- <div field="loginPwd" width="160" headerAlign="center" allowSort="true" align="center">密码</div> -->
+											<div field="statusDesc" width="80" headerAlign="center" allowSort="true" align="center">状态</div>
+											<div field="email" width="160" headerAlign="center" allowSort="true" align="left">邮箱</div>
 											<div field="mobile" width="160" headerAlign="center" allowSort="true" align="center">手机</div>
 											<div field="tel" width="160" headerAlign="center" allowSort="true" align="center">电话</div>
 											<div field="numQq" width="160" headerAlign="center" allowSort="true" align="center">QQ</div>
 											<div field="numWx" width="160" headerAlign="center" allowSort="true" align="center">微信</div>
 											<div field="birthday" width="160" headerAlign="center" allowSort="true" align="center">生日</div>
-											<div field="addressOffice" width="160" headerAlign="center" allowSort="true" align="center">办公地点</div>
-											<div field="addressHome" width="160" headerAlign="center" allowSort="true" align="center">家庭地址</div>
+											<div field="addressOffice" width="260" headerAlign="center" allowSort="true" align="left">办公地点</div>
+											<div field="addressHome" width="260" headerAlign="center" allowSort="true" align="left">家庭地址</div>
 											<div field="sexDesc" width="160" headerAlign="center" allowSort="true" align="center">性别</div>
 											<div field="sn" width="160" headerAlign="center" allowSort="true" align="center">序号</div>
-											<div field="remark" width="160" headerAlign="center" allowSort="true" align="center">备注</div>
+											<div field="remark" width="160" headerAlign="center" allowSort="true" align="left">备注</div>
 											<div field="appCode" width="160" headerAlign="center" allowSort="true" align="center">系统编码</div>
 											<div field="gid" width="160" headerAlign="center" allowSort="true" align="center">全局编码</div>
 											<div field="createTime" dateFormat="yyyy-MM-dd HH:mm:ss" width="160" headerAlign="center" allowSort="true" align="center">创建日期</div>

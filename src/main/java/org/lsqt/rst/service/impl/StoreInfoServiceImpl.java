@@ -13,6 +13,7 @@ import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.rst.model.StoreInfo;
 import org.lsqt.rst.model.StoreInfoQuery;
 import org.lsqt.rst.model.StoreManager;
+import org.lsqt.rst.model.StoreRegion;
 import org.lsqt.rst.service.StoreInfoService;
 
 @Service
@@ -40,7 +41,25 @@ public class StoreInfoServiceImpl implements StoreInfoService{
 		if (StringUtil.isBlank(model.getCode())) {
 			model.setCode(new ORMappingIdGenerator().getUUID58().toString());
 		}
-		return db.saveOrUpdate(model);
+		db.saveOrUpdate(model);
+
+		
+		String sql = "delete from bu_store_city_relationship where store_id=?";
+		db.executeUpdate(sql, model.getCode());
+		
+		StoreRegion region = new StoreRegion();
+		region.setProvince(model.getProvinceName());
+		region.setProvinceCode(model.getProvinceCode());
+		region.setCity(model.getCityName());
+		region.setCityCode(model.getCityCode());
+		region.setArea(model.getAreaName());
+		region.setAreaCode(model.getAreaCode());
+		region.setStoreCode(model.getCode());
+		region.setStoreName(model.getName());
+		region.setTenantCode(model.getTenantCode());
+		db.saveOrUpdate(region);
+		
+		return model;
 	}
 
 	public int deleteById(Long... ids) {

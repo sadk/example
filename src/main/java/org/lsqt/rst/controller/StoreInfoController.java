@@ -57,6 +57,7 @@ public class StoreInfoController {
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public StoreInfo saveOrUpdate(StoreInfo form) {
 		form.setTenantCode(ContextUtil.getLoginTenantCode());
+		
 		return storeInfoService.saveOrUpdate(form);
 	}
 	

@@ -5,6 +5,14 @@
 		
 	 		<column name="store_id" property="code" text="门店编码"/>
 	 		<column name="store_name" property="name" text="门店名称"/>
+	 		
+	 		<column name="province_name" property="provinceName" text="所属省"/>
+	 		<column name="province_code" property="provinceCode" />
+	 		<column name="city_name" property="cityName" text="所属市"/>
+	 		<column name="city_code" property="cityCode" />
+	 		<column name="area_name" property="areaName" text="所属区"/>
+	 		<column name="area_code" property="areaCode"/>
+	 		
 	 		<column name="belong_region" property="belongRegion" text="所属区域"/>
 	 	
 	 		<column createTime="create_date" property="createTime" text="创建时间"/>

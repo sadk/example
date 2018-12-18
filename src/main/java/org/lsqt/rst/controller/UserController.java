@@ -17,6 +17,8 @@ import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.rst.model.User;
+import org.lsqt.rst.model.UserEntryInfo;
+import org.lsqt.rst.model.UserEntryInfoQuery;
 import org.lsqt.rst.model.UserQuery;
 import org.lsqt.rst.service.UserService;
 
@@ -43,8 +45,12 @@ public class UserController {
 	}
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
-	public Page<User> queryForPage(UserQuery query) throws IOException {
+	public Page<User> queryForPage(UserQuery query,String codesNotIn) throws IOException {
 		query.setTenantCode(ContextUtil.getLoginTenantCode());
+		
+		if (StringUtil.isNotBlank(codesNotIn)) {
+			query.setCodeNotInList(StringUtil.split(codesNotIn, ","));
+		}
 		return userService.queryForPage(query); //  
 	}
 	
@@ -57,6 +63,13 @@ public class UserController {
 	public User saveOrUpdate(User form) {
 		form.setTenantCode(ContextUtil.getLoginTenantCode());
 		return userService.saveOrUpdate(form);
+	}
+	
+	@RequestMapping(mapping = { "/save_or_update_short", "/m/save_or_update_short" })
+	public User saveOrUpdateShort(User form) {
+		form.setTenantCode(ContextUtil.getLoginTenantCode());
+		db.saveOrUpdate(form, "realName","nickName","sex","birthday","mobile","email","seatNumber","education","entryStatus","roleName","roleCode","dependCompanyName","dependCompanyCode");
+		return form;
 	}
 	
 	@RequestMapping(mapping = { "/delete", "/m/delete" })
@@ -88,48 +101,30 @@ public class UserController {
 			if (user == null) {
 				return Result.fail("没有当前用户");
 			}
-			user.setEntryStatus(User.ENTRY_STATUS_离职);
+			//user.setEntryStatus(User.ENTRY_STATUS_离职);
 
-			SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
-			user.setQuitTime(df.parse(quitDate));
+			UserEntryInfoQuery ueQuery = new UserEntryInfoQuery();
+			ueQuery.setUserCode(userCode);
+			UserEntryInfo ueModel = db.queryForObject("queryForPage", UserEntryInfo.class, ueQuery);
+			if(ueModel == null) {
+				ueModel = new UserEntryInfo();
+			}
+			ueModel.setBirthday(user.getBirthday());
+			ueModel.setEntryStatus(UserEntryInfo.ENTRY_STATUS_已离职);
 			
-			db.update(user, "entryStatus", "quitTime");
+			SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+			ueModel.setLeaveTime(df.parse(quitDate));
+			ueModel.setPhone(user.getMobile());
+			ueModel.setSex(user.getSex());
+			ueModel.setTenantCode(user.getTenantCode());
+			ueModel.setUserCode(userCode);
+			ueModel.setUserName(user.getRealName());
+			
+			db.saveOrUpdate(ueModel);
 
 			return Result.ok(user);
 		} catch (Exception ex) {
 			return Result.fail("离职失败: " + ex.getMessage());
 		}
 	}
-	
-	@RequestMapping(mapping = { "/batch_short_update", "/m/batch_short_update" }, text = "批量修改用户所在厂区和离职在职状态")
-	public Result<Object> batchShortUpdate(String userIds, String entryStatus, String companyName, String companyCode) {
-		if (StringUtil.isBlank(userIds)) {
-			return Result.fail("用户ID不能为空");
-		}
-		
-		List<Object> args = new ArrayList<>();
-		
-		String sql = "update bu_user_info set is_entry=? ";
-		args.add(entryStatus);
-		
-		if (StringUtil.isNotBlank(companyName)) {
-			sql+= ", depend_company_name = ? ";
-			args.add(companyName);
-		}
-		
-		if (StringUtil.isNotBlank(companyCode)) {
-			sql += ", depend_company_code=? ";
-			args.add(companyCode);
-		}
-		
-		if (StringUtil.isNotBlank(entryStatus) && User.ENTRY_STATUS_入职.equals(entryStatus)) {
-			 sql += ",quit_time = null ";
-		}
-		
-		sql+=" where id in ("+ userIds +") ";
-		
-		Integer cnt = db.executeUpdate(sql , args.toArray());
-		return Result.ok(cnt+"");
-	}
-	
 }

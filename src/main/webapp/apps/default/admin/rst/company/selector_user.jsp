@@ -17,7 +17,7 @@
     </div>
     <div class="mini-fit">
 		<div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" autoLoad="true"
-			url="${pageContext.request.contextPath}/rst/user/page"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" > 
+			url="${pageContext.request.contextPath}/rst/user/page?codesNotIn=${param.codesNotIn}"  idField="id" sizeList="[20,50,100,150,200]" pageSize="50" > 
 		    <div property="columns">
 					<div type="checkcolumn" ></div>
 					<div field="code" width="160" headerAlign="center" allowSort="true" align="center">编号</div>

@@ -55,29 +55,11 @@
 					<#assign key = StringUtil.escapeSql(query.key)/>
 					and (
 							user_name like '%${key}%'  or 
-							 
 							phone like '%${key}%'  or 
-							
-							wechat = '${key}'  or 
-							
-							job_id = '${key}'  or 
-							
-							publisher_id = '${key}'  or 
-							 
 							job_name like '%${key}%'  or 
-							 
 							company_name like '%${key}%'  or 
-							
-							interview_place like '%${key}%'  or 
-							
 							contact_name like '%${key}%'  or 
-							 
-							contact_phone like '%${key}%'  or 
-							 
-							last_follow_id like '%${key}%'  or 
-							
-							platfrom like '%${key}%' 
-							
+							contact_phone like '%${key}%'
 					)
 				</#if>
 				
@@ -85,63 +67,55 @@
 					
 	  						<#if query.userCode??> and user_id = '${StringUtil.escapeSql(query.userCode)}' </#if>
 						
-					
 	  						<#if query.userName??> and user_name = '${StringUtil.escapeSql(query.userName)}' </#if>
 						
-					
 	  						<#if query.userMobile??> and phone = '${StringUtil.escapeSql(query.userMobile)}' </#if>
 						
-					
 	  						<#if query.userWechat??> and wechat = '${StringUtil.escapeSql(query.userWechat)}' </#if>
 						
-					
 	  						<#if query.videoCode??> and video_id = '${StringUtil.escapeSql(query.videoCode)}' </#if>
 						
-					
 	  						<#if query.positionCode??> and job_id = '${StringUtil.escapeSql(query.positionCode)}' </#if>
-						
 					
 	  						<#if query.positionPublishUserCode??> and publisher_id = '${StringUtil.escapeSql(query.positionPublishUserCode)}' </#if>
 						
-					
 	  						<#if query.positionName??> and job_name = '${StringUtil.escapeSql(query.positionName)}' </#if>
-						
 					
 	  						<#if query.salary??> and salary = '${StringUtil.escapeSql(query.salary)}' </#if>
-						
 					
 	  						<#if query.welfare??> and welfare = '${StringUtil.escapeSql(query.welfare)}' </#if>
-						
 					
 	  						<#if query.companyName??> and company_name = '${StringUtil.escapeSql(query.companyName)}' </#if>
-						
 					
 	  						<#if query.interviewPlace??> and interview_place = '${StringUtil.escapeSql(query.interviewPlace)}' </#if>
-						
-					
-	  						<#if query.interviewTime??> and interview_time = '${StringUtil.escapeSql(query.interviewTime)}' </#if>
-						
 					
 	  						<#if query.interviewContactName??> and contact_name = '${StringUtil.escapeSql(query.interviewContactName)}' </#if>
-						
 					
 	  						<#if query.interviewContactMobile??> and contact_phone = '${StringUtil.escapeSql(query.interviewContactMobile)}' </#if>
-						
 					
 	  						<#if query.lastFollowId??> and last_follow_id = '${StringUtil.escapeSql(query.lastFollowId)}' </#if>
-						
 					
 	  						<#if query.status??> and status = '${StringUtil.escapeSql(query.status)}' </#if>
-						
-					
+							
+							<#if query.statusList?? && (query.statusList?size > 0)>
+								and status in (   
+							    	<#list query.statusList as status>
+							    		'${StringUtil.escapeSql(status)}' <#if status_has_next>,</#if>
+									</#list>
+								 ) 
+							</#if>
+							
 	  						<#if query.platfrom??> and platfrom = '${StringUtil.escapeSql(query.platfrom)}' </#if>
 							
-							
+							<#if query.interviewTimeBegin?? && query.interviewTimeEnd??>
+	  							and date_format(interview_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.interviewTimeBegin)}' and '${StringUtil.escapeSql(query.interviewTimeEnd)}'
+	  						</#if>
+	  						
 							<#if query.createTimeBegin?? && query.createTimeEnd??>
 	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 	  						</#if>
 	  						
-							 <#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
+							<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
         	</#if>
         	
 		]]>

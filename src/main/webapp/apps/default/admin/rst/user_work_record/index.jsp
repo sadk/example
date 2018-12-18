@@ -189,11 +189,11 @@
 		
 		if ('edit' == action ) {
 			$.ajax({
-				url : "${pageContext.request.contextPath}/rst/user/get_by_code?code="+row.userCode,
+				url : "${pageContext.request.contextPath}/rst/user_entry_info/get_by_user_code?userCode="+row.userCode,
 				dataType: 'json', type : 'post', // data: o,
 				success : function(text) {
 					if(text) {
-						if(text.entryStatus && text.entryStatus == 'P5') {
+						if(text.entryStatus && text.entryStatus == 400) {
 							doOpen();
 						}else {
 							mini.alert("用户没有入职,请先入职");

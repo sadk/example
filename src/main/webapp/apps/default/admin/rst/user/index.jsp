@@ -92,12 +92,10 @@
 					<table style="width:100%;">
 						<tr>
 							<td style="width:100%;">
-								<!-- <a class="mini-button" iconCls="icon-add" onclick="edit('add')">添加</a>
-								<a class="mini-button" iconCls="icon-edit" onclick="edit('edit')">修改</a>
-								<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
-								<span class="separator"></span>   -->
-								 <a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
-								 <a class="mini-button" iconCls="icon-user" onclick="entry()">入(离)职处理</a>
+								   <a class="mini-button" iconCls="icon-edit" onclick="edit('edit')">编辑</a>
+								    <a class="mini-button" iconCls="icon-reload" onclick="entry()">入(离)职办理</a>
+								   <span class="separator"></span>
+								   <a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
 							</td>
 						</tr>
 					</table>
@@ -111,30 +109,26 @@
 						<div field="realName" width="160" headerAlign="center" allowSort="true" align="left">姓名</div>
 						<div field="nickName" width="160" headerAlign="center" allowSort="true" align="left">昵称</div>
 						<div field="mobile" width="160" headerAlign="center" allowSort="true" align="center">手机</div>
-						<div type="comboboxcolumn" field="entryStatus" width="80" headerAlign="center" align="center" allowSort="true">在职状态
-							<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_jianli_tech_entry_status" />
-						</div>
-						<div field="dependCompanyName" width="180" headerAlign="center" allowSort="true" align="left">入职工厂</div>
 						
 						
 						<div type="comboboxcolumn" field="sex" width="80" headerAlign="center" align="center" allowSort="true">性别
-							<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sex" />
+							<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_sex_required" />
 						</div>
 						<div field="wxAccount" width="160" headerAlign="center" allowSort="true" align="center">微信号</div>
-						<div field="email" width="160" headerAlign="center" allowSort="true" align="center">邮箱</div>
+						<div field="email" width="160" headerAlign="center" allowSort="true" align="left">邮箱</div>
 						
-						<div field="birthday" dateFormat="yyyy-MM-dd" width="160" headerAlign="center" allowSort="true" align="center">生日</div>
+						<div field="birthday" dateFormat="yyyy-MM-dd" width="120" headerAlign="center" allowSort="true" align="center">生日</div>
 						
-						<div field="education" width="160" headerAlign="center" allowSort="true" align="center">学历</div>
+						<div field="education" width="120" headerAlign="center" allowSort="true" align="center">学历</div>
 						
-						<div field="countryName" width="160" headerAlign="center" allowSort="true" align="center">国家</div>
-						<div field="provinceName" width="160" headerAlign="center" allowSort="true" align="center">省份</div>
-						<div field="cityName" width="160" headerAlign="center" allowSort="true" align="center">城市</div>
+						<div field="countryName" width="80" headerAlign="center" allowSort="true" align="center">国家</div>
+						<div field="provinceName" width="80" headerAlign="center" allowSort="true" align="center">省份</div>
+						<div field="cityName" width="80" headerAlign="center" allowSort="true" align="center">城市</div>
 						
 				 
-						<div field="registrationTime" dateFormat="yyyy-MM-dd" width="160" headerAlign="center" allowSort="true" align="center">注册时间</div>
-						<div field="registrationSource" width="160" headerAlign="center" allowSort="true" align="center">注册来源</div>
-						<div field="refereeUserCode" width="160" headerAlign="center" allowSort="true" align="center">邀请码</div>
+						<div field="registrationTime" dateFormat="yyyy-MM-dd" width="120" headerAlign="center" allowSort="true" align="center">注册时间</div>
+						<div field="registrationSource" width="100" headerAlign="center" allowSort="true" align="center">注册来源</div>
+						<!-- <div field="refereeUserCode" width="160" headerAlign="center" allowSort="true" align="center">邀请码</div> -->
 						<div field="seatNumber" width="160" headerAlign="center" allowSort="true" align="center">坐席电话</div>
 						
 					</div>
@@ -146,9 +140,7 @@
 		mini.parse();
 
 		var form = new mini.Form("#form1");
-		function clear() {
-			 form.clear();
-		}
+
 		
 		var grid = mini.get("datagrid1");
 		grid.load();
@@ -165,18 +157,18 @@
 		function entry() { // 入职处理
 			var rows = grid.getSelecteds();
 			if(rows.length == 0) {
-				mini.alert("请至少选择一个要入职用户");
+				mini.alert("请至少选择一个要入职员工");
 				return ;
 			}
 			var userIds = new Array();
 			for (var i=0;i<rows.length; i++) {
-				userIds.add(rows[i].id);
+				userIds.add(rows[i].code);
 			}
 			mini.open({
-				url : "${pageContext.request.contextPath}/apps/default/admin/rst/user/entry.jsp",
+				url : "${pageContext.request.contextPath}/apps/default/admin/rst/user_entry_info/entry.jsp",
 				title : "入职/离职处理",
-				width : 500,
-				height : 180,
+				width : 520,
+				height : 350,
 				onload : function() {
 					var iframe = this.getIFrameEl();
 					var data = {};
@@ -235,24 +227,7 @@
 			);
 		}
 		
-		function add() {
-			mini.open({
-				url : "${pageContext.request.contextPath}/apps/default/admin/uum/user/edit.jsp",
-				title : "添加用户",
-				width : 500,
-				height : 380,
-				onload : function() {
-					var iframe = this.getIFrameEl();
-					var data = {
-						action : "add"
-					};
-					iframe.contentWindow.SetData(data);
-				},
-				ondestroy : function(action) {
-					grid.reload();
-				}
-			});
-		}
+	 
 		
 
 		function edit(action) {
@@ -263,8 +238,8 @@
 			
 			if (row) {
 				mini.open({
-					url : "${pageContext.request.contextPath}/apps/default/admin/uum/user/edit.jsp",
-					title : "编辑用户信息",
+					url : "${pageContext.request.contextPath}/apps/default/admin/rst/user/edit.jsp",
+					title : "编辑",
 					width : 500,
 					height : 380,
 					onload : function() {
@@ -283,20 +258,13 @@
 				mini.alert("请选中一条记录");
 			}
 		}
-		
-		function exportData() {
-			var exportDataType = mini.get("exportDataType").value;
-			var exportFileType = mini.get("exportFileType").value;
-			mini.confirm("确定导出记录？", "确定？",
-		            function (action) {
-		                if (action == "ok") {
-		    				var o = form.getData();
-		    				
-							var url = "${pageContext.request.contextPath}/user/export?exportFileType="+exportFileType+"&exportDataType="+exportDataType;
-							location.href=url;
-						}
-					});
-			
+		 
+		// ----------------
+		function refresh() {
+			grid.reload();
+		}
+		function clear() {
+			 form.clear();
 		}
 		</script>
 	</body>

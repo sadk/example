@@ -16,6 +16,15 @@ public class StoreInfo {
 
 	/** 所属区域 */
 	private String belongRegion;
+	
+	private String provinceName;
+	private String provinceCode;
+	
+	private String cityName;
+	private String cityCode;
+	
+	private String areaName;
+	private String areaCode;
 
 	/** 创建时间 */
 	private java.util.Date createTime;
@@ -81,6 +90,54 @@ public class StoreInfo {
 
 	public void setUpdateTime(java.util.Date updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
+
+	public String getProvinceCode() {
+		return provinceCode;
+	}
+
+	public void setProvinceCode(String provinceCode) {
+		this.provinceCode = provinceCode;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getCityCode() {
+		return cityCode;
+	}
+
+	public void setCityCode(String cityCode) {
+		this.cityCode = cityCode;
+	}
+
+	public String getAreaName() {
+		return areaName;
+	}
+
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
+	}
+
+	public String getAreaCode() {
+		return areaCode;
+	}
+
+	public void setAreaCode(String areaCode) {
+		this.areaCode = areaCode;
 	}
 
 }
