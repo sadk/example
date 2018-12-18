@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -23,16 +23,16 @@
 										<tr>
 											<td style="width:60px;">姓名</td>
 											<td style="width:90px">
-												<input id="userName" name="userName"  class="mini-textbox" allowInput="false" />
+												<input id="userName" name="userName"  class="mini-textbox" readonly="readonly"  />
 												<input name="userIds" id="userIds" name="userIds" class="mini-hidden"/>
 											</td>
 											<td style="width:60px;">手机</td>
 											<td style="width:90px">
-												<input id="phone" name="phone"  class="mini-textbox"   allowInput="false"  />
+												<input id="phone" name="phone"  class="mini-textbox"  readonly="readonly"  />
 											</td>
 											<td style="width:100px;">性别</td>
 											<td style="width:120px">
-												<input name="sex" id="sex"  class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sex" readonly="readonly"/>
+												<input name="sex" id="sex"  class="mini-combobox" readonly="readonly" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sex" />
 											</td>
 											<td style="width:90px;">身份证</td>
 											<td style="width:200px">

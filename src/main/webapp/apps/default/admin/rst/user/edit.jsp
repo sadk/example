@@ -42,6 +42,7 @@
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
 			<input id="id" name="id" class="mini-hidden" />
+			<input id="code" name="code" class="mini-hidden" />
 			<div style="padding-left:11px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
 		            <legend>用户信息</legend>
@@ -99,21 +100,6 @@
 											<input id="roleCode" name="roleCode" class="mini-hidden" />
 										</td>
 									</tr>
-									
-									<%-- 
-									<tr>
-										<td>入职企业：</td>
-										<td>
-											<input name="dependCompanyName" id="dependCompanyName" class="mini-textbox" onclick = "onClickCompanyName()" emptyText="请选择入职的企业"/>
-								 			<input name="dependCompanyCode" id="dependCompanyCode" class="mini-hidden"/>
-										</td>
-										 <td>入职状态 ：</td>
-										<td>
-											<input id="entryStatus" name="entryStatus" class="mini-combobox" onvaluechanged="onValueChangedEntryStatus" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_jianli_tech_entry_status" />
-										</td>
-									</tr>
-									 --%>
-									
 				        </table>
 				    </div>
 				</fieldset>
@@ -173,8 +159,8 @@
 	                        var data = iframe.contentWindow.GetData();
 	                        if(data) {
 	                        	data = mini.clone(data);
-		                        btnEdit.setValue(data.roleName);
-		                        btnEdit.setText(data.roleName);
+		                        btnEdit.setValue(data.name);
+		                        btnEdit.setText(data.name);
 		                        
 		                        mini.get("roleCode").setValue(data.code);
 	                        }

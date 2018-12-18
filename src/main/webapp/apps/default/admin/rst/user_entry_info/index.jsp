@@ -81,7 +81,7 @@
 							<td style="width:100%;">
 								<a class="mini-button" iconCls="icon-node" onclick="entry()">批量入(离)职处理</a>
 								<a class="mini-button" iconCls="icon-user" onclick="viewFile()">影像资料审核</a>
-								<!-- <a class="mini-button" iconCls="icon-expand"  onclick="detail()">详情</a> -->
+								<a class="mini-button" iconCls="icon-expand"  onclick="detail()">详情</a>
 								<span class="separator"></span>
 								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
 								<!-- <a class="mini-button" iconCls="icon-download" onclick="export()">导出</a> -->
@@ -137,33 +137,26 @@
 			}
 		});
 		
-		function detail(action) {
+		function detail( ) {
 			var row = grid.getSelected();
-			if(typeof(action) == 'undefined') {
-				action = "edit";
-			}
-			
-			if (row) {
-				mini.open({
-					url : "${pageContext.request.contextPath}/apps/default/admin/rst/user_entry_info/work_detail.jsp",
-					title : "详情",
-					width : 480,
-					height : 480,
-					onload : function() {
-						var iframe = this.getIFrameEl();
-						var data = {
-							action : action,
-							id : row.id
-						};
-						iframe.contentWindow.SetData(data);
-					},
-					ondestroy : function(action) {
-						grid.reload();
-					}
-				});
-			} else {
+
+			if(!row) {
 				mini.alert("请选中一条记录");
+				return ;
 			}
+
+			mini.open({
+				url : "${pageContext.request.contextPath}/apps/default/admin/rst/user_entry_info/work_detail.jsp",
+				title : "详情", width : 520, height : 520,
+				onload : function() {
+					var iframe = this.getIFrameEl();
+				 
+					iframe.contentWindow.SetData(row);
+				},
+				ondestroy : function(action) {
+					grid.reload();
+				}
+			});
 		}
 		
 		function viewFile() { //查看影像资料
@@ -176,8 +169,8 @@
 			mini.open({
 				url : "${pageContext.request.contextPath}/apps/default/admin/rst/user_entry_info/view_file.jsp",
 				title : "查看",
-				width : screen.width,
-				height : screen.height - 100,
+				width : screen.width-150,
+				height : screen.height - 200,
 				onload : function() {
 					var iframe = this.getIFrameEl();
 					var data = {};
@@ -197,10 +190,14 @@
 				mini.alert("请至少选择一个要入职员工");
 				return ;
 			}
-			var userIds = new Array();
+			var userIds = [];
+			var entryUserNameList = [];
 			for (var i=0;i<rows.length; i++) {
-				userIds.add(rows[i].userCode);
+				userIds.push(rows[i].userCode);
+				entryUserNameList.push(rows[i].userName);
+				
 			}
+			console.log(entryUserNameList)
 			mini.open({
 				url : "${pageContext.request.contextPath}/apps/default/admin/rst/user_entry_info/entry.jsp",
 				title : "入职/离职处理",
@@ -210,6 +207,7 @@
 					var iframe = this.getIFrameEl();
 					var data = {};
 					data.userIds = userIds.join(",")
+					data.entryUserNames = entryUserNameList.join(",");
 					iframe.contentWindow.SetData(data);
 				},
 				ondestroy : function(action) {

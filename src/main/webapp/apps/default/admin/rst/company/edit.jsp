@@ -71,7 +71,7 @@
 						<tr>
 							<td>人脸识别：</td>
 							<td>
-								<input id="enableFaceDetect" name="enableFaceDetect" class="mini-combobox"  style="width:140px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status"/>
+								<input id="enableFaceDetect" name="enableFaceDetect" onvaluechanged="onChangedEnableFaceDetect" class="mini-combobox"  style="width:140px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status"/>
 							</td>
 							<%-- 
 							<td>OCR认别:</td>
@@ -143,6 +143,11 @@
 				
 			}
 			 */
+			
+			function onChangedEnableFaceDetect(e) {
+				// enableOcrIdCard.setValue(e.send.get)
+			 }
+			 
 			function SaveData() {
 				var o = form.getData();
 				form.validate();

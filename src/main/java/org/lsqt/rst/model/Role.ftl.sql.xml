@@ -5,7 +5,7 @@
 	 		<column name="role_id" property="code" text="角色编码"/>
 	 		<column name="role_name" property="name" text="角色名称"/>
 	 		<column name="remark" property="remark" text="角色备注"/>
-	 		
+ 
 	 		<column name="create_user" property="createUser" text="创建人"/>
 	 		<column createTime="create_time" property="createTime" text="创建时间"/>
 	 		

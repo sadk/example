@@ -93,7 +93,7 @@
 						<tr>
 							<td style="width:100%;">
 								   <a class="mini-button" iconCls="icon-edit" onclick="edit('edit')">编辑</a>
-								    <a class="mini-button" iconCls="icon-reload" onclick="entry()">入(离)职办理</a>
+								    <a class="mini-button" iconCls="icon-user" onclick="entry()">入(离)职办理</a>
 								   <span class="separator"></span>
 								   <a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
 							</td>
@@ -110,7 +110,6 @@
 						<div field="nickName" width="160" headerAlign="center" allowSort="true" align="left">昵称</div>
 						<div field="mobile" width="160" headerAlign="center" allowSort="true" align="center">手机</div>
 						
-						
 						<div type="comboboxcolumn" field="sex" width="80" headerAlign="center" align="center" allowSort="true">性别
 							<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_sex_required" />
 						</div>
@@ -126,10 +125,12 @@
 						<div field="cityName" width="80" headerAlign="center" allowSort="true" align="center">城市</div>
 						
 				 
+ 
 						<div field="registrationTime" dateFormat="yyyy-MM-dd" width="120" headerAlign="center" allowSort="true" align="center">注册时间</div>
 						<div field="registrationSource" width="100" headerAlign="center" allowSort="true" align="center">注册来源</div>
+ 
 						<!-- <div field="refereeUserCode" width="160" headerAlign="center" allowSort="true" align="center">邀请码</div> -->
-						<div field="seatNumber" width="160" headerAlign="center" allowSort="true" align="center">坐席电话</div>
+						<div field="seatNumber" width="160" headerAlign="center" allowSort="true" align="center">坐席号码</div>
 						
 					</div>
 					</div>
@@ -160,9 +161,16 @@
 				mini.alert("请至少选择一个要入职员工");
 				return ;
 			}
-			var userIds = new Array();
+			var userIds = [];
+			var entryUserNameList = [];
 			for (var i=0;i<rows.length; i++) {
-				userIds.add(rows[i].code);
+				userIds.push(rows[i].code);
+				
+				if(rows[i].realName == '' || rows[i].realName  == null) {
+					entryUserNameList.push(rows[i].nickName);
+				}else {
+					entryUserNameList.push(rows[i].realName);
+				}
 			}
 			mini.open({
 				url : "${pageContext.request.contextPath}/apps/default/admin/rst/user_entry_info/entry.jsp",
@@ -172,7 +180,8 @@
 				onload : function() {
 					var iframe = this.getIFrameEl();
 					var data = {};
-					data.userIds = userIds.join(",")
+					data.userIds = userIds.join(",");
+					data.entryUserNames = entryUserNameList.join(",");
 					iframe.contentWindow.SetData(data);
 				},
 				ondestroy : function(action) {

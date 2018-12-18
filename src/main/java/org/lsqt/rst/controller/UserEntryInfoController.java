@@ -94,15 +94,19 @@ public class UserEntryInfoController {
 				entry.setUserCode(userCode);
 				entry.setUserName(user.getRealName());
 				entry.setTenantCode(ContextUtil.getLoginTenantCode());
-				
-				entry.setEntryTime(new SimpleDateFormat("yyyy-MM-dd").parse(entryTime));
+				if (StringUtil.isBlank(entryTime)) {
+					entry.setEntryTime(new Date());
+				} else {
+					entry.setEntryTime(new SimpleDateFormat("yyyy-MM-dd").parse(entryTime));
+				}
 				entry.setEntryStatus(entryStatus);
 				entry.setCompanyCode(companyCode);
 				entry.setCompanyName(companyName);
+				
 				if (UserEntryInfo.ENTRY_STATUS_已入职 == entry.getEntryStatus()) {
 					entry.setLeaveTime(null);
-					
 				}
+				
 				if (UserEntryInfo.ENTRY_STATUS_已离职 == entry.getEntryStatus()) {
 					//entry.setCompanyCode(null);
 					//entry.setCompanyName(null);
@@ -114,6 +118,7 @@ public class UserEntryInfoController {
 			}
 		}
 	}
+	 
 	
 	@RequestMapping(mapping = { "/tree", "/m/tree" })
 	public List<Node> getTree(UserEntryInfoQuery query) throws IOException {

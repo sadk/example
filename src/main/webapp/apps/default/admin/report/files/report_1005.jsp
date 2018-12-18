@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>小企贷月结</title>
+    <title>累计_逾期表</title>
 
     <style type="text/css">
     body{
@@ -17,14 +17,14 @@
    
     
 <div class="mini-splitter" style="width:100%;height:100%;">
-    <div size="250" showCollapseButton="true">
+    <div size="270" showCollapseButton="true">
 				<div id="form1"  style="padding:8px;">
 					<table>	
 						<!-- 			
 						<tr>
 							<td>关键字 ：</td>
 							<td>
-								<input id="reportDefinitionId" name="reportDefinitionId" class="mini-hidden" value="7"/>
+								<input id="reportDefinitionId" name="reportDefinitionId" class="mini-hidden" value="1005"/>
 								<input id="key" name="key" style="width:140px" class="mini-textbox" emptyText="请输入关键字搜索" style="width: 150px;" onenter="search"/>
 							</td>
 						</tr>
@@ -32,15 +32,15 @@
 								
 								
 								
-									<tr>
-										<td>合同号：</td>
-										<td>
-											<input id="合同号" name="合同号"  style="width:140px" class="mini-textbox"  emptyText="请输入合同号"  onenter="search"  />
-										</td>
-									</tr>
 								
 								
 
+									<tr>
+										<td>到期日：</td>
+										<td>
+											<input id="PAYDATE" name="PAYDATE" class="mini-datepicker" style="width:140px;" nullValue="null"  format="yyyy/MM/dd" timeFormat="HH:mm:ss"  showTime="true" showOkButton="true" showClearButton="false"  emptyText="请输入" required="true" />
+										</td>
+									</tr>
 								
 								
 								
@@ -55,7 +55,7 @@
     <div showCollapseButton="true">
     	<div id="tabs1" class="mini-tabs" activeIndex="0" plain="false" style="width:100%;height:100%;" bodyStyle="padding:0;border:0;">
   			
-  			<div title="小企贷月结">
+  			<div title="累计_逾期表">
 		        <div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right:0;">                
 					<table style="width:100%;">
 						<tr>
@@ -69,48 +69,45 @@
 					</table>
 		        </div>
 		        <div class="mini-fit" >
-					<div id="report_xiao_qi_dai" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" 
+					<div id="bi_report_ljyuqi" class="mini-datagrid" style="width:100%;height:100%;" allowResize="false" multiSelect="true" 
 							showPager="true"  
 							
 									sizeList="[20,50,100,500]" 
 							
 								pageSize="20"
 						
-							showPageInfo="false" showPageIndex="false" showPagerButtonText="true" sizeText="&lt;span id='pageIndexSpan'&gt;第1页&lt;/span&gt;&nbsp;"
 						
 						url="${pageContext.request.contextPath}/report/definition/search"  idField="id" >
 						<div property="columns">
 							<div type="checkcolumn" ></div>
-									<div field="合同号" width="120" headerAlign="center" visible="true"   align="center" >合同号</div>
-									<div field="核销日期" width="120" headerAlign="center" visible="true"   align="center" >核销日期</div>
-									<div field="记账日期" width="120" headerAlign="center" visible="true"   align="center" >记账日期</div>
-									<div field="统计月" width="120" headerAlign="center" visible="true"   align="center" >统计月</div>
-									<div field="客户渠道" width="120" headerAlign="center" visible="true"   align="center" >客户渠道</div>
-									<div field="业务模式" width="120" headerAlign="center" visible="true"   align="center" >业务模式</div>
-									<div field="产品子类型" width="120" headerAlign="center" visible="true"   align="center" >产品子类型</div>
-									<div field="产品名称" width="120" headerAlign="center" visible="true"   align="center" >产品名称</div>
-									<div field="省" width="120" headerAlign="center" visible="true"   align="center" >省</div>
-									<div field="市" width="120" headerAlign="center" visible="true"   align="center" >市</div>
-									<div field="城市编码" width="120" headerAlign="center" visible="true"   align="center" >城市编码</div>
-									<div field="应还款月" width="120" headerAlign="center" visible="true"   align="center" >应还款月</div>
-									<div field="期次" width="120" headerAlign="center" visible="true"   align="center" >期次</div>
-									<div field="是否取消分期期次" width="120" headerAlign="center" visible="true"   align="center" >是否取消分期期次</div>
-									<div field="还款类型" width="120" headerAlign="center" visible="true"   align="center" >还款类型</div>
-									<div field="代垫方" width="120" headerAlign="center" visible="true"   align="center" >代垫方</div>
-									<div field="资产所属方" width="120" headerAlign="center" visible="true"   align="center" >资产所属方</div>
-									<div field="保证方" width="120" headerAlign="center" visible="true"   align="center" >保证方</div>
-									<div field="被担保方" width="120" headerAlign="center" visible="true"   align="center" >被担保方</div>
-									<div field="担保方式" width="120" headerAlign="center" visible="true"   align="center" >担保方式</div>
-									<div field="应还本金" width="120" headerAlign="center" visible="true"   align="center" >应还本金</div>
-									<div field="应还利息" width="120" headerAlign="center" visible="true"   align="center" >应还利息</div>
-									<div field="应还账户管理费" width="120" headerAlign="center" visible="true"   align="center" >应还账户管理费</div>
-									<div field="应还增值服务费" width="120" headerAlign="center" visible="true"   align="center" >应还增值服务费</div>
-									<div field="应还提前还款手续费" width="120" headerAlign="center" visible="true"   align="center" >应还提前还款手续费</div>
-									<div field="应还滞纳金" width="120" headerAlign="center" visible="true"   align="center" >应还滞纳金</div>
-									<div field="应还催收费" width="120" headerAlign="center" visible="true"   align="center" >应还催收费</div>
-									<div field="应还提前催收费" width="120" headerAlign="center" visible="true"   align="center" >应还提前催收费</div>
-									<div field="应还印花税" width="120" headerAlign="center" visible="true"   align="center" >应还印花税</div>
-									<div field="合计" width="120" headerAlign="center" visible="true"   align="center" >合计</div>
+									<div field="PUTOUTNO" width="120" headerAlign="center" visible="true"   align="center" >合同号</div>
+									<div field="HXRQ" width="120" headerAlign="center" visible="true"   align="center" >核销日期</div>
+									<div field="CPDDAYS" width="120" headerAlign="center" visible="true"   align="center" >逾期天数</div>
+									<div field="PAYDATE" width="120" headerAlign="center" visible="true"   align="center" >到期日</div>
+									<div field="JZR" width="120" headerAlign="center" visible="true"   align="center" >记账日</div>
+									<div field="TJY" width="120" headerAlign="center" visible="true"   align="center" >统计月</div>
+									<div field="KHQD" width="120" headerAlign="center" visible="true"   align="center" >客户渠道</div>
+									<div field="YWMS" width="120" headerAlign="center" visible="true"   align="center" >业务模式</div>
+									<div field="CPZLX" width="120" headerAlign="center" visible="true"   align="center" >产品子类型</div>
+									<div field="CPMC" width="120" headerAlign="center" visible="true"   align="center" >产品名称</div>
+									<div field="SF" width="120" headerAlign="center" visible="true"   align="center" >省</div>
+									<div field="CS" width="120" headerAlign="center" visible="true"   align="center" >市</div>
+									<div field="CSBM" width="120" headerAlign="center" visible="true"   align="center" >城市编码</div>
+									<div field="YQTS" width="120" headerAlign="center" visible="true"   align="center" >逾期天数</div>
+									<div field="SSJFL" width="120" headerAlign="center" visible="true"   align="center" >十四级分类</div>
+									<div field="SFQXFQ" width="120" headerAlign="center" visible="true"   align="center" >是否取消分期</div>
+									<div field="DDF" width="120" headerAlign="center" visible="true"   align="center" >代垫方</div>
+									<div field="ZCSSF" width="120" headerAlign="center" visible="true"   align="center" >资产所属方</div>
+									<div field="BZF" width="120" headerAlign="center" visible="true"   align="center" >保证方</div>
+									<div field="BDBF" width="120" headerAlign="center" visible="true"   align="center" >被担保方</div>
+									<div field="DBFS" width="120" headerAlign="center" visible="true"   align="center" >担保方式</div>
+									<div field="SFDQDQ" width="120" headerAlign="center" visible="true"   align="center" >是否当期到期</div>
+									<div field="YQBJ" width="120" headerAlign="center" visible="true"   align="center" >逾期本金</div>
+									<div field="YQLX" width="120" headerAlign="center" visible="true"   align="center" >逾期利息</div>
+									<div field="YQZHGLF" width="120" headerAlign="center" visible="true"   align="center" >逾期账户管理费</div>
+									<div field="YQZZFWF" width="120" headerAlign="center" visible="true"   align="center" >逾期增值服务费</div>
+									<div field="YQZNJ" width="120" headerAlign="center" visible="true"   align="center" >逾期滞纳金</div>
+									<div field="HJ" width="120" headerAlign="center" visible="true"   align="center" >合计</div>
 						</div>
 					</div>
 		        </div>
@@ -122,13 +119,13 @@
     
     <script type="text/javascript">
     mini.parse();
-	var grid = mini.get("report_xiao_qi_dai");
+	var grid = mini.get("bi_report_ljyuqi");
 	var form = new mini.Form("form1");
 	
 
 	function ajaxGetTemplateExists(type,callback) {
 		var data = {};
-		data.definitionId= '7';
+		data.definitionId= '1005';
 		data.type = type; //100=导入模板 200=导出模板
         $.ajax({ 
             url: "${pageContext.request.contextPath}/report/export_template/list",
@@ -153,7 +150,7 @@
 				var iframe = this.getIFrameEl();
 				var data = {
 					action : "importData",
-					definitionId: '7'
+					definitionId: '1005'
 				};
 				iframe.contentWindow.SetData(data);
 			},
@@ -221,7 +218,7 @@
 		
 		 	data.pageIndex = grid.pageIndex;
 		 	data.pageSize = grid.pageSize;
-		data.reportDefinitionId=7;
+		data.reportDefinitionId=1005;
 		
 		download(data);
 
@@ -256,7 +253,7 @@
  	        	   
  	               // 转换完成，创建一个a标签用于下载
  	               var a = document.createElement('a');
- 	               a.download = '小企贷月结.xlsx';
+ 	               a.download = '累计_逾期表.xlsx';
  	               a.href = e.target.result;
  	               $("body").append(a);    // 修复firefox中无法触发click
  	               a.click();
@@ -304,8 +301,9 @@
     	form.validate();
 		if(form.isValid() == false) return;
 		
+		    			data.PAYDATE =  mini.get('PAYDATE').text;
     	
-    	data.reportDefinitionId=7;
+    	data.reportDefinitionId=1005;
     	grid.load(data,function(e){
     		if(e && e.text) {
     			var data = mini.decode(e.text).hook;
@@ -321,9 +319,6 @@
     		}
     	});
     	
-	        grid.on("load", function (e) {
-	        	document.getElementById("pageIndexSpan").innerHTML="<span class='mini-button-text'>第"+(e.pageIndex+1)+"页</span>";
-	        });		
     	
 		grid.on("drawcell", function (e) {// 如果有日期类型，转换为人工可讯形式
 		   var record = e.record,

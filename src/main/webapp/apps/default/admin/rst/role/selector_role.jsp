@@ -22,7 +22,7 @@
 				<div type="checkcolumn" ></div>
 				<div field="id" width="40"  headerAlign="center">ID</div>
 				<div field="code"   headerAlign="center">编码</div>
-				<div field="roleName"   headerAlign="center">名称</div>
+				<div field="name"   headerAlign="center">名称</div>
 				<div field="remark"   headerAlign="center">备注</div>
 				<div field="createTime" width="80" dateFormat="yyyy-MM-dd" align="center" headerAlign="center">创建日期</div>
 		    </div>

@@ -25,6 +25,12 @@
 		            <legend>入职办理</legend>
 		            <div style="padding:5px;">
 				        <table>
+				        	<tr>
+				        		<td>入职用户：</td>
+				        		<td colspan="3">
+				        			<input name="entryUserNames" id="entryUserNames" class="mini-textarea" readonly="readonly" style="width: 100%"/>
+				        		</td>
+				        	</tr>
 							<tr>
 								<td style="width:100px;">入职企业：</td>
 								<td style="width:150px;">
@@ -34,7 +40,7 @@
 								</td>
 								<td style="width:100px;">入(离)职日期：</td>
 								<td style="width:150px;">
-									<input id="entryTime" name="entryTime" class="mini-datepicker" emptyText="请选择入职日期"  />
+									<input id="entryTime" name="entryTime" class="mini-datepicker" emptyText="请选择入职日期" required="true" />
 								</td>
 							</tr>
 							
@@ -92,7 +98,10 @@
 				if(form.isValid() == false) return;
 				
 				o.entryTime = mini.get("entryTime").text;
-				
+				if((o.entryStatus+"") == "400" && (o.companyCode == "" || o.companyCode == null)) {
+					mini.alert("请选择入职的企业");
+					return ;
+				}
 				$.ajax({
 					url : "${pageContext.request.contextPath}/rst/user_entry_info/batch_short_update",
 					dataType: 'json', data: o,type : 'post',
