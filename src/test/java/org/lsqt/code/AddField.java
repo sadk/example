@@ -41,7 +41,7 @@ public class AddField {
         if(ca == null) { 
             ca = new AddFieldAdapter(cw, Opcodes.ACC_PUBLIC, fieldName, fieldDesc); 
         } else { 
-            ca = new AddFieldAdapter(ca, Opcodes.ACC_PUBLIC, fieldName, fieldDesc); 
+           // ca = new AddFieldAdapter(ca, Opcodes.ACC_PUBLIC, fieldName, fieldDesc); 
         } 
     } 
 
@@ -50,7 +50,7 @@ public class AddField {
      * 
      */ 
     public void writeByteCode() { 
-        cr.accept(ca, ClassReader.SKIP_DEBUG); 
+       // cr.accept(ca, ClassReader.SKIP_DEBUG); 
         byte[] bys = cw.toByteArray(); 
         OutputStream os = null; 
         try { 

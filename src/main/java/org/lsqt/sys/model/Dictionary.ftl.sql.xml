@@ -41,9 +41,19 @@
 		        or A.remark like '%${StringUtil.escapeSql(query.key)}%' 
 		        or B.name like '%${StringUtil.escapeSql(query.key)}%' )
 			</#if>
+			
 			<#if query.id??>
 				and A.id = ${query.id} 
 			</#if>
+			
+		    <#if query.idList?? && (query.idList?size > 0)>
+		    	and A.id in (
+			    	<#list query.idList as id>
+			    		  ${id} <#if id_has_next>,</#if>
+					</#list>
+				)
+			</#if>
+			
 			<#if query.code??>
 				and A.code = '${query.code}' 
 			</#if>
@@ -99,6 +109,8 @@
 					</#list>
 					)
 			</#if>
+			
+			
 							
 			<#if query.sortField?? && query.sortOrder??>
 				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}

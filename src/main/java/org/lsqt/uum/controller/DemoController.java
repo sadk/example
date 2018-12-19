@@ -19,7 +19,6 @@ import org.lsqt.uum.model.User;
 import org.lsqt.uum.model.UserQuery;
 import org.lsqt.uum.service.OrgService;
 import org.lsqt.uum.service.UserService;
-import org.lsqt.uum.util.CodeUtil;
 
 @Controller(mapping={"/uum/demo"})
 public class DemoController {

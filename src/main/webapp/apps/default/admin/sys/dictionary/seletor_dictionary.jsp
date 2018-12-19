@@ -17,8 +17,8 @@
     </div>
     <div class="mini-fit">
 		<div id="datagrid1" class="mini-treegrid"" style="width:100%;height:100%;"
-		showTreeIcon="true" allowResize="true" expandOnLoad="false"
- 		treeColumn="name" idField="id" parentField="pid" resultAsTree="false"  checkRecursive="true"  showCheckBox="false" 
+		showTreeIcon="true" allowResize="true" expandOnLoad="false" 
+ 		treeColumn="name" idField="id" parentField="pid" resultAsTree="false"  checkRecursive="true"  showCheckBox="${param.showCheckBox }" 
 		url="${pageContext.request.contextPath}/dictionary/list?isEnableTreeQuery=true" > 
 		    <div property="columns">
 		        <div type="indexcolumn"></div>
@@ -68,6 +68,14 @@
 	        return row;
 	    }
 	    
+	    function GetDatas() {
+	        var rows = grid.getCheckedNodes (true);
+	        
+	       // console.log(row);
+	        return rows;
+	    }
+	    
+	    
 	    function GetColumn() {
 	    	var val = $("input[name='dicHead']:checked").val();
 	     	
@@ -84,7 +92,7 @@
 	     		data.name = "字典编码";
 	     		data.code = "code";
 	     	}
-	     	console.log(data);
+	     	//console.log(data);
 	     	
 	     	return data;
 	    }

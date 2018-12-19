@@ -21,6 +21,8 @@ public class DictionaryQuery {
 	
 	
 	private Long id;
+	private List<Long> idList; 
+	
 	private String name; // 字典名称
 	
 	private String value; // 字典值
@@ -130,5 +132,11 @@ public class DictionaryQuery {
 	}
 	public void setNodePathList(List<String> nodePathList) {
 		this.nodePathList = nodePathList;
+	}
+	public List<Long> getIdList() {
+		return idList;
+	}
+	public void setIdList(List<Long> idList) {
+		this.idList = idList;
 	} 
 }

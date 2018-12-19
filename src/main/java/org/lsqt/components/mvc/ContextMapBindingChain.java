@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.lsqt.components.context.ContextUtil;
+import org.lsqt.components.mvc.util.CodeUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
-import org.lsqt.uum.util.CodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

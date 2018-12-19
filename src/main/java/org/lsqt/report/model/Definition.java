@@ -116,6 +116,8 @@ public class Definition {
 	public static int EXPORT_DATA_RENDER_数据自动渲染=1;
 	
 	
+	
+	
 	private String version;
 	
 	/** 租户编码 */
@@ -515,4 +517,5 @@ public class Definition {
 	public void setExportDataRender(Integer exportDataRender) {
 		this.exportDataRender = exportDataRender;
 	}
+
 }

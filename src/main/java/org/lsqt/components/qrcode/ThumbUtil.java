@@ -10,8 +10,6 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import org.lsqt.components.util.lang.StringUtil;
-
 import net.coobird.thumbnailator.Thumbnailator;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.Thumbnails.Builder;
@@ -26,7 +24,7 @@ import net.coobird.thumbnailator.geometry.Positions;
 public class ThumbUtil {
 	public static String rebuild_path(String path,int width,int height){
 		int i = path.lastIndexOf('.');
-		if(StringUtil.isBlank(path) || i<0)
+		if((path == null || "".equals(path)) || i<0)
 			return path;
 		String ident = path.substring(0,i);
 		String ext = path.substring(i);

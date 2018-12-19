@@ -9,12 +9,12 @@ import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +27,6 @@ import org.lsqt.components.db.Db;
 import org.lsqt.components.db.DbException;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.db.orm.SqlStatementArgs;
-import org.lsqt.components.db.orm.ftl.FtlDbExecute;
 import org.lsqt.components.db.orm.util.ModelUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.collection.MapUtil;
@@ -38,10 +37,13 @@ import org.lsqt.report.model.Definition;
 import org.lsqt.report.model.DefinitionQuery;
 import org.lsqt.report.model.Resource;
 import org.lsqt.report.model.ResourceQuery;
+import org.lsqt.report.model.Variable;
+import org.lsqt.report.model.VariableQuery;
 import org.lsqt.report.service.DefinitionService;
 import org.lsqt.report.service.impl.support.FreemarkGenerateReportFile;
 import org.lsqt.sys.model.DataSource;
 import org.lsqt.sys.model.Dictionary;
+import org.lsqt.sys.model.DictionaryQuery;
 import org.lsqt.sys.service.impl.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -304,6 +306,41 @@ public class DefinitionServiceImpl implements DefinitionService{
 		List<org.lsqt.report.model.Column> list = db.queryForList("queryForPage", org.lsqt.report.model.Column.class, query); //报表的列
 		model.setColumnList(list);
 		
+		// 报表字典变量纳入到SQL渲染的上下文
+		VariableQuery vquery = new VariableQuery();
+		vquery.setDefinitionId(id);;
+		List<Variable> varList = db.queryForList("queryForPage", Variable.class, vquery);
+		if (ArrayUtil.isNotBlank(varList)) {
+			for (Variable v : varList) {
+				if (v.getType() == null) {
+					continue;
+				}
+				
+				if (Variable.TYPE_数据字典  == v.getType()) {
+					List<Long> dictIdList = StringUtil.split(Long.class, v.getValue(), ",");
+					if(ArrayUtil.isNotBlank(dictIdList)) {
+						if(dictIdList.size() ==1) {
+							Dictionary dict = db.getById(Dictionary.class, dictIdList.get(0));
+							formMap.put(v.getCode(), dict);
+						}else {
+							DictionaryQuery dquery = new DictionaryQuery();
+							dquery.setIdList(dictIdList);
+							formMap.put(v.getCode(), db.queryForList("queryForPage", Dictionary.class, dquery));
+						}
+					}
+				}
+				
+				if (Variable.TYPE_当前日期  == v.getType()) {
+					formMap.put(v.getCode(),new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+				}
+				
+				if (Variable.TYPE_常量字符 == v.getType()) {
+					formMap.put(v.getCode(), v.getValue());
+				}
+				
+			}
+		}
+
 		
 		//报表数据源
 		DataSource dsModel = db.getById(DataSource.class, model.getDatasourceId());
@@ -511,8 +548,8 @@ public class DefinitionServiceImpl implements DefinitionService{
 			
 			if (e.getJavaType() != null) {
 				// 字符
-				if (org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_STRING == e.getJavaType()
-						|| org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_CHARACTER == e.getJavaType()) {
+				if (org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_STRING == e.getJavaType()
+						|| org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_CHARACTER == e.getJavaType()) {
 					baseValue = ModelUtil.prepareBaseValue(String.class, blankText2Null(formMap,e.getPropertyName()));
 					
 					if(baseValue!=null && e.getLikeSearchIs()!=null) { //如果是模糊查询
@@ -537,35 +574,35 @@ public class DefinitionServiceImpl implements DefinitionService{
 				}
 				
 				//数字
-				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_BYTE==e.getJavaType()) {
+				else if(org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_BYTE==e.getJavaType()) {
 					baseValue = ModelUtil.prepareBaseValue(Byte.class, blankText2Null(formMap,e.getPropertyName()));
 				}
-				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_SHORT==e.getJavaType()) {
+				else if(org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_SHORT==e.getJavaType()) {
 					baseValue = ModelUtil.prepareBaseValue(Short.class, blankText2Null(formMap,e.getPropertyName()));
 				}
-				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_INTEGER==e.getJavaType()) {
+				else if(org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_INTEGER==e.getJavaType()) {
 					baseValue = ModelUtil.prepareBaseValue(Integer.class, blankText2Null(formMap,e.getPropertyName()));
 				}
-				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_LONG==e.getJavaType()) {
+				else if(org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_LONG==e.getJavaType()) {
 					baseValue = ModelUtil.prepareBaseValue(Long.class, blankText2Null(formMap,e.getPropertyName()));
 				}
-				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_FLOAT==e.getJavaType()) {
+				else if(org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_FLOAT==e.getJavaType()) {
 					baseValue = ModelUtil.prepareBaseValue(Float.class, blankText2Null(formMap,e.getPropertyName()));
 				}
-				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_DOUBLE==e.getJavaType()) {
+				else if(org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_DOUBLE==e.getJavaType()) {
 					baseValue = ModelUtil.prepareBaseValue(Double.class, blankText2Null(formMap,e.getPropertyName()));
 				}
-				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_MATH_BIGDECIMAL==e.getJavaType()) {
+				else if(org.lsqt.components.db.Column.JAVA_TYPE_JAVA_MATH_BIGDECIMAL==e.getJavaType()) {
 					baseValue = ModelUtil.prepareBaseValue(BigDecimal.class, blankText2Null(formMap,e.getPropertyName()));
 				}
-				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_MATH_BIGINTEGER==e.getJavaType()) {
+				else if(org.lsqt.components.db.Column.JAVA_TYPE_JAVA_MATH_BIGINTEGER==e.getJavaType()) {
 					baseValue = ModelUtil.prepareBaseValue(BigInteger.class, blankText2Null(formMap,e.getPropertyName()));
 				}
 				
 				//日期
-				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_UTIL_DATE==e.getJavaType()
-						|| org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_SQL_TIME==e.getJavaType()
-						|| org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_SQL_DATE==e.getJavaType()) {
+				else if(org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_UTIL_DATE==e.getJavaType()
+						|| org.lsqt.components.db.Column.JAVA_TYPE_JAVA_SQL_TIME==e.getJavaType()
+						|| org.lsqt.components.db.Column.JAVA_TYPE_JAVA_SQL_DATE==e.getJavaType()) {
 					
 					baseValue = ModelUtil.prepareBaseValue(BigInteger.class, blankText2Null(formMap,e.getPropertyName()));
 					
@@ -602,7 +639,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 					}
 					*/
 				}
-				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_SQL_TIMESTAMP==e.getJavaType()) {
+				else if(org.lsqt.components.db.Column.JAVA_TYPE_JAVA_SQL_TIMESTAMP==e.getJavaType()) {
 					Object formTimeStamp = blankText2Null(formMap,e.getPropertyName());
 					if(formTimeStamp!=null) {
 						baseValue = new java.sql.Timestamp(Long.valueOf(formTimeStamp.toString()));
@@ -611,13 +648,13 @@ public class DefinitionServiceImpl implements DefinitionService{
 				
 				
 				//布尔型
-				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_BOOLEAN==e.getJavaType()) {
+				else if(org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_BOOLEAN==e.getJavaType()) {
 					baseValue = ModelUtil.prepareBaseValue(Boolean.class, blankText2Null(formMap,e.getPropertyName()));
 				}
 				
 				
 				//数组
-				else if(org.lsqt.sys.model.Column.JAVA_TYPE_JAVA_LANG_BYTE_ARRAY==e.getJavaType()) {
+				else if(org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_BYTE_ARRAY==e.getJavaType()) {
 					baseValue = (String[]) formMap.get(e.getPropertyName());
 				}
 				

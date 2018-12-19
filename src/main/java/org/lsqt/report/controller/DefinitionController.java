@@ -46,6 +46,7 @@ import org.lsqt.report.model.Definition;
 import org.lsqt.report.model.DefinitionQuery;
 import org.lsqt.report.model.ExportTemplate;
 import org.lsqt.report.model.ExportTemplateQuery;
+import org.lsqt.report.model.Variable;
 import org.lsqt.report.service.ColumnService;
 import org.lsqt.report.service.DefinitionService;
 import org.lsqt.report.service.ExportTemplateService;
@@ -90,14 +91,28 @@ public class DefinitionController {
 	}
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
-	public Definition saveOrUpdate(Definition form) {
+	public Definition saveOrUpdate(Definition form,
+			Long variableId,String variableCode, String variableType, String variableValue) {
+		
 		if (StringUtil.isNotBlank(form.getColumnSql())) {
 			form.setColumnSql(form.getColumnSql().trim());
 		}
 		if (StringUtil.isNotBlank(form.getReportSql())) {
 			form.setReportSql(form.getReportSql().trim());
 		}
-		return definitionService.saveOrUpdate(form);
+		
+		form = definitionService.saveOrUpdate(form);
+		
+		if (StringUtil.isNotBlank(variableCode, variableType)) {
+			Variable var = new Variable();
+			var.setId(variableId);
+			var.setCode(variableCode);
+			var.setType(Integer.valueOf(variableType));
+			var.setValue(variableValue);
+			var.setDefinitionId(form.getId());
+			db.saveOrUpdate(var);
+		}
+		return form;
 	}
 	
 	@RequestMapping(mapping = { "/get_by_id", "/m/get_by_id" })

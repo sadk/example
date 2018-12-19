@@ -2,7 +2,6 @@ package org.lsqt.components.mvc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -63,11 +62,7 @@ public class ConfigInitialization implements Initialization  {
 		
 
 		Order[] orders = new Order[macroList.size()];
-		Arrays.sort(macroList.toArray(orders), new Comparator<Order>() {
-			public int compare(Order o1, Order o2) {
-				return o1.getOrder() - o2.getOrder();
-			}
-		});
+		Arrays.sort(macroList.toArray(orders), (o1, o2) -> o1.getOrder() - o2.getOrder());
 
 		for (Order e : orders) {
 			((Initialization) e).init();

@@ -483,3 +483,23 @@ INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (454,432,'FrontBase','21','FrontbaseDialect','dictionary',NULL,'1',NULL,0,'432,454','FrontBase','Wn6SZVKMTDpoSeHw4bNEo','2018-12-01 18:53:18','2018-12-01 18:53:18');
 INSERT INTO `sys_dictionary` (`id`,`pid`,`name`,`value`,`code`,`category_code`,`data_type`,`enable`,`app_code`,`sn`,`node_path`,`remark`,`gid`,`create_time`,`update_time`) VALUES (455,432,'Firebird','22','FirebirdDialect','dictionary',NULL,'1',NULL,0,'432,455','Firebird','zt1yRdoatzSADjnRRMw83','2018-12-01 18:54:04','2018-12-01 18:54:04');
 
+
+
+-- 2018-12-19
+drop table  IF EXISTS  rpt_variable ;
+CREATE TABLE `rpt_variable` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `definition_id` bigint(20) NOT NULL  COMMENT '报表定义ID',
+  `code` varchar(200) NOT NULL COMMENT '变量编码',
+  `type` int(4) NOT NULL COMMENT '变量类型 1=数据字典 2=登陆用户 3=当前日期 4=常量字符',
+  `value` text(256)  NULL COMMENT '变量值',
+  
+  `sn` int(4) DEFAULT '0',
+  `remark` varchar(100) DEFAULT NULL COMMENT '变量备注',
+  `app_code` varchar(40) DEFAULT NULL,
+  `gid` varchar(40) DEFAULT NULL,
+  `create_time` datetime NOT NULL COMMENT '创建日期',
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='报表定义时，使用的上下文变量';
+

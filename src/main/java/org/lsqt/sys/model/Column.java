@@ -6,28 +6,28 @@ package org.lsqt.sys.model;
  */
 public class Column {
 	
-	public static int JAVA_TYPE_JAVA_LANG_STRING=0;
-	public static int JAVA_TYPE_JAVA_LANG_CHARACTER=1;
+	public static int JAVA_TYPE_JAVA_LANG_STRING = org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_STRING;
+	public static int JAVA_TYPE_JAVA_LANG_CHARACTER= org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_CHARACTER;
 	
-	public static int JAVA_TYPE_JAVA_LANG_BYTE=2;
-	public static int JAVA_TYPE_JAVA_LANG_SHORT=3;
-	public static int JAVA_TYPE_JAVA_LANG_INTEGER=4;
-	public static int JAVA_TYPE_JAVA_LANG_LONG=5;
-	public static int JAVA_TYPE_JAVA_LANG_FLOAT=6;
-	public static int JAVA_TYPE_JAVA_LANG_DOUBLE=7;
+	public static int JAVA_TYPE_JAVA_LANG_BYTE=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_BYTE;
+	public static int JAVA_TYPE_JAVA_LANG_SHORT=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_SHORT;
+	public static int JAVA_TYPE_JAVA_LANG_INTEGER=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_INTEGER;
+	public static int JAVA_TYPE_JAVA_LANG_LONG=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_LONG;
+	public static int JAVA_TYPE_JAVA_LANG_FLOAT=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_FLOAT;
+	public static int JAVA_TYPE_JAVA_LANG_DOUBLE=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_DOUBLE;
 	
-	public static int JAVA_TYPE_JAVA_LANG_BOOLEAN=8;
+	public static int JAVA_TYPE_JAVA_LANG_BOOLEAN=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_BOOLEAN;
 	
-	public static int JAVA_TYPE_JAVA_LANG_UTIL_DATE=9;
+	public static int JAVA_TYPE_JAVA_LANG_UTIL_DATE=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_UTIL_DATE;
 	
-	public static int JAVA_TYPE_JAVA_MATH_BIGDECIMAL=10;
-	public static int JAVA_TYPE_JAVA_MATH_BIGINTEGER=11;
+	public static int JAVA_TYPE_JAVA_MATH_BIGDECIMAL=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_MATH_BIGDECIMAL;
+	public static int JAVA_TYPE_JAVA_MATH_BIGINTEGER=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_MATH_BIGINTEGER;
 	
-	public static int JAVA_TYPE_JAVA_SQL_TIME=12;
-	public static int JAVA_TYPE_JAVA_SQL_DATE=13;
-	public static int JAVA_TYPE_JAVA_SQL_TIMESTAMP=14;
+	public static int JAVA_TYPE_JAVA_SQL_TIME=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_SQL_TIME;
+	public static int JAVA_TYPE_JAVA_SQL_DATE=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_SQL_DATE;
+	public static int JAVA_TYPE_JAVA_SQL_TIMESTAMP=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_SQL_TIMESTAMP;
 	
-	public static int JAVA_TYPE_JAVA_LANG_BYTE_ARRAY=15;
+	public static int JAVA_TYPE_JAVA_LANG_BYTE_ARRAY=org.lsqt.components.db.Column.JAVA_TYPE_JAVA_LANG_BYTE_ARRAY;
 	
 	
 	

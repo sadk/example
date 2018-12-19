@@ -64,7 +64,6 @@
 	 		<column name="export_data_render" property="exportDataRender" text="按导出模板渲染=0 ， 数据自动渲染 = 1"/>
 	 		
 	 		
-	 		
 	 		<column name="app_code" property="appCode" text="租户编码"/>
 	 	
 	 		<column name="sn" property="sn" text="排序"/>

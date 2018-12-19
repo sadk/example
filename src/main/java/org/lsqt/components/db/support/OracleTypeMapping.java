@@ -3,9 +3,10 @@ package org.lsqt.components.db.support;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
-import org.lsqt.sys.model.Column;
+import org.lsqt.components.db.Column;
+
+import java.util.Map.Entry;
 
 public class OracleTypeMapping {
 	public static final Map<String/*数据库类型*/,String /*Java类型*/> DB_JAVA_MAPPING = new LinkedHashMap<>();

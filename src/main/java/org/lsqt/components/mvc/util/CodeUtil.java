@@ -1,4 +1,4 @@
-package org.lsqt.uum.util;
+package org.lsqt.components.mvc.util;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;

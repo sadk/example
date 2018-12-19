@@ -268,7 +268,33 @@
 		            	<input id="reportSql" name="reportSql" class="mini-textarea" style="height: 100px;width:100%" required="true"/>
 		            </div>
 		        </fieldset>
-
+				
+				<fieldset style="border:solid 1px #aaa;padding:2px; ">
+		            <legend>报表SQL上下文变量</legend>
+		            <div style="padding:5px;">
+		            	<table>
+		            		<tr>
+		            			<td>变量名称：</td>
+		            			<td>
+		            				<input id="variableId" name="variableId" class="mini-hidden"  />
+		            				<input id="variableDefinitionId" name="variableDefinitionId" class="mini-hidden"  />
+		            				<input id="variableCode" name="variableCode" class="mini-textbox"  />
+		            			</td>
+		            			<td>变量类型：</td>
+		            			<td>
+		            				<input id="variableType" name="variableType"  class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rtp_variable_type"/>
+		            			</td>
+		            		</tr>
+		            		<tr>
+		            			<td>变量值：</td>
+		            			<td colspan="3">
+		            				<input id="variableValue" name="variableValue" onbuttonclick="selectDict" class="mini-buttonedit" style="width:370px;" />
+		            			</td>
+		            		</tr>
+		            	</table>
+		            </div>
+		        </fieldset>
+		        
 				<fieldset style="border:solid 1px #aaa;padding:2px; margin-bottom:2px;height: 130px">
 		            <legend>报表自定义javascript<font color="red">(用于自定义js函数，自行控制调用)</font></legend>
 		            <div style="padding:5px;">
@@ -303,8 +329,38 @@
 			
 			var exportMode = mini.get("exportMode");
 			var importMode = mini.get("importMode");
-
 			
+			function selectDict(e) {
+				var btnEdit = this;
+				mini.open({
+					url : "${pageContext.request.contextPath}/apps/default/admin/sys/dictionary/seletor_dictionary.jsp?showCheckBox=true",
+					title : "选择字典",
+					width : 800,
+					height : 600,
+					onload : function() {
+						var iframe = this.getIFrameEl();
+						var data = {
+							action : "edit"
+						};
+						//iframe.contentWindow.SetData(data);
+					},
+					ondestroy : function(action) {
+						var iframe = this.getIFrameEl();
+						var rows = iframe.contentWindow.GetDatas();
+						if(rows.length >0) {
+							var arrNames = [];
+							var arrIds = [];
+							for (var i=0;i<rows.length;i++) {
+								arrNames.push(rows[i].name);
+								arrIds.push(rows[i].id);
+							}
+							
+							mini.get("variableValue").setText(arrNames.join(","));
+							mini.get("variableValue").setValue(arrIds.join(","));
+						}
+					}
+				});
+			}
 			
 			function onImportExportTemplateButtonEdit(e) {
 				if(typeof(id.value) == 'undefined' || id.value ==null || id.value =='') {
@@ -589,6 +645,29 @@
 		    	}
 		    }
 		    
+			function ajaxLoadVariable(definitionId) {
+				var data = {};
+		    	data.definitionId= definitionId;
+		    	
+	            $.ajax({
+	                url: "${pageContext.request.contextPath}/report/variable/list",
+	                type: "post",  data : data,
+	                success: function (data) {
+	                	if(data && data.length == 1) {
+	                		data = mini.decode(data[0]);
+	                		mini.get("variableId").setValue(data.id);
+	                		mini.get("variableCode").setValue(data.code);
+	                		mini.get("variableType").setValue(data.type);
+	                		mini.get("variableValue").setValue(data.value);
+	                		mini.get("variableValue").setText(data.valueText);
+	                		mini.get("variableDefinition").setValue(data.definitionId);
+	                	}
+	                },
+	                error: function (jqXHR, textStatus, errorThrown) {
+	                    alert(jqXHR.responseText);
+	                }
+	            });
+			}
 			
 			function SaveData() {
 				var o = form.getData();
@@ -677,6 +756,7 @@
 							
 							ajaxLoadImportExportTemplateText(data.id);
 							
+							ajaxLoadVariable(data.id);
 							if (data.action == 'view') {
 								//form.setEnabled(false);
 							}

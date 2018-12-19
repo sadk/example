@@ -18,7 +18,6 @@ import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.mvc.util.FileUploadUtil;
 import org.lsqt.components.util.lang.StringUtil;
-import org.lsqt.report.controller.PolicyReportFileRename;
 import org.lsqt.rst.model.Company;
 import org.lsqt.rst.model.CompanyPicture;
 import org.lsqt.rst.model.CompanyQuery;
