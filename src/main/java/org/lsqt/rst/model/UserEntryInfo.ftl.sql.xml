@@ -33,7 +33,7 @@
 	
 	<statement id="queryForPage" parameterName="query">
 	 	<![CDATA[
-			SELECT 
+SELECT 
 			    A.id,
 			    A.user_id,
 			    A.real_name,
@@ -46,21 +46,18 @@
 			    A.tenant_code,
 			    A.entry_time,
 			    A.leave_time,
-			     
-			    
-			    B.sex,
+			    E.sex,
 			    B.identity_card,
 			    B.bank_card,
 			    B.bank_card_deposit,
 			    B.contact_person,
 			    B.contact_person_phone,
-			    B.birthday,
+			    E.birthday,
 			    B.nation,
 			    B.idcard0_url,
 			    B.idcard1_url,
 			    B.face_url,
 			    B.bank_url
-			   
 			FROM
 			    bu_user_entry_info A
 			        LEFT JOIN
@@ -69,7 +66,10 @@
 				bu_user_job_record C on A.record_id = C.id
 					LEFT JOIN 
 				bu_store_info D on C.store_id = D.store_id
+					LEFT JOIN
+				bu_user_info E on A.user_id = E.user_id
 			WHERE 1=1
+			
 		 	<#if query??>
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
