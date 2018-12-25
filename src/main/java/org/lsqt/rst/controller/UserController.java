@@ -67,9 +67,8 @@ public class UserController {
 	public User saveOrUpdateShort(User form) {
 		form.setTenantCode(ContextUtil.getLoginTenantCode());
 		db.saveOrUpdate(form, "realName","nickName","sex","birthday","mobile","email","seatNumber","education","entryStatus","roleName","roleCode","dependCompanyName","dependCompanyCode");
-		
+
 		if (StringUtil.isNotBlank(form.getCode())) {
-			//form = db.getById(User.class, form.getId());
 			
 			UserEntryInfoQuery equery = new UserEntryInfoQuery();
 			equery.setUserCode(form.getCode());
@@ -85,6 +84,7 @@ public class UserController {
 			String sql = "update  bu_user_extra_info set sex=? , birthday=?, phone=? where user_id=?";
 			db.executeUpdate(sql, form.getSex(),form.getBirthday(),form.getMobile(), form.getCode());
 		}
+
 		return form;
 	}
 	

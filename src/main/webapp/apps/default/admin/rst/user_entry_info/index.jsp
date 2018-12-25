@@ -82,6 +82,7 @@
 								<a class="mini-button" iconCls="icon-node" onclick="entry()">批量入(离)职处理</a>
 								<a class="mini-button" iconCls="icon-user" onclick="viewFile()">影像资料审核</a>
 								<a class="mini-button" iconCls="icon-expand"  onclick="detail()">详情</a>
+
 								<span class="separator"></span>
 								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
 								<!-- <a class="mini-button" iconCls="icon-download" onclick="export()">导出</a> -->

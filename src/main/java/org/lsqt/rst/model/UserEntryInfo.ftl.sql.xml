@@ -7,8 +7,10 @@
 	 		<column name="real_name" property="userName" text="真实姓名"/>
 	 		<column name="phone" property="phone" text="手机号"/>
 	 		<column name="entry_status" property="entryStatus" text="入职状态: 100=待入职    120=身份证识别状态  140=人脸识别状态  160=银行卡是被状态  180=入职信息完善  300=待人工审核  400=已入职  500=审核失败"/>
+	 		
 	 		<column name="company_name" property="companyName" text="入职企业(名称)"/>
 	 		<column name="company_id" property="companyCode" text="入职企业(编码)"/>
+
 	 		<column name="store_id" property="storeCode" text="用户入职的职位所属门店"/>
 	 		<column name="store_name" property="storeName" text="门店名称"/>
 	 		<column name="entry_time" property="entryTime" text="入职时间" />
