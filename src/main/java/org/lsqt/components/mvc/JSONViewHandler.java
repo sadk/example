@@ -72,7 +72,9 @@ public class JSONViewHandler implements ViewHandler{
 				 * WriteNullBooleanAsFalse–Boolean字段如果为null,输出为false,而非null
 				 */
 				String json = JSON.toJSONString(modelAndView, DATE_VALUE_FILTER,
-						SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.PrettyFormat,
+						SerializerFeature.DisableCircularReferenceDetect, 
+						SerializerFeature.PrettyFormat,
+						SerializerFeature.WriteDateUseDateFormat,
 						SerializerFeature.WriteMapNullValue);
 				out.write(json.getBytes("UTF-8"));
 			}

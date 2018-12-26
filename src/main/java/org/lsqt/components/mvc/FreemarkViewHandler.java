@@ -4,6 +4,7 @@ import static java.util.Objects.isNull;
 
 import java.io.File;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.lsqt.components.mvc.util.ViewResolveFtlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
@@ -57,12 +59,6 @@ public class FreemarkViewHandler implements ViewHandler{
 		}
 		
 		
-		View view = requestMapping.view();
-		if (view != View.FTL) {
-			return null;
-		}
-		
-		
 		String tmpl = requestMapping.path();
 		String fileName = tmpl.substring(tmpl.lastIndexOf("/")+1, tmpl.length());
 		String fileDir = tmpl.substring(0,tmpl.lastIndexOf("/"));
@@ -90,6 +86,7 @@ public class FreemarkViewHandler implements ViewHandler{
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String ...strings) throws Exception{
+		
 		Map map = new HashMap();
 		map.put("user", "lavasoft哈哈鞢");
 		map.put("url", "http://www.baidu.com/");
@@ -105,9 +102,38 @@ public class FreemarkViewHandler implements ViewHandler{
 		Template temp = cfg.getTemplate("test.ftl");
 		temp.process(map, new OutputStreamWriter(System.out));
         
-    
+ 
 	}
 
+	
+	/**
+	 * 使作字符串作为模板,输出字符串
+	 */
+	public static void main1() {
 
+		Configuration cfg = new Configuration();
+		cfg.setDefaultEncoding("UTF-8");
+		cfg.setClassicCompatible(true);
+		
+		StringTemplateLoader stringLoader = new StringTemplateLoader();
+		String templateContent = "欢迎：${name}";
+		stringLoader.putTemplate("这是模板ID", templateContent);
+
+		cfg.setTemplateLoader(stringLoader);
+
+		try (StringWriter writer = new StringWriter()) {
+			Template template = cfg.getTemplate("这是模板ID", "utf-8");
+			Map<String, Object> root = new HashMap<>();
+			root.put("name", "张三");
+
+			template.process(root, writer);
+
+			System.out.println(writer.toString());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+ 
 }
 
