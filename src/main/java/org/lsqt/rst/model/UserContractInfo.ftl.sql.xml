@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.UserContractInfo" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="bu_user_contract_info">
+			<column id="id" type="auto" property="id" text="主键" />
+			
+			<column name="contract_id" property="contractCode" text="合同编码"/>
+			<column name="status" property="status" text="合同状态:1=有效 0=无效"/>
+			
+			<column name="title" property="title" text="合同(或模板)名称"/>
+	 		<column name="template_id" property="templateId" text="合同模板ID"/>
+	 		<column name="user_name" property="userName" text="用户名"/>
+	 		<column name="user_id" property="userId" text="用户Id"/>
+	 		<column name="url" property="url" text="模板实体内容的url"/>
+	 	
+	 		<column name="sn" property="sn" text=""/>
+	 		<column name="remark" property="remark" text="用户备注"/>
+	 		<column name="app_code" property="appCode" text=""/>
+	 		<column name="tenant_code" property="tenantCode" text=""/>
+	 	
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	 		
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from bu_user_contract_info where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							title like '%${key}%'  or 
+							user_name like '%${key}%'  or 
+							remark like '%${key}%' 
+					)
+				</#if>
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						<#if query.status??> and status = '${StringUtil.escapeSql(query.status)}' </#if>
+	  						
+	  						<#if query.contractCode??> and contract_id = '${StringUtil.escapeSql(query.contractCode)}' </#if>
+	  						
+	  						<#if query.title??> and title like '%${StringUtil.escapeSql(query.title)}%' </#if>
+						
+	  						<#if query.templateId??> and template_id = ${query.templateId} </#if>
+					
+	  						<#if query.userName??> and user_name = '${StringUtil.escapeSql(query.userName)}' </#if>
+						
+	  						<#if query.userId??> and user_id = '${StringUtil.escapeSql(query.userId)}' </#if>
+						
+	  						<#if query.url??> and url = '${StringUtil.escapeSql(query.url)}' </#if>
+						
+	  						<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+	  						<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from bu_user_contract_info ]]>
+	</statement>
+	
+</statements>

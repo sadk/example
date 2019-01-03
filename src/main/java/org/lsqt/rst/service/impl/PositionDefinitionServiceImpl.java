@@ -60,6 +60,17 @@ public class PositionDefinitionServiceImpl implements PositionDefinitionService{
 			}
 		}
 		
+		if(model.getId()!=null) { //BugFix: 职位更换企业后，关联的公司地址、面试地址没有被清空；
+			PositionDefinition dbModel = db.getById(PositionDefinition.class, model.getId());
+			if(dbModel!=null) {
+				if(!model.getCompanyCode().equals(dbModel.getCompanyCode())) {
+					db.executeUpdate("delete from bu_job_address_relationship where job_id=?", model.getCode());//关联的公司地址清空
+					model.setInterviewAddress(null); //面试地址清空
+				}
+			}
+			
+		}
+		
 		db.saveOrUpdate(model);
 
 		if (StringUtil.isNotBlank(model.getAmountRule()) || StringUtil.isNotBlank(model.getRedAmount())) {
@@ -68,6 +79,10 @@ public class PositionDefinitionServiceImpl implements PositionDefinitionService{
 			String sql = "insert into bu_red_packet (job_id,red_packet_amount,red_packet_rule,tenant_code) values(?,?,?,?)";
 			db.executeUpdate(sql, model.getCode(), model.getRedAmount(), model.getAmountRule(), model.getTenantCode());
 		}
+		
+
+		
+		
 		return model;
 	}
 

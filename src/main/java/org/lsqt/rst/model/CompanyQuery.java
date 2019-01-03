@@ -15,6 +15,8 @@ public class CompanyQuery {
 	private String key; // 关键字
 	private String ids; // 用逗号分割的id字符
 	private Long id;
+	
+	private Integer entrySignSetting;
 
 	/** 企业编号 */
 	private String code;
@@ -209,6 +211,14 @@ public class CompanyQuery {
 
 	public void setEnableFaceDetect(Integer enableFaceDetect) {
 		this.enableFaceDetect = enableFaceDetect;
+	}
+
+	public Integer getEntrySignSetting() {
+		return entrySignSetting;
+	}
+
+	public void setEntrySignSetting(Integer entrySignSetting) {
+		this.entrySignSetting = entrySignSetting;
 	}
 
 }

@@ -9,6 +9,10 @@
 	 	
 	 		<column name="sn" property="sn" text="排序号"/>
 	 		
+	 		<column name="enable" property="enable" text="是否启用：1=启用 0=未启用"/>
+	 		<column name="category_id" property="categoryId" text="分类 ID"/>
+	 		<column name="category_name" property="categoryName" text="分类 名称" isVirtual="true"/>
+	 		
 	 		<column name="create_user" property="createUser" text="创建人"/>
 	 	
 	 		<column name="update_user" property="updateUser" text="更新人"/>
@@ -23,50 +27,36 @@
 	
 	<statement id="queryForPage" parameterName="query">
 	 	<![CDATA[
-		 	select * from bu_base_job_info where 1=1
+		 	 select A.*,B.name category_name from bu_base_job_info A left join bu_job_category B on A.category_id = B.id where 1=1 
 		 	<#if query??>
 		 		 
 				<#if query.key??>
 					<#assign key = StringUtil.escapeSql(query.key)/>
-					and (
-							 							 							 							 					
-							 
-							base_job_id like '%${key}%'  or 
-							
-							 
-							base_job_name like '%${key}%'  or 
-							
-							 
-							create_user like '%${key}%'  or 
-							
-							 
-							update_user like '%${key}%' 
-							
-					)
+					and ( base_job_name like '%${key}%')
 				</#if>
 				 
 				
-							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+							<#if query.ids??> and A.id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
-	  						<#if query.id??> and id = ${query.id} </#if>
+	  						<#if query.id??> and A.id = ${query.id} </#if>
+	  						
+	  						<#if query.categoryId??> and A.category_id = ${query.categoryId} </#if>
+	  						
+	  						<#if query.enable??> and A.enable = ${query.enable} </#if>
 					
-	  						<#if query.code??> and base_job_id = '${StringUtil.escapeSql(query.code)}' </#if>
+	  						<#if query.code??> and A.base_job_id = '${StringUtil.escapeSql(query.code)}' </#if>
 						
-	  						<#if query.name??> and base_job_name = '${StringUtil.escapeSql(query.name)}' </#if>
+	  						<#if query.name??> and A.base_job_name = '${StringUtil.escapeSql(query.name)}' </#if>
 						
 							<#if query.createTimeBegin?? && query.createTimeEnd??>
-	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  							and date_format(A.create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 	  						</#if>
 	  						
-	  						<#if query.createUser??> and create_user = '${StringUtil.escapeSql(query.createUser)}' </#if>
+	  						<#if query.createUser??> and A.create_user = '${StringUtil.escapeSql(query.createUser)}' </#if>
 						
-	  						<#if query.updateUser??> and update_user = '${StringUtil.escapeSql(query.updateUser)}' </#if>
-						
-							<#if query.code??> and addr_id = '${StringUtil.escapeSql(query.code)}' </#if>
+	  						<#if query.updateUser??> and A.update_user = '${StringUtil.escapeSql(query.updateUser)}' </#if>
 							
-							<#if query.code??> and addr_id = '${StringUtil.escapeSql(query.code)}' </#if>
-							
-							<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
+							<#if query.tenantCode??> and A.tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
         	</#if>
         	
 		]]>

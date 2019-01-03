@@ -112,9 +112,15 @@ public class UserEntryInfoController {
 					//entry.setCompanyName(null);
 					entry.setEntryTime(null);
 					entry.setLeaveTime(new SimpleDateFormat("yyyy-MM-dd").parse(entryTime));
+					
+					// 当前用户的合同失效
+					String sql = "update bu_user_contract_info set status = 0 where user_id=?";
+					db.executeUpdate(sql, userCode);
 				}
 				
 				db.saveOrUpdate(entry);
+				
+
 			}
 		}
 	}

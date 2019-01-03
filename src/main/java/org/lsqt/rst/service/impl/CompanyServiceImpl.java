@@ -40,6 +40,15 @@ public class CompanyServiceImpl implements CompanyService{
 			IdGenerator idgen = new ORMappingIdGenerator();
 			model.setCode(idgen.getUUID58().toString());
 		}
+		
+		if (model.getId() != null && StringUtil.isNotBlank(model.getCode())) { //BugFix: 级联更新职位表的公司名称
+			String sql = "update bu_job_info set company_short_name=? where company_id=?";
+			db.executeUpdate(sql,model.getShortName(), model.getCode());
+			
+			String sql2 = "update bu_company_store_relationship set company_name=? where company_id=?"; //门店管理（企业）表
+			db.executeUpdate(sql2, model.getFullName(),model.getCode());
+		}
+		
 		return db.saveOrUpdate(model);
 	}
 

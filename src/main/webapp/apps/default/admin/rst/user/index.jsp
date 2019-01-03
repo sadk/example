@@ -19,8 +19,8 @@
 	</head>
 	<body>
 		<div class="mini-splitter" style="width:100%;height:100%;">
-			<div size="250" showCollapseButton="true">
-				<div id="form1"  style="padding:8px;margin-left: 8px;">
+			<div size="270" showCollapseButton="true">
+				<div id="form1"  style="padding:4px;margin-left: 4px;">
 					<table>						
 									<tr>
 										<td>关键字 ：</td>
@@ -80,6 +80,20 @@
 											<input id="sex" name="sex" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sex"  />
 										</td>
 									</tr>
+									
+									<tr>
+										<td>注册日期(开始)：</td>
+										<td>
+											<input id="registrationTimeBegin" name="registrationTimeBegin" class="mini-datepicker" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sex"  />
+										</td>
+									</tr>
+									<tr>
+										<td>注册日期(结束)：</td>
+										<td>
+											<input id="registrationTimeEnd" name="registrationTimeEnd" class="mini-datepicker" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=sex"  />
+										</td>
+									</tr>
+									
 					</table>
 					<div style="text-align:center;padding:10px;">
 						<a class="mini-button" onclick="search()" iconCls="icon-search" style="width:60px;margin-right:20px;">查询</a>
@@ -195,11 +209,11 @@
 		function search() {
 			var data = form.getData();
 			
-			//var createTimeBegin = mini.get('createTimeBegin').text;
-			//var createTimeEnd = mini.get('createTimeEnd').text;
+			var registrationTimeBegin = mini.get('registrationTimeBegin').text;
+			var registrationTimeEnd = mini.get('registrationTimeEnd').text;
 			
-			//data.createTimeBegin = createTimeBegin;
-			//data.createTimeEnd = createTimeEnd;
+			data.registrationTimeBegin = registrationTimeBegin;
+			data.registrationTimeEnd = registrationTimeEnd;
 			
 			grid.load(data);
 		}

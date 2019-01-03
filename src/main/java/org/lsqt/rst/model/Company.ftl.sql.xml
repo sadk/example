@@ -17,7 +17,7 @@
 	 		<column name="enable_ocr_idcard" property="enableOcrIdCard" text="是否开启Ocr身份证识别"/>
 	 		<column name="enable_ocr_bankcard" property="enableOcrBankCard" text="是否开启Orc银行认证识别"/>
 	 		<column name="enable_face_detect" property="enableFaceDetect" text="是否开启人脸识别"/>
-	 		
+	 		<column name="entry_sign_setting" property="entrySignSetting" text="企业入职签约设置: 1=入职需要签约  0=入职不需要签约"/>
 	 		
 	 		<column name="create_user" property="createUser" text="创建人"/>
 	 		<column name="update_user" property="updateUser" text="更新人"/>
@@ -48,6 +48,8 @@
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						<#if query.entrySignSetting??> and entry_sign_setting = ${query.entrySignSetting} </#if>
 	  						
 	  						<#if query.enableOcrIdCard??> and enable_ocr_idcard = ${query.enableOcrIdCard} </#if>
 	  						<#if query.enableOcrBankCard??> and enable_ocr_bankcard = ${query.enableOcrBankCard} </#if>

@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="UTF-8" />
-	<title>简历科技-用户选择器</title>
+	<title>企业选器</title>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/boot.js"></script>
 	<style type="text/css">
     	body{ margin:0;padding:0;border:0;width:100%;height:100%;overflow:hidden;}
@@ -40,43 +40,11 @@
 	    mini.parse();
 	    var grid = mini.get("datagrid1");
 	    
-	    var companyCode = null;
-	    var companyName = null;
-	    
-	    
-	    function SaveData() {
-	    	var rows = grid.getSelecteds();
-	    	if (rows.length == 0) {
-	    		mini.alert("请至少选择一个用户");
-	    		return ;
-	    	}  
-	    	var userCodes = new Array();
-	    	for(var i=0;i<rows.length;i++) {
-	    		userCodes.push(rows[i].code);
-	    	}
-	    	
-	    	var data = {};
-	    	data.companyCode = companyCode;
-	    	data.userCodes = userCodes.join(",");
-	    	$.ajax({
-				'url': "${pageContext.request.contextPath}/rst/company_admin/save_manager",
-				type: 'post', dataType:'JSON',
-				data : data,
-				success: function (json) {
-					 CloseWindow("ok");
-				},
-				error : function(data) {
-			  		//mini.alert(data.status + " : " + data.statusText + " : " + data.responseText);
-			  		mini.alert(data.responseText);
-				}
-			});
-	    }
 		////////////////////
 		//标准方法接口定义
 		function SetData(data) {
 			data = mini.clone(data); //跨页面传递的数据对象，克隆后才可以安全使用
-			companyCode = data.companyCode;
-			companyName = data.companyName;
+			
 		}
 		
 	    function GetData() {
@@ -107,7 +75,7 @@
 	    }
 	
 	    function onOk() {
-	    	SaveData();
+	    	CloseWindow("ok");
 	    }
 	    function onCancel() {
 	        CloseWindow("cancel");

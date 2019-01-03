@@ -16,6 +16,10 @@ public class JobDefinitionQuery {
 	private String ids; // 用逗号分割的id字符
 	private Long id;
 	
+	private Integer enable;
+	
+	private Long categoryId;
+	
 	/** 岗位ID */
 	private String code;
 
@@ -124,6 +128,22 @@ public class JobDefinitionQuery {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Integer getEnable() {
+		return enable;
+	}
+
+	public void setEnable(Integer enable) {
+		this.enable = enable;
+	}
+
+	public Long getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
 	}
 
 }

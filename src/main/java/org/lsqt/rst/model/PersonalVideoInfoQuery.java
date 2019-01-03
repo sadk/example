@@ -15,7 +15,7 @@ public class PersonalVideoInfoQuery {
 	private String key; // 关键字
 	private String ids; // 用逗号分割的id字符
 	private Long id;
-	
+	private String code;
 	/** 用户ID */
 	private String userCode;
 
@@ -31,12 +31,13 @@ public class PersonalVideoInfoQuery {
 	/** 视频状态（0:隐藏， 1展示） */
 	private String status;
 
+	/** 审核状态（0=未阅， 1=已阅） */
+	private Integer checkStatus;
+	
 	/** 上传时间 */
-
 	private java.util.Date uploadTime;
 
 	/** 更新时间 */
-
 	private java.util.Date reviewTime;
 
 	/** 职位ID */
@@ -48,6 +49,8 @@ public class PersonalVideoInfoQuery {
 	/** 租户编码 */
 	private String tenantCode;
 
+	private String remark;
+	
 	// ----------- 虚拟列 
 	private String nickName;
 	private String realName;
@@ -213,6 +216,30 @@ public class PersonalVideoInfoQuery {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public Integer getCheckStatus() {
+		return checkStatus;
+	}
+
+	public void setCheckStatus(Integer checkStatus) {
+		this.checkStatus = checkStatus;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
 }

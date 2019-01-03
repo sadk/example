@@ -22,11 +22,13 @@ public class PersonalVideoInfo {
 	/** 视频ID */
 	private String videoUrl;
 
-	/** 视频状态（0:隐藏， 1展示） */
+	/** 上架状态（0=下线， 1=上线） */
 	private String status;
+	
+	/** 审核结果：2=审核中 1=审核通过  0=审核不通过  */
+	private Integer checkStatus;
 
 	/** 上传时间 */
-
 	private java.util.Date uploadTime;
 
 	/** 更新时间 */
@@ -42,6 +44,8 @@ public class PersonalVideoInfo {
 	/** 租户编码 */
 	private String tenantCode;
 	
+	/**用户备注**/
+	private String remark;
 	
 	// ----------- 虚拟列 
 	private String nickName;
@@ -167,6 +171,22 @@ public class PersonalVideoInfo {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public Integer getCheckStatus() {
+		return checkStatus;
+	}
+
+	public void setCheckStatus(Integer checkStatus) {
+		this.checkStatus = checkStatus;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
 }

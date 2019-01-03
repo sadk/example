@@ -32,6 +32,9 @@ public class Company {
 	/** 状态(0:有效，1:无效) */
 	private Integer status;
 
+	/** 企业入职签约设置: 1=入职需要签约  0=入职不需要签约 **/
+	private Integer entrySignSetting;
+	
 	/** 创建人 */
 	private String createUser;
 
@@ -175,6 +178,14 @@ public class Company {
 
 	public void setEnableFaceDetect(Integer enableFaceDetect) {
 		this.enableFaceDetect = enableFaceDetect;
+	}
+
+	public Integer getEntrySignSetting() {
+		return entrySignSetting;
+	}
+
+	public void setEntrySignSetting(Integer entrySignSetting) {
+		this.entrySignSetting = entrySignSetting;
 	}
 
 }

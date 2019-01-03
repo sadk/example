@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
@@ -13,6 +15,9 @@ import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.sys.model.Dictionary;
+
+import com.aliyuncs.http.HttpRequest;
+
 import org.lsqt.rst.model.PersonalVideoInfo;
 import org.lsqt.rst.model.PersonalVideoInfoQuery;
 import org.lsqt.rst.service.PersonalVideoInfoService;
@@ -39,7 +44,7 @@ public class PersonalVideoInfoController {
 	}
 	
 	@RequestMapping(mapping = { "/all", "/m/all" })
-	public Collection<PersonalVideoInfo> getAll() {
+	public Collection<PersonalVideoInfo> getAll() {	
 		return personalVideoInfoService.getAll();
 	}
 	
@@ -52,8 +57,13 @@ public class PersonalVideoInfoController {
 	@RequestMapping(mapping = { "/save_or_update_short", "/m/save_or_update_short" })
 	public PersonalVideoInfo check(PersonalVideoInfo form) {
 		form.setTenantCode(ContextUtil.getLoginTenantCode());
-		if (form.getId() != null) {
-			db.update(form, "reason","status","tenantCode");
+		if (StringUtil.isNotBlank(form.getCode())) {
+			PersonalVideoInfoQuery q = new PersonalVideoInfoQuery();
+			q.setCode(form.getCode());
+			PersonalVideoInfo model = db.queryForObject("queryForPage", PersonalVideoInfo.class, q);
+			if (model != null) {
+				db.update(form, "reason", "status", "tenantCode", "checkStatus","remark");
+			}
 		}
 		return form;
 	}

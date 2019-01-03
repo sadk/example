@@ -44,6 +44,13 @@ public class CompanyController {
 		return companyService.getById(id);
 	}
 	
+	@RequestMapping(mapping = { "/get_by_code", "/m/get_by_code" })
+	public Company getByCode(String code) throws IOException {
+		CompanyQuery query = new CompanyQuery();
+		query.setCode(code);
+		return db.queryForObject("queryForPage", Company.class, query);
+	}
+	
 	@RequestMapping(mapping = { "/list", "/m/list" })
 	public List<Company> queryForList(CompanyQuery query) throws IOException {
 		query.setTenantCode(ContextUtil.getLoginTenantCode());

@@ -45,12 +45,23 @@
 							</td>
 						</tr>
 						<tr>
-							<td>审核状态：</td>
+							<td>上架状态：</td>
 							<td>
 								<input id="status" name="status" class="mini-combobox"  style="width:140px" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_video_status" />
 							</td>
 						</tr>
- 
+						<tr>
+							<td>审核状态：</td>
+							<td>
+								<input id="checkStatus" name="checkStatus" class="mini-combobox"  style="width:140px" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_video_check_status" />
+							</td>
+						</tr>
+						<tr>
+							<td>备注：</td>
+							<td>
+								<input id="remark" name="remark" class="mini-textbox"  style="width:140px"   emptyText="请输入备注" textField="name"   />
+							</td>
+						</tr>
 
 					</table>
 					<div style="text-align:center;padding:10px;">
@@ -67,9 +78,9 @@
 					<table style="width:100%;">
 						<tr>
 							<td style="width:100%;">
-								<a class="mini-button" iconCls="icon-edit" onclick="edit()">审核</a>
+								<a class="mini-button" iconCls="icon-edit" onclick="edit()">审核上架</a>
 								<a class="mini-button" iconCls="icon-node" onclick="view()">查看</a>
-								<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
+								<!-- <a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a> -->
 								<span class="separator"></span>
 								<a class="mini-button" iconCls="icon-reload" onclick="refresh()">刷新</a>
 							</td>
@@ -95,13 +106,16 @@
 									<div field="positionCode" headerAlign="center" align="" >职位编码</div>
 									-->
 									
-									<div type="comboboxcolumn" field="status" width="120" headerAlign="center" align="center" allowSort="true">审核状态
+									<div type="comboboxcolumn" field="status" width="120" headerAlign="center" align="center" allowSort="true">上架状态
 										<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_video_status" />
 									</div>
-									
+									<div type="comboboxcolumn" field="checkStatus" width="120" headerAlign="center" align="center" allowSort="true">审核状态
+										<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_video_check_status" />
+									</div>
 									<div field="uploadTime" width="180" dateFormat="yyyy-MM-dd HH:mm:ss" align="center" headerAlign="center">上传时间</div>
 									<div field="reviewTime" width="180" dateFormat="yyyy-MM-dd HH:mm:ss" align="center" headerAlign="center">审核时间</div>     
 									<div field="reason" width="180" headerAlign="center" align="left" >下线原因</div>
+									<div field="remark" width="120" headerAlign="center" align="left" >备注</div>
 						</div>
 					</div>
 		        </div>
@@ -115,6 +129,11 @@
     mini.parse();
 	var grid = mini.get("datagrid1");
 	var form = new mini.Form("form1");
+	
+	grid.on("rowdblclick",function(sender){
+		openEdit(sender.row);
+		//console.log(sender.row)
+	})
 	
 	function view() {
 		var row = grid.getSelected();
@@ -166,7 +185,11 @@
  			mini.alert("请选择一条记录");
  			return ;
  		}
- 		
+ 		openEdit(row);
+ 		 
+ 	}
+ 	
+ 	function openEdit(data) {
 		mini.open({
 			url : "${pageContext.request.contextPath}/apps/default/admin/rst/personal_video_info/edit.jsp",
 			title : "审核",
@@ -174,7 +197,7 @@
 			height : 220,
 			onload : function() {
 				var iframe = this.getIFrameEl();
-				var data = row;
+				
 				iframe.contentWindow.SetData(data);
 			},
 			ondestroy : function(action) {

@@ -426,10 +426,13 @@
 					mini.alert("请选择一个职位");
 					return ;
 				}
-				
+				var title = "上传企业Logo图";
+				if('cover' == type) {
+					title = "上传职位封面";
+				}
 				mini.open({
 					url : "${pageContext.request.contextPath}/apps/default/admin/rst/position_definition/upload_img_htmlfile.jsp",
-					title : "上传企业Logo图",
+					title : title,
 					width : 420,
 					height : 330,
 					onload : function() {

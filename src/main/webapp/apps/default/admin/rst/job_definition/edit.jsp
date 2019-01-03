@@ -37,16 +37,17 @@
 									<input name="code" id="code" class="mini-hidden" />
 								</td>
 							</tr>
-							<!-- 
 							<tr>
 								<td>是否启用：</td>
 								<td>
-								 	<input id="enable" name="enable" class="mini-combobox"  showNullItem="true" nullItemText="请选择..." emptyText="请选择" data='[{id:"1",text:"启用"},{id:"0",text:"禁用"}]' />
+								 	<input id="enable" name="enable" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" required="true"/>
 								</td>
-								<td>排序号：</td>
-								 
+								<td>所属分类：</td>
+								<td>
+									<input id="categoryId" name="categoryId" class="mini-buttonedit" onbuttonclick="onButtonEditCategory" /> 
+								</td>
 							</tr> 
-							 -->
+							
 				        </table>
 				    </div>
 				</fieldset>
@@ -60,21 +61,62 @@
 			mini.parse();
 
 			var form = new mini.Form("edit-form1");
-			
-	      
+	
+	      	function onButtonEditCategory(e) {
+	      		var edit = this;
+	            mini.open({
+	    			url : "${pageContext.request.contextPath}/apps/default/admin/rst/job_category/seletor_category.jsp?showCheckBox=false",
+	    			title : "选择分类",
+	    			width : 500,
+	    			height : 420,
+	    			onload : function() {
+	    				var iframe = this.getIFrameEl();
+	    				//iframe.contentWindow.SetData(data);
+	    			},
+	    			ondestroy : function(action) {
+	    				var iframe = this.getIFrameEl();
+	    				var row = iframe.contentWindow.GetData();
+	    				
+	    				if(row) {
+	    					row = mini.clone(row);
+		    				edit.setText(row.name);
+		    				edit.setValue(row.id);
+	    				}
+	    			}
+	    		});
+	      	}
+	      	
 			function SaveData() {
 				var o = form.getData();
 				form.validate();
 				if(form.isValid() == false) return;
 				$.ajax({
 					url : "${pageContext.request.contextPath}/rst/job_definition/save_or_update",
-					dataType: 'json', data: form.getData(),
+					dataType: 'json', data: form.getData(),type:"post",
 					success : function(text) {
 						CloseWindow("save");
 					}
 				});
 			}
 
+			function loadCategoryName(id){
+				//console.log(id)
+				if(id == null) {
+					return ;
+				}
+				$.ajax({
+					url : "${pageContext.request.contextPath}/rst/job_category/get_by_id?id="+id,
+					dataType: 'json',
+					cache : false,
+					success : function(text) {
+						if(text) {
+							var o = mini.decode(text);
+							mini.get("categoryId").setText(o.name);
+						}
+					}
+				});
+			}
+			
 			////////////////////
 			//标准方法接口定义
 			function SetData(data) {
@@ -88,7 +130,8 @@
 							var o = mini.decode(text);
 							 
 							form.setData(o);
-							  
+							
+							loadCategoryName(o.categoryId)
 						}
 					});
 				}

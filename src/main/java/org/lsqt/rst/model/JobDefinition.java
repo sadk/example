@@ -7,7 +7,13 @@ public class JobDefinition {
 
 	/***/
 	private Long id;
-
+	
+	private Integer enable;
+	
+	private Long categoryId;
+	
+	private String categoryName; //辅助字段
+	
 	/** 岗位ID */
 	private String code;
 
@@ -100,6 +106,30 @@ public class JobDefinition {
 
 	public void setSn(Integer sn) {
 		this.sn = sn;
+	}
+
+	public Integer getEnable() {
+		return enable;
+	}
+
+	public void setEnable(Integer enable) {
+		this.enable = enable;
+	}
+
+	public Long getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
 	}
 
 }

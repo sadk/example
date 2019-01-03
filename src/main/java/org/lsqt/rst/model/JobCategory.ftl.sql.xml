@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.JobCategory" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="bu_job_category">
+		<column id="id" type="auto" property="id" text="主键" />
+		<column name="pid" property="pid"/>
+		<column name="code" property="code"/>
+		<column name="name" property="name"/>
+		
+		<column name="sn" property="sn"/>
+		
+		<column name="node_path" property="nodePath"/>
+		<column name="app_code" property="appCode" />
+		<column name="tenant_code" property="tenantCode" />
+		<column name="remark" property="remark" />
+		
+		
+		<column gid="gid" property="gid" />
+		<column createTime="create_time" property="createTime" text="创建时间"/>
+		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		SELECT * FROM  bu_job_category A where 1=1 
+		
+		<#if query??>
+			<#if query.key??>
+		        and (
+			        A.id like '%${StringUtil.escapeSql(query.key)}%' 
+			        or A.name like '%${StringUtil.escapeSql(query.key)}%' 
+			        or A.code like '%${StringUtil.escapeSql(query.key)}%' 
+			        or A.remark like '%${StringUtil.escapeSql(query.key)}%' 
+		        )
+			</#if>
+			
+			<#if query.id??>
+				and A.id = ${query.id} 
+			</#if>
+			
+		    <#if query.idList?? && (query.idList?size > 0)>
+		    	and A.id in (
+			    	<#list query.idList as id>
+			    		  ${id} <#if id_has_next>,</#if>
+					</#list>
+				)
+			</#if>
+			
+			<#if query.code??>
+				and A.code = '${query.code}' 
+			</#if>
+			<#if query.codes??>
+				and A.code in (
+					<#list StringUtil.split(query.codes,',') as code>
+						'${StringUtil.escapeSql(code)}'
+						<#if code_has_next>,</#if>
+					</#list>
+				) 
+			</#if>
+			
+			<#if query.name??>
+				and A.name like '%${StringUtil.escapeSql(query.name)}%' 
+			</#if>
+			
+			
+			<#if query.remark??>
+				and A.remark like '%${StringUtil.escapeSql(query.remark)}%' 
+			</#if>
+			
+			<#if query.appCode??>
+				and A.app_code like '%${StringUtil.escapeSql(query.appCode)}%' 
+			</#if>
+			
+			<#if query.tenantCode??>
+				and A.tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' 
+			</#if>
+			
+		    <#if query.nodePathList?? && (query.nodePathList?size > 0)>
+		    	and (
+			    	<#list query.nodePathList as nodePath>
+			    		  A.node_path like '${StringUtil.escapeSql(nodePath)}%'
+			    		<#if nodePath_has_next>or</#if>
+					</#list>
+					)
+			</#if>
+			
+							
+			<#if query.sortField?? && query.sortOrder??>
+				order by ${StringUtil.escapeSql(query.sortField)}  ${StringUtil.escapeSql(query.sortOrder)}
+			<#else>
+				order by sn 
+			</#if>
+			
+        </#if>
+		]]>
+	</statement>
+	
+	<statement id="getAll" >
+		<![CDATA[ select * from bu_job_category ]]>
+	</statement>
+</statements>

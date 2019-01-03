@@ -38,6 +38,8 @@
 	 		<column name="job_welfare" property="welfare" text="岗位福利"/>
 	 	
 	 		<column name="status" property="status" text="状态(0:未发布，1：已发布)"/>
+	 		
+	 		<column name="is_urgent" property="urgent" text="是否急招：1=急招 0=不急招"/>
 	 	
 	 		<column name="work_addr_id" property="workAddressCode" text="工作地址ID"/>
 	 	
@@ -88,6 +90,8 @@
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 						
 	  						<#if query.id??> and id = ${query.id} </#if>
+	  						
+	  						<#if query.urgent??> and urgent = ${query.urgent} </#if>
 	  						
 	  						<#if query.storeCode??> and store_id = '${StringUtil.escapeSql(query.storeCode)}' </#if>
 	  						<#if query.storeName??> and store_name = '${StringUtil.escapeSql(query.storeCode)}' </#if>

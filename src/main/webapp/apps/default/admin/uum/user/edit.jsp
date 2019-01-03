@@ -214,9 +214,11 @@
 					ondestroy : function(action) {
 						var iframe = this.getIFrameEl();
 						var data = iframe.contentWindow.GetData();
-						data = mini.clone(data);
-						mini.get("tenantCode").setValue(data.code) ;
-						mini.get("tenantName").setValue(data.name) ;
+						if(data && data.code) {
+							data = mini.clone(data);
+							mini.get("tenantCode").setValue(data.code) ;
+							mini.get("tenantName").setValue(data.name) ;
+						}
 					}
 				});
 			}

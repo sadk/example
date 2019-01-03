@@ -69,8 +69,10 @@ public class PositionDefinitionQuery {
 	private String updateUser;
 
 	/** 状态(0:未发布，1：已发布) */
-
 	private Integer status;
+	
+	/** 是否急招  1=急招 0=不急招**/
+	private Integer urgent;
 
 	/** 工作地址ID */
 	private String workAddressCode;
@@ -391,6 +393,14 @@ public class PositionDefinitionQuery {
 
 	public void setImgType(String imgType) {
 		this.imgType = imgType;
+	}
+
+	public Integer getUrgent() {
+		return urgent;
+	}
+
+	public void setUrgent(Integer urgent) {
+		this.urgent = urgent;
 	}
 
 }

@@ -85,12 +85,18 @@
 							
 							<tr>
 								<td>岗位职责：</td>
+								<td colspan="3">
+									<input id="responsibility" name="responsibility"  class="mini-textarea"  style="width:415px"  required="true"/>
+								</td>
+							</tr>
+							<tr>
+								<td>是否热招：</td>
 								<td>
-									<input id="responsibility" name="responsibility"  class="mini-textarea"  style="width:150px" required="true"/>
+									<input id="urgent" name="urgent" class="mini-combobox"  style="width:150px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=yes_or_no"/>
 								</td>
 								<td> 工资详情 ：</td>
 								<td>
-									<input id="salaryDetails" name="salaryDetails"  class="mini-textarea"  style="width:150px" />
+									<input id="salaryDetails" name="salaryDetails"  class="mini-textbox"  style="width:150px"  />
 								</td>
 							</tr>
 							

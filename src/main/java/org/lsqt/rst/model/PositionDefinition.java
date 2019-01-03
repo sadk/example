@@ -71,6 +71,9 @@ public class PositionDefinition {
 
 	/** 状态(0:未发布，1：已发布) */
 	private Integer status;
+	
+	/** 是否急招  1=急招 0=不急招**/
+	private Integer urgent;
 
 	/** 工作地址ID */
 	private String workAddressCode;
@@ -417,6 +420,14 @@ public class PositionDefinition {
 
 	public void setAmountRule(String amountRule) {
 		this.amountRule = amountRule;
+	}
+
+	public Integer getUrgent() {
+		return urgent;
+	}
+
+	public void setUrgent(Integer urgent) {
+		this.urgent = urgent;
 	}
 
 }

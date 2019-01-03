@@ -13,7 +13,10 @@
 	 	
 	 		<column name="video_url" property="videoUrl" text="视频ID"/>
 	 	
-	 		<column name="status" property="status" text="视频状态（0:隐藏， 1展示）"/>
+	 		<column name="status" property="status" text="视频上架状态（0=下线， 1=上线）"/>
+	 		
+	 		<column name="check_status" property="checkStatus" text="审核状态 0=未审核  1=已审核 "/>
+	 		
 	 	
 	 		<column name="upload_time" property="uploadTime" text="上传时间"/>
 	 	
@@ -28,6 +31,8 @@
 	 		<column name="nick_name" property="nickName" isVirtual = "true" text="租户编码"/>
 	 		<column name="real_name" property="realName" isVirtual = "true" text="租户编码"/>
 	 		<column name="phone" property="phone" isVirtual = "true" text="租户编码"/>
+	 		
+	 		<column name="remark" property="remark" text="审核原因"/>
 	 	
 	</table>
 	
@@ -52,10 +57,14 @@
 						u.phone like '%${key}%'
 					)
 				</#if>
-				
+
+							
+							
 							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
 							
 	  						<#if query.code??> and video_id = '${StringUtil.escapeSql(query.code)}' </#if>
+							
+							<#if query.checkStatus??> and check_status = ${query.checkStatus} </#if>
 						
 	  						<#if query.userCode??> and user_id = '${StringUtil.escapeSql(query.userCode)}' </#if>
 						
@@ -81,6 +90,14 @@
 	  						<#if query.reason??> and reason = '${StringUtil.escapeSql(query.reason)}' </#if>
 					
 	  						<#if query.tenantCode??> and v.tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
+	  						
+	  						<#if query.remark??> and v.remark = '${StringUtil.escapeSql(query.remark)}'  </#if>
+	  						
+	  						<#if query.nickName??> and u.nick_name like '%${query.nickName}%'	 </#if>
+							<#if query.realName??> and u.real_name like '%${query.realName}%'	 </#if>
+							<#if query.phone??> and u.phone = '${query.phone}'	 </#if>
+							
+							order by v.id desc
 						
         	</#if>
         	

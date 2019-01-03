@@ -62,9 +62,9 @@ public class UserQuery {
 	private String roleName;
 
 	/** 注册时间 */
-
-	private java.util.Date registrationTime;
-
+	private String registrationTimeBegin;
+	private String registrationTimeEnd;
+	
 	/** 注册来源 */
 	private String registrationSource;
 
@@ -235,14 +235,6 @@ public class UserQuery {
 
 	public String getRoleName() {
 		return this.roleName;
-	}
-
-	public void setRegistrationTime(java.util.Date registrationTime) {
-		this.registrationTime = registrationTime;
-	}
-
-	public java.util.Date getRegistrationTime() {
-		return this.registrationTime;
 	}
 
 	public void setRegistrationSource(String registrationSource) {
@@ -435,6 +427,22 @@ public class UserQuery {
 
 	public void setCodeNotInList(List<String> codeNotInList) {
 		this.codeNotInList = codeNotInList;
+	}
+
+	public String getRegistrationTimeBegin() {
+		return registrationTimeBegin;
+	}
+
+	public void setRegistrationTimeBegin(String registrationTimeBegin) {
+		this.registrationTimeBegin = registrationTimeBegin;
+	}
+
+	public String getRegistrationTimeEnd() {
+		return registrationTimeEnd;
+	}
+
+	public void setRegistrationTimeEnd(String registrationTimeEnd) {
+		this.registrationTimeEnd = registrationTimeEnd;
 	}
 
 }

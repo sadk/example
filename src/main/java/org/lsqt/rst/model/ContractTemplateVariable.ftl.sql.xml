@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.ContractTemplateVariable" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="bu_contract_template_variable">
+				<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="template_id" property="templateId" text="模板ID"/>
+	 	
+	 		<column name="name" property="name" text="变量名称:如合同年限、岗位类别、工价等"/>
+	 	
+	 		<column name="code" property="code" text="变量编码:编程使用码，需唯一"/>
+	 	
+	 		<column name="value" property="value" text="变量值"/>
+	 	
+	 		<column name="type" property="type" text="变量类型: 1=固定值 "/>
+	 	
+	 		<column name="enable" property="enable" text="是否启用: 1=启用  0=禁用"/>
+	 	
+	 		<column name="sn" property="sn" text=""/>
+	 	
+	 		<column name="remark" property="remark" text="用户备注"/>
+	 	
+	 		<column name="app_code" property="appCode" text=""/>
+	 	
+	 		<column name="tenant_code" property="tenantCode" text=""/>
+	 	
+	 	
+	 	
+	 	
+		
+		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		
+	 		
+	 		
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		
+	 		
+	 		
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from bu_contract_template_variable where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 							 							 							 							 												
+							 
+							name like '%${key}%'  or 
+							
+							 
+							code like '%${key}%'  or 
+							
+							 
+							value like '%${key}%'  or 
+							
+							 
+							remark like '%${key}%'  or 
+							
+							 
+							app_code like '%${key}%'  or 
+							
+							 
+							tenant_code like '%${key}%' 
+							
+														
+					)
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+	
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  					<#if query.id??> and id = ${query.id} </#if>
+					
+						
+	  					<#if query.templateId??> and template_id = ${query.templateId} </#if>
+					
+	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
+						
+					
+	  						<#if query.code??> and code = '${StringUtil.escapeSql(query.code)}' </#if>
+						
+					
+	  						<#if query.value??> and value = '${StringUtil.escapeSql(query.value)}' </#if>
+						
+					
+						
+	  					<#if query.type??> and type = ${query.type} </#if>
+					
+						
+	  					<#if query.enable??> and enable = ${query.enable} </#if>
+					
+						
+	  					<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+					
+	  						<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
+						
+					
+						
+					
+						
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+						
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from bu_contract_template_variable ]]>
+	</statement>
+	
+</statements>

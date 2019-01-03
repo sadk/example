@@ -31,11 +31,10 @@ public class Application {
 	private String tenantCode;
 	private String tenantName;
 	
-	//@JSONField (format="yyyy-MM-dd")  
 	private Date createTime;
 	private String createTimeDesc;
 	private String updateTimeDesc;
-	//@JSONField (format="yyyy-MM-dd") 
+	
 	private Date updateTime;
 	
 	public String getEnableDesc(){

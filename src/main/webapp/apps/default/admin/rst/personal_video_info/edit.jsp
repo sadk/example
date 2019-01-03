@@ -21,6 +21,8 @@
 	<body> 
 		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
 			<input name="id" id="id" class="mini-hidden" />
+			<input name="code" id="code" class="mini-hidden" />
+			<input name="videoUrl" id="videoUrl" class="mini-hidden"/>
 			<div style="padding-left:11px;padding-bottom:5px;">
 				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
 		            <legend>审核</legend>
@@ -29,21 +31,33 @@
 							<tr>
 								<td>视频编码：</td>
 								<td>
-									<input id="userCode" name="userCode"  style="width:140px" class="mini-textbox"  emptyText=""  onenter="search" />
+									<input id="code" name="code"  style="width:140px" class="mini-textbox"  emptyText=""  onenter="search" />
 								</td>
-								<td>审核结果：</td>
+								<td>上架状态：</td>
 								<td>
 									<input id="status" name="status" class="mini-combobox"  style="width:140px" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_video_status" />
 								</td>
 							</tr>
 							
 							<tr>
-								<td>原因:</td>
-								<td colspan="3">
-									<input id="reason" name="reason"  style="width:100%" class="mini-textarea"  emptyText="请输入不通过原因"  onenter="search"/>
+								<td>审核状态：</td>
+								<td>
+									<input id="checkStatus" name="checkStatus" class="mini-combobox"  style="width:140px" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_video_check_status" />
+								</td>
+								<td>审核失败原因:</td>
+								<td>
+									<input id="reason" name="reason" style="width:140px" class="mini-textbox"  emptyText="请输入不通过原因"  />
 								</td>
 							</tr>
-							
+							<tr>
+								<td>&nbsp;</td>
+								<td><a href="javascript:video()">点击这里查看视频</a></td>
+								<td>用户备注：</td>
+								<td>
+									<input id="remark" name="remark" style="width:140px" class="mini-textbox"  emptyText="请输入备注"   />
+								</td>
+								
+							</tr>
 				        </table>
 				    </div>
 				</fieldset>
@@ -57,7 +71,16 @@
 			mini.parse();
 
 			var form = new mini.Form("edit-form1");
-		
+			
+			function video() {
+				var videoUrl = mini.get("videoUrl").getValue();
+				if(videoUrl) {
+					window.open(videoUrl,"_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width="+screen.width+", height="+screen.height+"");
+					return ;
+				}
+				mini.alert("没有找到视频");
+			}
+			
 			function SaveData() {
 				var o = form.getData();
 				form.validate();
