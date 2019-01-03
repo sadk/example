@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;
+import org.lsqt.components.mvc.util.RequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +110,7 @@ public class DispatcherChain implements Chain{
 		}
 		
 		// 选择相应的视图呈现
-		final UrlMappingDefinition urlMapping = configuration.getUrlMappingRoute().find(getRequestURI());
+		final UrlMappingDefinition urlMapping = configuration.getUrlMappingRoute().find(RequestUtil.getRequestURI(request));
 		ViewHandler viewHandler = new ViewSelectHandler(request, response);
 		viewHandler.resolve(urlMapping, modelAndView);
 		
@@ -121,19 +122,5 @@ public class DispatcherChain implements Chain{
 		return null;
 	}
 
-	/**
-	 * 
-	 * 获取请求的URI地址
-	 * @param request
-	 * @return
-	 */
-	private String getRequestURI() {
-		String uri = request.getRequestURI();
-
-		// bugFix: 去掉工程名前缀，如: http://ip:poart/工程名(也就是context)/user/login
-		String ctx = request.getContextPath();
-		uri = uri.substring(ctx.length(), uri.length());
-		return uri;
-	}
 }
 

@@ -108,8 +108,6 @@ public class UserEntryInfoController {
 				}
 				
 				if (UserEntryInfo.ENTRY_STATUS_已离职 == entry.getEntryStatus()) {
-					//entry.setCompanyCode(null);
-					//entry.setCompanyName(null);
 					entry.setEntryTime(null);
 					entry.setLeaveTime(new SimpleDateFormat("yyyy-MM-dd").parse(entryTime));
 					
@@ -119,7 +117,6 @@ public class UserEntryInfoController {
 				}
 				
 				db.saveOrUpdate(entry);
-				
 
 			}
 		}

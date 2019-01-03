@@ -14,6 +14,8 @@ public class PositionDefinition {
 	
 	/** 职位ID */
 	private String code;
+	
+	private Integer sn;
 
 	/** 职位名称 */
 	private String name;
@@ -428,6 +430,14 @@ public class PositionDefinition {
 
 	public void setUrgent(Integer urgent) {
 		this.urgent = urgent;
+	}
+
+	public Integer getSn() {
+		return sn;
+	}
+
+	public void setSn(Integer sn) {
+		this.sn = sn;
 	}
 
 }

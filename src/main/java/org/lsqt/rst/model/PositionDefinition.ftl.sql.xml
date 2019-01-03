@@ -39,6 +39,8 @@
 	 	
 	 		<column name="status" property="status" text="状态(0:未发布，1：已发布)"/>
 	 		
+	 		<column name="sn" property="sn" text="排序号"/>
+	 		
 	 		<column name="is_urgent" property="urgent" text="是否急招：1=急招 0=不急招"/>
 	 	
 	 		<column name="work_addr_id" property="workAddressCode" text="工作地址ID"/>
@@ -161,6 +163,8 @@
 	  						</#if>
 	  						
 	  						<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
+	  						
+	  						order by is_top desc , sn desc, update_time desc 
         	</#if>
         	
 		]]>

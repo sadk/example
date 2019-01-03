@@ -98,12 +98,19 @@ public class UserWorkRecordServiceImpl implements UserWorkRecordService{
 		if (ueModel == null || ueModel.getEntryStatus() == null) {
 			throw new UnsupportedOperationException("入职信息为空，不能记录考勤");
 		}
-		
+		/*
 		if(UserEntryInfo.ENTRY_STATUS_已入职 != ueModel.getEntryStatus()) {
 			throw new UnsupportedOperationException("用户未入职不能进行考勤记录");
 		}
+		*/
+		if(ueModel.getEntryTime() == null) {
+			throw new UnsupportedOperationException("入职日期为空，不能记录工时");
+		}
 		
-		 
+		if (new Date().compareTo(ueModel.getEntryTime()) < 0) {
+			throw new UnsupportedOperationException("未到入职生效日期，不能记录工时");
+		}
+		
 		if(StringUtil.isBlank(ueModel.getCompanyCode())) {
 			throw new UnsupportedOperationException("没有找到注册用户的入职企业");
 		}

@@ -13,7 +13,6 @@
 	 		
 	 		
 	 		
-	 		
 	 		<column name="enable_ocr_idcard" property="enableOcrIdCard" text="是否开启Ocr身份证识别"/>
 	 		<column name="enable_ocr_bankcard" property="enableOcrBankCard" text="是否开启Orc银行认证识别"/>
 	 		<column name="enable_face_detect" property="enableFaceDetect" text="是否开启人脸识别"/>

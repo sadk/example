@@ -27,7 +27,10 @@ public class UserEntryInfo {
 	 */
 	private Integer entryStatus;
 	public static int ENTRY_STATUS_待入职=100;
+	
+	public static int ENTRY_STATUS_已完善个人信息=400;
 	public static int ENTRY_STATUS_已入职=530; //400改为530, by:2019-01-02
+	
 	public static int ENTRY_STATUS_已离职=600;
 	
 	public static int ENTRY_STATUS_身份证识别状态_成功=120;

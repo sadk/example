@@ -113,7 +113,21 @@
 				</div>
 			</fieldset>
 				
-			
+			<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
+	            <legend>入职签约设置</legend>
+	            <div style="padding:5px;">
+			        <table>
+								
+								<tr>
+									<td>启用入职签约：</td>
+									<td>
+										<input id="entrySignSetting" name="entrySignSetting" class="mini-combobox"  style="width:140px" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status"/>
+									</td>
+									 
+								</tr>
+					</table>
+				</div>
+			</fieldset>
 			</div>
 			<div id="subbtn" style="text-align:center;padding:10px;">
 				<a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>

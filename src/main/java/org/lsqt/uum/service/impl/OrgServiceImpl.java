@@ -50,7 +50,7 @@ public class OrgServiceImpl implements OrgService{
 		
 		if (!parentIds.isEmpty()) {
 			Collections.reverse(parentIds);
-			model.setNodePath(StringUtil.join(parentIds, ","));
+			model.setNodePath(StringUtil.join(parentIds, ",")+",");
 			db.update(model, "nodePath");
 		}
 		

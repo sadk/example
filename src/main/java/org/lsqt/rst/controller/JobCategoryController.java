@@ -7,14 +7,14 @@ import java.util.List;
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
+import org.lsqt.components.context.annotation.mvc.After;
+import org.lsqt.components.context.annotation.mvc.Match;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Page;
-import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.rst.model.JobCategory;
 import org.lsqt.rst.model.JobCategoryQuery;
 import org.lsqt.rst.service.JobCategoryService;
-import org.lsqt.sys.model.Dictionary;
 
 @Controller(mapping={"/rst/job_category"})
 public class JobCategoryController {
@@ -34,6 +34,7 @@ public class JobCategoryController {
 	}
 	
 	@RequestMapping(mapping = { "/list", "/m/list" })
+	@After(clazz=JobCategoryController.class,method="resultWrapper")
 	public Collection<JobCategory> queryForList(JobCategoryQuery query) throws IOException {
 		if(StringUtil.isBlank(query.getTenantCode())) {
 			query.setTenantCode(ContextUtil.getLoginTenantCode());
@@ -41,6 +42,11 @@ public class JobCategoryController {
 		
 		List<JobCategory> data = jobCategoryService.queryForList(query);
 		return data;
+	}
+	
+	@Match(mapping = {"/m/list"},excludeTransaction = true)
+	public org.lsqt.rst.model.Result<Object> resultWrapper(Object result) {
+		return org.lsqt.rst.model.Result.ok(result);
 	}
 	
 	@RequestMapping(mapping = { "/tree", "/m/tree" })

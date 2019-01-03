@@ -1,19 +1,24 @@
 package org.lsqt.components.mvc;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.lsqt.components.context.CacheReflectUtil;
 import org.lsqt.components.context.Result;
+import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.mvc.After;
+import org.lsqt.components.context.annotation.mvc.Match;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.bean.BeanFactory;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.mvc.impl.UrlMappingRoute;
 import org.lsqt.components.mvc.util.ArgsValueBindUtil;
+import org.lsqt.components.mvc.util.RequestUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +72,7 @@ public class ControllerInvokeChain implements Chain{
 	 */
 	public Object handle() throws Exception {
 		UrlMappingRoute route = configuration.getUrlMappingRoute();
-		UrlMappingDefinition urlMappingDefinition = route.find(getRequestURI());
+		UrlMappingDefinition urlMappingDefinition = route.find(RequestUtil.getRequestURI(request));
 		
 		if (urlMappingDefinition == null) {
 			return null;
@@ -115,19 +120,7 @@ public class ControllerInvokeChain implements Chain{
 		return result.getData();
 	}
 	
-	/**
-	 * 
-	 * 获取请求的URI地址
-	 * @return
-	 */
-	private String getRequestURI() {
-		String uri = request.getRequestURI();
 
-		// bugFix: 去掉工程名前缀，如: http://ip:poart/工程名(也就是context)/user/login
-		String ctx = request.getContextPath();
-		uri = uri.substring(ctx.length(), uri.length());
-		return uri;
-	}
 	
 	/**
 	 * 请求后置处理
@@ -159,18 +152,60 @@ public class ControllerInvokeChain implements Chain{
 			}
 
 			if (processMethod != null) {
-				processMethod.setAccessible(true);
-
-				Object bean = beanFactory.getBean(processClass);
-				if (bean == null) {
-					bean = processClass.newInstance();
+				boolean isNeedInvoke = false;
+				
+				Match match = processMethod.getAnnotation(Match.class);
+				if (match.mapping().length > 0) { //按某URL模式来匹配并产生controller的后置调用
+					Set<String> mappingUrlSet = new HashSet<>();
+					for (String u: processClass.getAnnotation(Controller.class).mapping()) {
+						for (String url : match.mapping()) {
+							mappingUrlSet.add(wrapURL(u).concat(wrapURL(url)));
+						}
+					}
+					 
+					for (String e : mappingUrlSet) {
+						if (urlMappingDefinition.getUrl().equals(e)) {
+							isNeedInvoke = true;
+							break;
+						}
+					}
+				} else {
+					isNeedInvoke = true;
 				}
+				
+				if (isNeedInvoke) {
+					processMethod.setAccessible(true);
 
-				Object wrappedObject = processMethod.invoke(bean, controllerResult.getData());
-				controllerResult.setData(wrappedObject);
+					Object bean = beanFactory.getBean(processClass);
+					if (bean == null) {
+						bean = processClass.newInstance();
+					}
+
+					Object wrappedObject = processMethod.invoke(bean, controllerResult.getData());
+					controllerResult.setData(wrappedObject);
+				}
 			}
 		}
 	}
 	
+	private static String wrapURL(String u) { // 使终以 /xxx/action/yyy 的连接返回!!!
+		u = u.replace("\\", "/");
+		u = u.replace("//", "/");
+		
+		if (!u.startsWith("/")) {
+			u = "/".concat(u);
+		}
+
+		if (u.endsWith("/")) {
+			u = u.substring(0, u.length() - 1);
+		}
+
+		return u;
+	}
+	
+	public static void main(String[] args) {
+		String u = "\\aaaa/bbbdsa//";
+		System.out.println(wrapURL(u));
+	}
 }
 

@@ -22,4 +22,28 @@ public class RequestUtil {
 		}
 		return null;
 	}
+	
+	/**
+	 * 
+	 * 获取请求的URI地址
+	 * @return
+	 */
+	public static String getRequestURI(HttpServletRequest request) {
+		String uri = request.getRequestURI();
+
+		// bugFix: 去掉工程名前缀，如: http://ip:poart/工程名(也就是context)/user/login
+		String ctx = request.getContextPath();
+		uri = uri.substring(ctx.length(), uri.length());
+
+		while (true) {
+			uri = uri.replace("//", "/");
+			uri = uri.replace("\\", "/");
+
+			if (uri.indexOf("//") == -1 && uri.indexOf("\\") == -1) {
+				break;
+			}
+		}
+
+		return uri;
+	}
 }

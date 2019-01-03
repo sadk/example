@@ -182,6 +182,12 @@
 									<input id="storeCode" name="storeCode"   class="mini-hidden" />
 								</td>
 							</tr>
+							<tr>
+								<td>排序号：</td>
+								<td>
+									<input id="sn" name="sn" class="mini-spinner" minValue="0" maxValue="9999999" />
+								</td>
+							</tr>
 						</table>
 					</div>
 				</fieldset>

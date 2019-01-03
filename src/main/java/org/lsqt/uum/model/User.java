@@ -3,9 +3,19 @@ package org.lsqt.uum.model;
 import org.lsqt.components.context.annotation.model.Pattern;
 
 /**
- * 用户表
+ * <pre>
+ * 1.uum_user_object ==> 用户所在(部门、组、岗位/职称)[注意没有角色!该表只保存用户的"职能",而角色不是"职能体"]，多对多表(中间表) 
+ * 其中，obj_type 表示是 对象类型: 1=职称 2=岗位 3=部门 4=组 7=角色
+ * 
+ * 2.uum_object_role ==> 对象(指的是部门、组、岗位/职称、用户[注意用户的角色保存在这张表!])拥有的角色，多对多表(中间表)
+ * 其中，obj_type 对象类型: 1=职称 2=岗位 3=部门 4=组 5=用户
+ * 
+ * 
+ * </pre>
  */
 public class User implements java.io.Serializable{
+	private static final long serialVersionUID = -8219775209409585592L;
+
 	public static final String PWD_SALT = "bqjr@123"; // 暂拟用固定值做密码盐
 	
 	public static final int status_过期 = 3;
