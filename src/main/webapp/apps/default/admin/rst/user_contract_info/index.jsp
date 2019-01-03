@@ -153,6 +153,10 @@
 					mini.alert("请选择一个合同");
 					return ;
 				}
+				if(row.url == null || row.url == '') {
+					mini.alert("没有生成生同链接,请确定");
+					return ;
+				}
 				
 	        	window.open(row.url,"_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width="+screen.width+", height="+screen.height+"");
 			}
