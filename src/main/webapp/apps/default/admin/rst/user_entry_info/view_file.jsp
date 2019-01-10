@@ -151,13 +151,14 @@
 			var msg = "";
 			o.entryTime = mini.get("entryTime").text;
 			if (e == 'yes') {
-				o.entryStatus = 400;
-				msg = "审核通过，用户将直接入职，是否确认？";
+				//o.entryStatus = 530;
+				msg = "审核通过，是否确认？";
 			}
 			if (e =='no') {
 				o.entryStatus = 500;
 				msg = "审核不通过，用户将入职失败，是否确认？";
 			}
+			o.passFlag = e;
 			
 	        mini.confirm(msg, "确定？",
 	                function (action) {

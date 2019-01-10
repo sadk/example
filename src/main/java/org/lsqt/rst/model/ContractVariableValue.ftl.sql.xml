@@ -3,7 +3,7 @@
 	<table name="bu_contract_variable_value">
 			<column id="id" type="auto" property="id" text="主键" />
 	 	
-	 		<column name="contract_id" property="contractId" text="合同ID"/>
+	 		<column name="contract_id" property="contractCode" text="合同ID"/>
 	 	
 	 		<column name="name" property="name" text="变量名称:如合同年限、岗位类别、工价等"/>
 	 	
@@ -42,7 +42,7 @@
 						
 	  						<#if query.id??> and id = ${query.id} </#if>
 					
-	  						<#if query.contractId??> and contract_id = ${query.contractId} </#if>
+	  						<#if query.contractCode??> and contract_id = '${query.contractCode}' </#if>
 					
 	  						<#if query.name??> and name = '${StringUtil.escapeSql(query.name)}' </#if>
 					

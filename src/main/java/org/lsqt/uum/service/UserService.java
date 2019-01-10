@@ -7,7 +7,6 @@ import org.lsqt.uum.model.User;
 import org.lsqt.uum.model.UserQuery;
 
 public interface UserService {
-	
 	User getById(Long id);
 	
 	Page<User> queryForPage(UserQuery query);

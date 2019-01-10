@@ -15,7 +15,7 @@ public class GlobalBeforeRequestChain implements Chain{
 	private static final Logger log = LoggerFactory.getLogger(GlobalBeforeRequestChain.class);
 	
 	private boolean enable = true;
-	private int order = 700;
+	private int order = 800;
 	private int state = STATE_NO_WORK;
 	
 	private HttpServletRequest request;

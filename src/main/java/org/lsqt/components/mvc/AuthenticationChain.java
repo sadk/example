@@ -15,7 +15,6 @@ import org.lsqt.components.util.lang.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSON;
 
 /**
  * 主要用来判断是否启用登陆、是否已登陆

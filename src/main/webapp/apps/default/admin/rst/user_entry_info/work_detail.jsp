@@ -210,19 +210,25 @@
 					mini.get("roleName").setText(o.roleName);
 					
 					mini.get("roleCode").setValue(o.roleCode);
-				})
-				
-				loadUserEntryInfo(data.userCode,function(data){
-					var o = mini.decode(data);
-					mini.get("bankCard").setValue(o.bankCard);
-					mini.get("bankCardName").setValue(o.bankCardName);
-					mini.get("contactor").setValue(o.contactor);
-					mini.get("contactorPhone").setValue(o.contactorPhone);
-					mini.get("entryStatus").setValue(o.entryStatus);
-					mini.get("entryTime").setValue(o.entryTime);
-					mini.get("companyName").setValue(o.companyName);
+					
+					
+					
+					loadUserEntryInfo(data.userCode,function(data){
+						var o = mini.decode(data);
+						mini.get("bankCard").setValue(o.bankCard);
+						mini.get("bankCardName").setValue(o.bankCardName);
+						mini.get("contactor").setValue(o.contactor);
+						mini.get("contactorPhone").setValue(o.contactorPhone);
+						mini.get("entryStatus").setValue(o.entryStatus);
+						mini.get("entryTime").setValue(o.entryTime);
+						mini.get("companyName").setValue(o.companyName);
+						mini.get("leaveTime").setValue(o.leaveTime);
+						mini.get("idCard").setValue(o.idCard);
+					})
 					
 				})
+				
+
 			}
 
 			function loadUserInfo(userCode,callback) { // 注册表的用户信息

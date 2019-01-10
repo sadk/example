@@ -14,6 +14,8 @@ public interface ResService {
 	Page<Res> queryForPage(ResQuery query);
 
 	Res saveOrUpdate(Res model);
+	
+	Res getById(Long id);
 
 	int deleteById(Long... ids);
 	

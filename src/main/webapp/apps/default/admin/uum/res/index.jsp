@@ -41,14 +41,20 @@
 								<input id="name" name="name"  style="width:140px" class="mini-textbox"  emptyText="请输入资源名称"  onenter="search"/>
 							</td>
 						</tr>
-						
+						<%-- 
 						<tr>
 							<td>资源类型：</td>
 							<td>
-								<input id="type" name="type" style="width:140px"  class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=res_type"  />
+								<input id="type" name="type"  multiSelect="true"  showClose="true" oncloseclick="onCloseClick" style="width:140px"  class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=res_type"  />
 							</td>
 						</tr>
-						
+						 --%>
+						<tr>
+							<td>资源类型：</td>
+							<td>
+								<input id="types" name="types"  multiSelect="true"  showClose="true" oncloseclick="onCloseClick" style="width:140px"  class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=res_type"  />
+							</td>
+						</tr>
 						<tr>
 							<td>资源编码：</td>
 							<td>
@@ -89,14 +95,8 @@
 								<a class="mini-button" iconCls="icon-add" onclick="add()">添加</a>
 								<a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
 								<a class="mini-button" iconCls="icon-edit" onclick="edit()">编辑</a>
-								<!--  
-								<a class="mini-button" iconCls="icon-node" onclick="edit('view')">查看</a> -->
+								<span class="separator"></span>  	
 								<a class="mini-button" iconCls="icon-node" onclick="repairNodePath()">修复节点路径</a>
-								<span class="separator"></span>  
-								<a class="mini-button" iconCls="icon-download" onclick="exportData()">导出</a>
-								<input id="exportFileType" name="exportFileType" class="mini-combobox" style="width:60px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"excel"},{id:"1",text:"word"},{id:"2",text:"pdf"},{id:"3",text:"txt"}]' />
-								<input id="exportDataType" name="exportDataType" class="mini-combobox" style="width:64px" value="0"  showNullItem="false" nullItemText="请选择..." emptyText="请选择" data='[{id:"0",text:"当前页"},{id:"1",text:"选中行"},{id:"2",text:"全部数据"}]' />
-								
 							</td>
 							<td style="white-space:nowrap;">
 		                        <input id="key2" name="key2" class="mini-textbox" emptyText="请输入关键字" style="width:150px;" onenter="search"/>   
@@ -113,7 +113,7 @@
 					url="${pageContext.request.contextPath}/res/list?isEnableTreeQuery=false" > 
 					    <div property="columns">
 					        <div type="indexcolumn"></div>
-					        <div name="name" field="name" width="160" headerAlign="center">名称</div>
+					        <div name="name" field="name" width="180" headerAlign="center">名称</div>
 					        <div field="code" width="180" headerAlign="center">编码</div>
 					        <div field="url" width="280" headerAlign="center" align="left">URL
 					        	<input property="editor" class="mini-textbox" style="width:100%;" />
@@ -123,7 +123,7 @@
 								<input property="editor" class="mini-combobox" showNullItem="false" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
 							</div>
 							
-					        <div field="typeDesc" width="80" headerAlign="center" align="center">资源类型</div>
+					        <div field="typeDesc" width="100" headerAlign="center" align="center">资源类型</div>
 					        <div field="sn" width="30" align="right" headerAlign="center">序号</div>
 					        <div field="appCode" width="60" align="left">所属应用</div>
 					        <div field="nodePath" width="60" align="left">结点路径</div>
@@ -151,6 +151,12 @@
 		var form = new mini.Form("#form1");
 		var grid = mini.get("datagrid1");
 		var messageId = null;
+		
+        function onCloseClick(e) {
+            var obj = e.sender;
+            obj.setText("");
+            obj.setValue("");
+        }
 		
 		function closeOther() {
 			var row = grid.getSelected();
@@ -293,8 +299,8 @@
 			mini.open({
 				url : "${pageContext.request.contextPath}/apps/default/admin/uum/res/edit.jsp",
 				title : "添加资源",
-				width : 490,
-				height : 340,
+				width : 500,
+				height : 470,
 				onload : function() {
 					var iframe = this.getIFrameEl();
 					var data = {
@@ -320,13 +326,13 @@
 			if(typeof(action) == 'undefined') {
 				action = "edit";
 			}
-			
+			var url = "";
 			if (row) {
 				mini.open({
 					url : "${pageContext.request.contextPath}/apps/default/admin/uum/res/edit.jsp",
 					title : "编辑资源信息",
-					width : 490,
-					height : 340,
+					width : 500,
+					height : 470,
 					onload : function() {
 						var iframe = this.getIFrameEl();
 						var data = {
@@ -354,20 +360,6 @@
 			} else {
 				mini.alert("请选中一条记录");
 			}
-		}
-		
-		function exportData() {
-			var exportDataType = mini.get("exportDataType").value;
-			var exportFileType = mini.get("exportFileType").value;
-			mini.confirm("确定导出记录？", "确定？",
-		            function (action) {
-		                if (action == "ok") {
-		    				var o = form.getData();
-							var url = "${pageContext.request.contextPath}/res/export?exportFileType="+exportFileType+"&exportDataType="+exportDataType;
-							location.href=url;
-						}
-					});
-			
 		}
 		
 		function clear() {

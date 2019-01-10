@@ -1,5 +1,7 @@
 package org.lsqt.components.mvc;
 
+import org.lsqt.components.context.Order;
+
 /**
  * 请求链 (isNext是否执行下一步， getOrder 链的排序号, isEnable 是否启用)
  * @author mm

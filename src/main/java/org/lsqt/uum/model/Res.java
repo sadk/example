@@ -6,7 +6,7 @@ package org.lsqt.uum.model;
 public class Res {
 	public static final int TYPE_菜单 = 100;
 	public static final int TYPE_页面元素 = 200;
-	public static final int TYPE_数据查询条件 = 300;
+	public static final int TYPE_数据查询 = 300;
 	public static final int TYPE_页面 = 400;
 	public static final int TYPE_链接 = 401;
 	
@@ -199,8 +199,8 @@ public class Res {
 		if (TYPE_页面元素 == type) {
 			return "页面元素";
 		}
-		if (TYPE_数据查询条件 == type) {
-			return "数据查询条件";
+		if (TYPE_数据查询 == type) {
+			return "数据查询";
 		}
 		if (TYPE_链接 == type) {
 			return "链接";

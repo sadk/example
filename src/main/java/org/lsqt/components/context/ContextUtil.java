@@ -1,7 +1,7 @@
 package org.lsqt.components.context;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 上下文核心工具类，需绑定当前请求线程使用
@@ -126,7 +126,7 @@ public class ContextUtil {
 	 */
 	public static Map<String, Object> getFormMap() {
 		if (THREADLOCAL_FORM_MAP.get() == null) { 
-			Map<String, Object> formMap = new HashMap<String, Object>();
+			Map<String, Object> formMap = new ConcurrentHashMap<String, Object>();
 			THREADLOCAL_FORM_MAP.set(formMap);
 		}
 		return THREADLOCAL_FORM_MAP.get();
@@ -139,7 +139,7 @@ public class ContextUtil {
 	 */
 	public static Map<String,Object> getContextMap() {
 		if (THREADLOCAL_CONTEXT_MAP.get() == null) {
-			Map<String, Object> contextMap = new HashMap<String, Object>();
+			Map<String, Object> contextMap = new ConcurrentHashMap<String, Object>();
 			THREADLOCAL_CONTEXT_MAP.set(contextMap);
 		}
 		return THREADLOCAL_CONTEXT_MAP.get();

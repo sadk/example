@@ -144,7 +144,7 @@
 		 
 			grid.on("rowclick", function(e){
 				var record = e.record;
-				variableGrid.load({contractId:record.id});
+				variableGrid.load({contractCode:record.contractCode});
 			});
 	
 			function view() {

@@ -5,16 +5,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.lsqt.components.context.Result;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
-import org.lsqt.components.context.annotation.mvc.After;
+import org.lsqt.components.context.annotation.mvc.Cache;
 import org.lsqt.components.context.annotation.mvc.Default;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
-import org.lsqt.sys.model.Application;
 import org.lsqt.sys.model.Dictionary;
 import org.lsqt.sys.model.DictionaryQuery;
 import org.lsqt.sys.service.DictionaryService;
@@ -74,6 +72,11 @@ public class DictionaryController {
 		return dictionaryService.deleteById(list.toArray(new Long[list.size()]));
 	}
 	
+	//@Cache(key="dict",type=Type.Cacheable,scope="session")
+	//@Cache(key="",timeout="30s")
+	//@Cache(key="",timeoutPoit="30s")
+	//@Cache(scheduled = "1h",type=Type.Evict) 
+	@Cache
 	@RequestMapping(mapping = { "/option", "/m/option" },isTransaction = false)
 	public List<Dictionary> option(@Default("1000") String  appCode,String code,Integer enable) {
 		/*

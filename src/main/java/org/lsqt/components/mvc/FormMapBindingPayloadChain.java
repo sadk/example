@@ -2,8 +2,10 @@ package org.lsqt.components.mvc;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,6 +20,7 @@ import org.lsqt.components.context.Result;
 import org.lsqt.components.context.annotation.mvc.RequestPayload;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.mvc.impl.UrlMappingRoute;
+import org.lsqt.components.mvc.util.RequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +82,7 @@ public class FormMapBindingPayloadChain implements Chain{
 
 		UrlMappingRoute route = configuration.getUrlMappingRoute();
 		
-		UrlMappingDefinition urlMappingDefinition = route.find(getRequestURI());
+		UrlMappingDefinition urlMappingDefinition = route.find(RequestUtil.getRequestURI(request));
 		if(urlMappingDefinition == null) {
 			return null;
 		}
@@ -91,7 +94,15 @@ public class FormMapBindingPayloadChain implements Chain{
 			try {
 				Map<String, Object> form = JSON.parseObject(IOUtils.toString(request.getInputStream(), "UTF-8"),Map.class);
 				
-				ContextUtil.getFormMap().putAll(form);
+				Iterator<Map.Entry<String, Object>> iter =  form.entrySet().iterator();
+				
+				Map<String, Object> concurrentForm = new ConcurrentHashMap<>();
+				while (iter.hasNext()) {
+					Entry<String, Object> entry = iter.next();
+					concurrentForm.put(entry.getKey(), entry.getValue() == null ? "" : entry.getValue());
+				}
+				
+				ContextUtil.getFormMap().putAll(concurrentForm);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -102,19 +113,7 @@ public class FormMapBindingPayloadChain implements Chain{
 		return null;
 	}
 	
-	/**
-	 * 
-	 * 获取请求的URI地址
-	 * @return
-	 */
-	private String getRequestURI() {
-		String uri = request.getRequestURI();
 
-		// bugFix: 去掉工程名前缀，如: http://ip:poart/工程名(也就是context)/user/login
-		String ctx = request.getContextPath();
-		uri = uri.substring(ctx.length(), uri.length());
-		return uri;
-	}
 	
 }
 

@@ -246,7 +246,8 @@ public class DefinitionController {
 			}
 			
 			List<Map<String,Object>> dataFromDb = definitionService.getDataFromDbByLoopPage(def, ds);
-			if (def.getExportMode()!=null && def.getExportMode() == Definition.EXPORT_OR_IMPORT_MODE_SELECTED_COLUMN) { //用户选择字段导出
+			//if (def.getExportMode()!=null && def.getExportMode() == Definition.EXPORT_OR_IMPORT_MODE_SELECTED_COLUMN) { //数据导出模式:默认全部导出、
+				
 				if (ArrayUtil.isNotBlank(notAllowColumn)) {
 					for (Map<String, Object> row : dataFromDb) {
 						for (Column c : notAllowColumn) {
@@ -254,7 +255,7 @@ public class DefinitionController {
 						}
 					}
 				}
-			}
+			//}
 			
 			Map<String,Object> ct = new HashMap<>();
 			ct.put("data",dataFromDb); //查询不导出的列，将字段数据置为null
@@ -273,12 +274,12 @@ public class DefinitionController {
 			XLSTransformer transformer = new XLSTransformer();  
 			transformer.transformXLS(srcFilePath,ct,destFilePath); //直接模板渲染导出
 		
+			Util4Download.download(uploadDir+fileName, def.getName());
+			
 			File destFile = new File(destFilePath);
 			if(destFile.exists()) {
 				destFile.delete();
 			}
-			
-			Util4Download.download(uploadDir+fileName, def.getName());
 			return ;
 		}
 
@@ -301,6 +302,15 @@ public class DefinitionController {
 
 			
 			definitionService.getDataFromDbByLoopPage(def, ds, (currPageIndex, currPageSize, currPageData) -> {
+				
+				if (ArrayUtil.isNotBlank(notAllowColumn)) { // 不允许导出的列，不导出数据
+					for (Map<String, Object> row : currPageData) {
+						for (Column c : notAllowColumn) {
+							row.remove(c.getCode());
+						}
+					}
+				}
+				
 				if (currPageIndex == 0 && (currPageData != null && currPageData.size() > 0)) { // 处理表头
 					Map<String, Object> dataHead= new  LinkedHashMap<>();
 					

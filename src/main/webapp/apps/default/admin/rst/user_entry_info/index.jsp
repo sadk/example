@@ -167,6 +167,10 @@
 				return ;
 			}
 			
+			if ((row.entryStatus+"") !='300') { //待人工审核
+				mini.alert("非人工审核阶段不允许审核影像资料");	
+				return;
+			}
 			mini.open({
 				url : "${pageContext.request.contextPath}/apps/default/admin/rst/user_entry_info/view_file.jsp",
 				title : "查看",

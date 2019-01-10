@@ -16,13 +16,11 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.lsqt.components.cache.Cache;
-import org.lsqt.components.cache.SimpleCache;
 import org.lsqt.components.db.Db.Dialect;
 import org.lsqt.components.db.support.ColumnUtil;
 import org.lsqt.components.db.support.MySQLTypeMapping;
 import org.lsqt.components.db.support.OracleTypeMapping;
 import org.lsqt.components.util.collection.ArrayUtil;
-import org.lsqt.components.util.lang.Md5Util;
 import org.lsqt.components.util.lang.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +32,6 @@ public class JDBCExecutor {
 	private static final Logger log = LoggerFactory.getLogger(JDBCExecutor.class);
 	
 	private static final ThreadLocal<Connection> THREAD_LOCAL_CON = new ThreadLocal<>();
-	
-	private Cache jdbcCache  = new SimpleCache();
-	
-	public void setCache(Cache cache) {
-		this.jdbcCache = cache;
-	}
 	
 	public JDBCExecutor(){}
 	
@@ -375,7 +367,6 @@ public class JDBCExecutor {
 				pstmt.addBatch(sqls.get(i));
 			}
 
-			jdbcCache.clear();
 			return sum += ArrayUtil.sum(pstmt.executeBatch());
 		} catch (Exception ex) {
 			throw new DbException(ex);

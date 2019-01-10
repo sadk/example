@@ -21,6 +21,13 @@ public class ResServiceImpl implements ResService{
 	
 	@Inject private Db db;
 	
+	public Res getById(Long id) {
+		//return db.getById(Res.class, id) ;
+		ResQuery query = new ResQuery();
+		query.setId(id);
+		return db.queryForObject("queryForPage", Res.class, query);
+	}
+	
 	public Page<Res>  queryForPage(ResQuery query) {
 		return db.queryForPage("queryForPage", query.getPageIndex(), query.getPageSize(), Res.class, query);
 	}

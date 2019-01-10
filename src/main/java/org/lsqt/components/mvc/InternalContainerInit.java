@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.lsqt.components.context.CacheReflectUtil;
+import org.lsqt.components.context.Order;
 import org.lsqt.components.context.annotation.OnStarted;
 import org.lsqt.components.context.bean.BeanDefinition;
 import org.lsqt.components.context.bean.BeanFactory;
@@ -159,6 +160,7 @@ public class InternalContainerInit implements Order,Initialization {
 				Collections.sort(toDoList,(o1,o2)-> o1.order-o2.order);
 				for (MethodWrap mw : toDoList) {
 					Object instance = beanFactory.getBean(mw.clazz);
+					mw.method.setAccessible(true);
 					mw.method.invoke(instance,MethodWrap.fillNullParam(mw.method));
 					log.info("The method \"{}\" has been invoked after application startup, and the signature of the method is: {}", mw.method.getName(),mw.method);
 				}

@@ -10,7 +10,7 @@ public class ContractVariableValue {
 	private Long id;
 
 	/**  */
-	private Long contractId;
+	private String contractCode;
 
 	/** 变量名称:如合同年限、岗位类别、工价等 */
 	private String name;
@@ -153,12 +153,11 @@ public class ContractVariableValue {
 		return this.updateTime;
 	}
 
-	public Long getContractId() {
-		return contractId;
+	public String getContractCode() {
+		return contractCode;
 	}
 
-	public void setContractId(Long contractId) {
-		this.contractId = contractId;
+	public void setContractCode(String contractCode) {
+		this.contractCode = contractCode;
 	}
-
 }

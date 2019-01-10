@@ -19,52 +19,53 @@
 		</style>
 	</head>
 	<body> 
-		<form id="edit-form1" method="post" style="height:97%; overflow:auto;">
+		<form id="edit-form1" method="post" style="height:98%; overflow:auto;">
 			<input name="id" class="mini-hidden" />
 			<input name="idNotIn" id="idNotIn" class="mini-hidden" />
 			
-			<div style="padding:4px;padding-bottom:5px;">
-				<fieldset style="border:solid 1px #aaa;padding:3px; margin-bottom:5px;">
+			<div style="padding:4px;padding-bottom:4px;">
+				<fieldset style="border:solid 1px #aaa;padding:2px; margin-bottom:4px;">
 		            <legend>资源信息</legend>
 		            <div style="padding:5px;">
 				        <table>
 							<tr>
-								<td style="width:70px;">名称：</td>
+								<td style="width:150px;">名称：</td>
 								<td style="width:150px;">
-								 	<input name="name" id="name" class="mini-textbox"  emptyText="请输入名称"/>
+								 	<input name="name" id="name" class="mini-textbox"  emptyText="请输入名称" required="true"/>
 								</td>
 								<td style="width:100px;">类型：</td>
 								<td style="width:150px;">
-									<input id="type" name="type" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=res_type"  />
-								</td>
-								
-							</tr>
-							
-							<tr>
-								<td >编码：</td>
-								<td > 
-								 	<input id="code" name="code" class="mini-textbox" emptyText="请输入编码"/>
-								</td>
-								<td>编码值：</td>
-								<td>
-									<input name="value" id="value" class="mini-textbox" emptyText="请输入编码值"/>
+									<input id="type" name="type"  class="mini-combobox" required="true" onvaluechanged="onChangedType" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=res_type"  />
 								</td>
 							</tr>
 							
 							<tr>
 								<td>状态 </td>
 								<td>
-									<input id="status" name="status" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
+									<input id="status" name="status" required="true" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=enable_status" />
 								</td>
 								<td>上级：</td>
 								<td>
 								 	<input id="pid" name="pid" class="mini-buttonedit" onbuttonclick="onButtonEdit" emptyText="上级可以为空"/>    
 								</td>
 							</tr>
+							
+							
+							<tr>
+								<td >编码：</td>
+								<td > 
+								 	<input id="code" name="code" class="mini-textbox" required="true" emptyText="请输入编码"/>
+								</td>
+								<td class="dataQueryPermission">编码值：</td>
+								<td class="dataQueryPermission">
+									<input name="value" id="value" class="mini-textbox" emptyText="请输入编码值"/>
+								</td>
+							</tr>
+							
 							<tr>
 
-								<td>图标：</td>
-								<td> 
+								<td class="dataQueryPermission">图标：</td>
+								<td class="dataQueryPermission"> 
 								 	<input name="icon" id="icon" class="mini-textbox"/>
 								</td>
 								<td>序号：</td>
@@ -73,11 +74,26 @@
 								</td>
 							</tr>
 							<tr>
-								<td>地址：</td>
+								<td>URL地址：</td>
 								<td colspan="3">
 								 	<input name="url" id="url" class="mini-textbox" style="width:100%"  emptyText="请输入URL地址"/>
 								</td>
 							</tr>
+							
+							<tr class = "dataQueryPermissionValue">
+								<td>上下文数据：</td>
+								<td colspan="3"> 
+								 	<input id="types" name="types" readonly="readonly"  multiSelect="true"  showClose="true" oncloseclick="onCloseClick" style="width:100%"  class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=res_def_context_data"  />
+								</td>
+							</tr>
+							
+							<tr class = "dataQueryPermissionValue">
+								<td>权限值：</td>
+								<td colspan="3"> 
+								 	<input id="dataQueryPermissionValue" name="dataQueryPermissionValue" class="mini-textarea" emptyText="请输入权限值" style="width:100%;height: 100px;"/>
+								</td>
+							</tr>
+							
 							<tr>
 								<td>备注：</td>
 								<td colspan="3"> 
@@ -88,7 +104,7 @@
 				    </div>
 				</fieldset>
 			</div>
-			<div id="subbtn" style="text-align:center;padding:10px;">
+			<div id="subbtn" style="text-align:center;padding:5px;">
 				<a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>
 				<a class="mini-button" onclick="onCancel" style="width:60px;">取消</a>
 			</div>
@@ -98,6 +114,26 @@
 
 			var form = new mini.Form("edit-form1");
 		
+			function onChangedType(e) {
+				var sender = e.sender;
+				var value = sender.getValue();
+				if(value == 300) {
+					$(".dataQueryPermission").hide();
+					$(".dataQueryPermissionValue").show();
+					mini.get("types").setValue("0,1");
+				}else {
+					$(".dataQueryPermission").show();
+					$(".dataQueryPermissionValue").hide();
+					
+				}
+			}
+	        
+			function onCloseClick(e) {
+	            var obj = e.sender;
+	            obj.setText("");
+	            obj.setValue("");
+	        }
+	        
 	        function onButtonEdit(e) {
 	            var btnEdit = this;
 	            var idNotIn = mini.get("idNotIn").getValue();
@@ -130,12 +166,15 @@
 				if(form.isValid() == false) return;
 				//mini.alert(mini.encode(form.getData()));
 				//if(true) return ;
+				
+				if (o.type == 300) { //菜单 =100 页面元素 =200  数据查询条件=300 页面=400 链接=401
+					o.value = mini.get("dataQueryPermissionValue").getValue();	
+				}
+				
 				$.ajax({
 					url : "${pageContext.request.contextPath}/res/save_or_update",
-					dataType: 'json',
-					type : 'post',
-					cache : false,
-					data: form.getData(),
+					dataType: 'json', type : 'post',
+					data: o,
 					success : function(text) {
 						CloseWindow("save");
 					},error : function(data) {
@@ -159,25 +198,33 @@
 				
 				 if(data.action == "edit" || data.action=='view') {
 					$.ajax({
-						url : "${pageContext.request.contextPath}/res/page?id=" + data.id,
+						url : "${pageContext.request.contextPath}/res/get_by_id?id=" + data.id,
 						dataType: 'json',
-						cache : false,
 						success : function(text) {
-							var o = mini.decode(text);
-							if(o!=null && o.data!=null && o.data.length>0) {
-								o = o.data[0];
+							if(text) {
+								var o = mini.decode(text);
+								form.setData(o);
+								
+								mini.get("pid").setValue(o.pid);
+								if(typeof(o.pName) != 'undefined') {
+									mini.get("pid").setText(o.pName);
+								}
+								
+								mini.get("idNotIn").setValue(o.id);
+								
+								if("300" == (o.type+"")) { 
+									$(".dataQueryPermission").hide();
+									$(".dataQueryPermissionValue").show();
+									
+									mini.get("dataQueryPermissionValue").setValue(o.value);
+									mini.get("value").setValue("");
+								}else {
+									$(".dataQueryPermissionValue").hide();
+								}
+								
+								mini.get("types").setValue("0,1"); // 
 							}
-							form.setData(o);
-							form.setChanged(false);
-							
-							//alert(o.pName);
-							mini.get("pid").setValue(o.pid);
-							if(typeof(o.pName) != 'undefined') {
-								mini.get("pid").setText(o.pName);
-							}
-							
-							mini.get("idNotIn").setValue(o.id);
-							
+
 							if (data.action == 'view') {
 								form.setEnabled(false);
 							}

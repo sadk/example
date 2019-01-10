@@ -660,7 +660,7 @@
 	                		mini.get("variableType").setValue(data.type);
 	                		mini.get("variableValue").setValue(data.value);
 	                		mini.get("variableValue").setText(data.valueText);
-	                		mini.get("variableDefinition").setValue(data.definitionId);
+	                		mini.get("variableDefinitionId").setValue(data.definitionId);
 	                	}
 	                },
 	                error: function (jqXHR, textStatus, errorThrown) {

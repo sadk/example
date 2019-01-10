@@ -43,7 +43,7 @@ public class UserEntryInfo {
 	public static int ENTRY_STATUS_银行卡识别_失败=161;
 	
 	public static int ENTRY_STATUS_待人工审核=300; // 三步流程是：身份证扫描-》人脸识别-》银行卡号扫描
-	public static int ENTRY_STATUS_入职失败=500; //后台审核都失败
+	public static int ENTRY_STATUS_审核失败=500; //后台审核都失败
 	
 	public static int ENTRY_STATUS_入职信息完善中=180;
  
@@ -71,6 +71,8 @@ public class UserEntryInfo {
 
 	@Pattern("yyyy-MM-dd")
 	private Date entryTime;
+	
+	@Pattern("yyyy-MM-dd")
 	private Date leaveTime;
 	
 	// --------------------虚拟字段 

@@ -7,8 +7,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.lsqt.components.context.ContextUtil;
-import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.mvc.util.RequestUtil;
 import org.slf4j.Logger;
@@ -74,7 +72,9 @@ public class DispatcherChain implements Chain{
 		Chain verificationCodeChain = new VerificationCodeChain(request, response); //是否验证码验证通过（默认无验证码）
 		Chain authenticationChain = new AuthenticationChain(configuration,request,response);//用户是否登陆
 		Chain globalBeforeRequestChain = new GlobalBeforeRequestChain(request, response);//全局请求处理
-		 
+		
+		Chain authenticationDataQueryChain = new JurisdictionChain(configuration,request,response);//用户数据查询权限
+		
 		Chain beforeHandleChain = new BeforeHandleChain(configuration, request);
 		Chain controllerInvokeChain = new ControllerInvokeChain(configuration, request);
 		
@@ -87,6 +87,7 @@ public class DispatcherChain implements Chain{
 		chainList.add(verificationCodeChain);
 		chainList.add(authenticationChain);
 		chainList.add(globalBeforeRequestChain);
+		chainList.add(authenticationDataQueryChain);
 		chainList.add(beforeHandleChain);
 		chainList.add(controllerInvokeChain);
 		

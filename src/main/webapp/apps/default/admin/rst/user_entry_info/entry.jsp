@@ -47,7 +47,7 @@
 							<tr>
 								<td>入职状态：</td>
 								<td>
-								 	<input id="entryStatus" name="entryStatus" required="true"   class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_jianli_tech_entry_status_new" />
+								 	<input id="entryStatus" name="entryStatus" required="true"   class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" data="[{name:'已入职',value:'530'},{name:'已离职',value:'600'}]"  />
 								</td>
 								<td>入职备注：</td>
 								<td>
@@ -98,7 +98,7 @@
 				if(form.isValid() == false) return;
 				
 				o.entryTime = mini.get("entryTime").text;
-				if((o.entryStatus+"") == "400" && (o.companyCode == "" || o.companyCode == null)) {
+				if((o.entryStatus+"") == "530" && (o.companyCode == "" || o.companyCode == null)) {
 					mini.alert("请选择入职的企业");
 					return ;
 				}

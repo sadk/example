@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -71,7 +72,7 @@ public class JSONViewHandler implements ViewHandler{
 				 * WriteNullStringAsEmpty—字符类型字段如果为null,输出为”“,而非null
 				 * WriteNullBooleanAsFalse–Boolean字段如果为null,输出为false,而非null
 				 */
-				String json = JSON.toJSONString(modelAndView, DATE_VALUE_FILTER,
+				String json = JSON.toJSONString(modelAndView,DATE_VALUE_FILTER,
 						SerializerFeature.DisableCircularReferenceDetect, 
 						SerializerFeature.PrettyFormat,
 						SerializerFeature.WriteDateUseDateFormat,
@@ -94,11 +95,11 @@ public class JSONViewHandler implements ViewHandler{
 		
 		return null;
 	}
-
+	
 	private static class DateValueFilter implements ValueFilter {
 		
 		@Override
-		public Object process(Object object, String name, Object value) {
+		public Object process(Object object, String name, Object value) { 
 			if(value == null) return value;
 			
 			String parttern = getDateField(object, name) ;
@@ -124,6 +125,11 @@ public class JSONViewHandler implements ViewHandler{
 			}
 			return null;
 		}
+	}
+	
+	public static void main(String[] args) {
+		String str = "[{\"_id\":27,id:89}]";
+		System.out.println(JSON.parseArray(str, Map.class));
 	}
 }
 

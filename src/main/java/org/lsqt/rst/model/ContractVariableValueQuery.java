@@ -17,8 +17,8 @@ public class ContractVariableValueQuery {
 	
 	private Long id;
 
-	/** 合同ID */
-	private Long contractId;
+	/** 合同编 */
+	private String contractCode;
 	
 	/** 变量名称:如合同年限、岗位类别、工价等 */
 	private String name;
@@ -172,20 +172,20 @@ public class ContractVariableValueQuery {
 		this.ids = ids;
 	}
 
-	public Long getContractId() {
-		return contractId;
-	}
-
-	public void setContractId(Long contractId) {
-		this.contractId = contractId;
-	}
-
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getContractCode() {
+		return contractCode;
+	}
+
+	public void setContractCode(String contractCode) {
+		this.contractCode = contractCode;
 	}
 
 }

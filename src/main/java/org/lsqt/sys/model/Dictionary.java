@@ -8,7 +8,11 @@ import java.util.Date;
  * @author yuanmm
  *
  */
-public class Dictionary {
+public class Dictionary implements java.io.Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9161220675039743944L;
 	/**导出数据的文件类型**/
 	public static final String EXPORT_FILE_TYPE_EXCEL = "excel";
 	public static final String EXPORT_FILE_TYPE_PDF = "pdf";

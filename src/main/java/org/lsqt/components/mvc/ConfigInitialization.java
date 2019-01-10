@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.servlet.FilterConfig;
 
+import org.lsqt.components.context.Order;
 import org.lsqt.components.context.bean.BeanFactory;
 import org.lsqt.components.mvc.impl.UrlMappingRoute;
 import org.slf4j.Logger;
@@ -42,7 +43,7 @@ public class ConfigInitialization implements Initialization  {
 	public void init() throws Exception {
 		SERVLET_CONTEXT_REAL_PATH = filterConfig.getServletContext().getRealPath("/") ;
 		
-		Initialization bannerConfigInit = new BannerConfigInit(); 
+		
 		Initialization globalConstConfigInit = new GlobalConstConfigInit();
 		Initialization webXmlConfigInit = new WebXmlConfigInit(filterConfig);
 		Initialization configPropetiesInit = new ConfigPropertiesInit("/framework.cfg.properties");
@@ -50,8 +51,9 @@ public class ConfigInitialization implements Initialization  {
 		Initialization configYmlInit = new ConfigYMLInit("/framework.cfg.yml");
 		Initialization internalConstConfigInit = new InternalConstConfigInit(filterConfig);
 		Initialization internalContainerInit = new InternalContainerInit();
+		Initialization bannerConfigInit = new BannerConfigInit(); 
 		
-		macroList.add(bannerConfigInit);
+		
 		macroList.add(globalConstConfigInit);
 		macroList.add(webXmlConfigInit);
 		macroList.add(configPropetiesInit);
@@ -59,7 +61,7 @@ public class ConfigInitialization implements Initialization  {
 		macroList.add(configYmlInit);
 		macroList.add(internalConstConfigInit);
 		macroList.add(internalContainerInit);
-		
+		macroList.add(bannerConfigInit);
 
 		Order[] orders = new Order[macroList.size()];
 		Arrays.sort(macroList.toArray(orders), (o1, o2) -> o1.getOrder() - o2.getOrder());

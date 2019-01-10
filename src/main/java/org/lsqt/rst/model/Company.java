@@ -34,6 +34,10 @@ public class Company {
 
 	/** 企业入职签约设置: 1=入职需要签约  0=入职不需要签约 **/
 	private Integer entrySignSetting;
+	public static final int ENTRY_SIGN_SETTING_入职需要签约 =1;
+	public static final int  ENTRY_SIGN_SETTING_入职不需要签约 =0;
+	
+	
 	
 	/** 创建人 */
 	private String createUser;

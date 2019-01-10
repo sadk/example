@@ -20,6 +20,8 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
+import org.lsqt.rst.model.Company;
+import org.lsqt.rst.model.CompanyQuery;
 import org.lsqt.rst.model.User;
 import org.lsqt.rst.model.UserEntryInfo;
 import org.lsqt.rst.model.UserEntryInfoQuery;
@@ -73,7 +75,7 @@ public class UserEntryInfoController {
 	}
 	
 	@RequestMapping(mapping = { "/batch_short_update", "/m/batch_short_update" }, text = "批量修改用户所在厂区和离职在职状态")
-	public void batchShortUpdate(String userIds, Integer entryStatus, String companyName, String companyCode,String entryTime) throws ParseException {
+	public void batchShortUpdate(String userIds, Integer entryStatus, String companyName, String companyCode,String entryTime,String passFlag) throws ParseException {
 		if (StringUtil.isNotBlank(userIds)) {
 			for (String userCode : StringUtil.split(userIds, ",")) {
 				UserEntryInfoQuery query = new UserEntryInfoQuery();
@@ -116,12 +118,32 @@ public class UserEntryInfoController {
 					db.executeUpdate(sql, userCode);
 				}
 				
+				if (UserEntryInfo.ENTRY_STATUS_待人工审核 == entry.getEntryStatus()) {
+					CompanyQuery cq = new CompanyQuery();
+					cq.setCode(companyCode);
+					Company com = db.queryForObject("queryForPage", Company.class, cq);
+						
+					if (com != null 
+							&& com.getEntrySignSetting() != null 
+							&& com.getEntrySignSetting() == Company.ENTRY_SIGN_SETTING_入职需要签约) {//企业有设置需要入职答约
+						if ("yes".equals(passFlag)) {
+							entry.setEntryStatus(UserEntryInfo.ENTRY_STATUS_已完善个人信息);
+						} else {
+							entry.setEntryStatus(UserEntryInfo.ENTRY_STATUS_审核失败);
+						}
+					} else {
+						if ("yes".equals(passFlag)) {
+							entry.setEntryStatus(UserEntryInfo.ENTRY_STATUS_已入职);
+							entry.setEntryTime(new Date());
+						} else {
+							entry.setEntryStatus(UserEntryInfo.ENTRY_STATUS_审核失败);
+						}
+					}
+				}
 				db.saveOrUpdate(entry);
-
 			}
 		}
 	}
-	 
 	
 	@RequestMapping(mapping = { "/tree", "/m/tree" })
 	public List<Node> getTree(UserEntryInfoQuery query) throws IOException {

@@ -21,6 +21,7 @@ import org.lsqt.components.db.Db;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.mvc.impl.UrlMappingRoute;
 import org.lsqt.components.mvc.util.ArgsValueBindUtil;
+import org.lsqt.components.mvc.util.RequestUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.slf4j.Logger;
@@ -91,7 +92,7 @@ public class BeforeHandleChain implements Chain{
 		UrlMappingRoute route = configuration.getUrlMappingRoute();
 		
 		
-		UrlMappingDefinition urlMappingDefinition = route.find(getRequestURI());
+		UrlMappingDefinition urlMappingDefinition = route.find(RequestUtil.getRequestURI(request));
 		if(urlMappingDefinition == null) {
 			return null;
 		}
@@ -109,19 +110,7 @@ public class BeforeHandleChain implements Chain{
 		return beforeMethodReturnObject;
 	}
 
-	/**
-	 * 
-	 * 获取请求的URI地址
-	 * @return
-	 */
-	private String getRequestURI() {
-		String uri = request.getRequestURI();
-
-		// bugFix: 去掉工程名前缀，如: http://ip:poart/工程名(也就是context)/user/login
-		String ctx = request.getContextPath();
-		uri = uri.substring(ctx.length(), uri.length());
-		return uri;
-	}
+ 
 	
 
 	
@@ -182,7 +171,7 @@ public class BeforeHandleChain implements Chain{
 							return null;
 						}
 						 
-						String currUrl = getRequestURI();
+						String currUrl = RequestUtil.getRequestURI(request);
 						
 						Controller ctl = urlMappingDefinition.getControllerClass().getAnnotation(Controller.class);
 						String [] ctlMapping = ctl.mapping();

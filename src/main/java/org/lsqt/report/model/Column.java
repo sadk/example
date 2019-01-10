@@ -1,5 +1,7 @@
 package org.lsqt.report.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 /**
  * @see org.lsqt.sys.model.Column
  * 报表字段定义管理

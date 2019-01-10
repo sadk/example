@@ -63,7 +63,9 @@
 							<#if query.status??> and A.status = ${query.status} </#if>
 							
 	  						<#if query.type??> and A.type = ${query.type} </#if>
-						
+							
+							<#if query.types??> and A.type in ( ${StringUtil.escapeSql(query.types)} )</#if>
+							
 	  						<#if query.sn??> and A.sn = ${query.sn} </#if>
 					
 	  						<#if query.nodePath??> and A.node_path like '${StringUtil.escapeSql(query.nodePath)}%' </#if>

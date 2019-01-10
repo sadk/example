@@ -32,6 +32,7 @@ public class ResQuery {
 
 	/** 资源类型：100=菜单 200=页面元素 300=数据查询条件 400=页面 401=链接*/
 	private Integer type;
+	private String types;
 
 	/** 排序 */
 	private Integer sn;
@@ -258,6 +259,14 @@ public class ResQuery {
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	public String getTypes() {
+		return types;
+	}
+
+	public void setTypes(String types) {
+		this.types = types;
 	}
 
 

@@ -25,6 +25,10 @@ public class ResController {
 	
 	@Inject private Db db;
  
+	@RequestMapping(mapping = { "/get_by_id", "/m/get_by_id" })
+	public Res getById(Long id) {
+		return resService.getById(id);
+	}
 	
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<Res> queryForPage(ResQuery query) {
@@ -53,9 +57,9 @@ public class ResController {
 				nodePathList.add(e.getNodePath());
 			}
 			if(ArrayUtil.isNotBlank(nodePathList)) {
-				ResQuery q = new ResQuery();
-				q.setNodePathList(nodePathList);
-				return resService.queryForList(q);
+				//ResQuery q = new ResQuery();
+				query.setNodePathList(nodePathList);
+				return resService.queryForList(query);
 			}
 		}
 		return list;

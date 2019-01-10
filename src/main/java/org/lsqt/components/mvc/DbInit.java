@@ -1,5 +1,6 @@
 package org.lsqt.components.mvc;
 
+import org.lsqt.components.context.Order;
 import org.lsqt.components.context.bean.BeanFactory;
 import org.lsqt.components.context.factory.AnnotationBeanFactory;
 import org.lsqt.components.db.Db;

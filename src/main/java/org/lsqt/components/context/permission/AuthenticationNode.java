@@ -1,7 +1,7 @@
-package org.lsqt.components.mvc;
+package org.lsqt.components.context.permission;
 
 /**
-* 权限资源节点(返回到cookie使用)
+* 权限资源节点
 * @author mm
 *
 */
@@ -10,5 +10,7 @@ public  class  AuthenticationNode {
 	public Long pid;
 	public String name; // 资源名笱
 	public String code; // 资源编码
+	
+	public String value; // 资源定义值
 }
 

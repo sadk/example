@@ -11,6 +11,7 @@ import org.lsqt.components.context.CacheReflectUtil;
 import org.lsqt.components.context.Result;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.mvc.After;
+import org.lsqt.components.context.annotation.mvc.Cache;
 import org.lsqt.components.context.annotation.mvc.Match;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.bean.BeanFactory;
@@ -20,8 +21,11 @@ import org.lsqt.components.mvc.impl.UrlMappingRoute;
 import org.lsqt.components.mvc.util.ArgsValueBindUtil;
 import org.lsqt.components.mvc.util.RequestUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
+import org.lsqt.components.util.lang.Md5Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
 
 /**
  * Controller方法调用
@@ -71,6 +75,8 @@ public class ControllerInvokeChain implements Chain{
 	 * 返回controller返回的值
 	 */
 	public Object handle() throws Exception {
+		final Result<Object> result = Result.fail();
+		
 		UrlMappingRoute route = configuration.getUrlMappingRoute();
 		UrlMappingDefinition urlMappingDefinition = route.find(RequestUtil.getRequestURI(request));
 		
@@ -78,9 +84,28 @@ public class ControllerInvokeChain implements Chain{
 			return null;
 		}
 		
+		
 		Object controller = beanFactory.getBean(urlMappingDefinition.getControllerClass());
 		
 		List<Object> methodInputParamValues = ArgsValueBindUtil.getMethodArgsValue(urlMappingDefinition.getMethod());
+
+		
+		Cache cache = null;
+		WebCacheHandler webcacheHandler = beanFactory.getBean(WebCacheHandler.class);
+		if (webcacheHandler != null) {
+			cache = urlMappingDefinition.getMethod().getAnnotation(Cache.class);
+			if (cache != null) {
+				String key = urlMappingDefinition.getMethod().getName()+"."+JSON.toJSONString(methodInputParamValues);
+				webcacheHandler.setKey(Md5Util.MD5Encode(key, "utf-8", false));
+				Object data = webcacheHandler.handle(null);
+				if (data != null) {// 有缓存，并且获取到数据,记得执行后置处理
+					result.setData(data);
+					invokeAfter(urlMappingDefinition,result); 
+					ArgsValueBindUtil.clear();
+					return result;
+				}
+			}
+		}
 		
 		boolean isExcludeTransaction = false; // 是否脱离数据库(事务)环境
 		boolean isTransaction = true; //开启事务
@@ -92,14 +117,18 @@ public class ControllerInvokeChain implements Chain{
 			isTransaction = rm.isTransaction();
 		}
 		
-		final Result<Object> result = Result.fail();
+		
 		if (isExcludeTransaction) {
-			result.setData(urlMappingDefinition.getMethod().invoke(controller, methodInputParamValues.toArray()));
+			if(result.getData() == null) {
+				result.setData(urlMappingDefinition.getMethod().invoke(controller, methodInputParamValues.toArray()));
+			}
 			invokeAfter(urlMappingDefinition,result);
 		} else {
 			db.executePlan(isTransaction, () -> {
 				try {
-					result.setData(urlMappingDefinition.getMethod().invoke(controller, methodInputParamValues.toArray()));
+					if(result.getData() == null) {
+						result.setData(urlMappingDefinition.getMethod().invoke(controller, methodInputParamValues.toArray()));
+					}
 					
 					//后置处理，一定纳入到当前事务中
 					invokeAfter(urlMappingDefinition,result);
@@ -117,7 +146,14 @@ public class ControllerInvokeChain implements Chain{
 		}
 		
 		ArgsValueBindUtil.clear();
-		return result.getData();
+		Object data = result.getData();
+		
+		// Web缓存处理
+		if (cache != null) {
+			webcacheHandler.handle(data);
+		}
+		
+		return data;
 	}
 	
 
