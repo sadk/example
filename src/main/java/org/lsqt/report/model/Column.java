@@ -84,9 +84,18 @@ public class Column {
 	
 	
 	/**
-	 * 字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键  4=文本框 5=整型框 6=精度型框 7=日期 8=文件  9=下拉框(常量JSON)
+	 * 字段的代码生成器类型:1=选择器 2=下拉框(字典) 3=外键  4=文本框 5=整型框 6=精度型框 7=日期(起始框) 8=文件  9=下拉框(常量JSON) 10=日期框(单个框)
 	 */
 	private Integer columnCodegenType;
+	public static final int COLUMN_CODEGEN_TYPE_选择器 = 1;
+	public static final int COLUMN_CODEGEN_TYPE_下拉框_字典 = 2;
+	public static final int COLUMN_CODEGEN_TYPE_文本框 = 4;
+	public static final int COLUMN_CODEGEN_TYPE_整型框  = 5;
+	public static final int COLUMN_CODEGEN_TYPE_精度型框 = 6;
+	public static final int COLUMN_CODEGEN_TYPE_日期_起始框= 7;
+	public static final int COLUMN_CODEGEN_TYPE_文件 = 8;
+	public static final int COLUMN_CODEGEN_TYPE_下拉框_常量JSON = 9;
+	public static final int COLUMN_CODEGEN_TYPE_日期框_单个框 = 10;
 
 	/** 默认：double型的为两个小数点， date 为 [yyyy-MM-dd HH:mm:ss] */
 	private String columnCodegenFormat;

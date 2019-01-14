@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.FengYong" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="test_fy">
+				<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="name" property="name" text="报表定义ID"/>
+	 	
+	 		<column name="code" property="myCode" text="变量编码"/>
+	 	
+	 		<column name="value" property="value" text="值"/>
+	 	
+	 		<column name="sn" property="sn" text=""/>
+	 	
+	 		<column name="remark" property="remark" text="变量备注"/>
+	 	
+	 		<column name="app_code" property="appCode" text=""/>
+	 	
+	 	
+	 	
+	 	
+		
+		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		
+	 		
+	 		
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		
+	 		
+	 		
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from test_fy where 1=1
+		 	<#if query??>
+		 		
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+ 
+							code like '%${key}%'  or 
+
+							remark like '%${key}%'  or 
+							
+							 
+							app_code like '%${key}%' 
+							
+														
+					)
+				</#if>
+	 
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  					<#if query.id??> and id = ${query.id} </#if>
+					
+						
+	  					<#if query.name??> and name = ${query.name} </#if>
+					
+	  						<#if query.myCode??> and code = '${StringUtil.escapeSql(query.myCode)}' </#if>
+						
+					
+	  						<#if query.value??> and value = '${StringUtil.escapeSql(query.value)}' </#if>
+						
+					
+						
+	  					<#if query.sn??> and sn = ${query.sn} </#if>
+					
+	  						<#if query.remark??> and remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+					
+	  						<#if query.appCode??> and app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+						
+					
+						
+					
+						
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+	  						
+						
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from test_fy ]]>
+	</statement>
+	
+</statements>

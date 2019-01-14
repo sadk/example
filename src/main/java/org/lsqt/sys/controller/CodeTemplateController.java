@@ -85,7 +85,7 @@ public class CodeTemplateController {
 		}
 	}
 
-	@After(clazz=CodegenAfter.class,method="afterProcess") 
+	//@After(clazz=CodegenAfter.class,method="afterProcess") 
 	@RequestMapping(mapping = { "/codegen", "/m/codegen" })
 	public String codegen(Long tableId,String groupId,String modules,String entityName,String codegenType,String isCreateZip) throws Exception{
 		// 暂只生成单表，

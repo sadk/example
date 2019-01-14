@@ -76,7 +76,7 @@ public class DictionaryController {
 	//@Cache(key="",timeout="30s")
 	//@Cache(key="",timeoutPoit="30s")
 	//@Cache(scheduled = "1h",type=Type.Evict) 
-	@Cache
+	//@Cache
 	@RequestMapping(mapping = { "/option", "/m/option" },isTransaction = false)
 	public List<Dictionary> option(@Default("1000") String  appCode,String code,Integer enable) {
 		/*

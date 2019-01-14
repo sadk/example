@@ -82,7 +82,7 @@
 										</td>
 										<td>数据生成类型：</td>
 										<td>
-											<input id="type" name="type"  class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rpt_general_type" required="true"/>
+											<input id="type" name="type" onvaluechanged="onTypeChanged"  class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rpt_general_type" required="true"/>
 										</td>
 									</tr>
 									
@@ -92,8 +92,8 @@
 										<td>
 											<input id="url" name="url" enabled="false" class="mini-textbox"  emptyText="请输入链接"  />
 										</td>
-										<td>数据库类型：</td>
-										<td>
+										<td class="httpJSON">数据库类型：</td>
+										<td class="httpJSON">
 											<input id="dbType" name="dbType" class="mini-combobox" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rpt_db_type" required="true"/>
 										</td>
 									</tr>
@@ -255,7 +255,7 @@
 				    </div>
 				</fieldset>
 		            
-				<fieldset style="border:solid 1px #aaa;padding:2px; margin-bottom:2px;height: 130px">
+				<fieldset class="httpJSON" style="border:solid 1px #aaa;padding:2px; margin-bottom:2px;height: 130px">
 		            <legend>报表列SQL<font color="red">(用于导入字段使用，可以直接执行)</font></legend>
 		            <div style="padding:5px;">
 		            	<input id="columnSql" name="columnSql" class="mini-textarea" style="height: 100px;width:100%" required="true"/>
@@ -263,14 +263,14 @@
 		        </fieldset>
 		        
 				<fieldset style="border:solid 1px #aaa;padding:2px; margin-bottom:2px;height: 130px">
-		            <legend>报表真实SQL</legend>
+		            <legend>报表真实SQL(或JSON API's URL)</legend>
 		            <div style="padding:5px;">
 		            	<input id="reportSql" name="reportSql" class="mini-textarea" style="height: 100px;width:100%" required="true"/>
 		            </div>
 		        </fieldset>
 				
 				<fieldset style="border:solid 1px #aaa;padding:2px; ">
-		            <legend>报表SQL上下文变量</legend>
+		            <legend>报表上下文变量</legend>
 		            <div style="padding:5px;">
 		            	<table>
 		            		<tr>
@@ -329,6 +329,16 @@
 			
 			var exportMode = mini.get("exportMode");
 			var importMode = mini.get("importMode");
+			
+			function onTypeChanged(e) { //报表内容类型： 1=SQL 2=Table 3=View 4=http_json 5=存储过程
+				var sender = e.sender;
+				//alert(sender.getValue());
+				if((sender.getValue()+"") == "4") {
+					$(".httpJSON").hide();
+				} else {
+					$(".httpJSON").show();
+				}
+			}
 			
 			function selectDict(e) {
 				var btnEdit = this;
@@ -769,6 +779,12 @@
 					                if (c.setIsValid) c.setIsValid(true);      //去除错误提示
 					                if (c.addCls) c.addCls("asLabel");          //增加asLabel外观
 					            }
+							}
+							
+							if((o.type+"") == "4") {
+								$(".httpJSON").hide();
+							} else {
+								$(".httpJSON").show();
 							}
 						}
 					});

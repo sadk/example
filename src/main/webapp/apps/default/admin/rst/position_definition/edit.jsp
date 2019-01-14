@@ -118,6 +118,26 @@
 									<input id="amountRule" name="amountRule"  class="mini-textarea"  style="width:415px"  />
 								</td>
 							</tr>
+							<tr>
+								<td>招聘人数 ：</td>
+								<td>
+									<input id="headCount" name="headCount"  class="mini-textbox" />
+								</td>
+								<td>用工方式 ：</td>
+								<td>
+									<input id="employmentMode" name="employmentMode" class="mini-combobox"  style="width:150px" showNullItem="true" nullItemText="请选择..." emptyText="请选择" textField="name" valueField="value" url="${pageContext.request.contextPath}/dictionary/option?code=rst_dict_employment_mode"/>
+								</td>
+							</tr>
+							<tr>
+								<td>薪水范围：</td>
+								<td>
+									<input id="salaryMin" name="salaryMin"  class="mini-spinner"  style="width:150px" minValue="0" maxValue="999999999" />
+								</td>
+								<td>至</td>
+								<td>
+									<input id="salaryMax" name="salaryMax"  class="mini-spinner"  style="width:150px" minValue="0" maxValue="999999999"/>
+								</td>
+							</tr>
 				        </table>
 				    </div>
 				</fieldset>
@@ -422,7 +442,7 @@
 							if (text) {
 								var o = mini.decode(text);
 								form.setData(o);
-								//console.log(o)
+								console.log(o)
 								mini.get("name").setText(o.name);
 								mini.get("intermediaryName").setText( o.intermediaryName);
 								mini.get("welfare").setText(o.welfare);

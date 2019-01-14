@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,6 +59,7 @@ import org.lsqt.report.service.impl.support.SelectorDataFromUrlJson;
 import org.lsqt.report.service.impl.support.SelectorDataFromUrlXml;
 import org.lsqt.sys.model.DataSource;
 import org.lsqt.sys.model.Dictionary;
+import org.lsqt.sys.model.DictionaryQuery;
 import org.lsqt.sys.service.DataSourceService;
 import org.lsqt.sys.service.impl.DataSourceFactory;
 import org.slf4j.Logger;
@@ -188,6 +190,79 @@ public class DefinitionController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	private Page<Map<String,Object>> searchHttpJSON(Definition model,Map<String,Object> formMap) throws Exception {
+		Page<Map<String,Object>> page = new Page.PageModel<>();
+		
+		String paramJSON =  JSON.toJSONString(formMap,true);
+		log.info("报表请求参数: {}",paramJSON);
+		
+		String json = org.lsqt.biz.util.HttpClient.post(model.getReportSql(),paramJSON);
+		log.info("报表：{} 报表id={}，返回：{}", model.getName(), model.getId(), json);
+		
+		Map<String, Object> rs = JSON.parseObject(json, Map.class);
+		if (rs != null && rs.containsKey("data")) {
+			Object data = rs.get("data");
+			if(data instanceof List) {
+				List<Map<String,Object>> list = (List<Map<String,Object>>)data;
+				page.setData(list);
+			}
+			
+			if(String.class.isAssignableFrom(data.getClass())) { // 服务器异常，data有可能返回字符说明(而不是list数据!!!)
+				page.setHook(data.toString());
+			}
+		} else {
+			page.setHook(json);
+		}
+		return page;
+	}
+	
+	/**
+	 * <pre>
+	 * 导出Excel时，字典数据翻译成中文
+	 * 注意：只有导出Excel的时候才需要翻译字典!!!!
+	 * </pre>
+	 * @param def
+	 * @param data
+	 */
+	private void translateDictionaryExportedExcel(Definition def,List<Map<String,Object>> data) {
+		Map<String /*id_java字段名*/,List<Dictionary>> dictColumnMap = new LinkedHashMap<>(); //当前报表所有的字典字典字段
+		
+		for (Column col : def.getColumnList()) {
+			if(col.getColumnCodegenType()!=null 
+					&& Column.COLUMN_CODEGEN_TYPE_下拉框_字典 == col.getColumnCodegenType()) {
+				
+				DictionaryQuery query = new DictionaryQuery();
+				query.setParentCode(col.getSelectorDataFrom());
+				List<Dictionary> dictData = db.queryForList("queryForPage", Dictionary.class, query);
+				dictColumnMap.put(col.getId()+"_"+col.getPropertyName(), dictData);
+			}
+		}
+		
+
+		for (Map<String, Object> row : data) {
+			Set<Entry<String, Object>> set = row.entrySet();
+			for (Entry<String, Object> e : set) {
+				String key = e.getKey();
+				Object value = e.getValue();
+
+				for (Column col : def.getColumnList()) {
+					if (e.getKey().equals(col.getPropertyName())) { // 确定字段
+						List<Dictionary> dictData = dictColumnMap.get(col.getId() + "_" + col.getPropertyName());
+						if(dictData!=null) {
+							for (Dictionary d : dictData) {
+								if (d.getValue().equals(value + "")) {
+									row.put(key, d.getName());
+								}
+							}
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+	
 	@RequestMapping(mapping = { "/export", "/m/export" },text="导出报表数据")
 	public void export(Long reportDefinitionId) throws Exception {
 		HttpServletRequest request = ContextUtil.getRequest();
@@ -245,20 +320,30 @@ public class DefinitionController {
 				return ;//Result.fail(String.format("没有上传导出模板,报表定义id=%s", reportDefinitionId));
 			}
 			
-			List<Map<String,Object>> dataFromDb = definitionService.getDataFromDbByLoopPage(def, ds);
-			//if (def.getExportMode()!=null && def.getExportMode() == Definition.EXPORT_OR_IMPORT_MODE_SELECTED_COLUMN) { //数据导出模式:默认全部导出、
-				
-				if (ArrayUtil.isNotBlank(notAllowColumn)) {
-					for (Map<String, Object> row : dataFromDb) {
-						for (Column c : notAllowColumn) {
-							row.put(c.getCode(), null);
+			
+			
+			List<Map<String,Object>> excelData = new ArrayList<>();
+			if (Definition.TYPE_HTTP_JSON.equals(def.getType())) {
+				Page<Map<String, Object>> page = searchHttpJSON(def, ContextUtil.getFormMap());
+				excelData = new ArrayList<>(page.getData());
+			}
+			else if(Definition.TYPE_SQL.equals(def.getType())) {
+				excelData = definitionService.getDataFromDbByLoopPage(def, ds);
+				//if (def.getExportMode()!=null && def.getExportMode() == Definition.EXPORT_OR_IMPORT_MODE_SELECTED_COLUMN) { //数据导出模式:默认全部导出、
+					
+					if (ArrayUtil.isNotBlank(notAllowColumn)) {
+						for (Map<String, Object> row : excelData) {
+							for (Column c : notAllowColumn) {
+								row.put(c.getCode(), null);
+							}
 						}
 					}
-				}
-			//}
+				//}
+			}
 			
+			translateDictionaryExportedExcel(def,excelData);
 			Map<String,Object> ct = new HashMap<>();
-			ct.put("data",dataFromDb); //查询不导出的列，将字段数据置为null
+			ct.put("data",excelData); //查询不导出的列，将字段数据置为null
 			
 			String uploadDir = "/upload/report/data";
 			String dir = root +uploadDir ;
@@ -300,58 +385,62 @@ public class DefinitionController {
 			Workbook wb = new SXSSFWorkbook(1000); // keep 100 rows in memory,  exceeding rows will be flushed to disk 
 			Sheet sh = wb.createSheet();
 
-			
-			definitionService.getDataFromDbByLoopPage(def, ds, (currPageIndex, currPageSize, currPageData) -> {
-				
-				if (ArrayUtil.isNotBlank(notAllowColumn)) { // 不允许导出的列，不导出数据
-					for (Map<String, Object> row : currPageData) {
-						for (Column c : notAllowColumn) {
-							row.remove(c.getCode());
-						}
-					}
-				}
-				
-				if (currPageIndex == 0 && (currPageData != null && currPageData.size() > 0)) { // 处理表头
-					Map<String, Object> dataHead= new  LinkedHashMap<>();
+			if (Definition.TYPE_HTTP_JSON.equals(def.getType())) {
+				Page<Map<String, Object>> page = searchHttpJSON(def, ContextUtil.getFormMap());
+				// 在这里渲染excel列与数据列对这套 to be continue ...
+			}
+			else if(Definition.TYPE_SQL.equals(def.getType())) {
+				definitionService.getDataFromDbByLoopPage(def, ds, (currPageIndex, currPageSize, currPageData) -> {
 					
-					List<String> keyList = MapUtil.toKeyList(currPageData.get(0));
-					for (String key: keyList) {
-						boolean isExists = false;
-						for (Column c: def.getColumnList()) {
-							if(key.equals(c.getCode())) {
-							 
-								dataHead.put(c.getCode(), c.getName());
-								 
-								isExists = true;
-								break;
+					if (ArrayUtil.isNotBlank(notAllowColumn)) { // 不允许导出的列，不导出数据
+						for (Map<String, Object> row : currPageData) {
+							for (Column c : notAllowColumn) {
+								row.remove(c.getCode());
 							}
 						}
+					}
+					
+					if (currPageIndex == 0 && (currPageData != null && currPageData.size() > 0)) { // 处理表头
+						Map<String, Object> dataHead= new  LinkedHashMap<>();
 						
-						if(!isExists) {
-							dataHead.put(key,null);
+						List<String> keyList = MapUtil.toKeyList(currPageData.get(0));
+						for (String key: keyList) {
+							boolean isExists = false;
+							for (Column c: def.getColumnList()) {
+								if(key.equals(c.getCode())) {
+								 
+									dataHead.put(c.getCode(), c.getName());
+									 
+									isExists = true;
+									break;
+								}
+							}
+							
+							if(!isExists) {
+								dataHead.put(key,null);
+							}
+						}
+						currPageData.add(0,dataHead);
+					}
+					
+					for (int rownum = 0; rownum < currPageData.size(); rownum++) {
+						int idx = rownum + (currPageIndex * currPageSize);
+						if (currPageIndex>0) {
+							idx+=1;
+						}
+						Row row = sh.createRow(idx); //物理行号
+	
+						Map<String, Object> rowMap = currPageData.get(rownum);
+						List<String> keyList = MapUtil.toKeyList(rowMap);
+	
+						for (int i = 0; i < keyList.size(); i++) {
+							Cell cell = row.createCell(i);
+							Object value = rowMap.get(keyList.get(i));
+							cell.setCellValue(value == null ? "" : value.toString());
 						}
 					}
-					currPageData.add(0,dataHead);
-				}
-				
-				for (int rownum = 0; rownum < currPageData.size(); rownum++) {
-					int idx = rownum + (currPageIndex * currPageSize);
-					if (currPageIndex>0) {
-						idx+=1;
-					}
-					Row row = sh.createRow(idx); //物理行号
-
-					Map<String, Object> rowMap = currPageData.get(rownum);
-					List<String> keyList = MapUtil.toKeyList(rowMap);
-
-					for (int i = 0; i < keyList.size(); i++) {
-						Cell cell = row.createCell(i);
-						Object value = rowMap.get(keyList.get(i));
-						cell.setCellValue(value == null ? "" : value.toString());
-					}
-				}
-			});
-			
+				});
+			}
 			FileOutputStream out = new FileOutputStream(destFilePath); 
 			wb.write(out); 
 			out.close();

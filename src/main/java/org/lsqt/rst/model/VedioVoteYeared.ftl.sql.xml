@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.rst.model.VedioVoteYeared" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="ac_year_vedio_vote">
+			<column id="id" type="auto" property="id" text="主键" />
+	 	
+	 		<column name="user_id" property="userId" text="用户编码"/>
+	 		
+	 		<column name="user_name" property="userName" text="用户编码"/>
+	 	
+	 		<column name="vedio_id" property="videoId" text="视频编码"/>
+	 	
+	 		<column name="vote_time" property="voteTime" text="投票时间"/>
+	 	
+	 		<column name="status" property="status" text="0:取消投票； 1:投票"/>
+	 	
+	 		<column name="create_date" property="createDate" text="创建日期"/>
+	 	
+	 		<column name="update_date" property="updateDate" text="更新日期"/>
+	 	
+	 		<column name="tenant_code" property="tenantCode" text="租户编码"/>
+	 	
+		
+		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select * from ac_year_vedio_vote where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							user_id like '%${key}%'  or 
+							user_name like '%${key}%'
+					)
+				</#if>
+				
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.userId??> and user_id = '${StringUtil.escapeSql(query.userId)}' </#if>
+						
+	  						<#if query.videoId??> and vedio_id = ${query.videoId} </#if>
+					
+							<#if query.voteTimeBegin?? && query.voteTimeEnd??>
+	  							and date_format(vote_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.voteTimeBegin)}' and '${StringUtil.escapeSql(query.voteTimeEnd)}'
+	  						</#if>
+	  						
+	  						<#if query.status??> and status = '${StringUtil.escapeSql(query.status)}' </#if>
+						
+							<#if query.createDateBegin?? && query.createDateEnd??>
+	  							and date_format(create_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createDateBegin)}' and '${StringUtil.escapeSql(query.createDateEnd)}'
+	  						</#if>
+
+							<#if query.updateDateBegin?? && query.updateDateEnd??>
+	  							and date_format(update_date,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.updateDateBegin)}' and '${StringUtil.escapeSql(query.updateDateEnd)}'
+	  						</#if>
+	  						
+	  						<#if query.tenantCode??> and tenant_code = '${StringUtil.escapeSql(query.tenantCode)}' </#if>
+						
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from ac_year_vedio_vote ]]>
+	</statement>
+	
+</statements>

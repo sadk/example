@@ -16,11 +16,26 @@ public class PositionDefinitionQuery {
 	private String ids; // 用逗号分割的id字符
 	private Long id;
 
+	/**薪水范围：最小值**/
+	private Integer salaryMin;
+	
+	/**薪水范围：最大值**/
+	private Integer salaryMax;
+	
+	
 	/** 职位ID */
 	private String code;
 
 	/** 职位名称 */
 	private String name;
+	
+	/**招聘人数**/
+	private String headCount; 
+	
+	/** 用工方式：1=正式工、2=派遣工、3=小时工 **/
+	private String employmentMode; 
+	
+
 
 	/** 公司ID */
 	private String companyCode;
@@ -401,6 +416,34 @@ public class PositionDefinitionQuery {
 
 	public void setUrgent(Integer urgent) {
 		this.urgent = urgent;
+	}
+
+	public String getEmploymentMode() {
+		return employmentMode;
+	}
+
+	public void setEmploymentMode(String employmentMode) {
+		this.employmentMode = employmentMode;
+	}
+
+	public Integer getSalaryMin() {
+		return salaryMin;
+	}
+
+	public void setSalaryMin(Integer salaryMin) {
+		this.salaryMin = salaryMin;
+	}
+
+	public Integer getSalaryMax() {
+		return salaryMax;
+	}
+
+	public void setSalaryMax(Integer salaryMax) {
+		this.salaryMax = salaryMax;
+	}
+
+	public void setHeadCount(String headCount) {
+		this.headCount = headCount;
 	}
 
 }

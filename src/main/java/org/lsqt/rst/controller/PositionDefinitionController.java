@@ -67,6 +67,9 @@ public class PositionDefinitionController {
 		if (StringUtil.isBlank(form.getCode())) {
 			form.setCode(idgen.getUUID58().toString());
 		}
+		/*if (form.getSalaryMin() != null && form.getSalaryMax() != null) {
+			form.setComprehensiveSalary(form.getSalaryMin() + "-" + form.getSalaryMax());
+		}*/
 		return positionDefinitionService.saveOrUpdate(form);
 	}
 	

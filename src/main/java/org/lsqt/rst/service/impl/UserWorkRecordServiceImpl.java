@@ -98,6 +98,8 @@ public class UserWorkRecordServiceImpl implements UserWorkRecordService{
 		if (ueModel == null || ueModel.getEntryStatus() == null) {
 			throw new UnsupportedOperationException("入职信息为空，不能记录考勤");
 		}
+		
+
 		/*
 		if(UserEntryInfo.ENTRY_STATUS_已入职 != ueModel.getEntryStatus()) {
 			throw new UnsupportedOperationException("用户未入职不能进行考勤记录");
@@ -114,6 +116,19 @@ public class UserWorkRecordServiceImpl implements UserWorkRecordService{
 		if(StringUtil.isBlank(ueModel.getCompanyCode())) {
 			throw new UnsupportedOperationException("没有找到注册用户的入职企业");
 		}
+		
+		
+		//不能修改历史（入职过的）公司的考勤数据。
+		if (StringUtil.isNotBlank(model.getUserCode()) && model.getRecordDate() != null) {
+			UserWorkRecordQuery q = new UserWorkRecordQuery();
+			q.setUserCode(model.getUserCode());
+			q.setRecordDate(model.getRecordDate());
+			UserWorkRecord modelDb = db.queryForObject("queryForPage", UserWorkRecord.class, q);
+			if (modelDb != null && (!ueModel.getCompanyCode().equals(modelDb.getCompanyCode()))) {
+				throw new UnsupportedOperationException("已离职公司的考勤数据不能修改");
+			}
+		}
+		
 	 
 		model.setCompanyCode(ueModel.getCompanyCode());
 		model.setCompanyName(ueModel.getCompanyName());

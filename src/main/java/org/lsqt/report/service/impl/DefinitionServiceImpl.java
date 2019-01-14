@@ -48,6 +48,8 @@ import org.lsqt.sys.service.impl.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSON;
+
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateHashModel;
@@ -289,6 +291,27 @@ public class DefinitionServiceImpl implements DefinitionService{
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
+	private Page<Map<String,Object>> searchHttpJSON(Definition model,Map<String,Object> formMap) throws Exception {
+		Page<Map<String,Object>> page = new Page.PageModel<>();
+		String json = org.lsqt.biz.util.HttpClient.post(model.getReportSql(), JSON.toJSONString(formMap));
+		log.info("报表：{} id={}，返回：{}", model.getName(), model.getId(), json);
+		Map<String, Object> rs = JSON.parseObject(json, Map.class);
+		if (rs != null && rs.containsKey("data")) {
+			Object data = rs.get("data");
+			if(data instanceof List) {
+				List<Map<String,Object>> list = (List<Map<String,Object>>)data;
+				page.setData(list);
+			}
+			
+			if(String.class.isAssignableFrom(data.getClass())) { // 服务器异常，data有可能返回字符说明(而不是list数据!!!)
+				page.setHook(data.toString());
+			}
+		} else {
+			page.setHook(json);
+		}
+		return page;
+	}
 	
 	public Page<Map<String,Object>> search(Long id,Map<String,Object> formMap) throws Exception{
 		
@@ -299,6 +322,10 @@ public class DefinitionServiceImpl implements DefinitionService{
 		Definition model = db.getById(Definition.class, id);
 		if(model == null) {
 			return new Page.PageModel<>();
+		}
+		
+		if (Definition.TYPE_HTTP_JSON.equals(model.getType())) {
+			return searchHttpJSON(model, formMap);
 		}
 		
 		ColumnQuery query = new ColumnQuery();

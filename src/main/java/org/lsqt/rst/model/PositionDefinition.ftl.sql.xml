@@ -6,6 +6,14 @@
 	 		<column name="job_id" property="code" text="职位ID"/>
 	 	
 	 		<column name="job_name" property="name" text="职位名称"/>
+	 		
+	 		<column name="head_count" property="headCount" text="招聘人数"/>
+	 		
+	 		<column name="employment_mode" property="employmentMode" text="用工方式: 1=正式工、2=派遣工、3=小时工"/>
+	 		
+	 		<column name="min_salary" property="salaryMin" text="薪水范围-最小值"/>
+	 		
+	 		<column name="max_salary" property="salaryMax" text="薪水范围-最大值"/>
 	 	
 	 		<column name="company_id" property="companyCode" text="公司ID"/>
 	 	

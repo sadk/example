@@ -8,6 +8,13 @@ public class PositionDefinition {
 	/***/
 	private Long id;
 
+	/**薪水范围：最小值**/
+	private Integer salaryMin;
+	
+	/**薪水范围：最大值**/
+	private Integer salaryMax;
+	
+	
 	private String storeCode; //职位所属门店
 	
 	private String storeName;
@@ -110,7 +117,13 @@ public class PositionDefinition {
 	/**工资详情**/
 	private String salaryDetails;
 
-
+	/**招聘人数**/
+	private String headCount;
+	
+	/**招工模式**/
+	private String employmentMode; 
+	
+	
 	
 	private String tenantCode;
 	
@@ -438,6 +451,38 @@ public class PositionDefinition {
 
 	public void setSn(Integer sn) {
 		this.sn = sn;
+	}
+
+	public String getEmploymentMode() {
+		return employmentMode;
+	}
+
+	public void setEmploymentMode(String employmentMode) {
+		this.employmentMode = employmentMode;
+	}
+
+	public Integer getSalaryMin() {
+		return salaryMin;
+	}
+
+	public void setSalaryMin(Integer salaryMin) {
+		this.salaryMin = salaryMin;
+	}
+
+	public Integer getSalaryMax() {
+		return salaryMax;
+	}
+
+	public void setSalaryMax(Integer salaryMax) {
+		this.salaryMax = salaryMax;
+	}
+
+	public String getHeadCount() {
+		return headCount;
+	}
+
+	public void setHeadCount(String headCount) {
+		this.headCount = headCount;
 	}
 
 }

@@ -686,7 +686,7 @@
 				mini.open({
 					url : "${pageContext.request.contextPath}/apps/default/admin/rst/position_definition/edit.jsp",
 					title : "编辑信息",
-					width : 650,
+					width : 580,
 					height : 620,
 					onload : function() {
 						var iframe = this.getIFrameEl();

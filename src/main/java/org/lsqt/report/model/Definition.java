@@ -49,7 +49,12 @@ public class Definition {
 
 	/** 报表内容类型： 1=SQL 2=Table 3=View 4=http_json 5=存储过程 */
 	private String type;
-
+	public static final String TYPE_SQL="1";
+	public static final String TYPE_TABLE="2";
+	public static final String TYPE_VIEW="3";
+	public static final String TYPE_HTTP_JSON="4";
+	public static final String TYPE_PROCEDURE="5";
+	
 	/** 报表url */
 	private String url;
 
