@@ -2,7 +2,6 @@ package org.lsqt.components.context.factory;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -17,23 +16,18 @@ import org.lsqt.components.context.annotation.Dao;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Scope;
 import org.lsqt.components.context.annotation.Service;
-import org.lsqt.components.context.meta.AnnotationBeanDefinition;
-import org.lsqt.components.context.meta.BeanWrapper;
-import org.lsqt.components.context.resolve.AnnotationBeanMetaResolveImpl;
 import org.lsqt.components.context.bean.BeanDefinition;
 import org.lsqt.components.context.bean.BeanException;
 import org.lsqt.components.context.bean.BeanFactory;
 import org.lsqt.components.context.bean.BeanMetaResolve;
-import org.lsqt.components.db.Db;
-import org.lsqt.components.mvc.impl.UrlMappingDefinition;
-import org.lsqt.components.mvc.impl.AnnotationUrlMappingRoute;
+import org.lsqt.components.context.meta.AnnotationBeanDefinition;
+import org.lsqt.components.context.meta.BeanWrapper;
+import org.lsqt.components.context.resolve.AnnotationBeanMetaResolveImpl;
 import org.lsqt.components.util.bean.BeanUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.components.util.reflect.ClassLoaderUtil;
-import org.lsqt.sys.controller.ApplicationController;
-import org.lsqt.sys.service.ApplicationService;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import net.sf.cglib.proxy.Enhancer;
 
 
 /**
@@ -78,6 +72,13 @@ public class AnnotationBeanFactory implements BeanFactory{
 	public int order() {
 		return 0;
 	}
+	
+	private Object newInstance(Class<?> clazz) {
+		Enhancer enhancer = new Enhancer();
+		enhancer.setSuperclass(clazz);
+		enhancer.setCallback(new ObjectMethodInterceptor());
+		return enhancer.create();
+	}
 
 	private final List<BeanFactory> register = new ArrayList<>();
 
@@ -99,6 +100,7 @@ public class AnnotationBeanFactory implements BeanFactory{
 		this.beanDefinitionList.addAll(r.resolve());
 	}
 	
+ 
 	/**
 	 * <pre>
 	 * 容器实例化的整个流程,方法2.
@@ -110,7 +112,8 @@ public class AnnotationBeanFactory implements BeanFactory{
 		
 		for(BeanDefinition d:beanDefinitionList) {
 			try{
-				BeanWrapper object = new BeanWrapper(d,d.getBeanClass().newInstance(),true);
+				
+				BeanWrapper object = new BeanWrapper(d,newInstance(d.getBeanClass()),true);
 				
 				singletonObjectList.add(object);
 			}catch(Exception ex){
@@ -196,7 +199,7 @@ public class AnnotationBeanFactory implements BeanFactory{
 		if(def == null) return null;
 		try {
 			requiredType = (Class<T>) def.getBeanClass();
-			bean =  (T) requiredType.newInstance();
+			bean = (T) newInstance(requiredType); // (T) requiredType.newInstance();
 		} catch ( Exception e) {
 			e.printStackTrace();
 			return null;
@@ -234,7 +237,7 @@ public class AnnotationBeanFactory implements BeanFactory{
 		 
 		try{
 			Class<T> requiredType = (Class<T>) ClassLoaderUtil.classForName(def.getFullClassName());
-			bean = requiredType.newInstance();
+			bean = (T) newInstance(requiredType) ; //requiredType.newInstance();
 		
 			BeanWrapper beanWapper = new BeanWrapper(def, bean,true) ;
 			final Map<Field, Integer> fieldInfo = new ConcurrentHashMap<Field, Integer>();
@@ -376,7 +379,7 @@ public class AnnotationBeanFactory implements BeanFactory{
 			
 		} else if(isScopeFor(def.getBeanClass(), Scope.PROTOTYPE)) {
 			try {
-				BeanWrapper object = new BeanWrapper(def, def.getBeanClass().newInstance(),true);
+				BeanWrapper object = new BeanWrapper(def, newInstance(def.getBeanClass()),true);
 				value = object ;
 			} catch (Exception ex){
 				ex.printStackTrace();

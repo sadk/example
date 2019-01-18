@@ -17,7 +17,6 @@ import org.lsqt.cms.model.NewsQuery;
 import org.lsqt.cms.service.NewsService;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
-import org.lsqt.components.context.annotation.mvc.Cache;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
@@ -35,7 +34,7 @@ public class NewsController {
 		return newsService.queryForPage(query);
 	}
 	
-	@Cache(scope="application",timeout="30m")
+	//@Cache(scope="application",timeout="30m")
 	@RequestMapping(mapping = { "/all", "/m/all" },view = View.JSON)
 	public Collection<News> all(NewsQuery query) {
 		  return newsService.queryForList(query);

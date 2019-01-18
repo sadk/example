@@ -65,7 +65,7 @@ public class BeanWrapper {
 		return sb.toString();
 	}
 
-	@Override
+/*	@Override
 	public int hashCode() {
 		return originalBean.hashCode();
 	}
@@ -74,6 +74,6 @@ public class BeanWrapper {
 	public boolean equals(Object obj) {
 		return originalBean.equals(obj);
 	}
-
+*/
 	
 }

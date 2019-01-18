@@ -1,5 +1,6 @@
 package org.lsqt.components.context;
 
+import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,19 +16,19 @@ public class ContextUtil {
 	
 	//当前请求线程上下文数据容器
 	private static ThreadLocal<Map<String,Object>> THREADLOCAL_CONTEXT_MAP=new ThreadLocal<Map<String,Object>>();
-	private static final String KEY_END_FIX="~!@#$%^&*()-_+=[{]}\\|;:'\",<.>/?";
-	public static final String CONTEXT_REQUEST_OBJECT  = "context_request_object".concat(KEY_END_FIX);
-	public static final String CONTEXT_RESPONSE_OBJECT = "context_response_object".concat(KEY_END_FIX);
+	private static final String KEY_END_FIX= Base64.getEncoder().encodeToString("~!@#$%^&*()-_+=[{]}\\|;:'\",<.>/?".concat(System.nanoTime()+"").getBytes());
+	public static final String CONTEXT_REQUEST_OBJECT  = "context_request_object_".concat(KEY_END_FIX);
+	public static final String CONTEXT_RESPONSE_OBJECT = "context_response_object_".concat(KEY_END_FIX);
 	
 	// 登陆用户上下文
-	public static final String CONTEXT_LOGIN_USER_OBJECT = "context_login_user_object".concat(KEY_END_FIX);
-	public static final String CONTEXT_LOGIN_ACCOUNT_OBJECT = "context_login_account_object".concat(KEY_END_FIX);
-	public static final String CONTEXT_LOGIN_NAME_OBJECT = "context_login_name_object".concat(KEY_END_FIX);
-	public static final String CONTEXT_LOGIN_ID_OBJECT = "context_login_id_object".concat(KEY_END_FIX);
-	public static final String CONTEXT_LOGIN_TENANT_CODE_OBJECT = "context_tenant_code_object".concat(KEY_END_FIX);
+	public static final String CONTEXT_LOGIN_USER_OBJECT = "context_login_user_object_".concat(KEY_END_FIX);
+	public static final String CONTEXT_LOGIN_ACCOUNT_OBJECT = "context_login_account_object_".concat(KEY_END_FIX);
+	public static final String CONTEXT_LOGIN_NAME_OBJECT = "context_login_name_object_".concat(KEY_END_FIX);
+	public static final String CONTEXT_LOGIN_ID_OBJECT = "context_login_id_object_".concat(KEY_END_FIX);
+	public static final String CONTEXT_LOGIN_TENANT_CODE_OBJECT = "context_tenant_code_object_".concat(KEY_END_FIX);
 	
 	// spring容器上下文
-	public static final String CONTEXT_SPRING_HOLDER = "context_spring_container_holder".concat(KEY_END_FIX);
+	public static final String CONTEXT_SPRING_HOLDER = "context_spring_container_holder_".concat(KEY_END_FIX);
 	
 	
 	

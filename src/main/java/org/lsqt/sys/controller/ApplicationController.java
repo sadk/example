@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
+import org.lsqt.components.context.annotation.Cache;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
@@ -15,10 +15,9 @@ import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.sys.model.Application;
 import org.lsqt.sys.model.ApplicationQuery;
-import org.lsqt.sys.model.Dictionary;
 import org.lsqt.sys.service.ApplicationService;
 
-
+@Cache(Application.class)
 @Controller(mapping={"/application"})
 public class ApplicationController {
 	
@@ -53,6 +52,7 @@ public class ApplicationController {
 		public String code;
 		
 	}
+	
 	@RequestMapping(mapping = { "/all_tree", "/m/all_tree" },view = View.JSON)
 	public Collection<Node> getAllTree() {
 		Collection<Application> list = applicationService.getAll();
@@ -76,6 +76,7 @@ public class ApplicationController {
 		return rs;
 	}
 	
+	@Cache(evict = true)
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" }, view = View.JSON)
 	public Application saveOrUpdate(Application form) {
 		if(StringUtil.isBlank(form.getCode())) {
@@ -84,6 +85,7 @@ public class ApplicationController {
 		return applicationService.saveOrUpdate(form);
 	}
 	
+	@Cache(evict = true)
 	@RequestMapping(mapping = { "/delete", "/m/delete" },view = View.JSON)
 	public int delete(String ids) {
 		List<Long> list = StringUtil.split(Long.class, ids, ",");

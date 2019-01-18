@@ -57,5 +57,21 @@ public class CacheMapDB<K,V> implements Cache<K, V> {
 		for (int i=0;i<33333;i++)
 		System.out.println(map.get("something").getAddressHome());
 	}
+
+
+
+	@Override
+	public void clear(String nameSpace) {
+	 
+		
+	}
+
+
+
+	@Override
+	public V remove(String nameSpace, String key) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
 

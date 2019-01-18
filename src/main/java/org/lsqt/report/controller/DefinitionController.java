@@ -263,7 +263,7 @@ public class DefinitionController {
 		}
 	}
 	
-	@RequestMapping(mapping = { "/export", "/m/export" },text="导出报表数据")
+	@RequestMapping(mapping = { "/export", "/m/export" },text="导出报表数据",isTransaction = true)
 	public void export(Long reportDefinitionId) throws Exception {
 		HttpServletRequest request = ContextUtil.getRequest();
 		final String root = request.getServletContext().getRealPath("/");

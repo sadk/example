@@ -1,5 +1,6 @@
 package org.lsqt.sys.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
@@ -10,8 +11,13 @@ import java.util.Date;
  * @author yuanmm
  *
  */
-public class Category {
+public class Category implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8344997182681788059L;
+
 	private Long id;
 	
 	private String code;

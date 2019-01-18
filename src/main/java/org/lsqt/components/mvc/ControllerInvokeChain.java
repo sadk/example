@@ -8,10 +8,11 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.lsqt.components.context.CacheReflectUtil;
+import org.lsqt.components.context.GenerateKey;
 import org.lsqt.components.context.Result;
+import org.lsqt.components.context.annotation.Cache;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.mvc.After;
-import org.lsqt.components.context.annotation.mvc.Cache;
 import org.lsqt.components.context.annotation.mvc.Match;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.bean.BeanFactory;
@@ -20,12 +21,10 @@ import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.mvc.impl.UrlMappingRoute;
 import org.lsqt.components.mvc.util.ArgsValueBindUtil;
 import org.lsqt.components.mvc.util.RequestUtil;
+import org.lsqt.components.plugin.cache.EhcachePlugin;
 import org.lsqt.components.util.collection.ArrayUtil;
-import org.lsqt.components.util.lang.Md5Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.alibaba.fastjson.JSON;
 
 /**
  * Controller方法调用
@@ -70,7 +69,7 @@ public class ControllerInvokeChain implements Chain{
 	public int getState() {
 		return this.state;
 	}
-
+	
 	/**
 	 * 返回controller返回的值
 	 */
@@ -90,20 +89,43 @@ public class ControllerInvokeChain implements Chain{
 		List<Object> methodInputParamValues = ArgsValueBindUtil.getMethodArgsValue(urlMappingDefinition.getMethod());
 
 		
-		Cache cache = null;
-		WebCacheHandler webcacheHandler = beanFactory.getBean(WebCacheHandler.class);
-		if (webcacheHandler != null) {
-			cache = urlMappingDefinition.getMethod().getAnnotation(Cache.class);
-			if (cache != null) {
-				String key = urlMappingDefinition.getMethod().getName()+"."+JSON.toJSONString(methodInputParamValues);
-				webcacheHandler.setKey(Md5Util.MD5Encode(key, "utf-8", false));
-				Object data = webcacheHandler.handle(null);
-				if (data != null) {// 有缓存，并且获取到数据,记得执行后置处理
-					result.setData(data);
-					invokeAfter(urlMappingDefinition,result); 
-					ArgsValueBindUtil.clear();
-					return result;
-				}
+		
+		
+		boolean isCachable = false;
+		String nameSpace = null;
+		String key = null;
+		EhcachePlugin plugin = EhcachePlugin.getInstance();
+		
+		Cache cacheClazz = urlMappingDefinition.getControllerClass().getAnnotation(Cache.class); //注解在控制器上，所有的方法都有缓存
+		Cache cacheMethod = urlMappingDefinition.getMethod().getAnnotation(Cache.class);
+
+		if(cacheClazz != null || cacheMethod != null) {
+			isCachable = true;
+			
+			if(cacheClazz!=null && cacheClazz.ignore()) {
+				isCachable = false;
+			} else if(cacheMethod!=null && cacheMethod.ignore()) {
+				isCachable = false;
+			}
+		}
+		
+		if (isCachable) {
+			
+			GenerateKey.Key keyInfo = GenerateKey.generate(urlMappingDefinition.getControllerClass(), urlMappingDefinition.getMethod(), methodInputParamValues);
+			nameSpace = keyInfo.nameSpace;
+			key = keyInfo.key;
+			
+			if (cacheMethod != null && cacheMethod.evict()) {
+				plugin.clear(nameSpace);
+			}
+			
+			Object data = plugin.get(nameSpace, key);
+			if (data != null) {// 有缓存，并且获取到数据,记得执行后置处理
+				result.setData(data);
+				invokeAfter(urlMappingDefinition, result);
+				ArgsValueBindUtil.clear();
+				log.debug("命中缓存,URL: {}",RequestUtil.getRequestURI(request));
+				return result.getData();
 			}
 		}
 		
@@ -149,8 +171,8 @@ public class ControllerInvokeChain implements Chain{
 		Object data = result.getData();
 		
 		// Web缓存处理
-		if (cache != null) {
-			webcacheHandler.handle(data);
+		if (isCachable && data != null) {
+			plugin.put(nameSpace, key, data);
 		}
 		
 		return data;

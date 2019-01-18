@@ -64,7 +64,9 @@ public interface Page<T> {
 		void doNextPage(int currPageIndex, int currPageSize, List<Map<String, Object>> currPageData);
 	}
 	
-	class PageModel<T> implements Page<T> {
+	class PageModel<T> implements Page<T>,java.io.Serializable {
+		
+		private static final long serialVersionUID = 2715047046345293259L;
 		
 		private int pageSize = DEFAULT_PAGE_SIZE;
 		private int pageIndex = DEFAULT_PAGE_INDEX;

@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 public class JurisdictionChain implements Chain{
 	private static final Logger log = LoggerFactory.getLogger(JurisdictionChain.class);
 	
-	private boolean enable = true;
+	private boolean enable = false;
 	private int order = 900;
 	private int state = STATE_IS_CONTINUE_TO_EXECUTE; // 数据查询权限不影响执行链的中断！！！
 	

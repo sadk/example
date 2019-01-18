@@ -53,6 +53,10 @@ public class UserController {
 	@Inject private OrgService orgService;
 	@Inject private Db db;
 	
+	@RequestMapping(mapping = { "/get_by_id", "/m/get_by_id" })
+	public User getById(Long id) {
+		return userService.getById(id);
+	}
 	
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public User saveOrUpdate(User form, String loginPwdReboot) {
@@ -60,6 +64,20 @@ public class UserController {
 		if (StringUtil.isNotBlank(loginPwdReboot)) { // 用户重新输入了密码
 			form.setLoginPwd(CodeUtil.passwodEncrypt(loginPwdReboot + User.PWD_SALT));
 		}
+		
+		/*
+		UserQuery query = new UserQuery();
+		query.setLoginName(form.getLoginName());
+		User user = db.queryForObject("queryForPage", User.class, query);
+		if(user == null) {
+			db.save(user);
+		} else {
+			//user.setXXXxxx
+			db.update(model);
+		}
+		
+		*/
+		
 		return userService.saveOrUpdate(form);
 	}
 	
@@ -366,7 +384,7 @@ public class UserController {
 		return new ArrayList<>();
 	}
 	
-	@RequestMapping(mapping = { "/get_permission_list", "/m/get_permission_list" },text="获取用户的所有资源权限")
+	@RequestMapping(mapping = { "/get_permission_list", "/m/get_permission_list" },text="获取用户的所有资源权限",isTransaction = false)
 	public List<Res> getPermissionList(ResQuery query) {
 		String enablePermission = ResourceUtil.getValue("user.permission.enable");
 		if (StringUtil.isBlank(enablePermission)) {

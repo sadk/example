@@ -12,7 +12,11 @@ import com.alibaba.fastjson.annotation.JSONField;
  * 应用系统模型
  * @author yuanmm
  */
-public class Application {
+public class Application implements java.io.Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7305042528002035404L;
 	public static final String ENABLE_YES ="1";
 	public static final String ENABLE_NO  ="0";
 	

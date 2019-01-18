@@ -1,6 +1,5 @@
 package org.lsqt.components.mvc;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -9,7 +8,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.lsqt.components.context.permission.Handler;
+import org.lsqt.components.context.permission.HandlerEntry;
 import org.lsqt.components.mvc.util.CodeUtil;
+import org.lsqt.components.mvc.util.RequestUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.slf4j.Logger;
@@ -33,7 +35,7 @@ public class AuthenticationChain implements Chain{
 	private HttpServletRequest request;
 	private HttpServletResponse response;
 
-	
+	private HandlerEntry handler; // 中央加载器，用于加载上下文详细数据到上下文
 	
 	public AuthenticationChain(Configuration configuration,HttpServletRequest request,HttpServletResponse response) {
 		this.configuration = configuration;
@@ -60,7 +62,7 @@ public class AuthenticationChain implements Chain{
 	}
 
 	
-	public Object handle() throws IOException {
+	public Object handle() throws Exception {
 		
 		if (!this.configuration.isEnableLogin()) {
 			this.state = STATE_IS_CONTINUE_TO_EXECUTE;
@@ -69,6 +71,12 @@ public class AuthenticationChain implements Chain{
 				response.sendRedirect(request.getContextPath() + "/login.jsp");
 				this.state = STATE_IS_REDIRECTED;
 			}
+			
+			handler = configuration.getBeanFacotry().getBean(HandlerEntry.class);
+			if (handler != null && handler.isEnable()) {
+				handler.handle(configuration.getBeanFacotry());
+			}
+			
 		}
 		return null;
 	}
@@ -141,7 +149,7 @@ public class AuthenticationChain implements Chain{
 		}
 
 		for (String pattern : uriSet) {
-			boolean isMatch = Pattern.matches(pattern, request.getRequestURI());
+			boolean isMatch = Pattern.matches(pattern,RequestUtil.getRequestURI(request));
 			if (isMatch) {
 				return true;
 			}

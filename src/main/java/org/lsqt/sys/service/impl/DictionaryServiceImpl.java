@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.lsqt.components.context.annotation.Cache;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.db.Db;
@@ -17,6 +18,7 @@ import org.lsqt.sys.model.DictionaryQuery;
 import org.lsqt.sys.service.DictionaryService;
 
 @Service
+@Cache(Dictionary.class)
 public class DictionaryServiceImpl implements DictionaryService{
 	
 	@Inject private Db db;
@@ -32,6 +34,7 @@ public class DictionaryServiceImpl implements DictionaryService{
 	public List<Dictionary> getAll(){
 		  return db.queryForList("getAll", Dictionary.class);
 	}
+	
 	
 	public List<Dictionary> queryForList(DictionaryQuery query) {
 		return db.queryForList("queryForPage", Dictionary.class, query);
