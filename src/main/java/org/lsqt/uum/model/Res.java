@@ -3,7 +3,11 @@ package org.lsqt.uum.model;
 /**
  * 资源表
  */
-public class Res {
+public class Res implements java.io.Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6829599939217879275L;
 	public static final int TYPE_菜单 = 100;
 	public static final int TYPE_页面元素 = 200;
 	public static final int TYPE_数据查询 = 300;

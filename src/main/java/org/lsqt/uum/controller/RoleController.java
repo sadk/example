@@ -1,25 +1,24 @@
 package org.lsqt.uum.controller;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.lsqt.components.context.ContextUtil;
+import org.lsqt.components.context.annotation.Cache;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
-import org.lsqt.components.util.bean.BeanUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
-import org.lsqt.sys.model.Dictionary;
 import org.lsqt.uum.model.Org;
+import org.lsqt.uum.model.Res;
 import org.lsqt.uum.model.Role;
 import org.lsqt.uum.model.RoleQuery;
+import org.lsqt.uum.model.User;
 import org.lsqt.uum.service.OrgService;
 import org.lsqt.uum.service.RoleService;
 
@@ -56,6 +55,7 @@ public class RoleController {
 	 * @author mingmin.yuan
 	 *
 	 */
+	@SuppressWarnings("serial")
 	public static class Node extends Role {
 		private Long pid;
 
@@ -68,6 +68,7 @@ public class RoleController {
 		}
 	}
 	
+	@Cache(Role.class)
 	@RequestMapping(mapping = { "/tree", "/m/tree" })
 	public Collection<Role> queryForTree(RoleQuery query) throws Exception {
 		List<Role> nodeList = new ArrayList<>();
@@ -84,23 +85,26 @@ public class RoleController {
 		return nodeList;
 	}
 
+	@Cache(Role.class)
 	@RequestMapping(mapping = { "/all", "/m/all" })
 	public Collection<Role> getAll() {
 		return roleService.getAll();
 	}
 	
+	@Cache(value = { User.class, Org.class, Role.class, Res.class }, evict = true)
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public Role saveOrUpdate(Role form) {
 		return roleService.saveOrUpdate(form);
 	}
 	
+	@Cache(value = { User.class, Org.class, Role.class, Res.class }, evict = true)
 	@RequestMapping(mapping = { "/delete", "/m/delete" })
 	public int delete(String ids) {
 		List<Long> list = StringUtil.split(Long.class, ids, ",");
 		return roleService.deleteById(list.toArray(new Long[list.size()]));
 	}
 	
-	
+	@Cache(value = { User.class, Org.class, Role.class, Res.class }, evict = true)
 	@RequestMapping(mapping = { "/add_user_to_role", "/m/add_user_to_role" },text="给角色添加(一个或多个)用户")
 	public Long addUserToRole(Long roleId,String userIds) {
 		Long cnt = 0L;
@@ -121,6 +125,7 @@ public class RoleController {
 		return cnt;
 	}
 	
+	@Cache(value = { User.class, Org.class, Role.class, Res.class }, evict = true)
 	@RequestMapping(mapping = { "/remove_user_from_role", "/m/remove_user_from_role" },text="移除角色下的用户")
 	public Integer removeUserFromRole(Long roleId,String userIds) {
 		Integer cnt = 0 ;
@@ -135,6 +140,7 @@ public class RoleController {
 		return cnt;
 	}
 	
+	@Cache(value = { User.class, Org.class, Role.class, Res.class }, evict = true)
 	@RequestMapping(mapping = { "/add_res_to_role", "/m/add_res_to_role" },text="给角色添加(一个或多个)资源")
 	public Long addResToRole(Long roleId,String resIds) {
 		Long cnt = 0L;
@@ -154,6 +160,7 @@ public class RoleController {
 		return cnt;
 	}
 	
+	@Cache(value = { User.class, Org.class, Role.class, Res.class }, evict = true)
 	@RequestMapping(mapping = { "/delete_res_from_role", "/m/delete_res_from_role" },text="删除角色下(一个或多个)资源")
 	public Integer deleteResFromRole(Long roleId,String resIds) {
 		Integer cnt = 0;

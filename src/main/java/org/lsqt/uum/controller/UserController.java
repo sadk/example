@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.Result;
+import org.lsqt.components.context.annotation.Cache;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -58,6 +59,12 @@ public class UserController {
 		return userService.getById(id);
 	}
 	
+	@RequestMapping(mapping = { "/get_by_id_detail", "/m/get_by_id_detail" })
+	public User getByIdDetail(Long id) {
+		return userService.getById(id,true);
+	}
+	
+	@Cache(value = User.class, evict = true)
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public User saveOrUpdate(User form, String loginPwdReboot) {
 
@@ -81,6 +88,7 @@ public class UserController {
 		return userService.saveOrUpdate(form);
 	}
 	
+	@Cache(value = User.class, evict = true)
 	@RequestMapping(mapping = { "/update_password", "/m/update_password"},text="登陆用户修改自己的密码")
 	public User updatePassword(String loginPwd,String loginPwdReboot) {
 		if (!loginPwd.equals(loginPwdReboot)) {
@@ -117,6 +125,7 @@ public class UserController {
 		return loginUser;
 	}
 	
+	@Cache(value = User.class)
 	@RequestMapping(mapping = { "/page", "/m/page" },isTransaction = false)
 	public Page<User> queryForPage(UserQuery query,Boolean isAllChild) {
 		if (isAllChild != null && isAllChild) {
@@ -161,14 +170,16 @@ public class UserController {
 		}
 		for (Res r: list) {
 			AuthenticationNode node = new AuthenticationNode();
-			node.id = r.getId();
-			node.pid = r.getPid();
-			node.name = r.getName();
-			node.code = r.getCode();
+			node.setId(r.getId());
+			node.setPid(r.getPid());
+			node.setName(r.getName());
+			node.setCode(r.getCode());
 			data.add(node);
 		}
 		return data;
-	}	
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(mapping = { "/login", "/m/login"},text="cooke的key是(登陆账号明文-->对称加密-->16进制串表示)后的散列值，value是（密码明文+盐分 的16进制串表示）后的散列值")
 	public Result<User> login(String username,String password) throws Exception {
@@ -303,7 +314,7 @@ public class UserController {
 		// 第三个cookie存放页面资源
 		List<String> permissionList = new ArrayList<>();
 		for(AuthenticationNode e: data) {
-			permissionList.add(e.code);
+			permissionList.add(e.getCode());
 		}
 		String resText = CodeUtil.byte2hex(JSON.toJSONString(permissionList).getBytes());
 		Cookie permission = new Cookie("uauth",resText);
@@ -311,9 +322,9 @@ public class UserController {
 		permission.setMaxAge(-1);
 		response.addCookie(permission);
 		
-		
-		
 	}
+	
+	@Cache(User.class)
 	@RequestMapping(mapping = { "/get_all_user_by_orgid", "/m/get_all_user_by_orgid" },text="获取部门下的用户(多层)")
 	public Page<User> getAllUserByOrgId(UserQuery query){
 		
@@ -339,18 +350,20 @@ public class UserController {
 		return db.getEmptyPage();
 	}
 	
+	@Cache(User.class)
 	@RequestMapping(mapping = { "/all", "/m/all" })
 	public Collection<User> getAll() {
 		return userService.getAll();
 	}
 	
+	@Cache(evict = true, value = { User.class, Res.class, Title.class, Role.class, Group.class })
 	@RequestMapping(mapping = { "/delete", "/m/delete" })
 	public int delete(String ids) {
 		List<Long> list = StringUtil.split(Long.class, ids, ",");
 		return userService.deleteById(list.toArray(new Long[list.size()]));
 	}
 	
-	
+	@Cache(User.class)
 	@RequestMapping(mapping = { "/get_role_list", "/m/get_role_list" },text="获取用户的角色")
 	public Page<Role> getRoleList(RoleQuery query) {
 		if(query.getUserId()!=null){
@@ -359,6 +372,7 @@ public class UserController {
 		return db.getEmptyPage();
 	}
 	
+	@Cache(User.class)
 	@RequestMapping(mapping = { "/get_org_list", "/m/get_org_list" },text="获取用户的部门")
 	public List<Org> getOrgList(OrgQuery query) {
 		if(query.getUserId()!=null) {
@@ -367,6 +381,7 @@ public class UserController {
 		return new ArrayList<>();
 	}
 	
+	@Cache(User.class)
 	@RequestMapping(mapping = { "/get_group_list", "/m/get_group_list" },text="获取用户的组")
 	public List<Group> getGroupList(GroupQuery query) {
 		if(query.getUserId()!=null) {
@@ -375,6 +390,7 @@ public class UserController {
 		return new ArrayList<>();
 	}
 	
+	@Cache(User.class)
 	@RequestMapping(mapping = { "/get_title_list", "/m/get_title_list" },text="获取用户的称谓")
 	public List<Title> getTitleList(TitleQuery query) {
 		if(query.getUserId()!=null) {
@@ -384,43 +400,13 @@ public class UserController {
 		return new ArrayList<>();
 	}
 	
+	@Cache(User.class)
 	@RequestMapping(mapping = { "/get_permission_list", "/m/get_permission_list" },text="获取用户的所有资源权限",isTransaction = false)
 	public List<Res> getPermissionList(ResQuery query) {
-		String enablePermission = ResourceUtil.getValue("user.permission.enable");
-		if (StringUtil.isBlank(enablePermission)) {
-			log.error("没有配置权限是否开启参数，见：config.properties");
-			return new ArrayList<>();
-		}
-
-		if ("true".equalsIgnoreCase(enablePermission)) {
-			if (query.getUserId() != null) {
-				return db.queryForList("queryForPage", Res.class, query);
-				
-			} else {
-				String loginName = ContextUtil.getLoginAccount();
-				if (StringUtil.isBlank(loginName)) {
-					throw new NullPointerException("登陆账号为空");
-				}
-				
-				if("admin".equals(loginName)) { // 写死如果是超级管理员admin,显示全部菜单，
-					query.setUserId(null);
-					return db.queryForList("queryForPage", Res.class,query);
-				}
-				
-				UserQuery q = new UserQuery();
-				q.setLoginName(loginName);
-				User user = db.queryForObject("queryForPage", User.class, q);
-				if (user != null) {
-					query.setUserId(user.getId());
-					return db.queryForList("queryForPage", Res.class, query);
-				}
-			}
-			return new ArrayList<>();
-		} else {
-			return db.queryForList("queryForPage", Res.class,query);
-		}
+		return userService.getResList(query);
 	}
 	
+	@Cache(value = User.class, evict = true)
 	@RequestMapping(mapping = { "/add_object_to_user", "/m/add_object_to_user" },text="给用户添加角色、组、部门、称谓")
 	public int addObjectToUser(Long userId,String objectIds,String objType){
 		Long cnt = 0L;
@@ -462,6 +448,7 @@ public class UserController {
 		return cnt.intValue();
 	}
 	
+	@Cache(value = User.class, evict = true)
 	@RequestMapping(mapping = { "/delete_object_from_user", "/m/delete_object_from_user" },text="给用户删除一个或多个角色、组、部门、称谓")
 	public int deleteObjectFromUser(Long userId,String objectIds,String objType){
 		Long cnt = 0L;

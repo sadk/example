@@ -13,7 +13,7 @@ public interface Cache<K, V> {
 	 * 
 	 * @param nameSpace
 	 * @param key
-	 * @param value 值对象，必须实现序列化接口
+	 * @param value 值对象:注意实现序列化接口!!!
 	 * @return
 	 */
 	V put(String nameSpace, K key, V value);

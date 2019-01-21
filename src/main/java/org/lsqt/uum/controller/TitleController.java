@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.lsqt.components.context.ContextUtil;
+import org.lsqt.components.context.annotation.Cache;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -13,8 +14,11 @@ import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.sys.model.Dictionary;
+import org.lsqt.uum.model.Group;
 import org.lsqt.uum.model.Org;
 import org.lsqt.uum.model.OrgQuery;
+import org.lsqt.uum.model.Res;
+import org.lsqt.uum.model.Role;
 import org.lsqt.uum.model.Title;
 import org.lsqt.uum.model.TitleQuery;
 import org.lsqt.uum.model.User;
@@ -36,27 +40,32 @@ public class TitleController {
 		return titleService.queryForPage(query); //  
 	}
 	
+	@Cache(Title.class)
 	@RequestMapping(mapping = { "/all", "/m/all" })
 	public Collection<Title> getAll() {
 		return titleService.getAll();
 	}
 	
+	@Cache(Title.class)
 	@RequestMapping(mapping = { "/all_selector", "/m/all_selector" },text="组织机构选择器用（过滤自己节点做为父节点等）")
 	public Collection<Title> getAll(TitleQuery query) {
 		return db.queryForList("queryForPage", Title.class, query);
 	}
 	
+	@Cache(value = { User.class, Title.class }, evict = true)
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public Title saveOrUpdate(Title form) {
 		return titleService.saveOrUpdate(form);
 	}
 	
+	@Cache(value = { User.class, Title.class }, evict = true)
 	@RequestMapping(mapping = { "/delete", "/m/delete" })
 	public int delete(String ids) {
 		List<Long> list = StringUtil.split(Long.class, ids, ",");
 		return titleService.deleteById(list.toArray(new Long[list.size()]));
 	}
 	
+	@Cache(value = { User.class, Title.class }, evict = true)
 	@RequestMapping(mapping = { "/add_user_to_title", "/m/add_user_to_title" },text="添加多个用户到一个称谓")
 	public int addUserToTitle(Long titleId,String type,String userIds) {
 		int cnt = 0;
@@ -82,7 +91,7 @@ public class TitleController {
 		return cnt;
 	}
 	
-	
+	@Cache(value = { User.class, Title.class }, evict = true)
 	@RequestMapping(mapping = { "/remove_user_from_title", "/m/remove_user_from_title" },text="移除称谓下的用户")
 	public int removeUserFromTitle(Long titleId,String type,String userIds) {
 		int cnt = 0;
@@ -98,6 +107,7 @@ public class TitleController {
 		return cnt;
 	}
 	
+	@Cache(value = { User.class, Title.class, Role.class, Res.class }, evict = true)
 	@RequestMapping(mapping = { "/add_role_to_title", "/m/add_role_to_title" },text="添加多个角色到一个称谓")
 	public int addRoleToTitle(Long titleId,String roleIds) {
 		int cnt = 0;
@@ -123,6 +133,7 @@ public class TitleController {
 		return cnt;
 	}
 	
+	@Cache(value = { User.class, Title.class, Role.class, Res.class }, evict = true)
 	@RequestMapping(mapping = { "/remove_role_from_title", "/m/remove_role_from_title" },text="删除称谓的角色")
 	public int removeRoleFromTitle(Long titleId,String roleIds) {
 		int cnt = 0;

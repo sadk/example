@@ -84,15 +84,16 @@ public class EhcachePlugin implements org.lsqt.components.cache.Cache<String, Ob
 	@Override
 	public void clear(String nameSpace) {
 		Cache<String, Serializable> cache = cacheManager.getCache(nameSpace, String.class, Serializable.class);
-		
-		Set<String> keys = new HashSet<>();
-		Iterator<org.ehcache.Cache.Entry<String, Serializable>> iter = cache.iterator();
-		while (iter.hasNext()) {
-			org.ehcache.Cache.Entry<String, Serializable> entry = iter.next();
-			keys.add(entry.getKey());
+		if (cache != null) {
+			Set<String> keys = new HashSet<>();
+			Iterator<org.ehcache.Cache.Entry<String, Serializable>> iter = cache.iterator();
+			while (iter.hasNext()) {
+				org.ehcache.Cache.Entry<String, Serializable> entry = iter.next();
+				keys.add(entry.getKey());
+			}
+
+			cache.removeAll(keys);
 		}
-		
-		cache.removeAll(keys);
 	}
 
 	@Override

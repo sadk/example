@@ -815,7 +815,7 @@ CREATE TABLE `cms_content` (
   
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_cms_content_code` (`code`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='字典名称';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='资讯内容';
 
 -- 栏目表: 栏目和新闻是多对多的关系
 drop table  if exists cms_channel;

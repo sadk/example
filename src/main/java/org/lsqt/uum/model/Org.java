@@ -3,7 +3,12 @@ package org.lsqt.uum.model;
 /**
  * 组织架构表
  */
-public class Org {
+public class Org implements java.io.Serializable  {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8937361159812722582L;
 
 	/** 组织ID */
 

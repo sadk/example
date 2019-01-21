@@ -3,8 +3,12 @@ package org.lsqt.uum.model;
 /**
  * 用户组表
  */
-public class Group {
+public class Group  implements java.io.Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2260882824223089631L;
 	/***/
 	private Long id;
 	private Long pid;

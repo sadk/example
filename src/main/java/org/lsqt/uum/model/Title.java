@@ -3,8 +3,12 @@ package org.lsqt.uum.model;
 /**
  * 用户称谓表，如岗位、职位等
  */
-public class Title {
+public class Title implements java.io.Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8086691294470328728L;
 	/***/
 	private Long id;
 	private Long pid;

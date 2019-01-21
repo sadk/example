@@ -6,7 +6,6 @@ import java.util.List;
 import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Component;
 import org.lsqt.components.context.annotation.Inject;
-import org.lsqt.components.context.annotation.OnStarted;
 import org.lsqt.components.context.permission.AuthenticationNode;
 import org.lsqt.components.context.permission.JurisdictionHandler;
 import org.lsqt.components.db.Db;
@@ -49,9 +48,9 @@ public class DataJurisdictionPluginHandler implements JurisdictionHandler{
 		List<AuthenticationNode> nodeList = new ArrayList<>();
 		for (Res e : list) {
 			AuthenticationNode node = new AuthenticationNode();
-			node.id = e.getId();
-			node.name = e.getName();
-			node.value = e.getValue();
+			node.setId(e.getId());
+			node.setName(e.getName());
+			node.setValue(e.getValue());
 			nodeList.add(node);
 		}
 

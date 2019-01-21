@@ -116,7 +116,17 @@ public class ControllerInvokeChain implements Chain{
 			key = keyInfo.key;
 			
 			if (cacheMethod != null && cacheMethod.evict()) {
-				plugin.clear(nameSpace);
+				for (int i = 0; i < cacheMethod.value().length; i++) {
+					if (cacheMethod != null && cacheMethod.value()[i] != Object.class) { // 注解在方法上
+						nameSpace = cacheMethod.value()[i].getName();
+					} else if (cacheClazz != null && cacheClazz.value()[i] != Object.class) { // 注解在类上
+						nameSpace = cacheClazz.value()[i].getName();
+					} else {
+						nameSpace = urlMappingDefinition.getControllerClass().getName(); // 默认以控制器类名为缓存命名空间
+					}
+					plugin.clear(nameSpace);
+					log.info("清空缓存命名空间: {}",nameSpace);
+				}
 			}
 			
 			Object data = plugin.get(nameSpace, key);

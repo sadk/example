@@ -34,10 +34,10 @@ public class GenerateKey {
 		Cache cacheClazz = targetClass.getAnnotation(Cache.class); // 注解在控制器上，所有的方法都有缓存
 		Cache cacheMethod = targetMethod.getAnnotation(Cache.class);
 
-		if (cacheMethod != null && cacheMethod.value() != Object.class) { // 注解在方法上
-			nameSpace = cacheMethod.value().getName();
-		} else if (cacheClazz != null && cacheClazz.value() != Object.class) { // 注解在类上
-			nameSpace = cacheClazz.value().getName();
+		if (cacheMethod != null && cacheMethod.value()[0] != Object.class) { // 注解在方法上
+			nameSpace = cacheMethod.value()[0].getName();
+		} else if (cacheClazz != null && cacheClazz.value()[0] != Object.class) { // 注解在类上
+			nameSpace = cacheClazz.value()[0].getName();
 		} else {
 			nameSpace = targetClass.getName(); // 默认以控制器类名为缓存命名空间
 		}

@@ -17,10 +17,11 @@ public @interface Cache {
 	boolean ignore() default false;
 	
 	/**
-	 * 添加到缓存的实体对象类型
+	 * 添加到缓存的实体对象类型,默认为实体类类型
+	 * 注：当evict=true时，将同时清除指定的多个实体类型缓存,比如关联对象
 	 * @return
 	 */
-	Class<?> value() default  Object.class;
+	Class<?>[] value() default { Object.class };
 	
 	/**
 	 * 移除缓存的实体对象类型

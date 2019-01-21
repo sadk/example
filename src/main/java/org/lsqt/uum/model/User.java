@@ -1,5 +1,8 @@
 package org.lsqt.uum.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.lsqt.components.context.annotation.model.Pattern;
 
 /**
@@ -17,6 +20,8 @@ public class User implements java.io.Serializable{
 	private static final long serialVersionUID = -8219775209409585592L;
 
 	public static final String PWD_SALT = "bqjr@123"; // 暂拟用固定值做密码盐
+	public static final String PWD_INIT="rst@123456"; // 用户初使密码
+	
 	
 	public static final int status_过期 = 3;
 	public static final int status_锁定 = 2;
@@ -103,6 +108,14 @@ public class User implements java.io.Serializable{
 	/**用户所属的租户**/
 	private String tenantCode;
 	private String tenantName;
+	
+	
+	// ------------------------- 辅助字段，用户关联的数据:用户的部门、权限资源、角色、所属用户组、[头衔：岗位（职称）] -----------------
+	private List<Org> myOrgList = new ArrayList<>();
+	private List<Group> myGroupList = new ArrayList<>();
+	private List<Res> myResList = new ArrayList<>();
+	private List<Title> myTitleList = new ArrayList<>();
+	private List<Role> myRoleList = new ArrayList<>();
 	
 	
 	// getter、setter
@@ -322,6 +335,46 @@ public class User implements java.io.Serializable{
 
 	public void setTenantName(String tenantName) {
 		this.tenantName = tenantName;
+	}
+
+	public List<Org> getMyOrgList() {
+		return myOrgList;
+	}
+
+	public void setMyOrgList(List<Org> myOrgList) {
+		this.myOrgList = myOrgList;
+	}
+
+	public List<Group> getMyGroupList() {
+		return myGroupList;
+	}
+
+	public void setMyGroupList(List<Group> myGroupList) {
+		this.myGroupList = myGroupList;
+	}
+
+	public List<Res> getMyResList() {
+		return myResList;
+	}
+
+	public void setMyResList(List<Res> myResList) {
+		this.myResList = myResList;
+	}
+
+	public List<Title> getMyTitleList() {
+		return myTitleList;
+	}
+
+	public void setMyTitleList(List<Title> myTitleList) {
+		this.myTitleList = myTitleList;
+	}
+
+	public List<Role> getMyRoleList() {
+		return myRoleList;
+	}
+
+	public void setMyRoleList(List<Role> myRoleList) {
+		this.myRoleList = myRoleList;
 	}
 
 

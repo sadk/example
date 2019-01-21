@@ -9,11 +9,8 @@ import org.lsqt.components.context.annotation.Component;
 import org.lsqt.components.context.annotation.Dao;
 import org.lsqt.components.context.annotation.Service;
 import org.lsqt.components.plugin.cache.EhcachePlugin;
-import org.lsqt.components.util.lang.Md5Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.alibaba.fastjson.JSON;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -38,13 +35,17 @@ public class ObjectMethodInterceptor implements MethodInterceptor {
 		
 		if (isAssignComponent(serviceClazz)) {
 			
-
-			
 			Cache cacheClazz = serviceClazz.getAnnotation(Cache.class); //注解在Service、Dao、Component的实现类上
 			Cache cacheMethod = method.getAnnotation(Cache.class); //注解在方法上
 
 			if(cacheClazz != null || cacheMethod != null) {
 				isCachable = true;
+				
+				if (cacheClazz != null && cacheClazz.ignore()) {
+					isCachable = false;
+				} else if (cacheMethod != null && cacheMethod.ignore()) {
+					isCachable = false;
+				}
 			}
 
 			if (isCachable) {
@@ -53,13 +54,22 @@ public class ObjectMethodInterceptor implements MethodInterceptor {
 				nameSpace = keyInfo.nameSpace;
 				key = keyInfo.key;
 
-				if (cacheMethod != null && cacheMethod.evict()) {
-					plugin.clear(nameSpace);
+				if (cacheMethod != null && cacheMethod.evict()) {// 如果有清除缓存
+					for (int i = 0; i < cacheMethod.value().length; i++) {
+						if (cacheMethod != null && cacheMethod.value()[i] != Object.class) { // 注解在方法上
+							nameSpace = cacheMethod.value()[i].getName();
+						} else if (cacheClazz != null && cacheClazz.value()[i] != Object.class) { // 注解在类上
+							nameSpace = cacheClazz.value()[i].getName();
+						} else {
+							nameSpace = serviceClazz.getName(); // 默认以控制器类名为缓存命名空间
+						}
+						plugin.clear(nameSpace);
+					}
 				}
 
 				Object data = plugin.get(nameSpace, key);
 				if (data != null) {// 有缓存，并且获取到数据,记得执行后置处理
-					log.info("命中缓存 nameSpace={}, key={} ", nameSpace, key);
+					log.debug("命中缓存 nameSpace={}, key={} ", nameSpace, key);
 					return data;
 				}
 			}

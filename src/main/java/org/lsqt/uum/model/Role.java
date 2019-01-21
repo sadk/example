@@ -4,8 +4,12 @@ package org.lsqt.uum.model;
 /**
  * 角色表
  */
-public class Role {
+public class Role implements java.io.Serializable  {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5277982119437928537L;
 	/**授权给不同实体(uum_role_object表)，如:用户、部门、组、岗位、职称**/
 	public static final String OBJ_TYPE_职称="1";
 	public static final String OBJ_TYPE_岗位="2";

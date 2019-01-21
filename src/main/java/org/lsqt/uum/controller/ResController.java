@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.lsqt.components.context.annotation.Cache;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -11,8 +12,11 @@ import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
+import org.lsqt.uum.model.Org;
 import org.lsqt.uum.model.Res;
 import org.lsqt.uum.model.ResQuery;
+import org.lsqt.uum.model.Role;
+import org.lsqt.uum.model.User;
 import org.lsqt.uum.service.ResService;
 
 
@@ -25,6 +29,7 @@ public class ResController {
 	
 	@Inject private Db db;
  
+	@Cache(Res.class)
 	@RequestMapping(mapping = { "/get_by_id", "/m/get_by_id" })
 	public Res getById(Long id) {
 		return resService.getById(id);
@@ -35,6 +40,7 @@ public class ResController {
 		return resService.queryForPage(query); //  
 	}
 	
+	@Cache(Res.class)
 	@RequestMapping(mapping = { "/all", "/m/all" })
 	public Collection<Res> getAll() {
 		return resService.getAll();
@@ -65,6 +71,7 @@ public class ResController {
 		return list;
 	}
 	
+	@Cache(Res.class)
 	@RequestMapping(mapping = { "/all_selector", "/m/all_selector" },text="资源选择器使用（过滤自己节点做为父节点等）")
 	public Collection<Res> getAll(ResQuery query,Boolean isAllChild) {
 		if(isAllChild!=null && isAllChild) {
@@ -83,22 +90,26 @@ public class ResController {
 		return db.queryForList("queryForPage", Res.class, query);
 	}
 	
+	@Cache(value = { User.class, Org.class, Role.class, Res.class }, evict = true)
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public Res saveOrUpdate(Res form) {
 		return resService.saveOrUpdate(form);
 	}
 	
+	@Cache(value = { User.class, Org.class, Role.class, Res.class }, evict = true)
 	@RequestMapping(mapping = { "/delete", "/m/delete" })
 	public int delete(String ids) {
 		List<Long> list = StringUtil.split(Long.class, ids, ",");
 		return resService.deleteById(list.toArray(new Long[list.size()]));
 	}
 	
+	@Cache(value = Res.class, evict = true)
 	@RequestMapping(mapping = { "/repair_node_path", "/m/repair_node_path" },text="修复节点路径")
 	public void repairNodePath() {
 		resService.repairNodePath();
 	}
 	
+	@Cache(Res.class)
 	@RequestMapping(mapping = { "/tree", "/m/tree" }, text = "权限管理")
 	public Collection<SimpleNode> getTree() {
 		List<SimpleNode> list = new ArrayList<>();
@@ -143,7 +154,10 @@ public class ResController {
 	 * @author mingmin.yuan
 	 *
 	 */
-	public static class SimpleNode{
+	public static class SimpleNode implements java.io.Serializable{
+		
+		private static final long serialVersionUID = -8092779930549804330L;
+		
 		public Long id;
 		public Long pid;
 		public String name;
