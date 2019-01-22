@@ -163,7 +163,9 @@ public class ResController {
 		public String name;
 		public List<Function> functions = new ArrayList<>();
 		
-		public static class Function {
+		public static class Function implements java.io.Serializable{
+			private static final long serialVersionUID = -7820277711652152458L;
+			
 			public String action ;
 			public String name;
 			public boolean checked ;

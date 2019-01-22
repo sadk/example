@@ -33,10 +33,10 @@ public class UserLoadingHandlerEntry implements HandlerEntry {
 	public Object handle(Object context) throws Exception {
 		if (context instanceof BeanFactory) {
 			UserService userService = ((BeanFactory) context).getBean(UserService.class);
-			//if (ContextUtil.getLoginId() != null) {
+			if (ContextUtil.getLoginId() != null) { //注：匿名访问，可能没有用户ID!!!
 				User loginUserDetail = userService.getById(Long.valueOf(ContextUtil.getLoginId()), true);
 				ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_USER_OBJECT, loginUserDetail);
-			//} 
+			} 
 		}
 		return null;
 	}

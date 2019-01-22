@@ -149,7 +149,7 @@ public class AuthenticationChain implements Chain{
 		}
 
 		for (String pattern : uriSet) {
-			boolean isMatch = Pattern.matches(pattern,RequestUtil.getRequestURI(request));
+			boolean isMatch = Pattern.matches(pattern,request.getRequestURI());// 注意，此睡不需要RequestUtil.getRequestURI包装获取路径
 			if (isMatch) {
 				return true;
 			}
