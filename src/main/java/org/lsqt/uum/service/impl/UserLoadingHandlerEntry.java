@@ -4,6 +4,7 @@ import org.lsqt.components.context.ContextUtil;
 import org.lsqt.components.context.annotation.Component;
 import org.lsqt.components.context.bean.BeanFactory;
 import org.lsqt.components.context.permission.HandlerEntry;
+import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.uum.model.User;
 import org.lsqt.uum.service.UserService;
 import org.slf4j.Logger;
@@ -35,10 +36,19 @@ public class UserLoadingHandlerEntry implements HandlerEntry {
 			UserService userService = ((BeanFactory) context).getBean(UserService.class);
 			if (ContextUtil.getLoginId() != null) { //注：匿名访问，可能没有用户ID!!!
 				User loginUserDetail = userService.getById(Long.valueOf(ContextUtil.getLoginId()), true);
-				ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_USER_OBJECT, loginUserDetail);
+				if(loginUserDetail!=null) {
+					ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_USER_OBJECT, loginUserDetail);
+					
+					if (StringUtil.isNotBlank(loginUserDetail.getAppCode())) {
+						ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_APP_CODE_OBJECT,loginUserDetail.getAppCode());
+					}
+					
+					if(StringUtil.isNotBlank(loginUserDetail.getTenantCode())) {
+						ContextUtil.getContextMap().put(ContextUtil.CONTEXT_LOGIN_TENANT_CODE_OBJECT, loginUserDetail.getTenantCode());
+					}
+				}
 			} 
 		}
 		return null;
 	}
-
 }

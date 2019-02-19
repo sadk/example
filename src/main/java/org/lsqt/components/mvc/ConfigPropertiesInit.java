@@ -40,11 +40,12 @@ public class ConfigPropertiesInit implements Order,Initialization {
 			synchronized (ConfigPropertiesInit.class) {
 
 				InputStream in = new ConfigPropertiesInit().getClass().getResourceAsStream(path);
-
-				prop.load(in);
-				log.info(String.format("loading properties file: %s",path));
-			 
-
+				log.info(String.format("loading default config file: %s",path));
+				try{
+					prop.load(in);
+				} catch(Exception ex) {
+					log.info("has no default config file (path = {})",path);
+				}
 			}
 			PROP_ALL.putAll(prop);
 		}

@@ -25,7 +25,7 @@ public class CacheReflectUtil{
 	private static final Map<Class<?>,List<Method>> BEAN_METHODS_GETTER = new ConcurrentHashMap<Class<?>,List<Method>>();
 	
 	private static final Map<Class<?>,List<Field>> BEAN_FIELDS = new ConcurrentHashMap<Class<?>,List<Field>>();
-	private static final Map<Class<?>,Map<Field,Method>> BEAN_FIELD_METHOD_MAPPING = new ConcurrentHashMap<Class<?>,Map<Field,Method>>();
+	private static final Map<String,Map<Field,Method>> BEAN_FIELD_METHOD_MAPPING = new ConcurrentHashMap<String,Map<Field,Method>>();
 	
 	/** 整个类的所有方法，包含继承的、接口、私有的、保护的等等，所有方法 **/
 	public static final Map<Class<?>, List<Method>> CLASS_METHODS = new ConcurrentHashMap<Class<?>, List<Method>>();
@@ -143,21 +143,16 @@ public class CacheReflectUtil{
 		return rs;
 	}
 	
-	public static Map<Field,Method> getBeanFieldMethodMapping(Class<?> clazz){
-		if (BEAN_FIELD_METHOD_MAPPING.containsKey(clazz)) {
-			return BEAN_FIELD_METHOD_MAPPING.get(clazz);
+	public static Map<Field, Method> getBeanFieldMethodMapping(Class<?> clazz, boolean isGetter) {
+		String key = clazz.toString() + isGetter;
+		if (BEAN_FIELD_METHOD_MAPPING.containsKey(key)) {
+			return BEAN_FIELD_METHOD_MAPPING.get(key);
 		}
+		
+		Map<Field, Method> mapSetter = BeanUtil.getSetterGetterMap(clazz, isGetter);
+		BEAN_FIELD_METHOD_MAPPING.put(key, mapSetter);
 
-		Map<Field, Method> rs = new HashMap<Field, Method>();
-		Map<Field, Method> mapSetter = BeanUtil.getSetterGetterMap(clazz, false);
-		Map<Field, Method> mapGetter = BeanUtil.getSetterGetterMap(clazz, true);
-
-		rs.putAll(mapGetter);
-		rs.putAll(mapSetter);
-
-		BEAN_FIELD_METHOD_MAPPING.put(clazz, rs);
-
-		return rs;
+		return mapSetter;
 	}
 	
 	/**

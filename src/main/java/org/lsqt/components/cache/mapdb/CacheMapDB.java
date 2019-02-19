@@ -21,32 +21,6 @@ public class CacheMapDB<K,V> implements Cache<K, V> {
 		return instance;
 	}
 	
-
-
-	public V get(String nameSpace,K key) {
-		db.hashMap(nameSpace).createOrOpen().get(key);
-		return null;
-		 
-	}
-
-	
-	public V put(String nameSpace,K key, V value) {
-		
-		return null;
-	}
-
-	
-	public V remove(String nameSpace,K value) {
-		
-		return null;
-	}
-
-	
-	public void clear() {
-		 
-	}
-
-	
 	public static void main(String[] args) {
 		
 		ConcurrentMap<String,User> map = (ConcurrentMap<String, User>) db.hashMap("map").createOrOpen();
@@ -58,20 +32,29 @@ public class CacheMapDB<K,V> implements Cache<K, V> {
 		System.out.println(map.get("something").getAddressHome());
 	}
 
-
+	@Override
+	public V get(String nameSpace, K key) {
+		
+		return null;
+	}
 
 	@Override
-	public void clear(String nameSpace) {
-	 
+	public V put(String nameSpace, K key, V value, Boolean... isBroadcastSynchronize) {
+		
+		return null;
+	}
+
+	@Override
+	public V remove(String nameSpace, String key, Boolean... isBroadcastSynchronize) {
+		
+		return null;
+	}
+
+	@Override
+	public void clear(String nameSpace, Boolean... isBroadcastSynchronize) {
+		
 		
 	}
 
-
-
-	@Override
-	public V remove(String nameSpace, String key) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
 

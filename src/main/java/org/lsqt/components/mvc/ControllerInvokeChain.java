@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.lsqt.components.cache.CacheSynchronizer;
 import org.lsqt.components.context.CacheReflectUtil;
 import org.lsqt.components.context.GenerateKey;
 import org.lsqt.components.context.Result;
@@ -73,6 +74,7 @@ public class ControllerInvokeChain implements Chain{
 	/**
 	 * 返回controller返回的值
 	 */
+	@SuppressWarnings("unchecked")
 	public Object handle() throws Exception {
 		final Result<Object> result = Result.fail();
 		
@@ -95,6 +97,7 @@ public class ControllerInvokeChain implements Chain{
 		String nameSpace = null;
 		String key = null;
 		EhcachePlugin plugin = EhcachePlugin.getInstance();
+		plugin.setCacheSynchronizer((CacheSynchronizer<String,Object>)beanFactory.getBean(CacheSynchronizer.class));
 		
 		Cache cacheClazz = urlMappingDefinition.getControllerClass().getAnnotation(Cache.class); //注解在控制器上，所有的方法都有缓存
 		Cache cacheMethod = urlMappingDefinition.getMethod().getAnnotation(Cache.class);

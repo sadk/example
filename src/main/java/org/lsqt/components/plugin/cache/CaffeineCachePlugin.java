@@ -36,19 +36,19 @@ public class CaffeineCachePlugin implements org.lsqt.components.cache.Cache<Stri
 	}
 
 	@Override
-	public Object put(String nameSpace, String key, Object value) {
+	public Object put(String nameSpace, String key, Object value,Boolean ... isBroadcastSynchronize) {
 		
 		return null;
 	}
 
 	@Override
-	public Object remove(String nameSpace, String key) {
+	public Object remove(String nameSpace, String key,Boolean ... isBroadcastSynchronize) {
 		
 		return null;
 	}
 
 	@Override
-	public void clear(String nameSpace) {
+	public void clear(String nameSpace,Boolean ... isBroadcastSynchronize) {
 		
 		
 	}

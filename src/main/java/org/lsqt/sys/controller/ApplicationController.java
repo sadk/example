@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.lsqt.components.context.annotation.Cache;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
-import org.lsqt.components.context.annotation.Cache;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
@@ -16,8 +16,9 @@ import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.sys.model.Application;
 import org.lsqt.sys.model.ApplicationQuery;
 import org.lsqt.sys.service.ApplicationService;
+import org.lsqt.uum.util.PermissionSQLUtil;
 
-@Cache(Application.class)
+
 @Controller(mapping={"/application"})
 public class ApplicationController {
 	
@@ -35,6 +36,12 @@ public class ApplicationController {
 		return applicationService.queryForPage(query);
 	}
 	
+	@RequestMapping(mapping = { "/page_auth", "/m/page_auth" }, text="权限使用")
+	public Page<Application> queryForPage4Auth(ApplicationQuery query) throws Exception {
+		PermissionSQLUtil.bindPermissionSQL(query);
+		return applicationService.queryForPage(query);
+	}
+	
 	@RequestMapping(mapping = { "/all", "/m/all" },view = View.JSON)
 	public Collection<Application> getAll() {
 		return applicationService.getAll();
@@ -45,6 +52,12 @@ public class ApplicationController {
 		return db.queryForList("queryForPage", Application.class, query);
 	}
 	
+	@RequestMapping(mapping = { "/list_auth", "/m/list_auth" })
+	public Collection<Application> queryForList4Auth(ApplicationQuery query) throws Exception{
+		PermissionSQLUtil.bindPermissionSQL(query);
+		return db.queryForList("queryForPage", Application.class, query);
+	}
+	
 	public static class Node {
 		public Long id;
 		public Long pid;
@@ -52,7 +65,6 @@ public class ApplicationController {
 		public String code;
 		
 	}
-	
 	@RequestMapping(mapping = { "/all_tree", "/m/all_tree" },view = View.JSON)
 	public Collection<Node> getAllTree() {
 		Collection<Application> list = applicationService.getAll();

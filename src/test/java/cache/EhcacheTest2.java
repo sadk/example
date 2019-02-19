@@ -26,6 +26,7 @@ public class EhcacheTest2 {
                 )
         ).build(true);
 
+       
         Cache<Integer, String> threeTieredCache = persistentCacheManager.getCache("threeTieredCache", Integer.class, String.class);
 
         //读
@@ -38,7 +39,8 @@ public class EhcacheTest2 {
             String value = threeTieredCache.get(i);
             System.out.println("get at "+i+":"+value);
         }
-
+        
+         
         persistentCacheManager.close();
     }
 
