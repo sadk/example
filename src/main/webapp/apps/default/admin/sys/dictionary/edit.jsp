@@ -210,6 +210,9 @@
 			}
 			
 			function loadParentName(id){
+				if(typeof(id) == 'undefined' || id == null || id == '') {
+					return ;
+				}
 				$.ajax({
 					url : "${pageContext.request.contextPath}/dictionary/get_by_id?id="+id,
 					dataType: 'json',

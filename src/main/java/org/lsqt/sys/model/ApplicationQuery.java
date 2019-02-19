@@ -9,6 +9,7 @@ import org.lsqt.components.db.Page;
  * 应用系统管理综合查询
  * @author yuanmm
  */
+//@PermissionQuery(field={"permissionSQL"},type={String.class})
 public class ApplicationQuery {
 	private Integer pageIndex=Page.DEFAULT_PAGE_INDEX;
 	private Integer pageSize=Page.DEFAULT_PAGE_SIZE;

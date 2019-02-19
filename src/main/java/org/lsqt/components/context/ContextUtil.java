@@ -25,6 +25,7 @@ public class ContextUtil {
 	public static final String CONTEXT_LOGIN_ACCOUNT_OBJECT = "context_login_account_object_".concat(KEY_END_FIX);
 	public static final String CONTEXT_LOGIN_NAME_OBJECT = "context_login_name_object_".concat(KEY_END_FIX);
 	public static final String CONTEXT_LOGIN_ID_OBJECT = "context_login_id_object_".concat(KEY_END_FIX);
+	public static final String CONTEXT_LOGIN_APP_CODE_OBJECT = "context_application_code_object_".concat(KEY_END_FIX);
 	public static final String CONTEXT_LOGIN_TENANT_CODE_OBJECT = "context_tenant_code_object_".concat(KEY_END_FIX);
 	
 	// spring容器上下文
@@ -68,6 +69,23 @@ public class ContextUtil {
 		return null;
 	}
 	
+	/**
+	 * 获取用户应用编码
+	 * 
+	 * @return 返回null
+	 */
+	public static <T> T getLoginAppCode() {
+
+		if (THREADLOCAL_CONTEXT_MAP.get() == null) {
+			return null;
+		}
+
+		T appCode = (T) THREADLOCAL_CONTEXT_MAP.get().get(CONTEXT_LOGIN_APP_CODE_OBJECT);
+		if (appCode != null) {
+			return appCode;
+		}
+		return null;
+	}
 	
 	/**
 	 * 获取用户的登陆姓名
