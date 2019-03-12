@@ -1,12 +1,18 @@
 package org.lsqt.components.context;
 
+import java.io.Serializable;
+
 /**
  * 数据包装器，可用于客户端统一数据格式
  * @author mingmin.yuan
  *
  * @param <T>
  */
-public class Result<T> {
+public class Result<T> implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9207344602439013775L;
 	/**用于标记Controller层调用底层service是否成功**/
 	private boolean isSuccess = false;
 	private String code;
