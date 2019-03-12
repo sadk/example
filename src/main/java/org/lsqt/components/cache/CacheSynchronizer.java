@@ -2,7 +2,7 @@ package org.lsqt.components.cache;
 
 
 /**
- * 缓存同步器,标识接口
+ * 缓存同步器
  * @author mm
  *
  */
