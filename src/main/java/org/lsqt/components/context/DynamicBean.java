@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.lsqt.components.context.CacheReflectUtil;
 import org.lsqt.sys.model.ApplicationQuery;
 
 import net.sf.cglib.beans.BeanGenerator;
@@ -70,6 +69,7 @@ public class DynamicBean {
 			generator.addProperty(key, (Class<?>) propertyMap.get(key));
 		}
 		
+		generator.setSuperclass(type);
 		return generator.create();
 	}
 
