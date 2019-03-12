@@ -1,7 +1,7 @@
 package org.lsqt.uum.service;
 
 import org.lsqt.components.context.annotation.Service;
-import org.lsqt.test.UserService;
+import org.lsqt.test.framework.UserService;
 
 //按name不唯一,指定impl=xxxServiceImpl.Class引用
 @Service(name="userService3")

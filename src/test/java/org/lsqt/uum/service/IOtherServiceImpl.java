@@ -1,7 +1,7 @@
 package org.lsqt.uum.service;
 
 import org.lsqt.components.context.annotation.Component;
-import org.lsqt.test.IOtherService;
+import org.lsqt.test.framework.IOtherService;
 
 @Component
 public class IOtherServiceImpl implements IOtherService {

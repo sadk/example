@@ -3,8 +3,8 @@ package org.lsqt.uum.service;
 
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.Service;
-import org.lsqt.test.IOtherService;
-import org.lsqt.test.UserService;
+import org.lsqt.test.framework.IOtherService;
+import org.lsqt.test.framework.UserService;
 import org.lsqt.uum.dao.UserDao;
 import org.lsqt.components.context.annotation.Scope;
 //直接引用id;

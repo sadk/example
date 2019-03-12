@@ -4,8 +4,8 @@ package org.lsqt.uum.service;
 import java.util.List;
 
 import org.lsqt.components.context.annotation.Service;
-import org.lsqt.test.IOtherService;
-import org.lsqt.test.UserService;
+import org.lsqt.test.framework.IOtherService;
+import org.lsqt.test.framework.UserService;
 import org.lsqt.uum.model.UserTest;
 
 //直接引用name(唯一) 
