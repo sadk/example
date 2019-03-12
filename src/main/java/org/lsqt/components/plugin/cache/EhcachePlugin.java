@@ -52,8 +52,8 @@ public class EhcachePlugin implements org.lsqt.components.cache.Cache<String, Ob
 
 	private void init() {
 		cacheConfig = CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, Serializable.class,
-				ResourcePoolsBuilder.newResourcePoolsBuilder().heap(1000, EntryUnit.ENTRIES) // 堆
-						.offheap(20, MemoryUnit.MB) // 堆外
+				ResourcePoolsBuilder.newResourcePoolsBuilder().heap(2000, EntryUnit.ENTRIES) // 堆
+						.offheap(2, MemoryUnit.MB) // 堆外
 						.disk(1, MemoryUnit.GB) // 磁盘
 		);// .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(20)));
 

@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService{
 	@Cache(User.class)
 	public User getById(Long id,boolean cascade) {
 		User user = db.getById(User.class, id);
+		if (user == null) return null;
 		
 		if(cascade) {
 			OrgQuery orgQuery = new OrgQuery();

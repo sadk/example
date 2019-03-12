@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.lsqt.components.context.annotation.Cache;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
@@ -21,21 +22,25 @@ public class TenantController {
 	
 	@Inject private Db db;
 	
+	@Cache(Tenant.class)
 	@RequestMapping(mapping = { "/page", "/m/page" })
 	public Page<Tenant> queryForPage(TenantQuery query) throws IOException {
 		return tenantService.queryForPage(query); //  
 	}
 	
+	@Cache(Tenant.class)
 	@RequestMapping(mapping = { "/all", "/m/all" })
 	public Collection<Tenant> getAll() {
 		return tenantService.getAll();
 	}
 	
+	@Cache(evict=true,value = Tenant.class)
 	@RequestMapping(mapping = { "/save_or_update", "/m/save_or_update" })
 	public Tenant saveOrUpdate(Tenant form) {
 		return tenantService.saveOrUpdate(form);
 	}
 	
+	@Cache(evict=true,value = Tenant.class)
 	@RequestMapping(mapping = { "/delete", "/m/delete" })
 	public int delete(String ids) {
 		List<Long> list = StringUtil.split(Long.class, ids, ",");

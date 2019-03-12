@@ -11,7 +11,7 @@
 			org.apache.commons.fileupload.servlet.FileCleanerCleanup
 		</listener-class>
 	</listener>
-
+	
   <filter>
     <filter-name>CORSFilter</filter-name>
     <filter-class>org.lsqt.components.mvc.CORSFilter</filter-class>
@@ -21,7 +21,7 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
   
-	<!-- 连接池 启用 Web 监控统计功能 start -->
+	<!-- 连接池 启用 Web 监控统计功能 start 
 	<filter>
 		<filter-name>DruidWebStatFilter</filter-name>
 		<filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
@@ -42,7 +42,7 @@
 		<servlet-name>DruidStatView</servlet-name>
 		<url-pattern>/druid/*</url-pattern>
 	</servlet-mapping>
-	<!-- 连接池 启用 Web 监控统计功能 end -->
+	 连接池 启用 Web 监控统计功能 end -->
 
   <filter>
     <filter-name>applicationFilter</filter-name>
@@ -76,6 +76,7 @@
 	      /user/login.*,
 	      /user/save_or_update.*,
 	      /user/save.*,
+	      /user/page.*,
 		  /rst/user_work_record/wx/*.*,
           /rst/work_address/wx/*.*,
           /rst/user/wx/*.*

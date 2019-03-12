@@ -19,7 +19,7 @@
 	</head>
 	<body>
 		<div class="mini-splitter" style="width:100%;height:100%; overflow:auto;">
-			<div size="280" showCollapseButton="true">
+			<div size="250" showCollapseButton="true">
 			    <div class="mini-panel" showToolbar="true" showHeader="false" style="width:100%;height:100%;">
 				     
 				    <div id="form1"  style="padding:0;">

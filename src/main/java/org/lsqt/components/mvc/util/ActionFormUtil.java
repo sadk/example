@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-@SuppressWarnings("unused")
 public final class ActionFormUtil {
 	static final Logger log = LoggerFactory.getLogger(ActionFormUtil.class);
 	/**

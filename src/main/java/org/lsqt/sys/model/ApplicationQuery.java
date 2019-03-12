@@ -3,13 +3,14 @@ package org.lsqt.sys.model;
 import java.util.Date;
 
 import org.lsqt.components.context.annotation.model.Pattern;
+import org.lsqt.components.context.annotation.mvc.PermissionQuery;
 import org.lsqt.components.db.Page;
 
 /**
  * 应用系统管理综合查询
  * @author yuanmm
  */
-//@PermissionQuery(field={"permissionSQL"},type={String.class})
+@PermissionQuery(field = "permissionSQL", type = String.class)
 public class ApplicationQuery {
 	private Integer pageIndex=Page.DEFAULT_PAGE_INDEX;
 	private Integer pageSize=Page.DEFAULT_PAGE_SIZE;

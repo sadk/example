@@ -11,7 +11,7 @@
 		<spring>5.0.8.RELEASE</spring>
 	</properties>
   <dependencies>
-  
+		
 <dependency>
     <groupId>cglib</groupId>
     <artifactId>cglib</artifactId>
@@ -292,7 +292,20 @@
     <version>9.4.14.v20181114</version>
 </dependency>
 
-		
+<!-- To run javax.websocket in embedded server 
+<dependency>
+    <groupId>org.eclipse.jetty.websocket</groupId>
+    <artifactId>javax-websocket-server-impl</artifactId>
+    <version>9.4.14.v20181114</version>
+</dependency>
+-->
+<!-- To run javax.websocket client 
+<dependency>
+  <groupId>org.eclipse.jetty.websocket</groupId>
+  <artifactId>javax-websocket-client-impl</artifactId>
+  <version>9.4.14.v20181114</version>
+</dependency>
+-->		
 		
 		
 		

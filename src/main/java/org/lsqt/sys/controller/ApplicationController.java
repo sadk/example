@@ -3,7 +3,9 @@ package org.lsqt.sys.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.lsqt.components.context.annotation.Cache;
 import org.lsqt.components.context.annotation.Controller;
@@ -25,6 +27,13 @@ public class ApplicationController {
 	@Inject private ApplicationService applicationService; 
 	
 	@Inject private Db db;
+
+	@RequestMapping(mapping = { "/health"},text="用于springcloud健康状态检查")
+	public Map<String,String> health()  {
+		Map<String,String> rs = new HashMap<>();
+		rs.put("status", "UP");
+		 return rs;
+	}
 	
 	@RequestMapping(mapping = { "/page", "/m/page" }, view = View.JSON)
 	public Page<Application> queryForPage(ApplicationQuery query) throws IOException {
@@ -38,7 +47,7 @@ public class ApplicationController {
 	
 	@RequestMapping(mapping = { "/page_auth", "/m/page_auth" }, text="权限使用")
 	public Page<Application> queryForPage4Auth(ApplicationQuery query) throws Exception {
-		PermissionSQLUtil.bindPermissionSQL(query);
+		//PermissionSQLUtil.bindPermissionSQL(query);
 		return applicationService.queryForPage(query);
 	}
 	

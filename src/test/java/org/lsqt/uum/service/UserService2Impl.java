@@ -1,7 +1,7 @@
 package org.lsqt.uum.service;
 
 import org.lsqt.components.context.annotation.Service;
-import org.lsqt.spi.uum.UserService;
+import org.lsqt.test.UserService;
 
 //直接name+version引用; 
 @Service(name="userService2",version="2.0")

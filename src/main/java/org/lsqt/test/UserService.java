@@ -1,4 +1,4 @@
-package org.lsqt.spi.uum;
+package org.lsqt.test;
 
 public interface UserService {
 

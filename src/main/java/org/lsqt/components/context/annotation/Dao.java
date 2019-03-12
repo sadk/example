@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
 public @interface Dao {
 	String value() default "";
 	String name() default "";

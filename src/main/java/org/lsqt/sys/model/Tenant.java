@@ -1,9 +1,16 @@
 package org.lsqt.sys.model;
 
+import java.io.Serializable;
+
 /**
  * 租户表
  */
-public class Tenant {
+public class Tenant implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5812012009656830036L;
 
 	/***/
 	private Long id;

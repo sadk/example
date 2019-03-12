@@ -10,11 +10,11 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.lsqt.components.db.orm.ORMappingIdGenerator;
 
 /**
- * 启动类
+ * 启动类,模拟分布式3
  * @author admin
  *
  */
-public class Main {
+public class Main3 {
 	
 	public static class JspStarter extends AbstractLifeCycle implements ServletContextHandler.ServletContainerInitializerCaller {
 		JettyJasperInitializer sci;
@@ -41,8 +41,8 @@ public class Main {
 	
 	public static void main(String[] args) throws Exception {
 	    long start = System.currentTimeMillis();
-		Server server = new Server(8086);
-		WebAppContext webappHandler = new WebAppContext("src/main/webapp", "/");
+		Server server = new Server(82);
+		WebAppContext webappHandler = new WebAppContext("src/main/webapp", "/qdp3");
 		
 		webappHandler.addBean(new JspStarter(webappHandler)); 
 		//webappHandler.addServlet(JettyJspServlet.class, "*.jsp"); 	

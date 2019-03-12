@@ -1,4 +1,4 @@
-package org.lsqt.components.context.annotation;
+package org.lsqt.components.context.annotation.mvc;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -11,12 +11,8 @@ import org.springframework.stereotype.Component;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Controller {
-	String value() default "";
-	String name() default "";
-	boolean lazy() default true;
-	String version() default "";
-	String scope() default Scope.PROTOTYPE;
-	String [] mapping() default {};
-	String destroyMethod() default "";
+public @interface PermissionQuery {
+	String field() default "permissionSQL";
+
+	Class<?> type() default String.class;
 }

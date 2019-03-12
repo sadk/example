@@ -39,8 +39,12 @@
 				<#if query.createTimeBegin?? && query.createTimeEnd??>
 				 and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
 				</#if>
-			<#else>
-				and 1=2
+				
+				<#-- 权限SQL片断,系统自动跟据登陆用户解析  -->
+				<#if query.permissionSQL??>
+					${query.permissionSQL}
+				</#if>
+				
         	</#if>
 		]]>
 	</statement>

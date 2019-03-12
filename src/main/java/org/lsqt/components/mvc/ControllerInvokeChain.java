@@ -20,6 +20,7 @@ import org.lsqt.components.context.bean.BeanFactory;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.mvc.impl.UrlMappingDefinition;
 import org.lsqt.components.mvc.impl.UrlMappingRoute;
+import org.lsqt.components.mvc.util.ArgsValueBeanDynamicFieldUtil;
 import org.lsqt.components.mvc.util.ArgsValueBindUtil;
 import org.lsqt.components.mvc.util.RequestUtil;
 import org.lsqt.components.plugin.cache.EhcachePlugin;
@@ -88,8 +89,8 @@ public class ControllerInvokeChain implements Chain{
 		
 		Object controller = beanFactory.getBean(urlMappingDefinition.getControllerClass());
 		
-		List<Object> methodInputParamValues = ArgsValueBindUtil.getMethodArgsValue(urlMappingDefinition.getMethod());
-
+		List<Object> controllerMethodParamList = ArgsValueBindUtil.getMethodArgsValue(urlMappingDefinition.getMethod());
+		List<Object> methodInputParamValues = ArgsValueBeanDynamicFieldUtil.processAddDynamicField(controllerMethodParamList);
 		
 		
 		
