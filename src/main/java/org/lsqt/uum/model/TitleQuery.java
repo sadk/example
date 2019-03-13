@@ -1,13 +1,11 @@
 package org.lsqt.uum.model;
 
-import org.lsqt.components.db.Page;
-
 /**
  * 用户称谓表，如岗位、职位等
  */
 public class TitleQuery {
-	private Integer pageIndex = Page.DEFAULT_PAGE_INDEX;
-	private Integer pageSize = Page.DEFAULT_PAGE_SIZE;
+	private Integer pageIndex = 0;
+	private Integer pageSize = 20;
 
 	private String sortOrder;
 	private String sortField;

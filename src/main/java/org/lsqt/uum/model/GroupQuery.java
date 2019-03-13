@@ -1,13 +1,12 @@
 package org.lsqt.uum.model;
 
-import org.lsqt.components.db.Page;
 
 /**
  * 用户组表
  */
 public class GroupQuery {
-	private Integer pageIndex = Page.DEFAULT_PAGE_INDEX;
-	private Integer pageSize = Page.DEFAULT_PAGE_SIZE;
+	private Integer pageIndex = 0;
+	private Integer pageSize = 20;
 
 	private String sortOrder;
 	private String sortField;
