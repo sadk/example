@@ -1,5 +1,6 @@
 package org.lsqt.uum.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import org.lsqt.components.context.annotation.model.Pattern;
  * 
  * </pre>
  */
-public class User implements java.io.Serializable{
+public class User implements Serializable {
 	private static final long serialVersionUID = -8219775209409585592L;
 
 	public static final String PWD_SALT = "bqjr@123"; // 暂拟用固定值做密码盐
@@ -376,6 +377,6 @@ public class User implements java.io.Serializable{
 	public void setMyRoleList(List<Role> myRoleList) {
 		this.myRoleList = myRoleList;
 	}
-
-
+	
+	
 }

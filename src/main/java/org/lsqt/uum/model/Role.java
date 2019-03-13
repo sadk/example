@@ -2,27 +2,26 @@ package org.lsqt.uum.model;
 
 import java.io.Serializable;
 
-import org.lsqt.uum.Resource;;
 
 /**
  * 角色表
  */
-public class Role implements Serializable,Resource  {
+public class Role implements Serializable   {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5277982119437928537L;
+	
 	/**授权给不同实体(uum_role_object表)，如:用户、部门、组、岗位、职称**/
-	public static final String OBJ_TYPE_职称 = Resource.Type.TYPE_POSITION;
-	public static final String OBJ_TYPE_岗位 = Resource.Type.TYPE_JOB;
+	public static final String OBJ_TYPE_职称 =  "1";
+	public static final String OBJ_TYPE_岗位 = "2";
 
-	public static final String OBJ_TYPE_部门 = Resource.Type.TYPE_DEPARTMENT;
-	public static final String OBJ_TYPE_组 = Resource.Type.TYPE_GROUP;
-	public static final String OBJ_TYPE_用户 = Resource.Type.TYPE_USER;
-	public static final String OBJ_TYPE_资源 = Resource.Type.TYPE_RESOURCE;
-	public static final String OBJ_TYPE_角色 = Resource.Type.TYPE_ROLE;
-	// 租户 code=0 
+	public static final String OBJ_TYPE_部门 = "3";
+	public static final String OBJ_TYPE_组 = "4";
+	public static final String OBJ_TYPE_用户 = "5";
+	public static final String OBJ_TYPE_资源 = "6";
+	public static final String OBJ_TYPE_角色 = "7";
 	
 	/** 角色ID */
 	private Long id;
@@ -159,25 +158,4 @@ public class Role implements Serializable,Resource  {
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
-
-	@Override
-	public Object getPid() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Object getValue() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getType() {
-		return Role.OBJ_TYPE_角色;
-	}
-
-	@Override
-	public String setType(String type) {
-		throw new UnsupportedOperationException();
-	}
-
 }
