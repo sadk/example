@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sms.model.SmsLaunchInfo" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="sms_launch_info">
+				<column id="id" type="auto" property="id" text="主键" />
+		
+	 	
+	 		<column name="launch_id" property="launchId" text="投放ID"/>
+	 	
+	 		<column name="package_id" property="packageId" text="上传包ID"/>
+	 	
+	 		<column name="sign_id" property="signId" text="签名ID"/>
+	 	
+	 		<column name="templ_id" property="templId" text="文案ID"/>
+	 	
+	 		<column name="launch_status" property="launchStatus" text="投放状态：0 审核中 1 初始化   2 进行中 3 成功 4 失败 5 审核失败"/>
+	 	
+	 		<column name="num" property="num" text="计划投放数量"/>
+	 	
+	 		<column name="bgn_time" property="bgnTime" text="计划投放时间"/>
+	 	
+	 		<column name="send_status" property="sendStatus" text="腾讯发送状态：0 审核中 1 初始化   2 进行中 3 成功 4 失败 5 审核失败"/>
+	 	
+	 		<column name="send_msg" property="sendMsg" text="腾讯发送描述"/>
+	 	
+	 		<column name="launch_bgn_time" property="launchBgnTime" text="投放开始时间"/>
+	 	
+	 		<column name="launch_end_time" property="launchEndTime" text="投放结束时间"/>
+	 	
+	 		<column name="succ_num" property="succNum" text="投放成功数量"/>
+	 	
+	 		<column name="fail_num" property="failNum" text="投放失败数量"/>
+	 	
+	 		<column name="recv_num" property="recvNum" text="用户接收成功数量"/>
+	 	
+	 		<column name="sendStatusTransfered" property="sendStatusTransfered" text="" />
+
+			<column name="launchStatusTransfered" property="launchStatusTransfered" text="" />
+	 	
+		
+		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		
+	 		
+	 		
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select *,
+		 	  (CASE WHEN launch_status = '0'
+    			THEN '审核中'
+   			  WHEN launch_status = '1'
+     			THEN '初始化'
+   			  WHEN launch_status = '2'
+     			THEN '进行中'
+   			  WHEN launch_status = '3'
+     			THEN '成功'
+   			  WHEN launch_status = '4'
+     			THEN '失败'
+   			  WHEN launch_status = '5'
+     			THEN '审核失败'
+     		  WHEN launch_status = '-1'
+     			THEN '取消投放'
+   			  ELSE launch_status END) as launchStatusTransfered,
+			  (
+				CASE WHEN send_status = '0'
+				  THEN '审核中'
+			   WHEN send_status = '1'
+				 THEN '初始化'
+			   WHEN send_status = '2'
+				  THEN '进行中'
+				WHEN send_status = '3'
+				  THEN '成功'
+				WHEN send_status = '4'
+				  THEN '失败'
+				WHEN send_status = '5'
+				  THEN '审核失败'
+			   ELSE send_status END
+			  ) as sendStatusTransfered
+		 	from sms_launch_info where 1=1
+		 	<#if query??>
+		 		<#-- -------------------关键字查询开始 --------------- -->
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							 							 							 							 							 							 							 					
+							 
+							launch_id like '%${key}%'  or 
+							
+							 
+							package_id like '%${key}%'  or 
+							
+							 
+							sign_id like '%${key}%'  or 
+							
+							 
+							templ_id like '%${key}%'  or 
+							
+							 
+							launch_status like '%${key}%'  or 
+							
+							 
+							send_status like '%${key}%'  or 
+							
+							 
+							send_msg like '%${key}%' 
+							
+					)
+				</#if>
+				<#-- -------------------关键字查询结束 --------------- -->
+	
+				<#-- -------------------综合查询开始 --------------- -->
+				
+				<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  					<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.launchId??> and launch_id = '${StringUtil.escapeSql(query.launchId)}' </#if>
+						
+					
+	  						<#if query.packageId??> and package_id = '${StringUtil.escapeSql(query.packageId)}' </#if>
+						
+					
+	  						<#if query.signId??> and sign_id = '${StringUtil.escapeSql(query.signId)}' </#if>
+						
+					
+	  						<#if query.templId??> and templ_id = '${StringUtil.escapeSql(query.templId)}' </#if>
+						
+					
+	  						<#if query.launchStatus??> and launch_status = '${StringUtil.escapeSql(query.launchStatus)}' </#if>
+						
+					
+						
+	  					<#if query.num??> and num = ${query.num} </#if>
+					
+						
+					
+						
+							<#if query.bgnTimeBegin?? && query.bgnTimeEnd??>
+	  							and date_format(bgn_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.bgnTimeBegin)}' and '${StringUtil.escapeSql(query.bgnTimeEnd)}'
+	  						</#if>
+	  						
+	  						<#if query.sendStatus??> and send_status = '${StringUtil.escapeSql(query.sendStatus)}' </#if>
+						
+					
+	  						<#if query.sendMsg??> and send_msg = '${StringUtil.escapeSql(query.sendMsg)}' </#if>
+						
+					
+						
+					
+						
+							<#if query.launchBgnTimeBegin?? && query.launchBgnTimeEnd??>
+	  							and date_format(launch_bgn_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.launchBgnTimeBegin)}' and '${StringUtil.escapeSql(query.launchBgnTimeEnd)}'
+	  						</#if>
+	  						
+						
+					
+						
+							<#if query.launchEndTimeBegin?? && query.launchEndTimeEnd??>
+	  							and date_format(launch_end_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.launchEndTimeBegin)}' and '${StringUtil.escapeSql(query.launchEndTimeEnd)}'
+	  						</#if>
+	  						
+						
+	  					<#if query.succNum??> and succ_num = ${query.succNum} </#if>
+					
+						
+	  					<#if query.failNum??> and fail_num = ${query.failNum} </#if>
+					
+						
+	  					<#if query.recvNum??> and recv_num = ${query.recvNum} </#if>
+					
+						
+					
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+
+	  						<#if query.createTime??>
+	  							and date_format(create_time,'%Y-%m-%d') = date_format('${query.createTime}','%Y-%m-%d')
+	  						</#if>
+	  						
+						
+					
+				<#-- -------------------综合查询结束 --------------- -->
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from sms_launch_info ]]>
+	</statement>
+	
+</statements>

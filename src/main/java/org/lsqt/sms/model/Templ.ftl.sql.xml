@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sms.model.Templ" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="sms_templ_info">
+			<column id="id" type="auto" property="id"/>
+		
+	 		<column name="templ_id" property="templId"/>
+	 		<column name="templ_name" property="templName"/>
+	 		<column name="templ_content" property="templContent"/>
+	 		<column name="sign_id" property="signId"/>
+			<column name="sign_name" property="signName"/>
+	 		<column name="launch_num" property="launchNum"/>
+	 		<column name="launch_time" property="launchTime"/>
+	 		<column name="templ_status" property="templStatus"/>
+	 		<column name="reply" property="reply"/>
+	 		<column name="create_time" property="createTime"/>
+	 		<column name="update_time" property="updateTime"/>
+			<column name="use_status" property="useStatus"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select tem.id,tem.templ_id,tem.templ_name,
+		 	tem.templ_content,tem.launch_num
+		 	,tem.launch_time,
+		 	(CASE WHEN tem.templ_status = '0'
+				THEN '已通过'
+			  WHEN tem.templ_status = '1'
+				THEN '待审核'
+			  WHEN tem.templ_status = '2'
+				THEN '已拒绝'
+			  ELSE tem.templ_status END) as templ_status
+			,tem.reply,tem.create_time,tem.update_time ,
+			tem.sign_id sign_id,
+			 (select si.name from sms_signature_info si where si.signature_id = tem.sign_id ) as sign_name,
+			 (CASE WHEN tem.use_status = '0'
+				THEN '未使用'
+			  WHEN tem.use_status = '1'
+				THEN '已使用'
+
+			  ELSE tem.use_status END) as use_status
+
+			from sms_templ_info tem where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							templ_id = %${key}%  or 
+							remark like '%${key}%' 
+					)
+				</#if>
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.templId??> and templ_id = ${query.templId} </#if>
+	  						<#if query.useStatus??> and use_status = ${query.useStatus} </#if>
+	  						<#if query.templStatus??> and templ_status = ${query.templStatus} </#if>
+
+					
+	  						<#if query.templName??> and templ_name like '%${query.templName}%' </#if>
+					
+	  						<#if query.templContent??> and templ_content like '%${query.templContent}%' </#if>
+						
+							<#if query.createTime??>
+	  							and date_format(create_time,'%Y-%m-%d') = date_format('${query.createTime}','%Y-%m-%d')
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+        <![CDATA[ select * from sms_templ_info ]]>
+    </statement>
+	
+</statements>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sms.model.Signature" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="sms_signature_info">
+			<column id="id" type="auto" property="id"/>
+	 		<column name="signature_id" property="signatureId"/>
+	 		<column name="name" property="name"/>
+	 		<column name="status" property="status"/>
+	 		<column name="create_time" property="createTime"/>
+	 		<column name="update_time" property="updateTime"/>
+			<column name="statusTransfered" property="statusTransfered" />
+			<column name="use_status" property="useStatus" />
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select sig.id, sig.signature_id, sig.name,
+		 	sig.status,
+		 	(
+		 	  CASE WHEN sig.status = '0'
+				THEN '已通过'
+			  WHEN sig.status = '1'
+				THEN '待审核'
+			  WHEN sig.status = '2'
+				THEN '已拒绝'
+			  ELSE sig.status END
+			) as statusTransfered,
+			sig.create_time, sig.update_time,
+			(
+				CASE WHEN sig.use_status = '0'
+					THEN '未使用'
+				WHEN sig.use_status = '1'
+					THEN '已使用'
+				ELSE sig.use_status END
+			) as use_status
+		 	from sms_signature_info sig where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							signature_id = %${key}%  or
+							name like '%${key}%'
+					)
+				</#if>
+							<#if query.ids??> and id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and id = ${query.id} </#if>
+					
+	  						<#if query.signatureId??> and signature_id = ${query.signatureId} </#if>
+					
+	  						<#if query.name??> and name = '${query.name}' </#if>
+
+							<#if query.createTime??>
+	  							and date_format(create_time,'%Y-%m-%d') = date_format('${query.createTime}','%Y-%m-%d')
+	  						</#if>
+
+	  						<#if query.status??> and status = ${query.status} </#if>
+
+	  						<#if query.useStatus??> and use_status = ${query.useStatus} </#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+        <![CDATA[ select * from sms_signature_info ]]>
+    </statement>
+	
+</statements>
