@@ -20,7 +20,6 @@ import org.lsqt.components.db.Db;
 import org.lsqt.components.db.IdGenerator;
 import org.lsqt.components.db.Page;
 import org.lsqt.components.db.orm.ORMappingIdGenerator;
-import org.lsqt.components.mvc.util.FileUploadUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.report.controller.PolicyReportFileRename;
 import org.lsqt.sys.model.Dictionary;
@@ -39,6 +38,7 @@ import org.lsqt.rst.util.AliyunOssUtils;
 
 @Controller(mapping={"/rst/position_definition"})
 public class PositionDefinitionController {
+	private static  final String UPLOAD_DIR = "/upload";
 	private IdGenerator idgen = new ORMappingIdGenerator();
 	
 	@Inject private PositionDefinitionService positionDefinitionService; 
@@ -125,7 +125,7 @@ public class PositionDefinitionController {
 	@RequestMapping(mapping = { "/upload", "/m/upload" }, view=View.JSP, path="/apps/default/admin/rst/position_definition",excludeTransaction=true, text="职位视频上传")
 	public String upload() throws Exception{
 		String serverPath = "";
-		String uploadDir = FileUploadUtil.UPLOAD_DIR;
+		String uploadDir = UPLOAD_DIR;
 		HttpServletRequest request = ContextUtil.getRequest();
 
 		String filePath = request.getServletContext().getRealPath("/") + uploadDir;
@@ -225,7 +225,7 @@ public class PositionDefinitionController {
 	@RequestMapping(mapping = { "/upload_logo", "/m/upload_logo" }, view=View.JSP, path="/apps/default/admin/rst/position_definition",excludeTransaction=true, text="职位logo字段")
 	public String uploadLogo() throws Exception{
 		String serverPath = "";
-		String uploadDir = FileUploadUtil.UPLOAD_DIR;
+		String uploadDir = UPLOAD_DIR;
 		HttpServletRequest request = ContextUtil.getRequest();
 
 		String filePath = request.getServletContext().getRealPath("/") + uploadDir;

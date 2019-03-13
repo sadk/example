@@ -15,7 +15,6 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
-import org.lsqt.components.mvc.util.FileUploadUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.report.controller.PolicyReportFileRename;
 import org.lsqt.rst.model.VideoYear;
@@ -29,7 +28,7 @@ import com.oreilly.servlet.MultipartRequest;
 
 @Controller(mapping={"/rst/video_year"})
 public class VideoYearController {
-	
+	private static final String UPLOAD_DIR = "/upload";
 	@Inject private VideoYearService videoYearService; 
 	
 	@Inject private Db db;
@@ -78,7 +77,7 @@ public class VideoYearController {
 		
 		
 		String serverPath = "";
-		String uploadDir = FileUploadUtil.UPLOAD_DIR;
+		String uploadDir = UPLOAD_DIR;
 		HttpServletRequest request = ContextUtil.getRequest();
 		
 		

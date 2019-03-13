@@ -39,7 +39,6 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
-import org.lsqt.components.mvc.util.FileUploadUtil;
 import org.lsqt.components.util.ExceptionUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.lang.StringUtil;
@@ -176,7 +175,7 @@ public class UserCrimeController {
 	@RequestMapping(mapping = { "/upload", "/m/upload" }, view=View.JSP, path="/apps/default/admin/chk/user", text="导入用户信息")
 	public String uplodad() throws Exception{
 		String serverPath = "";
-		String uploadDir = FileUploadUtil.UPLOAD_DIR;
+		String uploadDir = "/upload";
 		HttpServletRequest request = ContextUtil.getRequest();
 
 		String filePath = request.getServletContext().getRealPath("/") + uploadDir;

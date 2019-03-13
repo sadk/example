@@ -16,7 +16,6 @@ import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.context.annotation.mvc.RequestMapping.View;
 import org.lsqt.components.db.Db;
 import org.lsqt.components.db.Page;
-import org.lsqt.components.mvc.util.FileUploadUtil;
 import org.lsqt.components.util.lang.StringUtil;
 import org.lsqt.rst.model.Company;
 import org.lsqt.rst.model.CompanyPicture;
@@ -34,6 +33,7 @@ import com.oreilly.servlet.MultipartRequest;
 @Controller(mapping={"/rst/company"})
 public class CompanyController {
 	private static final Logger log = LoggerFactory.getLogger(CompanyController.class);
+	private static final String UPLOAD_DIR = "/upload";
 	
 	@Inject private CompanyService companyService; 
 	
@@ -108,7 +108,7 @@ public class CompanyController {
 	@RequestMapping(mapping = { "/upload", "/m/upload" }, view=View.JSP, path="/apps/default/admin/rst/company",excludeTransaction=true, text="上传公司图片")
 	public String upload() throws Exception{
 		String serverPath = "";
-		String uploadDir = FileUploadUtil.UPLOAD_DIR;
+		String uploadDir = UPLOAD_DIR;
 		HttpServletRequest request = ContextUtil.getRequest();
 
 		String filePath = request.getServletContext().getRealPath("/") + uploadDir;

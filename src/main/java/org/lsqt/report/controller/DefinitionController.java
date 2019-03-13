@@ -4,13 +4,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,14 +27,11 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.lsqt.components.context.ContextUtil;
-import org.lsqt.components.context.Result;
 import org.lsqt.components.context.annotation.Controller;
 import org.lsqt.components.context.annotation.Inject;
 import org.lsqt.components.context.annotation.mvc.RequestMapping;
 import org.lsqt.components.db.Db;
-import org.lsqt.components.db.DbException;
 import org.lsqt.components.db.Page;
-import org.lsqt.components.mvc.util.FileUploadUtil;
 import org.lsqt.components.util.ExceptionUtil;
 import org.lsqt.components.util.collection.ArrayUtil;
 import org.lsqt.components.util.collection.MapUtil;
@@ -197,7 +192,7 @@ public class DefinitionController {
 		String paramJSON =  JSON.toJSONString(formMap,true);
 		log.info("报表请求参数: {}",paramJSON);
 		
-		String json = org.lsqt.biz.util.HttpClient.post(model.getReportSql(),paramJSON);
+		String json = org.lsqt.report.util.HttpClient.post(model.getReportSql(),paramJSON);
 		log.info("报表：{} 报表id={}，返回：{}", model.getName(), model.getId(), json);
 		
 		Map<String, Object> rs = JSON.parseObject(json, Map.class);
@@ -460,7 +455,7 @@ public class DefinitionController {
 	@RequestMapping(mapping = { "/upload", "/m/upload" }, text="报表数据上传")
 	public String uplodad() throws Exception{
 		String serverPath = "";
-		String uploadDir = FileUploadUtil.UPLOAD_DIR;
+		String uploadDir = "/upload";
 		HttpServletRequest request = ContextUtil.getRequest();
 
 		String filePath = request.getServletContext().getRealPath("/") + uploadDir;

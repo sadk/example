@@ -294,7 +294,7 @@ public class DefinitionServiceImpl implements DefinitionService{
 	@SuppressWarnings("unchecked")
 	private Page<Map<String,Object>> searchHttpJSON(Definition model,Map<String,Object> formMap) throws Exception {
 		Page<Map<String,Object>> page = new Page.PageModel<>();
-		String json = org.lsqt.biz.util.HttpClient.post(model.getReportSql(), JSON.toJSONString(formMap));
+		String json = org.lsqt.report.util.HttpClient.post(model.getReportSql(), JSON.toJSONString(formMap));
 		log.info("报表：{} id={}，返回：{}", model.getName(), model.getId(), json);
 		Map<String, Object> rs = JSON.parseObject(json, Map.class);
 		if (rs != null && rs.containsKey("data")) {
