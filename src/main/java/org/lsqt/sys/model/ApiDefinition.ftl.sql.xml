@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<statements namespace="org.lsqt.sys.model.ApiDefinition" cache="true" import="org.lsqt.components.util.collection.ArrayUtil,org.lsqt.components.util.lang.StringUtil" >
+	<table name="api_definition">
+			<column id="id" type="auto" property="id" text="主键" />
+			
+	 		<column name="category_id" property="categoryId" text=""/>
+	 		<column name="category_name" property="categoryName" text=""/>
+	 		
+	 		<column name="code" property="code" text=""/>
+	 		<column name="name" property="name" text=""/>
+	 		<column name="value" property="value" text=""/>
+	 		
+	 		<column name="type" property="type" text="映射类型: 1=外部系统-http-json 2=本地系统"/>
+	 		<column name="send_type" property="sendType" text="报文发送方式: 1=form_data 2=x-www-form-urlencodeed 3=raw 4=binary(需选择文件)"/>
+	 		<column name="method" property="method" text="http请求方法"/>
+	 		<column name="url" property="url" text="接口地址(不带参数的地址)"/>
+	 		<column name="data_prop" property="dataProp" text="SON数据数据字段"/>
+	 		<column name="entity_class_request" property="entityClassRequest" text="请求实体"/>
+	 		<column name="entity_Class_response" property="entityClassResponse" text="对应的响应实体"/>
+	 		<column name="timeout" property="timeout" text="请求超时间"/>
+	 	
+	 		<column name="app_code" property="appCode" text="应用名称"/>
+	 		<column name="sn" property="sn" text="排序"/>
+	 		<column name="remark" property="remark" text=""/>
+	 	
+	 	
+	 		<column gid="gid" property="gid" text="全局唯一编号"/>
+	 		<column createTime="create_time" property="createTime" text="创建时间"/>
+	 		<column updateTime="update_time" property="updateTime" text="更新时间"/>
+	 		
+	 		<column name="category_name" property="categoryName" isVirtual = "true" text="虚拟列，关联查询时使用"/>
+	</table>
+	
+	<statement id="queryForPage" parameterName="query">
+	 	<![CDATA[
+		 	select A.* from api_definition A  where 1=1
+		 	<#if query??>
+				<#if query.key??>
+					<#assign key = StringUtil.escapeSql(query.key)/>
+					and (
+							A.name like '%${key}%'  or 
+							A.url like '%${key}%'  or 
+							A.code like '%${key}%'  or 
+							A.app_code like '%${key}%'  or 
+							A.remark like '%${key}%' or 
+							A.category_name like '%${key}%'  
+					)
+				</#if>
+				
+							<#if query.ids??> and A.id in (${StringUtil.escapeSql(query.ids)}) </#if>
+						
+	  						<#if query.id??> and A.id = ${query.id} </#if>
+					
+						
+	  						<#if query.categoryId??> and A.category_id = ${query.categoryId} </#if>
+					
+	  						<#if query.categoryName??> and B.name = '${StringUtil.escapeSql(query.categoryName)}' </#if>
+					
+	  						<#if query.name??> and A.name = '${StringUtil.escapeSql(query.name)}' </#if>
+						
+	  						
+					
+	  					
+	  						<#if query.type??> and A.type = ${query.type} </#if>
+	  						<#if query.sendType??> and A.send_type = ${query.sendType} </#if>
+							<#if query.method??> and A.method = '${StringUtil.escapeSql(query.method)}'  </#if>
+							<#if query.url??> and A.url = '${StringUtil.escapeSql(query.url)}' </#if>
+							<#if query.dataProp??> and A.data_prop = '${StringUtil.escapeSql(query.dataProp)}' </#if>
+							<#if query.entityClazzRequest??> and A.entity_class_request = '${StringUtil.escapeSql(query.entityClazzRequest)}' </#if>
+							<#if query.entityClazzRequest??> and A.entity_class_response = '${StringUtil.escapeSql(query.entityClazzRequest)}' </#if>
+						
+						
+							<#if query.appCode??> and A.app_code = '${StringUtil.escapeSql(query.appCode)}' </#if>
+	  						
+	  						<#if query.remark??> and A.remark = '${StringUtil.escapeSql(query.remark)}' </#if>
+						
+							<#if query.createTimeBegin?? && query.createTimeEnd??>
+	  							and date_format(A.create_time,'%Y-%m-%d') between  '${StringUtil.escapeSql(query.createTimeBegin)}' and '${StringUtil.escapeSql(query.createTimeEnd)}'
+	  						</#if>
+        	</#if>
+        	
+		]]>
+	</statement>
+	
+	<statement id="getAll">
+		<![CDATA[ select * from api_definition ]]>
+	</statement>
+	
+</statements>
